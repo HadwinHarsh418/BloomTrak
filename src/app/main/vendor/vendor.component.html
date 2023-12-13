@@ -1,0 +1,76 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+       <p class="font-weight-bolder ml-1" >Vendor List</p>
+    </div>
+    <div class="card-body mt-1">
+    <div class="row mb-1">
+       <div class="col-md-6 col-12">
+          <div class="d-flex">
+             <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6'|| currentUser.prmsnId == '1'"
+                [routerLink]="['add-Vendor']"><i class="fa fa-plus mr-50"></i>Add Vendor
+             </button> 
+             <!-- <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Community' || currentUser.role == 'Admin'" >
+             <i class="fa fa-file "></i>   Import File
+             <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+             </button> -->
+          </div>
+       </div>
+
+       <!-- <div class="col-md-6 col-12 d-flex justify-content-md-end">
+         <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+             <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                 <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                     [(ngModel)]="searchStr" />
+             </label>
+         </div>
+     </div> -->
+    </div>
+    <div class="ovrFlwCon">
+        
+    <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+    [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" 
+    [count]="rows.length" [offset]="" [limit]="10" 
+    >
+    <ngx-datatable-column name="vendor name" prop="vendor_name" [width]="150" >
+       <ng-template let-vendor_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+          {{ vendor_name || '---'}}
+       </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="description" prop="description" [width]="150" >
+       <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+          {{ description || '---'}}
+       </ng-template>
+    </ngx-datatable-column>
+
+    <ngx-datatable-column name="community name" prop="community_name" [width]="150" >
+      <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+         {{ community_name || '---'}}
+      </ng-template>
+   </ngx-datatable-column>
+    
+    <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="150">
+       <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          <div class="d-flex align-items-center">
+             <div ngbDropdown container="body">
+                <a ngbDropdownToggle  class="hide-arrow" id="dropdownBrowserState"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                </a>
+                <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                   <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-Vendor',row.id]" *ngIf="edtPrms ==1 || currentUser.user_role == '6'|| currentUser.prmsnId == '1'">
+                   <i class="fa fa-edit mr-50"></i> Edit 
+                   </a>
+                   <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)" *ngIf="dltPrms ==1 || currentUser.user_role == '6'|| currentUser.prmsnId == '1'">
+                   <i class="fa fa-trash mr-50"></i> Delete 
+                   </a>
+                   <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="dltPrms ==0 && edtPrms == 0">
+                     <i class="fa fa-trash mr-50"></i>  You have no Permissions for any actions. 
+                 </a>
+                </div>
+             </div>
+          </div>
+       </ng-template>
+    </ngx-datatable-column>
+    </ngx-datatable>
+   </div>

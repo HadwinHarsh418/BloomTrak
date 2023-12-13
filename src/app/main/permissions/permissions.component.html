@@ -1,0 +1,115 @@
+<div class="card">
+   <div class="card-body mt-1">
+
+      <div class="row ml-1 mb-1"  *ngIf="['6'].includes(currentUser.prmsnId)">
+         <div class="form-check mr-3">
+            <input class="form-check-input" type="radio"  (change)="handleChange('3')" name="flexRadioDefault" id="flexRadioDefault1">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Management
+            </label>
+          </div>
+          <div class="form-check mr-3">
+            <input class="form-check-input" type="radio"  (change)="handleChange('1')" name="flexRadioDefault" id="flexRadioDefault2" checked>
+            <label class="form-check-label" for="flexRadioDefault2">
+              Community
+            </label>
+          </div>
+          <div class="form-check mr-3">
+            <input class="form-check-input" type="radio"  (change)="handleChange('2')" name="flexRadioDefault" id="flexRadioDefault3" >
+            <label class="form-check-label" for="flexRadioDefault3">
+              Agency
+            </label>
+          </div>
+          <div class="form-check" *ngIf="currentUser.prmsnId == '6'">
+            <input class="form-check-input" type="radio"  (change)="handleChange('4')" name="flexRadioDefault" id="flexRadioDefault4" >
+            <label class="form-check-label" for="flexRadioDefault4">
+              Default
+            </label>
+          </div>
+      </div>
+
+      <div class="row">
+         <div class="{{colDefine}}"  *ngIf="currentUser.prmsnId == '6' && usrRlNo <=3">
+            <select  class="form-control" (change)="slctCom($event.target.value)">
+               <option value="" selected="selected" disabled *ngIf="usrRlNo =='1'">---Select Community---</option>
+               <option value="" selected="selected" disabled *ngIf="usrRlNo =='2'">---Select Agency---</option>
+               <option value="" selected="selected" disabled *ngIf="usrRlNo =='3'">---Select Management---</option>
+               <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name || item.mg_name || item.agency_name}}</option>
+           </select>
+         </div>
+
+         <div class="{{colDefine}}">
+            <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event.target.value)" >
+               <option  value="" selected disabled> ---Roles---</option>
+               <option [value]="data.id" *ngFor="let data of roleData"> {{data.name}}</option>
+               <option  *ngIf="!roleData.length"> No Data To Display</option>
+            </select>
+         </div>
+      
+         <div class="{{colDefine}}">
+            <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onMenuChange($event.target.value)" >
+               <option  value="" selected disabled> ---Menu---</option>
+               <option [value]="data.id" *ngFor="let data of permissionData"> {{data.name}}</option>
+               <option  *ngIf="!permissionData.length"> No Data To Display</option>
+
+            </select>
+         </div>
+         <div class="{{colDefine}}">
+            <button type="button" (click)="fileInput.click()"  class="btn btn-info btn-block" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
+               <i class="fa fa-file "></i>   Import File
+               <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none; height: 2.714rem;" />
+             </button>
+         </div>
+      </div>
+      <!-- *ngIf="!IsDepartment" -->
+      <div class="permission-body" >
+         <div class="per-mis">
+            <p  class="per-mis-p">Permission : Page Permissions</p>
+            <a (click)="CheckAllOptions()">{{isChecked}}</a>
+         </div>
+         <div  class="all-data">
+            <ul  class="all-data-ul" >
+               <li *ngFor="let data of permissionBox">
+                  <div  class="media">
+                     <i class="{{data.className}} icon-all" [ngClass]="{'active': data.checked== true}"   aria-hidden="true"></i>
+                     <div  class="media-body">
+                        <p  class="media-body-p">{{data.name}}</p>
+                        <p  class="media-body-p1">{{data.subTitle}}</p>
+                     </div>
+                  </div>
+                  <input  type="checkbox" [(ngModel)]="data.checked" [value]="data.value" class="cus-check-box ng-untouched ng-pristine ng-valid" (change)="checkValue(data.value)">
+               </li>
+            </ul>
+            <!-- <ul  class="all-data-ul" *ngIf="IsDepartment">
+               <li *ngFor="let data of deptList">
+                  <i class="fa fa-plus icon-all" [ngClass]="{'active': data.checked== true}"   aria-hidden="true"></i>
+                  <div  class="media-body">
+                     <p  class="media-body-p">{{data.name}}</p>
+                  </div>
+                  <input  type="checkbox" [(ngModel)]="data.checked" [value]="data.value" class="cus-check-box ng-untouched ng-pristine ng-valid" (change)="departmentCheckValue(data.value)">
+               </li>
+            </ul> -->
+         </div>
+      </div>
+      <div class="permission-body" *ngIf="IsDepartment">
+         <div class="per-mis">
+            <p  class="per-mis-p">Permission : Department Permissions</p>
+            <a (click)="CheckAllOptions1()">{{isChecked}}</a>
+         </div>
+         <div  class="all-data">
+           
+            <ul  class="all-data-ul" >
+               <li *ngFor="let data of deptList">
+                  <i class="fa fa-plus icon-all" [ngClass]="{'active': data.checked== true}"   aria-hidden="true"></i>
+                  <div  class="media-body">
+                     <p  class="media-body-p">{{data.name}}</p>
+                  </div>
+                  <input  type="checkbox" [(ngModel)]="data.checked" [value]="data.value" class="cus-check-box ng-untouched ng-pristine ng-valid" (change)="departmentCheckValue(data.value)">
+               </li>
+            </ul>
+         </div>
+      </div>
+     
+      <div  class="button-flex"><button  class="add-bt" (click)="updatePermissions()">Update</button></div>
+   </div>
+</div>

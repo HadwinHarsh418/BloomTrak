@@ -1,0 +1,158 @@
+<div *ngIf="horizontalMenu" class="navbar-header d-xl-block d-none">
+  <!-- Navbar brand -->
+  <ul class="nav navbar-nav flex-row">
+    
+    <li class="nav-item">
+      <a class="navbar-brand" [routerLink]="['/']">
+        <span class="brand-logo">
+          <!-- <img src="{{ coreConfig.app.appLogoImage}}" alt="brand-logo" height="36" /> -->
+         <img src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo/logo-dark.png' : 'assets/images/logo/logo.png' }}" alt="brand-logo" height="36" />
+
+        </span>
+        <h2 class="brand-text mb-0">{{ coreConfig.app.appName }}</h2>
+      </a>
+    </li>
+  </ul>
+  <!--/ Navbar brand -->
+</div>
+
+<div class="navbar-container d-flex content">
+  
+  <div class="bookmark-wrapper d-flex align-items-center">
+    <!-- Menu Toggler | Menu icon will be hidden in case of layout without menu -->
+    <ul class="nav navbar-nav d-xl-none" *ngIf="!coreConfig.layout.menu.hidden">
+      <li class="nav-item">
+        <a class="nav-link menu-toggle" (click)="toggleSidebar('menu')">
+          <span [data-feather]="'menu'" [class]="'ficon'"></span>
+        </a>
+       
+      </li>
+    </ul>
+    <!--/ Menu Toggler -->
+
+    <!-- Bookmark -->
+    <!-- <app-navbar-bookmark></app-navbar-bookmark> -->
+    <div class="d-none d-xl-block">
+     
+      <ul class="nav navbar-nav">
+        <!-- <li class="nav-item d-none d-lg-block">
+          <a [routerLink]="['/my-account/profile']" class="nav-link nav-link-style btn" tooltipClass="fadeInAnimation" placement="bottom"
+          ngbTooltip="Settings"  >
+            <span [data-feather]="'settings'" class="ficon font-medium-5 feather"></span>
+          </a>
+        </li> -->
+        <!-- <li class="nav-item d-none d-lg-block">
+          <a  [routerLink]="['/my-account/profile']" class="nav-link nav-link-style btn" tooltipClass="fadeInAnimation" placement="bottom"
+          ngbTooltip="Email">
+            <span [data-feather]="'mail'" class="ficon font-medium-5 feather"></span>
+          </a>
+        </li> -->
+        <li class="nav-item d-none d-lg-block" *ngIf="!dummyUrl">
+          <a type="button" class="nav-link nav-link-style btn" tooltipClass="fadeInAnimation" placement="bottom"
+          ngbTooltip="Logout" (click)="logout()">
+            <span [data-feather]="'power'" class="ficon font-medium-5 feather"></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="d-none d-xl-block">
+      <ul class="nav navbar-nav">
+        <li class="nav-item d-none d-lg-block ">
+         <p  class="portal ml-1 font-weight-bolder" >{{portal}}</p>
+        </li>
+      </ul>
+    </div>
+    <!--/ Bookmark -->
+  </div>
+  <ul class="nav navbar-nav align-items-center ml-auto">
+    <!-- Language selection -->
+    <li ngbDropdown class="nav-item dropdown dropdown-language">
+      <a class="nav-link dropdown-toggle" id="dropdown-flag" ngbDropdownToggle>
+        <!-- <img class='fl-img' [src]="'assets/images/flag-'+languageOptions[_translateService.currentLang].flag+'.png'"> -->
+        <!-- <i class="flag-icon flag-icon-{{ languageOptions[_translateService.currentLang].flag }}"></i> -->
+        <!-- <span class="selected-language">{{ languageOptions[_translateService.currentLang].title }}</span> -->
+      </a>
+      <div ngbDropdownMenu aria-labelledby="dropdown-flag">
+        <a *ngFor="let lang of _translateService.getLangs()" ngbDropdownItem (click)="setLanguage(lang)">
+          <img class='fl-img' [src]="'assets/images/flag-'+languageOptions[lang].flag+'.png'">
+          <!-- <i class="flag-icon flag-icon-{{ languageOptions[lang].flag }}"></i>  -->
+          <!-- {{ languageOptions[lang].title }} -->
+        </a>
+      </div>
+    </li>
+     <!-- Timer -->
+     <!-- <div *ngIf="currentUser?.user_role == '5'">
+      <app-schedule-timer></app-schedule-timer>
+    </div> -->
+    <!--/ Timer -->
+    <!--/ Language selection -->
+
+    <!-- Toggle skin -->
+    <li class="nav-item d-none d-lg-block">
+      <a type="button" class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
+        <i class="ficon" data-feather="sun" ></i>
+      </a>
+    </li>
+    <!--/ Toggle skin -->
+
+    <!-- Search -->
+    <!-- <app-navbar-search></app-navbar-search> -->
+    <!--/ Search -->
+
+    <!-- Cart -->
+    <!-- <app-navbar-cart></app-navbar-cart> -->
+    <!--/ Cart -->
+
+    <!-- News -->
+    <!-- <app-navbar-news></app-navbar-news> -->
+    <!--/ News -->
+   
+
+    <!-- Notification -->
+    <!-- <app-navbar-notification></app-navbar-notification> -->
+    <!--/ Notification -->
+
+    <!-- User Dropdown -->
+    <li ngbDropdown class="nav-item dropdown-user">
+      <a
+      [class.disabled]="dummyUrl"
+        class="nav-link dropdown-toggle dropdown-user-link"
+        id="dropdown-user"
+        ngbDropdownToggle
+        id="navbarUserDropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <ng-container *ngIf="this.currentUser">
+          <div class="user-nav d-sm-flex d-none">
+            <span class="user-name font-weight-bolder">{{ portalName2 }}</span>
+            <span class="user-status">{{portalName}}</span>
+          </div>
+          <!-- <span class="avatar"
+            ><img
+              class="round"
+              src="{{ currentUser.avatar ? currentUser.avatar : 'assets/images/avatars/10.png' }}"
+              alt="avatar"
+              height="40"
+              width="40" /><span class="avatar-status-online"></span
+          ></span> -->
+        </ng-container>
+      </a>
+      <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right" *ngIf="currentUser?.user_role != '7'">
+        <!-- 
+          <a ngbDropdownItem [routerLink]="['/my-account/profile']"
+          ><span [data-feather]="'user'" [class]="'mr-50'"></span> Profile</a>
+         -->
+        <a ngbDropdownItem [routerLink]="['user-profile']" *ngIf="currentUser?.prmsnId != '6'"
+          ><span [data-feather]="'user'" [class]="'mr-50'" ></span> Profile</a
+        >
+        <div class="dropdown-divider" *ngIf="currentUser?.role == 'Agency' || currentUser?.role == 'Community' || currentUser?.role == 'Admin' || currentUser?.role == 'User' || currentUser?.user_role != '7'"></div>
+        <a ngbDropdownItem (click)="logout()">
+          <span [data-feather]="'power'" [class]="'mr-50'"></span> Logout
+        </a>
+      </div>
+    </li>
+    <!--/ User Dropdown -->
+  </ul>
+</div>

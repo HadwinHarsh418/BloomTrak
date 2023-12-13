@@ -1,0 +1,12 @@
+@import '@core/scss/base/core/menu/menu-types/vertical-menu.scss';
+@import '@core/scss/base/core/menu/menu-types/vertical-overlay-menu.scss';
+.clockIn.header-navbar.navbar.navbar-expand-lg.align-items-center.navbar-shadow.navbar-light.floating-nav {
+    width: auto;
+    margin: 0;
+    left: 15px;
+    right: 15px;
+    top: 15px;
+}
+.app-content.content.clockIn {
+    margin: 0;
+}

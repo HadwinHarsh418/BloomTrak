@@ -1,0 +1,678 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <!-- account setting page -->
+    <section id="page-account-settings">
+      <div class="row nav-vertical d-flex">
+        <div class="col-md-3 mb-2 mb-md-0">
+          <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Reports</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Reports Information</h4>
+                  </div>
+                  <div class="card-body">
+                    <div class=" col-lg-12 mt-2">
+                        <div class="row mb-1">
+                          <div class="col-6" *ngIf="currentUser.role != 'Agency'">
+                            <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event)" [disabled]="runPrms == 0">
+                              <option  value="" selected disabled> ---Report---</option>
+                              <option value="0"> Current Status Report</option>
+                              <option value="1"> Agency Position Report</option>
+                              <option value="2"> Trend Analysis Report</option>
+                              <option value="3"> Agency Detail Time Report</option>
+                            </select>
+                          </div>
+
+                          <div class="col-6" *ngIf="currentUser.role == 'Agency'">
+                            <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event)" [disabled]="runPrms == 0" >
+                              <option  value="" selected disabled> ---Report---</option>
+                              <option value="3"> Agency Detail Time Report</option>
+                            </select>
+                          </div>
+
+                          <div class="col-6" *ngIf="allCommunity && currentUser.role == 'SuperAdmin'">
+                            <select id="inputState" class="form-control" (change)="selectCommunity($event.target.value)" [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                              <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                              <option value="{{item.id}}" *ngFor="let item of allCommunity">
+                                {{item.community_name}}</option>
+                            </select>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <div class="row" *ngIf="data2">
+                        <div class="col-6 text-center" >
+                          CURRENT
+                        </div>
+                        <div class="col-6 text-center">
+                          COMPARATIVE PERIOD
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        
+                        
+                        <div class="col-6">
+                          <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1" [markDisabled]="isDisabled"   (dateSelect)="currentDateSelection1($event,true)" *ngIf="data2" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
+                          </ngb-datepicker>
+                          
+                          <ng-template #t let-date let-focused="focused">
+                            <span
+                              class="custom-day12"
+                              [class.focusedrrrr]="focused"
+                              [class.range]="currentisRange1(date)"
+                              [class.faded]="currentisHovered1(date) || currentisInside1(date)"
+                              (mouseenter)="hoveredDate1 = date"
+                              (mouseleave)="hoveredDate1 = null"
+                            >
+                              {{ date.day }}
+                            </span>
+                          </ng-template>
+                        </div>
+
+                        <div class="col-6">
+                          <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1"  (dateSelect)="onDateSelection($event,false)" *ngIf="data2" [displayMonths]="2" [dayTemplate]="t1" outsideDays="hidden">
+                          </ngb-datepicker>
+                          
+                          <ng-template #t1 let-date let-focused="focused">
+                            <span
+                              class="custom-day"
+                              [class.focused]="focused"
+                              [class.range]="isRange(date)"
+                              [class.faded]="isHovered(date) || isInside(date)"
+                              (mouseenter)="hoveredDate = date"
+                              (mouseleave)="hoveredDate = null"
+                            >
+                              {{ date.day }}
+                            </span>
+                          </ng-template>
+                        </div>
+                      </div>
+
+                    
+
+
+
+                     
+                    <div class=" col-lg-12">
+                      <div class="card">
+                        <div class="row" *ngIf="!trndRpt">
+                          <div class="col-6">
+                              <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange($event)" [disabled]="runPrms == 0">
+                                <option  value="" selected disabled> ---Time Period---</option>
+                                <option value="30"> Last 30 Days</option>
+                                <option value="60"> Last 60 Days</option>
+                                <option value="90"> Last 90 Days</option>
+                                <option value="year"> Custom</option>
+                              </select>
+                            <div class="row mt-1">
+                              <div class="col-6">
+                                <input type="date"  max={{minDate}} class="form-control" name="dt" id="dt1" [(ngModel)]="stDt" *ngIf="disable">
+                              </div>
+                              <div class="col-6">
+                                <input type="date" min={{stDt}} max={{minDate}} [disabled]="!stDt" class="form-control" name="dt" id="dt"  [(ngModel)]="enDt" *ngIf="disable">
+                              </div>
+                            </div>
+                            <div *ngIf="timeprd" style="color: red;">
+                              This field required
+                            </div>
+                          </div>
+                          <div class="col-6" *ngIf="agncyDrp && currentUser.role != 'Agency' ">
+                            <select id="inputState" class="form-control" [(ngModel)]="agency_id">
+                              <option value="undefined" selected="selected" disabled>---Select Agency---</option>
+                              <option value="" *ngIf="currentUser.user_role != 5">All Agencies</option>
+                              <option value="{{item.id}}" *ngFor="let item of agencyListingData">
+                                {{item.agency_name}}</option>
+                            </select>
+                          </div>
+                        </div>
+                     
+                        <!-- <div class="row mt-1">
+                          <div class="col-6">
+                            <select placeholder="HH:MM" name="startTime" class="form-control">
+                              <option  value="" selected disabled> ---Community---</option>
+                              <option *ngFor="let com of allCommunity"> {{com.community_name}}</option>
+                            </select>
+                          </div>
+                        </div> -->
+
+                        <!-- <div class="row mt-1">
+                          <div class="col-6">
+                            <select placeholder="HH:MM" name="startTime" class="form-control">
+                              <option  value="" selected disabled> ---Management Co.---</option>
+                              <option *ngFor="let mgNm of mngmNames"> {{mgNm.mg_name}}</option>
+                            </select>
+                          </div>
+                        </div> -->
+                      
+                      </div>
+                      <button type="button" (click)="goBack()"
+                      class="btn btn-primary" [disabled]="btnShow">
+                      Cancel
+                  </button>
+                      <button type="button"  (click)="submit()"
+                      class="btn btn-primary ml-2" [disabled]="btnShow">
+                      Generate Report
+                  </button>
+                    </div>
+                  </div>
+                </div>
+                
+              <div *ngIf="Alldata && data0" id="demo" >
+                <div *ngFor="let data of Alldata">
+                  <h2>Current Status Report</h2>
+                <table class="table" border="0">
+                  <tbody>
+                    <tr>
+                      <th scope="row">Start Date</th>
+                      <td> 
+                        <div class="row">
+                        <div class="col-6">
+                          {{ priorDays | date:'M/d/yyyy'}}
+                          
+                        </div>
+                        <div class="col-6">
+                          <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button>
+                        </div>
+                      </div>
+                    </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">End Date</th>
+                      <td> <div class="row">
+                        <div class="col-6">
+                          {{ today1 | date:'M/d/yyyy'}}
+                          
+                        </div>
+                        <div class="col-6">
+                          <button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo" ngxPrint >Export to PDF</button>
+                        </div>
+                      </div></td>  
+                    </tr>
+                    <tr>
+                      <th scope="row">Total Days</th>
+                      <td *ngIf="!diffInDys">{{start_day2}}</td>
+                      <td *ngIf="diffInDys">{{Difference_In_Days || 0}}</td>
+
+                    </tr>
+                  </tbody>
+                </table>  
+                  <table class="table" border="0">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="btn-primary">Shifts</th>
+                        <th scope="col" class="btn-primary" class="btn-primary">Actual</th>
+                        <th scope="col" class="btn-primary" class="btn-primary">Budget</th>
+                        <th scope="col" class="btn-primary" class="btn-primary">Shift Variance</th>
+                        <th scope="col" class="btn-primary" class="btn-primary">Shift Variance%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">Filled Shifts - Agency</th>
+                        <td>{{data.filledByAgency}}</td>
+                        <td>{{data.agencyShiftBudget}}</td>
+                        <td>{{SHIFT_VARIANCE}}</td>
+                        <td>{{SHIFT_VARIANCE_PRS | number : '1.1-1' }}%</td>
+                       
+                      </tr>
+                      <tr>
+                        <th scope="row">Filled Shifts - Team Members</th>
+                        <td>{{data.filledByTeamMembers}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+
+                      <tr>
+                        <th scope="row">Total Filled Shifts</th>
+                        <td>{{data.totalFilledShift}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                       
+                      </tr>
+                      <!-- <tr>
+                        <th scope="row">Filled Shifts Per Day -Agency</th>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                        <td>@twr</td>
+                      </tr> -->
+                      
+                    </tbody>
+                  </table>
+                <table class="table" border="0">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="btn-primary">Dollars</th>
+                      <th scope="col" class="btn-primary">Actual</th>
+                      <th scope="col" class="btn-primary">Budget</th>
+                      <th scope="col" class="btn-primary">Spend Variance</th>
+                      <th scope="col" class="btn-primary">Spend Variance%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Filled Shifts - Agency($)</th>
+                      <td>
+                        ${{data.agencySpend | number : '1.2-2'}}
+                      </td>
+                      <td>
+                        ${{data.agencyShiftBudgetSpend | number : '1.2-2'}}
+                      </td>
+                      <!-- <td>$</td>
+                      <td></td> -->
+                      <td>${{SHIFT_VARIANCE_DOLLAR | number : '1.2-2'}}</td>
+                      <td>{{SHIFT_VARIANCE_PRS_DOLLAR | number : '1.1-1' }}%</td>
+                     
+                    </tr>
+                    <tr>
+                      <th scope="row">Current Unfilled Shifts</th>
+                      <td>{{data.currentUnfilledShift}}</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>  
+              </div>
+              </div>
+
+              <div *ngIf="AlldataAgency && data1" id="demo1" >
+                <div >
+                  <h2>Agency Position Report</h2>
+                <table class="table" border="0">
+                  <thead>
+                    
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Start Date</th>
+                      <td> 
+                        <div class="row">
+                        <div class="col-6">
+                          {{ priorDays | date:'M/d/yyyy'}}
+                          
+                        </div>
+                        <div class="col-6">
+                          <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button>
+                        </div>
+                      </div>
+                    </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">End Date</th>
+                      <td> <div class="row">
+                        <div class="col-6">
+                          {{ today1 | date:'M/d/yyyy'}}
+                          
+                        </div>
+                        <div class="col-6">
+                          <button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo1" ngxPrint >Export to PDF</button>
+                        </div>
+                      </div></td>  
+                    </tr>
+                    <tr>
+                      <th scope="row">Total Days</th>
+                      <td *ngIf="!diffInDys">{{start_day2}}</td>
+                      <td *ngIf="diffInDys">{{Difference_In_Days || 0}}</td>
+                    </tr>
+                  </tbody>
+                </table>  
+                  <table class="table" border="0">
+                    <thead>
+                      <tr>
+                        <th scope="col"   class="btn-primary">Position</th>
+                        <th scope="col"  class="btn-primary">Number of Shifts</th>
+                        <th scope="col"  class="btn-primary">Hours Scheduled</th>
+                        <th scope="col"  class="btn-primary">Adjusted Hours</th>
+                        <th scope="col"  class="btn-primary">Adjusted Agency Payable</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr >
+                        <td>Activities Assistant</td>
+                        <td>{{AlldataAgency1?.activities_assistant?.noOfShifts || '0'}}</td>
+                        <td>{{AlldataAgency1?.activities_assistant?.hourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>{{AlldataAgency1?.activities_assistant?.adjHourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>${{AlldataAgency1?.activities_assistant?.adjAgencyPayable || '0'  | number : '1.2-2'}}</td>
+                      </tr>
+                      <tr >
+                        <td>Cook</td>
+                        <td>{{AlldataAgency1?.cook?.noOfShifts || '0'}}</td>
+                        <td>{{AlldataAgency1?.cook?.hourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>{{AlldataAgency1?.cook?.adjHourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>${{AlldataAgency1?.cook?.adjAgencyPayable || '0' | number : '1.2-2'}}</td>
+                      </tr>
+                      <tr >
+                        <td>Direct Care Aide</td>
+                        <td>{{AlldataAgency1?.direct_care_aide?.noOfShifts || '0'}}</td>
+                        <td>{{AlldataAgency1?.direct_care_aide?.hourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>{{AlldataAgency1?.direct_care_aide?.adjHourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>${{AlldataAgency1?.direct_care_aide?.adjAgencyPayable || '0' | number : '1.2-2'}}</td>
+                      </tr>
+                      <tr >
+                        <td>Registered Medication Aide</td>
+                        <td>{{AlldataAgency1?.registered_medication_aide?.noOfShifts || '0'}}</td>
+                        <td>{{AlldataAgency1?.registered_medication_aide?.hourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>{{AlldataAgency1?.registered_medication_aide?.adjHourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>${{AlldataAgency1?.registered_medication_aide?.adjAgencyPayable || '0' | number : '1.2-2'}}</td>
+                      </tr>
+                      <tr >
+                        <td>Shift Supervisor</td>
+                        <td>{{AlldataAgency1?.shift_supervisor?.noOfShifts || '0'}}</td>
+                        <td>{{AlldataAgency1?.shift_supervisor?.hourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>{{AlldataAgency1?.shift_supervisor?.adjHourSchedule || '0' | number : '1.2-2'}}</td>
+                        <td>${{AlldataAgency1?.shift_supervisor?.adjAgencyPayable || '0' | number : '1.2-2'}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{data?.filledByTeamMembers}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+
+                      <tr>
+                        <th scope="row">Total </th>
+                        <td>{{totNumOfShft || '0'}}</td>
+                        <td>{{totHrSchld || '0' | number : '1.2-2'}}</td>
+                        <td>{{totAdjHr || '0' | number : '1.2-2'}}</td>
+                        <td>${{totAdjPay || '0' | number : '1.2-2'}}</td>
+                      </tr>
+                      <!-- <tr>
+                        <th scope="row">Filled Shifts Per Day -Agency</th>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                        <td>@twr</td>
+                      </tr> -->
+                      
+                    </tbody>
+                  </table>
+                 
+              </div>
+              </div>
+
+
+
+              <div *ngIf="trendAnalysis && data2" >
+                <div >
+                  <h2>Trend Analysis Report</h2>
+                 <table class="table" border="0">
+                  
+                  <thead>
+                    <tr>
+                      <th scope="col" class="btn-primary"></th>
+                      <th scope="col" class="btn-primary">Current</th>
+                      <th scope="col" class="btn-primary">Comparative Period</th> 
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Start Date</th>
+                      <td>{{this.fromDate1?.month + '/' + this.fromDate1?.day + '/' + this.fromDate1?.year}}</td>
+                      <td>{{this.fromDate?.month + '/' + this.fromDate?.day + '/' + this.fromDate?.year}}</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">End Date</th>
+                      <td>{{this.toDate1?.month + '/' + this.toDate1?.day + '/' + this.toDate1?.year}}</td>  
+                      <td>{{this.toDate?.month + '/' + this.toDate?.day + '/' + this.toDate?.year}}</td>  
+                    </tr>
+                    <tr>
+                      <th scope="row">Total Days</th>
+                      <td>{{Difference_In_Days2 + 1}}</td>
+                      <td>{{Difference_In_Days1 + 1}}</td>
+                    </tr>
+                  </tbody>
+                 </table>  
+                  <table class="table" border="0">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="btn-primary">Shifts</th>
+                        <th scope="col" class="btn-primary">Current</th>
+                        <th scope="col" class="btn-primary">Comparative Period</th>
+                        <th scope="col" class="btn-primary">Shifts Variance</th>
+                        <th scope="col" class="btn-primary">Shifts Variance%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr >
+                        <th scope="row">Filled Shifts - Agency</th>
+                        <td>{{trendAnalysis.currentResult.filledByAgency}}</td>
+                        <td>{{trendAnalysis.comparativePeriod.filledByAgency}}</td>
+                        <td>{{SHIFT_VARIANCE}}</td>
+                        <td>{{SHIFT_VARIANCE_PRS | number : '1.1-1' }}%</td>
+                       
+                      </tr>
+                      <tr>
+                        <th scope="row">Filled Shifts - Team Members</th>
+                        <td>{{trendAnalysis.currentResult.filledByTeamMembers}}</td>
+                        <td>{{trendAnalysis.comparativePeriod.filledByTeamMembers}}</td>
+                        <td>{{SHIFT_VARIANCE_DOLLAR}}</td>
+                        <td>{{SHIFT_VARIANCE_PRS_DOLLAR | number : '1.1-1' }}%</td>
+                      </tr>
+
+                      <tr>
+                        <th scope="row">Total Filled Shifts</th>
+                        <td>{{trendAnalysis.currentResult.totalFilledShift}}</td>
+                        <td>{{trendAnalysis.comparativePeriod.totalFilledShift}}</td>
+                        <td>{{SHIFT_VARIANCE_DOLLAR1}}</td>
+                        <td>{{SHIFT_VARIANCE_PRS_DOLLAR1 | number : '1.1-1' }}%</td>
+                      </tr>
+                     
+                    </tbody>
+                  </table>
+                 <table class="table" border="0">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="btn-primary">Dollars</th>
+                        <th scope="col" class="btn-primary">Current</th>
+                        <th scope="col" class="btn-primary">Comparative Period</th>
+                      <th scope="col" class="btn-primary"> Variance</th>
+                      <th scope="col" class="btn-primary"> Variance%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Filled Shifts - Agency($)</th>
+                      <td>
+                        ${{trendAnalysis.currentResult.agencySpend | number}}
+                      </td>
+                      <td>
+                        ${{trendAnalysis.comparativePeriod.agencySpend | number}}
+                      </td>
+                      <td>
+                        ${{SHIFT_VARIANCE_DOLLAR2 | number}}
+                      </td>
+                      <td>
+                        {{ SHIFT_VARIANCE_PRS_DOLLAR2 | number : '1.1-1' }}%
+                      </td>
+                    
+                    </tr>
+                  </tbody>
+                </table>  
+              </div>
+              </div>
+
+              <div *ngIf="agncyDtlTimeRept && data3"  id="demo2">
+                <h2>Reports - Agency Time Detail</h2>
+                <table class="table" border="0">
+                  <thead>
+                    <tr>
+                      <th scope="col"  class="btn-primary">Date</th>
+                      <th scope="col" class="btn-primary">Current</th>
+                      <!-- <th scope="col">ComparativePeriod</th>  -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Start Date</th>
+                      <td> 
+                        <div class="row">
+                        <div class="col-6">
+                          {{priorDays | date:'M/d/yyyy'}}
+                          
+                        </div>
+                        <div class="col-6">
+                          <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button>
+                        </div>
+                      </div>
+                    </td>
+                    </tr>
+                    <tr>
+                      <th scope="row">End Date</th>
+                      <td> <div class="row">
+                        <div class="col-6">
+                          {{today1 | date:'M/d/yyyy'}}
+                          
+                        </div>
+                        <!-- <div class="col-6">
+                          <button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo2" ngxPrint >Export to PDF</button>
+                        </div> -->
+                      </div></td> 
+                    </tr>
+                    <tr>
+                      <th scope="row">Total Days</th>
+                      <td *ngIf="!diffInDys">{{start_day2}}</td>
+                      <td *ngIf="diffInDys">{{Difference_In_Days || 0}}</td>
+                    </tr>
+                  </tbody>
+                </table>  
+                <div>
+                
+                  <table class="table-responsive text-center" border="1">
+                    <thead>
+                      <tr>
+                        <th scope="col-2" class="col btn-primary" >Shifts Count</th>
+                        <th scope="col-2"  class="col btn-primary">Agency Name</th>
+                        <th scope="col-2" class="col btn-primary">Agency Employee</th>
+                        <th scope="col-2" class="col btn-primary">Created Date</th>
+                        <th scope="col-2" class="col btn-primary">Position</th>
+                        <th scope="col-2" class="col btn-primary">Scheduled Start Date</th>
+                        <th scope="col-2" class="col btn-primary">Scheduled Start Time</th>
+                        <th scope="col-2" class="col btn-primary">Scheduled End Date</th>
+                        <th scope="col-2" class="col btn-primary">Scheduled End Time</th>
+                        <!-- <th scope="col-2" class="col btn-primary">Scheduled Start Time</th>
+                        <th scope="col-2" class="col btn-primary">Scheduled End Time</th> -->
+                        <th scope="col-2" class="col btn-primary">Total Hours</th>
+                        <th scope="col-2" class="col btn-primary">Clock In Time</th>
+                        <th scope="col-2" class="col btn-primary">Variance Clock In Time Complete</th>
+                        <th scope="col-2" class="col btn-primary">Variance Clock In Time</th>
+                        <th scope="col-2" class="col btn-primary">Adj Clock In Time</th>
+                        <th scope="col-2" class="col btn-primary">Clock Out Time</th>
+                        <th scope="col-2" class="col btn-primary">Variance Clock Out Time Complete</th>
+                        <th scope="col-2" class="col btn-primary">Variance Clock Out Time</th>
+                        <th scope="col-2" class="col btn-primary">Adj Clock Out Time</th>
+                        <th scope="col-2" class="col btn-primary">Gross Hours</th>
+                        <th scope="col-2" class="col btn-primary">Break</th>
+                        <th scope="col-2" class="col btn-primary">Break Variance</th>
+                        <th scope="col-2" class="col btn-primary">Adjusted Break</th>
+                        <th scope="col-2" class="col btn-primary">Adjusted Hours</th>
+                        <th scope="col-2" class="col btn-primary">Rate</th>
+                        <th scope="col-2" class="col btn-primary">Total Wages</th>
+                        <!-- <th scope="col-2" class="col btn-primary">Time Card Adjustments By</th> -->
+                     
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr  *ngFor="let data of agncyDtlTimeRept; let i = index">
+                        <th class="col">{{i+1}}</th>
+                        <td class="col">{{data.agencyName}}</td>
+                        <td class="col">{{data.agencyEmployee}}</td>
+                        <td class="col">{{data.date | date:'M/d/yyyy'}}</td>
+                        <td class="col">{{data.position}}</td>
+                        <td class="col">{{data.scheduleStartDate | date:'M/d/yyyy'}}</td>
+                        <td class="col">{{data.scheduleStartTime}}</td>
+                        <td class="col">{{data.scheduleEndDate | date:'M/d/yyyy'}}</td>
+                        <td class="col">{{data.scheduleEndTime}}</td>
+                        <!-- <td class="col">{{data.scheduleStartTime}}</td>
+                        <td class="col">{{data.scheduleEndTime}}</td> -->
+                        <td class="col">{{data.scheduleTotalHours}}</td>
+                        <td class="col">{{data.userClockInTime}}</td>
+                        <td class="col">{{data.varianceClockInTimeComplete}}</td>
+                        <td class="col">{{data.varianceClockInTime}}</td>
+                        <td class="col">{{data.adjClockInTime}}</td>
+                        <td class="col">{{data.userClockOutTime}}</td>
+                        <td class="col">{{data.varianceClockOutTimeComplete}}</td>
+                        <td class="col">{{data.varianceClockOutTime}}</td>
+                        <td class="col">{{data.adjClockOutTime}}</td>
+                        <td class="col">{{data.grossHours}}</td>
+                        <td class="col">{{data.breakTime}}</td>
+                        <td class="col">{{data.breakVariance}}</td>
+                        <td class="col">{{data.adjBreakTime}}</td>
+                        <td class="col">{{data.adjHours}}</td>
+                        <td class="col">{{data.hourlyRates | currency : 'USD' : true : '1.2-2'}}</td>
+                        <td class="col">{{data.totalWages | currency : 'USD' : true : '1.2-2'}}</td>
+                        <!-- <td class="col">{{data.totalWages}}</td> -->
+                      </tr>
+                      <tr *ngIf="!agncyDtlTimeRept.length && data3" class="text-center"> 
+                        <td>
+                          No Data Found
+                        </td>
+                      </tr>
+                      <tr *ngIf="agncyDtlTimeRept.length && data3">
+                        <th>
+                          Total
+                        </th>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <!-- <td></td> -->
+                        <!-- <td></td> -->
+                        <td>
+                          {{Tothrs}}
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{TotGroHrs}}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{adjHours1 | number : '1.2-2'}}</td>
+                        <td></td>
+                        <td>{{TotWave | number : '1.2-2'}}</td>
+                        <td></td>
+
+
+                      </tr>
+                      
+                    </tbody>
+                  </table>
+             
+              </div>
+              </div>
+              
+              </ng-template>
+            </li>
+
+          </ul>
+        </div>
+        <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+      </div>
+    </section>
+    <!--/ account setting page -->
+  </div>
+</div>

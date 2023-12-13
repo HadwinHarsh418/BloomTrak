@@ -1,0 +1,721 @@
+<div class="content-wrapper">
+    <div class="content-body">
+       <!-- content-header component -->
+       <app-content-header [contentHeader]="contentHeader"></app-content-header>
+       <!-- account setting page -->
+       <section id="page-account-settings">
+         <div class="d-flex justify-content-center">
+         <div class="load">
+            <span *ngIf="loadSpinner" class="spinner-border spinner-border-sm"></span>
+         </div>
+         </div>
+          <div class="row nav-vertical d-flex">
+             <div class="col-md-12 mb-2 mb-md-0">
+                <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+                   <li class="nav-item" ngbNavItem>
+                      <div class="card">
+                         <div class="card-body">
+                            <div class="mt-3">
+                               <form class="user" [formGroup]="formRoleData" (ngSubmit)="submitted()">
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Community Name <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <!-- <input type="text"
+                                           [class.is-invalid]="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid"
+                                           formControlName="community_name" class="form-control form-control-user"
+                                           id="community_name" class="form-control"
+                                           placeholder="Community Name" aria-describedby="passwordHelpInline"> -->
+
+                                           <select  class="form-control" formControlName="community_name" (change)="slctCom($event,1)" *ngIf="['6'].includes(currentUser.prmsnId)">
+                                             <option value="" selected="selected" disabled>---Select Community---</option>
+                                             <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                                         </select>
+                                         <span
+                                         *ngIf="!['6'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+
+                                        <span *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['community_name'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+
+                               <div class="row">
+                                 <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                         <label for="inputPassword6" class="col-form-label">Department <span class="text-danger">*</span>
+                                         </label>
+                                     </div>
+                                 </div>
+                                 <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                         <!-- <input type="text"
+                                             [class.is-invalid]="FormData_Control['department'].dirty && FormData_Control['department'].invalid"
+                                             formControlName="department" class="form-control form-control-user"
+                                             id="department" class="form-control"
+                                             placeholder="Department" aria-describedby="passwordHelpInline"> -->
+
+                                             <select  class="form-control" formControlName="department" (change)="chngdprt($event)">
+                                                 <option value="" selected="selected">---Select Department---</option>
+                                                 <option value="0" *ngIf="!dprtmnt?.length">No Department</option>
+                                                 <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}</option>
+                                             </select>
+
+                                             <span *ngIf="FormData_Control['department'].dirty && FormData_Control['department'].invalid">
+                                             <div class="invalid-feedback"
+                                                 *ngIf="FormData_Control['department'].hasError('required')"
+                                                 class="text text-danger">
+                                                 This field required
+                                             </div>
+                                         </span>
+                                     </div>
+                                    
+                                 </div>
+                             </div>
+
+                               <!-- <div class="row">
+                                 <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                       <label for="inputPassword6" class="col-form-label">Vendor <span class="text-danger">*</span>
+                                       </label>
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                       <input type="text"
+                                          [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
+                                          formControlName="vendor" class="form-control form-control-user"
+                                          id="vendor" class="form-control"
+                                          placeholder="Vendor" aria-describedby="passwordHelpInline">
+                                       <span *ngIf="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid">
+                                          <div class="invalid-feedback"
+                                             *ngIf="FormData_Control['vendor'].hasError('required')"
+                                             class="text text-danger">
+                                             This field required
+                                          </div>
+                                       </span>
+                                    </div>
+                                 </div>
+                              </div> -->
+
+                              <div class="row" >
+                                 <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                       <label for="inputPassword6" class="col-form-label">Vendor <span
+                                             class="text-danger">*</span>
+                                       </label>
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-6">
+                                    <div class="common-form-left form-group">
+                                       <!-- <input type="text"
+                                           [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
+                                           formControlName="vendor" class="form-control form-control-user"
+                                           id="vendor" class="form-control"
+                                           placeholder="Vendor" aria-describedby="passwordHelpInline"> -->
+
+                                           <ng-multiselect-dropdown placeholder="---Select Vendor---"
+                                           [settings]="dropdownSettings"
+                                           [data]="vendorData"
+                                           formControlName="vendor" >
+                                       </ng-multiselect-dropdown>
+
+                                       <!-- <select class="form-control" formControlName="vendor">
+                                          <option value="" selected="selected" disabled>---Select Vendor---
+                                          </option>
+                                          <option value="" disabled *ngIf="!vendorData.length">---No Record
+                                             Founded---</option>
+                                          <option value="{{item.vendor_name}}" *ngFor="let item of vendorData">
+                                             {{item.vendor_name}}</option>
+                                       </select> -->
+                                       <span *ngIf="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid">
+                                          <div class="invalid-feedback"
+                                             *ngIf="FormData_Control['vendor'].hasError('required')"
+                                             class="text text-danger">
+                                             This field required
+                                          </div>
+                                       </span>
+                                    </div>
+                                 </div>
+                                 <!-- <div class="col-lg-6" *ngIf="vendrHide">
+                                    <div class="common-form-left form-group">
+                                       <input type="text" #inpVal (keyup)="chckInpVal(inpVal.value)"  
+                                          [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
+                                          formControlName="vendor" class="form-control form-control-user"
+                                          id="vendor" class="form-control"
+                                          placeholder="Vendor" aria-describedby="passwordHelpInline">
+ -->
+                                      
+                                    <!-- </div>
+                                 </div> -->
+                                 <div class="col-lg-2">
+                                    <button class="btn btn-block btn-primary" type="button"
+                                       style="height: 2.714rem;font-size: smaller;" (click)="openAddNew()">Add New
+                                       Vendor</button>
+                                 </div>
+                              </div>
+
+
+                              <div class="row">
+                                 <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                       <label for="inputPassword6" class="col-form-label">Description <span class="text-danger">*</span>
+                                       </label>
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                       <input type="text"
+                                          [class.is-invalid]="FormData_Control['description'].dirty && FormData_Control['description'].invalid"
+                                          formControlName="description" class="form-control form-control-user"
+                                          id="description" class="form-control"
+                                          placeholder="Description" aria-describedby="passwordHelpInline">
+                                       <span *ngIf="FormData_Control['description'].dirty && FormData_Control['description'].invalid">
+                                          <div class="invalid-feedback"
+                                             *ngIf="FormData_Control['description'].hasError('required')"
+                                             class="text text-danger">
+                                             This field required
+                                          </div>
+                                       </span>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="row">
+                                 <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                       <label for="inputPassword6" class="col-form-label">GL Account <span class="text-danger">*</span>
+                                       </label>
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                       <!-- <input type="text"
+                                          [class.is-invalid]="FormData_Control['gl_account'].dirty && FormData_Control['gl_account'].invalid"
+                                          formControlName="gl_account" class="form-control form-control-user"
+                                          id="gl_account" class="form-control"
+                                          placeholder="GL Account" aria-describedby="passwordHelpInline"> -->
+
+                                          <select  class="form-control" formControlName="gl_account">
+                                            <option value="" selected="selected" disabled>---Select GL Account---</option>
+                                            <option value="{{nullDep == true ? item.GLA_id : item.gl_and_description}}" *ngFor="let item of ledgerData1" >{{nullDep == true ? item.GLA_id :item.gl_and_description}}</option>
+                                        </select>
+
+                                       <span *ngIf="FormData_Control['gl_account'].dirty && FormData_Control['gl_account'].invalid">
+                                          <div class="invalid-feedback"
+                                             *ngIf="FormData_Control['gl_account'].hasError('required')"
+                                             class="text text-danger">
+                                             This field required
+                                          </div>
+                                       </span>
+                                    </div>
+                                 </div>
+                              </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Contract Amount <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="number"
+                                           [class.is-invalid]="FormData_Control['contract_amount'].dirty && FormData_Control['contract_amount'].invalid"
+                                           formControlName="contract_amount" class="form-control form-control-user"
+                                           id="contract_amount" class="form-control"
+                                           placeholder="Contract Amount" aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['contract_amount'].dirty && FormData_Control['contract_amount'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['contract_amount'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                             
+                               <div class="row">
+                                 <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                       <label for="inputPassword6" class="col-form-label">Periods  <span class="text-danger">*</span>
+                                       </label>
+                                    </div>
+                                 </div>
+                                 <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                       <input type="number"
+                                          [class.is-invalid]="FormData_Control['periods'].dirty && FormData_Control['periods'].invalid"
+                                          formControlName="periods" class="form-control form-control-user"
+                                          id="periods" class="form-control"
+                                          placeholder="Periods" aria-describedby="passwordHelpInline">
+                                       <span *ngIf="FormData_Control['periods'].dirty && FormData_Control['periods'].invalid">
+                                          <div class="invalid-feedback"
+                                             *ngIf="FormData_Control['periods'].hasError('required')"
+                                             class="text text-danger">
+                                             This field required
+                                          </div>
+                                       </span>
+                                    </div>
+                                 </div>
+                              </div>
+                              
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Monthly Amount <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="number"
+                                           [class.is-invalid]="FormData_Control['monthly_amount'].dirty && FormData_Control['monthly_amount'].invalid"
+                                           formControlName="monthly_amount" class="form-control form-control-user"
+                                           id="monthly_amount" class="form-control"
+                                           placeholder="Monthly Amount" aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['monthly_amount'].dirty && FormData_Control['monthly_amount'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['monthly_amount'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label"> Type <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <!-- <input type="text"
+                                           [class.is-invalid]="FormData_Control['type'].dirty && FormData_Control['type'].invalid"
+                                           formControlName="type" class="form-control form-control-user"
+                                           id="type" class="form-control"
+                                           placeholder=" Type" aria-describedby="passwordHelpInline"> -->
+                                           <select  class="form-control" formControlName="type">
+                                             <option value="" selected="selected">---Select Type---</option>
+                                             <option value="{{item}}" *ngFor="let item of type">{{item}}</option>
+                                         </select>
+                                        <span *ngIf="FormData_Control['type'].dirty && FormData_Control['type'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['type'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Payment Type <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <!-- <input type="text"
+                                           [class.is-invalid]="FormData_Control['pmt_type'].dirty && FormData_Control['pmt_type'].invalid"
+                                           formControlName="pmt_type" class="form-control form-control-user"
+                                           id="pmt_type" class="form-control"
+                                           placeholder="Payment Type" aria-describedby="passwordHelpInline"> -->
+
+                                           <!-- <select  class="form-control" formControlName="pmt_type" disabled >
+                                             <option value="" selected="selected" disabled>---Select Payment Type---</option>
+                                             <option value="{{item}}" *ngFor="let item of paymentType">{{item}}</option>
+                                         </select> -->
+                                         <span class="form-control" formControlName="pmt_type">
+                                          Contract
+                                         </span>
+
+                                        <!-- <span *ngIf="FormData_Control['pmt_type'].dirty && FormData_Control['pmt_type'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['pmt_type'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span> -->
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Start Date <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="date"
+                                           [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
+                                           formControlName="start_date" class="form-control form-control-user"
+                                           id="start_date" class="form-control"
+                                           placeholder="Start Date" aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['start_date'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">End Date <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="date"
+                                           [class.is-invalid]="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid"
+                                           formControlName="end_date" class="form-control form-control-user"
+                                           id="end_date" class="form-control"
+                                           placeholder="End Date" aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['end_date'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Cancellation Date <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="date"
+                                           [class.is-invalid]="FormData_Control['cencellation_date'].dirty && FormData_Control['cencellation_date'].invalid"
+                                           formControlName="cencellation_date" class="form-control form-control-user"
+                                           id="cencellation_date" class="form-control"
+                                           placeholder="Cancellation Date" aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['cencellation_date'].dirty && FormData_Control['cencellation_date'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['cencellation_date'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Renewal Date 
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="date"
+                                           [class.is-invalid]="FormData_Control['renewal_date'].dirty && FormData_Control['renewal_date'].invalid"
+                                           formControlName="renewal_date" class="form-control form-control-user"
+                                           id="renewal_date" class="form-control"
+                                           placeholder="Renewal Date" aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['renewal_date'].dirty && FormData_Control['renewal_date'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['renewal_date'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Renewal Amount 
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="number"
+                                           [class.is-invalid]="FormData_Control['renewal_amount'].dirty && FormData_Control['renewal_amount'].invalid"
+                                           formControlName="renewal_amount" class="form-control form-control-user"
+                                           id="renewal_amount" class="form-control"
+                                           placeholder="Renewal Amount " aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['renewal_amount'].dirty && FormData_Control['renewal_amount'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['renewal_amount'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Contract Required <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <select id="inputState" class="form-control" formControlName="contract_required" (change)="con_req($event.target.value)">
+                                           <option value="0" >Yes</option>
+                                           <option value="1">No</option>
+                                        </select>
+                                        <span *ngIf="FormData_Control['contract_required'].dirty && FormData_Control['contract_required'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['contract_required'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Contract Uploaded <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <select id="inputState" class="form-control" formControlName="contract_uploaded" disabled>
+                                          <option value="" selected >Yes</option>
+                                           <option value="0" >Yes</option>
+                                           <option value="1">No</option>
+                                        </select>
+                                        <span *ngIf="FormData_Control['contract_uploaded'].dirty && FormData_Control['contract_uploaded'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['contract_uploaded'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row" *ngIf="formRoleData.value.contract_uploaded == '0' && !this.prmsUsrId.id">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Contract File 
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <!-- <input type="file" #fileInput (click)="fileInput.click()" 
+                                        (change)="onFileInput(fileInput.files)" 
+                                        [class.is-invalid]="FormData_Control['contract_file'].dirty && FormData_Control['contract_file'].invalid"
+                                        formControlName="contract_file" class="form-control form-control-user"
+                                        id="contract_file" class="form-control"
+                                        placeholder="Contract File " aria-describedby="passwordHelpInline"> -->
+                                        <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info"  >
+                                          <i class="fa fa-file "></i>   Import File
+                                          <input #fileInput type="file"  (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                                          </button>
+                                        <span *ngIf="err">
+                                           <div class="text text-danger">This field required</div>
+                                        </span>
+                                        
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row">
+                                 <div class="col-lg-12">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label" style="color: red;"> Note :- Spend Down entries will start in the current month or once the Start Date is reached.
+                                        </label>
+                                     </div>
+                                  </div>
+                               </div>
+                               <div class="row addUserbtn">
+                                 <div class="m-1">
+                                    <button type="submit" class="btn btn-primary" [disabled]="loading">
+                                    <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
+                                       aria-hidden="true"></span>
+                                    {{ prmsUsrId?.id ? 'Save' : 'Add'}} 
+                                    </button>
+                                    <button type="button" (click)="goBack()" class="btn btn-primary ml-1" >
+                                    Cancel
+                                    </button>
+                                 </div>
+                              </div>
+                               <!-- <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Entered Date <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                        <input type="date"
+                                           [class.is-invalid]="FormData_Control['entered_date'].dirty && FormData_Control['entered_date'].invalid"
+                                           formControlName="entered_date" class="form-control form-control-user"
+                                           id="entered_date" class="form-control"
+                                           placeholder="Contract File " aria-describedby="passwordHelpInline">
+                                        <span *ngIf="FormData_Control['entered_date'].dirty && FormData_Control['entered_date'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['entered_date'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                  </div>
+                               </div> -->
+                               <!-- <div class="row">
+                                  <div class="col-lg-4">
+                                     <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Entered By <span class="text-danger">*</span>
+                                        </label>
+                                     </div>
+                                  </div>
+                                  <div class="col-lg-8">
+                                     <div class="common-form-left form-group">
+                                       
+                                         <span *ngIf="['1'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+                                         <span *ngIf="['6'].includes(currentUser.prmsnId)">Admin</span>
+                                        <span *ngIf="FormData_Control['entered_by'].dirty && FormData_Control['entered_by'].invalid">
+                                           <div class="invalid-feedback"
+                                              *ngIf="FormData_Control['entered_by'].hasError('required')"
+                                              class="text text-danger">
+                                              This field required
+                                           </div>
+                                        </span>
+                                     </div>
+                                     
+                                  </div>
+                               </div> -->
+                               </form>  
+                            </div>
+                         </div>
+                      </div>
+                   </li>
+                </ul>
+             </div>
+          </div>
+       </section>
+       <!--/ account setting page -->
+    </div>
+ </div>
+
+ <!-- Addnew List -->
+<ng-template #Addnew let-modal>
+   <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white" id="myModalLabel1">Add New Vendor</h4>
+      <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+      </button>
+   </div>
+   <div class="modal-body" tabindex="0" ngbAutofocus>
+
+      <form class="user" [formGroup]="formData1" (ngSubmit)="addNwVndr(modal)">
+         <div class="row">
+            <div class="col-lg-12">
+               <div class="common-form-field">
+                  <div class="row">
+                     <div class="col-lg-12">
+                        <div class="welcome-logo">
+                           <img src="assets/images/log.png" alt="">
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-lg-4">
+                        <div class="common-form-left">
+                           <label for="inputPassword6" class="col-form-label">New Vendor <span
+                                 class="text-danger">*</span></label>
+                        </div>
+                     </div>
+                     <div class="col-lg-8">
+                        <div class="common-form-left form-group">
+                           <input type="text" placeholder="New Vendor"
+                              [class.is-invalid]="controls['newVendor'].dirty && controls['newVendor'].invalid"
+                              formControlName="newVendor" class="form-control form-control-user" id="newVendor"
+                              id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                           <span *ngIf="controls['newVendor'].dirty && controls['newVendor'].invalid">
+                              <div class="invalid-feedback" *ngIf="controls['newVendor'].hasError('required')"
+                                 class="text text-danger">
+                                 This field required
+                              </div>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-lg-4">
+                        <div class="common-form-left">
+                           <label for="inputPassword6" class="col-form-label">Description <span class="text-danger">*</span>
+                           </label>
+                        </div>
+                     </div>
+                     <div class="col-lg-8">
+                        <div class="common-form-left form-group">
+                           <input type="text"
+                              [class.is-invalid]="controls['description'].dirty && controls['description'].invalid"
+                              formControlName="description" class="form-control form-control-user"
+                              id="description" class="form-control"
+                              placeholder="Description" aria-describedby="passwordHelpInline">
+                           <span *ngIf="controls['description'].dirty && controls['description'].invalid">
+                              <div class="invalid-feedback"
+                                 *ngIf="controls['description'].hasError('required')"
+                                 class="text text-danger">
+                                 This field required
+                              </div>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">
+                     Add
+                     <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm" role="status"
+                        aria-hidden="true"></span>
+                  </button>
+                  <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
+                     Cancel
+                  </button>
+               </div>
+            </div>
+         </div>
+      </form>
+
+
+
+   </div>
+
+
+</ng-template>
+<!-- / Addnew List -->

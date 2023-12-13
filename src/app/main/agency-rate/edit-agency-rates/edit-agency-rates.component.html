@@ -1,0 +1,934 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <!-- account setting page -->
+        <section id="page-account-settings">
+            <div class="row nav-vertical d-flex">
+                <div class="col-md-12 mb-2 mb-md-0">
+                    <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+                        <li class="nav-item" ngbNavItem>
+                            <div class="card">
+                                <div class=" row justify-content-between">
+                                    <div class="card-header ml-1">
+                                        <h4 class="card-title" >Edit Agency Rates</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mt-3">
+                                        <form class="user" [formGroup]="formData" (ngSubmit)="submitted()">
+                                            <div class="row">
+                                              <div class="col-lg-12">
+                                                <div class="common-form-field">
+                                                  <div class="row">
+                                                    <div class="col-lg-12">
+                                                      <!-- <div class="welcome">
+                                                        <h1>Register Your Community</h1>
+                                                      </div> -->
+                                                    </div>
+                                                  </div>
+
+                                                  <div class="row" *ngIf="this.currentUser.user_role == 6 ">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Select Community</label>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                    <select id="inputState" class="form-control" formControlName="community_id" disabled>
+                                                                        <option value="" selected="selected" disabled>---Select Community---</option>
+                                                                        <option value="{{item.id}}" *ngFor="let item of comdata">{{item.community_name}}</option>
+                                                                    </select>
+                
+                                                                 <span *ngIf="controls['community_id'].dirty && controls['community_id'].invalid">
+                                                                  <div class="invalid-feedback"
+                                                                    *ngIf="controls['community_id'].hasError('required')" class="text text-danger">
+                                                                    This field required
+                                                                  </div>
+                                                                </span>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Select Agency</label>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                    <select id="inputState" class="form-control" formControlName="agency_id" disabled>
+                                                                        <option value="" selected="selected" disabled>---Select Agency---</option>
+                                                                        <option value="{{item.id}}" *ngFor="let item of agencyListingData">{{item.agency_name}}</option>
+                                                                    </select>
+                
+                                                                 <span *ngIf="controls['agency_id'].dirty && controls['agency_id'].invalid">
+                                                                  <div class="invalid-feedback"
+                                                                    *ngIf="controls['agency_id'].hasError('required')" class="text text-danger">
+                                                                    This field required
+                                                                  </div>
+                                                                </span>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Position</label>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                        <!-- <input type="text"
+                                                          [class.is-invalid]="controls['position'].dirty && controls['position'].invalid"
+                                                          formControlName="position" class="form-control form-control-user"
+                                                          id="position" id="inputPassword6" class="form-control"
+                                                          aria-describedby="passwordHelpInline" placeholder="Position"> -->
+
+                                                          <select id="inputState" class="form-control" formControlName="position" disabled>
+                                                            <option value="" selected="selected" disabled>---Select Position---</option>
+                                                            <option value="{{item.name}}" *ngFor="let item of postnListingData">{{item.name}}</option>
+                                                        </select>
+
+                                                        <span *ngIf="controls['position'].dirty && controls['position'].invalid">
+                                                          <div class="invalid-feedback"
+                                                            *ngIf="controls['position'].hasError('required')" class="text text-danger">
+                                                            This field required
+                                                          </div>
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <!-- <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Hourly Rate</label>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                        <input type="text" inputDirective inptype="number"
+                                                          [class.is-invalid]="controls['rate'].dirty && controls['rate'].invalid"
+                                                          formControlName="rate" class="form-control form-control-user"
+                                                          id="rate" id="inputPassword6" class="form-control"
+                                                          aria-describedby="passwordHelpInline" placeholder="Hourly Rate">
+                                                        <span *ngIf="controls['rate'].dirty && controls['rate'].invalid">
+                                                          <div class="invalid-feedback"
+                                                            *ngIf="controls['rate'].hasError('required')" class="text text-danger">
+                                                            This field required
+                                                          </div>
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                       -->
+                                                  <!-- <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Date Type</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                    <select id="inputState" class="form-control" formControlName="date_type">
+                                                                        <option value="" selected="selected" disabled>Date Type...</option>
+                                                                        <option  value="weekDay">Week Day</option>
+                                                                        <option  value="weekEnd">Week End</option>
+                                                                    </select>
+                
+                                                                 <span *ngIf="controls['date_type'].dirty && controls['date_type'].invalid">
+                                                                  <div class="invalid-feedback"
+                                                                    *ngIf="controls['date_type'].hasError('required')" class="text text-danger">
+                                                                    This field required
+                                                                  </div>
+                                                                </span>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Rate Type</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                    <select id="inputState" class="form-control" formControlName="rate_type">
+                                                                        <option value="" selected="selected" disabled>Rate Type...</option>
+                                                                        <option  value="normal">Normal</option>
+                                                                        <option  value="hazard">Hazard</option>
+                                                                    </select>
+                
+                                                                 <span *ngIf="controls['rate_type'].dirty && controls['rate_type'].invalid">
+                                                                  <div class="invalid-feedback"
+                                                                    *ngIf="controls['rate_type'].hasError('required')" class="text text-danger">
+                                                                    This field required
+                                                                  </div>
+                                                                </span>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div> -->
+
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_3p_WDN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_7a_3p_WDN'].dirty && controls['t_7a_3p_WDN'].invalid"
+                                                                        formControlName="t_7a_3p_WDN" class="form-control form-control-user"
+                                                                        id="t_7a_3p_WDN" class="form-control"
+                                                                        placeholder="Enter T_3p_11p_WDN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_3p_WDN'].dirty && controls['t_7a_3p_WDN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_3p_WDN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                      
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_3p_11p_WDN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_3p_11p_WDN'].dirty && controls['t_3p_11p_WDN'].invalid"
+                                                                        formControlName="t_3p_11p_WDN" class="form-control form-control-user"
+                                                                        id="t_3p_11p_WDN" class="form-control"
+                                                                        placeholder="Enter T_3p_11p_WDN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_3p_11p_WDN'].dirty && controls['t_3p_11p_WDN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_3p_11p_WDN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_11p_7a_WDN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_11p_7a_WDN'].dirty && controls['t_11p_7a_WDN'].invalid"
+                                                                        formControlName="t_11p_7a_WDN" class="form-control form-control-user"
+                                                                        id="t_11p_7a_WDN" class="form-control"
+                                                                        placeholder="Enter T_11p_7a_WDN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_11p_7a_WDN'].dirty && controls['t_11p_7a_WDN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_11p_7a_WDN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_7p_WDN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_7a_7p_WDN'].dirty && controls['t_7a_7p_WDN'].invalid"
+                                                                        formControlName="t_7a_7p_WDN" class="form-control form-control-user"
+                                                                        id="t_7a_7p_WDN" class="form-control"
+                                                                        placeholder="Enter T_7a_7p_WDN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_7p_WDN'].dirty && controls['t_7a_7p_WDN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_7p_WDN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7p_7a_WDN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_7p_7a_WDN'].dirty && controls['t_7p_7a_WDN'].invalid"
+                                                                        formControlName="t_7p_7a_WDN" class="form-control form-control-user"
+                                                                        id="t_7p_7a_WDN" class="form-control"
+                                                                        placeholder="Enter T_7p_7a_WDN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7p_7a_WDN'].dirty && controls['t_7p_7a_WDN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7p_7a_WDN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_3p_WEN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_7a_3p_WEN'].dirty && controls['t_7a_3p_WEN'].invalid"
+                                                                        formControlName="t_7a_3p_WEN" class="form-control form-control-user"
+                                                                        id="t_7a_3p_WEN" class="form-control"
+                                                                        placeholder="Enter T_7a_3p_WEN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_3p_WEN'].dirty && controls['t_7a_3p_WEN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_3p_WEN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_3p_11p_WEN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_3p_11p_WEN'].dirty && controls['t_3p_11p_WEN'].invalid"
+                                                                        formControlName="t_3p_11p_WEN" class="form-control form-control-user"
+                                                                        id="t_3p_11p_WEN" class="form-control"
+                                                                        placeholder="Enter T_3p_11p_WEN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_3p_11p_WEN'].dirty && controls['t_3p_11p_WEN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_3p_11p_WEN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_11p_7a_WEN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_11p_7a_WEN'].dirty && controls['t_11p_7a_WEN'].invalid"
+                                                                        formControlName="t_11p_7a_WEN" class="form-control form-control-user"
+                                                                        id="t_11p_7a_WEN" class="form-control"
+                                                                        placeholder="Enter T_11p_7a_WEN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_11p_7a_WEN'].dirty && controls['t_11p_7a_WEN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_11p_7a_WEN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_7p_WEN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_7a_7p_WEN'].dirty && controls['t_7a_7p_WEN'].invalid"
+                                                                        formControlName="t_7a_7p_WEN" class="form-control form-control-user"
+                                                                        id="t_7a_7p_WEN" class="form-control"
+                                                                        placeholder="Enter T_7a_7p_WEN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_7p_WEN'].dirty && controls['t_7a_7p_WEN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_7p_WEN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7p_7a_WEN</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_7p_7a_WEN'].dirty && controls['t_7p_7a_WEN'].invalid"
+                                                                        formControlName="t_7p_7a_WEN" class="form-control form-control-user"
+                                                                        id="t_7p_7a_WEN" class="form-control"
+                                                                        placeholder="Enter T_7p_7a_WEN" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7p_7a_WEN'].dirty && controls['t_7p_7a_WEN'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7p_7a_WEN'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_3p_WDH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_7a_3p_WDH'].dirty && controls['t_7a_3p_WDH'].invalid"
+                                                                        formControlName="t_7a_3p_WDH" class="form-control form-control-user"
+                                                                        id="t_7a_3p_WDH" class="form-control"
+                                                                        placeholder="Enter T_7a_3p_WDH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_3p_WDH'].dirty && controls['t_7a_3p_WDH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_3p_WDH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_3p_11p_WDH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number" 
+                                                                        [class.is-invalid]="controls['t_3p_11p_WDH'].dirty && controls['t_3p_11p_WDH'].invalid"
+                                                                        formControlName="t_3p_11p_WDH" class="form-control form-control-user"
+                                                                        id="t_3p_11p_WDH" class="form-control"
+                                                                        placeholder="Enter T_3p_11p_WDH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_3p_11p_WDH'].dirty && controls['t_3p_11p_WDH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_3p_11p_WDH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_11p_7a_WDH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_11p_7a_WDH'].dirty && controls['t_11p_7a_WDH'].invalid"
+                                                                        formControlName="t_11p_7a_WDH" class="form-control form-control-user"
+                                                                        id="t_11p_7a_WDH" class="form-control"
+                                                                        placeholder="Enter T_11p_7a_WDH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_11p_7a_WDH'].dirty && controls['t_11p_7a_WDH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_11p_7a_WDH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                 
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_7p_WDH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_7a_7p_WDH'].dirty && controls['t_7a_7p_WDH'].invalid"
+                                                                        formControlName="t_7a_7p_WDH" class="form-control form-control-user"
+                                                                        id="t_7a_7p_WDH" class="form-control"
+                                                                        placeholder="Enter T_7a_7p_WDH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_7p_WDH'].dirty && controls['t_7a_7p_WDH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_7p_WDH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7p_7a_WDH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_7p_7a_WDH'].dirty && controls['t_7p_7a_WDH'].invalid"
+                                                                        formControlName="t_7p_7a_WDH" class="form-control form-control-user"
+                                                                        id="t_7p_7a_WDH" class="form-control"
+                                                                        placeholder="Enter T_7p_7a_WDH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7p_7a_WDH'].dirty && controls['t_7p_7a_WDH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7p_7a_WDH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_3p_WEH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_7a_3p_WEH'].dirty && controls['t_7a_3p_WEH'].invalid"
+                                                                        formControlName="t_7a_3p_WEH" class="form-control form-control-user"
+                                                                        id="t_7a_3p_WEH" class="form-control"
+                                                                        placeholder="Enter T_7a_3p_WEH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_3p_WEH'].dirty && controls['t_7a_3p_WEH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_3p_WEH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_3p_11p_WEH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_3p_11p_WEH'].dirty && controls['t_3p_11p_WEH'].invalid"
+                                                                        formControlName="t_3p_11p_WEH" class="form-control form-control-user"
+                                                                        id="t_3p_11p_WEH" class="form-control"
+                                                                        placeholder="Enter T_3p_11p_WEH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_3p_11p_WEH'].dirty && controls['t_3p_11p_WEH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_3p_11p_WEH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_11p_7a_WEH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_11p_7a_WEH'].dirty && controls['t_11p_7a_WEH'].invalid"
+                                                                        formControlName="t_11p_7a_WEH" class="form-control form-control-user"
+                                                                        id="t_11p_7a_WEH" class="form-control"
+                                                                        placeholder="Enter T_11p_7a_WEH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_11p_7a_WEH'].dirty && controls['t_11p_7a_WEH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_11p_7a_WEH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7a_7p_WEH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_7a_7p_WEH'].dirty && controls['t_7a_7p_WEH'].invalid"
+                                                                        formControlName="t_7a_7p_WEH" class="form-control form-control-user"
+                                                                        id="t_7a_7p_WEH" class="form-control"
+                                                                        placeholder="Enter T_7a_7p_WEH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7a_7p_WEH'].dirty && controls['t_7a_7p_WEH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7a_7p_WEH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                 
+                                                
+                                                 
+                
+                                                  <div class="row">
+                                                    <div class="col-lg-4">
+                                                      <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">T_7p_7a_WEH</label>
+                      
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                      <div class="common-form-left form-group">
+                                                           
+                                                            <div class="row">
+                                                              <div class="col-lg-12">
+                                                                <div class="common-form-left form-group">
+                                                                  <div class="common-form-left form-group">
+                                                                    <input type="number"
+                                                                        [class.is-invalid]="controls['t_7p_7a_WEH'].dirty && controls['t_7p_7a_WEH'].invalid"
+                                                                        formControlName="t_7p_7a_WEH" class="form-control form-control-user"
+                                                                        id="t_7p_7a_WEH" class="form-control"
+                                                                        placeholder="Enter T_7p_7a_WEH" aria-describedby="passwordHelpInline">
+                                                                    <span *ngIf="controls['t_7p_7a_WEH'].dirty && controls['t_7p_7a_WEH'].invalid">
+                                                                        <div class="invalid-feedback"
+                                                                            *ngIf="controls['t_7p_7a_WEH'].hasError('required')"
+                                                                            class="text text-danger">
+                                                                            This field required
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+                                                           
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                
+                                          
+                
+                                                  <button type="submit" class="btn btn-primary nexts">
+                                                    Save
+                                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                                      aria-hidden="true"></span>
+                                                  </button>
+                                                  <button type="button" (click)="goBack()"
+                                                class="btn btn-primary ml-1" [disabled]="btnShow">
+                                                  Cancel
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          
+                                          </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div  class="col-12 col-md-9"></div>
+            </div>
+        </section>
+        <!--/ account setting page -->
+    </div>
+</div>

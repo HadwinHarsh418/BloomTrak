@@ -1,0 +1,339 @@
+<!-- Modal -->
+<ng-template #identifyModal let-modal2>
+    <div class="modal-header bg-primary">
+      <h4 class="modal-title text-white" id="myModalLabel1">Identification</h4>
+      <button type="button" class="close" (click)="closed(modal2)" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus style="overflow: auto; max-height: 80vh;">
+        <form class="mt-2 validate-form" [formGroup]="identificaitonForm" (ngSubmit)="identificaitonSubmission(modal2)">
+            <div class="row">
+              <div class="col-12 d-flex algn-center">
+                <div class="form-group">
+                  <label for="account-name">{{ 'login.rgstrAs' | translate}}</label>
+                  <div class="custom-control custom-radio">
+                    <input class="custom-control-input"  formControlName="is_company"
+                    [ngClass]="{ 'is-invalid': identiForm.is_company.dirty && identiForm.is_company.errors }"
+                    value="individual" id="individual" name="is_company"  type="radio" tabindex="4" />
+                    <label class="custom-control-label" for="individual"
+                      >{{ 'login.indvl' | translate}}</label
+                    >
+                    <div *ngIf="identiForm.is_company.dirty && identiForm.is_company.hasError('required')" class="invalid-feedback">
+                      <div>{{'COMMONERRORS.FIELDISREUIRED' | translate}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ml-3 form-group">
+                  <label for="account-name"></label>
+                  <div class="custom-control custom-radio">
+                    <input class="custom-control-input"  formControlName="is_company"
+                    [ngClass]="{ 'is-invalid': identiForm.is_company.dirty && identiForm.is_company.errors }"
+                    value="company"  name="is_company" id="company" type="radio" tabindex="4" />
+                    <label class="custom-control-label" for="company"
+                      >{{ 'login.compny' | translate}}</label
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <ng-container *ngIf="identiForm.is_company.value == 'individual'">
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-username">{{ 'PROFILE.NME' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="account-name"
+                      name="full-name" formControlName="name"  maxlength="50"
+                      [ngClass]="{ 'is-invalid':  identiForm.name.dirty && identiForm.name.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.name.errors">
+                      <span *ngIf="identiForm.name.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'PROFILE.SRNME' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="surname" 
+                      name="surname" formControlName="surname"maxlength="50"
+                      [ngClass]="{ 'is-invalid':  identiForm.surname.dirty && identiForm.surname.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.surname.errors">
+                      <span *ngIf="identiForm.surname.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'PROFILE.RMADDRSS' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="room" 
+                      name="room" formControlName="room" maxLimit="100"
+                      [ngClass]="{ 'is-invalid':  identiForm.room.dirty && identiForm.room.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.room.errors">
+                      <span *ngIf="identiForm.room.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'PROFILE.TEL' | translate}}</label>
+                    <input type="number" class="form-control" id="telephone"  
+                      name="telephone" formControlName="telephone" inputDirective maxLimit="15"
+                      [ngClass]="{ 'is-invalid':  identiForm.telephone.dirty && identiForm.telephone.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.telephone.errors">
+                      <span *ngIf="identiForm.telephone.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="identiForm.is_company.value == 'company'">
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'login.compny_name' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="company_name" 
+                      name="company_name" formControlName="company_name" maxLimit="100"
+                      [ngClass]="{ 'is-invalid':  identiForm.company_name.dirty && identiForm.company_name.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.company_name.errors">
+                      <span *ngIf="identiForm.company_name.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'login.compny_nmbr' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="contact_number" 
+                      name="contact_number" formControlName="contact_number"  maxlength="15"
+                      [ngClass]="{ 'is-invalid':  identiForm.contact_number.dirty && identiForm.contact_number.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.contact_number.errors">
+                      <span *ngIf="identiForm.contact_number.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'login.compny_url' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="company_url" 
+                      name="company_url" formControlName="company_url"  maxlength="100"
+                      [ngClass]="{ 'is-invalid':  identiForm.company_url.dirty && identiForm.company_url.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.company_url.errors">
+                      <span *ngIf="identiForm.company_url.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+  
+                <div class="col-12 col-sm-6">
+                  <div class="form-group">
+                    <label for="account-name">{{ 'login.compny_adrss' | translate}}</label>
+                    <input type="text" inputDirective class="form-control" id="company_address" 
+                      name="company_address" formControlName="company_address" maxlength="250"
+                      [ngClass]="{ 'is-invalid':  identiForm.company_address.dirty && identiForm.company_address.errors }"
+                    />
+                    <div class="invalid-feedback" *ngIf="identiForm.company_address.errors">
+                      <span *ngIf="identiForm.company_address.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label for="account-name">{{ 'PROFILE.DNI' | translate}}, {{ 'PROFILE.NIE' | translate}}</label>
+                  <input type="text" inputDirective inptype="alphanumSingle" maxLimit="20" class="form-control" 
+                    id="dni" name="dni" formControlName="dni" 
+                    [ngClass]="{ 'is-invalid':  identiForm.dni.dirty && identiForm.dni.errors }"
+                  />
+                  <div class="invalid-feedback" *ngIf="identiForm.dni.errors">
+                    <span *ngIf="identiForm.dni.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- doc -->
+              <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label for="account-name">{{ 'PROFILE.DNI' | translate}}, {{ 'PROFILE.NIEDOC' | translate}} </label>
+                  <input [readonly]="uploadingImg" (change)="onFileChange($event, 'dni_doc')" type="file"
+                  accept="image/jpg,image/jpeg, .pdf" class="form-control" id="dni_doc_name" 
+                    name="dni_doc_name" formControlName="dni_doc_name"
+                    [ngClass]="{ 'is-invalid':  identiForm.dni_doc_name.dirty && identiForm.dni_doc_name.errors }"
+                  />
+                  <div class="invalid-feedback" *ngIf="identiForm.dni_doc_name.errors">
+                    <span *ngIf="identiForm.dni_doc_name.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label for="account-name">{{ 'PROFILE.slfWthId' | translate}}
+                  </label>
+                  <input [readonly]="uploadingImg" (change)="onFileChange($event, 'selfie_pic')" type="file"
+                  accept="image/jpg,image/jpeg, .pdf" class="form-control" id="selfie_pic_name" 
+                    name="selfie_pic_name" formControlName="selfie_pic_name"
+                    [ngClass]="{ 'is-invalid':  identiForm.selfie_pic_name.dirty && identiForm.selfie_pic_name.errors }"
+                  />
+                  <div class="invalid-feedback" *ngIf="identiForm.selfie_pic_name.errors">
+                    <span *ngIf="identiForm.selfie_pic_name.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label for="account-name">{{ 'PROFILE.NIE' | translate}}</label>
+                  <input type="text" inputDirective class="form-control" id="nie_passport" 
+                    name="nie_passport" formControlName="nie_passport"
+                    [ngClass]="{ 'is-invalid':  identiForm.nie_passport.dirty && identiForm.nie_passport.errors }"
+                  />
+                  <div class="invalid-feedback" *ngIf="identiForm.nie_passport.errors">
+                    <span *ngIf="identiForm.nie_passport.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                  </div>
+                  <p class="mt-2"></p>
+                  <label for="account-name">{{ 'PROFILE.NIEDOC' | translate}}</label>
+                  <input [readonly]="uploadingImg" (change)="onFileChange($event, 'nie_doc')" type="file"
+                  accept="image/x-png,image/jpg,image/jpeg" class="form-control" id="nie_doc_name" 
+                    name="nie_doc_name" formControlName="nie_doc_name"
+                    [ngClass]="{ 'is-invalid':  identiForm.nie_doc_name.dirty && identiForm.nie_doc_name.errors }"
+                  />
+                  <div class="invalid-feedback" *ngIf="identiForm.nie_doc_name.errors">
+                    <span *ngIf="identiForm.nie_doc_name.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                  </div>
+                </div>
+              </div> -->
+              
+              <!-- <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <label for="account-name">{{ 'PROFILE.EML' | translate}}</label>
+                  <input type="email" class="form-control" id="email" 
+                    name="email" formControlName="email"
+                    [ngClass]="{ 'is-invalid':  identiForm.email.dirty && identiForm.email.errors }"
+                  />
+                  <div class="invalid-feedback" *ngIf="identiForm.email.errors">
+                    <span *ngIf="identiForm.email.errors.required">{{ 'COMMONERRORS.FIELDISREUIRED' | translate}}</span>
+                    <span *ngIf="identiForm.email.errors.email">{{ 'login.mustEmail' | translate}}</span>
+                  </div>
+                </div>
+              </div> -->
+              <!-- company details -->
+              <!-- <div class="col-12"></div> -->
+              
+
+              <div class="col-12"></div>
+              <div class="col-12 col-sm-6">
+                <div class="form-group">
+                  <div class="custom-control custom-checkbox">
+                    <input class="custom-control-input"  formControlName="term_cond"
+                    [ngClass]="{ 'is-invalid': identiForm.term_cond.dirty && identiForm.term_cond.errors }"
+                  id="register-privacy-policy"  type="checkbox" tabindex="4" />
+                  <label class="custom-control-label" for="register-privacy-policy"
+                    >{{ 'login.agrTo' | translate}}<a>&nbsp;{{ 'login.trmCnd' | translate}}.</a></label
+                  >
+                  <div *ngIf="identiForm.term_cond.dirty && identiForm.term_cond.hasError('required')" class="invalid-feedback">
+                    <div>{{'COMMONERRORS.FIELDISREUIRED' | translate}}</div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="col-12 col-sm-6">
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" formControlName="rule_procedure"
+                  [ngClass]="{ 'is-invalid': identiForm.rule_procedure.dirty && identiForm.rule_procedure.errors }"
+                   id="register-rule-procdures" [readonly]="true" type="checkbox" tabindex="4" />
+                  <label class="custom-control-label" for="register-rule-procdures"
+                    >{{ 'login.agrTo' | translate}}<a>&nbsp;{{ 'login.rlePrcd' | translate}}.</a></label
+                  >
+                  <div *ngIf="identiForm.rule_procedure.dirty && identiForm.rule_procedure.hasError('required')" class="invalid-feedback">
+                    <div>{{'COMMONERRORS.FIELDISREUIRED' | translate}}</div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="col-12 col-sm-6">
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" formControlName="knwdlge_test"
+                  [ngClass]="{ 'is-invalid': identiForm.knwdlge_test.dirty && identiForm.knwdlge_test.errors }"
+                   id="register-knowledge-test" [readonly]="true" type="checkbox" tabindex="4" />
+                  <label class="custom-control-label" for="register-knowledge-test"
+                    >{{ 'login.agrTo' | translate}}<a>&nbsp;{{ 'login.knwdTst' | translate}}.</a></label
+                  >
+                  <div *ngIf="identiForm.knwdlge_test.dirty && identiForm.knwdlge_test.hasError('required')" class="invalid-feedback">
+                    <div>{{'COMMONERRORS.FIELDISREUIRED' | translate}}</div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              <div class="col-12">
+                <button type="submit" [disabled]="isLoading  || uploadingImg" class="btn btn-primary mt-2 mr-1" rippleEffect>
+                  <span *ngIf="isLoading" class="spinner-border spinner-border-sm mr-1"></span>Save changes
+                </button>
+              </div>
+            </div>
+          </form>
+    </div>
+</ng-template>
+
+<!-- Modal -->
+<ng-template #termModal let-modal1>
+  <div class="modal-header bg-primary">
+    <h4 class="modal-title text-white" id="myModalLabel1">
+      {{ (termType == 'term_cond') ? 'Terms and Conditions' : (termType == 'rule_procedure') ? 'Rules and procedures' : 'Knowledge Test' }}
+    </h4>
+    <button type="button" class="close" (click)="closed(modal1)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus style="overflow: auto; max-height: 80vh;">
+    <div>
+      <div class="component text-jumbo-new-component variation-1  text-left text-center-mobile" data-component-name="textJumbo">
+        <!-- <div class="component text-component title-block  text-light  font-size-d-30     ">
+           <h2>Legal Considerations</h2>
+        </div> -->
+        <div *ngIf="termType == 'term_cond' && termData" [innerHTML]="termData.es_content | safe : 'html'"></div>
+        <div *ngIf="termType == 'rule_procedure' && termData" [innerHTML]="ruleProcedure.es_content | safe : 'html'"></div>
+        <div *ngIf="termType == 'knwdlge_test' && termData" [innerHTML]="knwoledgeTest.es_content | safe : 'html'"></div>
+
+        <!-- <div class="component text-component text-block        ">
+           <p><b>Regional Legal Considerations</b></p>
+           <p>The owner of the Demo Website is based in the state of California in the United States. The Demo Website can be accessed from countries around the world.&nbsp; Access to the Demo Website may not be legal by certain persons or in certain countries. If you access the Demo Website from outside the United States, you do so on your own initiative and are responsible for compliance with local laws. Access to the Demo Website from territories where the Demo Website or any of its services or products are illegal is prohibited. You acknowledge that you remain responsible at all times for your compliance with U.S. and all applicable export and related statutes and regulations.</p>
+           <p><b>Disclaimer of Warranties</b></p>
+           <p>ServiceNow cannot and does not promise or warrant that any aspect of the Demo Website is free of viruses or other destructive code. You are responsible for implementing sufficient procedures and checkpoints to satisfy your particular requirements for anti‑virus protection and accuracy of data input and output, and for maintaining a means external to our site for any reconstruction of any lost data. &nbsp;WE WILL NOT BE LIABLE FOR ANY LOSS OR DAMAGE CAUSED BY A DISTRIBUTED DENIAL‑OF‑SERVICE ATTACK, VIRUSES OR OTHER TECHNOLOGICALLY HARMFUL MATERIAL THAT MAY INFECT YOUR COMPUTER EQUIPMENT, COMPUTER PROGRAMS, DATA OR OTHER PROPRIETARY MATERIAL DUE TO YOUR USE OF THE DEMO WEBSITE OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE DEMO WEBSITE OR TO YOUR DOWNLOADING OF ANY MATERIAL POSTED ON IT, OR ON ANY WEBSITE LINKED TO IT.</p>
+           <p>YOUR USE OF THE DEMO WEBSITE, INCLUDING ANY WEBSITE CONTENT, AND ANY SERVICES OR ITEMS OBTAINED THROUGH THE DEMO WEBSITE, IS AT YOUR OWN RISK AND PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT ANY WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. NEITHER SERVICENOW NOR ANY PERSON ASSOCIATED WITH SERVICENOW MAKES ANY WARRANTY OR REPRESENTATION WITH RESPECT TO THE COMPLETENESS, SECURITY, RELIABILITY, QUALITY, ACCURACY OR AVAILABILITY OF THE DEMO WEBSITE. WITHOUT LIMITING THE FOREGOING, NEITHER SERVICENOW NOR ANYONE ASSOCIATED WITH SERVICENOW REPRESENTS OR WARRANTS THAT THE DEMO WEBSITE WILL BE ACCURATE, RELIABLE, ERROR‑FREE OR UNINTERRUPTED, THAT DEFECTS WILL BE CORRECTED, THAT OUR SITE OR THE SERVER THAT MAKES IT AVAILABLE ARE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS OR THAT THE DEMO WEBSITE OR ANY SERVICES OR ITEMS OBTAINED THROUGH THE DEMO WEBSITE WILL OTHERWISE MEET YOUR NEEDS OR EXPECTATIONS.</p>
+           <p>SERVICENOW HEREBY DISCLAIMS ALL WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, STATUTORY OR OTHERWISE, WITH RESPECT TO THE DEMO WEBSITE AND THE WEBSITE CONTENT, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OF MERCHANTABILITY, NON‑INFRINGEMENT AND FITNESS FOR PARTICULAR PURPOSE.</p>
+           <p>THE FOREGOING DOES NOT AFFECT ANY WARRANTIES WHICH CANNOT BE EXCLUDED OR LIMITED UNDER APPLICABLE LAW.</p>
+           <p><b>Limitation of Liability</b></p>
+           <p>EXCEPT TO THE EXTENT THAT A DISCLAIMER OF LIABILITY IS PROHIBITED UNDER APPLICABLE LAW, IN NO EVENT WILL SERVICENOW, ITS AFFILIATES AND ITS LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS AND DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE, OR INABILITY TO USE, THE DEMO WEBSITE, INCLUDING ANY WEBSITE CONTENT, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO, PERSONAL INJURY, PAIN AND SUFFERING, EMOTIONAL DISTRESS, LOSS OF REVENUE, LOSS OF PROFITS, LOSS OF BUSINESS OR ANTICIPATED SAVINGS, LOSS OF USE, LOSS OF GOODWILL, LOSS OF DATA, AND WHETHER CAUSED BY TORT (INCLUDING NEGLIGENCE), BREACH OF CONTRACT OR OTHERWISE, EVEN IF FORESEEABLE.</p>
+           <p><b>Indemnification</b></p>
+           <p>You agree to defend, indemnify and hold ServiceNow, its affiliates and licensors and their respective officers, directors, employees, contractors, agents, licensors and suppliers harmless from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses or fees (including reasonable attorneys' fees and other costs of defense) resulting from your violation of these Terms of Use or your use of the Demo Website, including, without limitation, any use of the Demo Website's content, services and products other than as expressly authorized in these Terms of Use or your use of any information obtained from the Demo Website.</p>
+           <p><b>Governing Law and Jurisdiction</b></p>
+           <p>These Terms of Use and any dispute or claim arising out of, or related to, them, their subject matter or their formation (in each case, including non‑contractual disputes or claims) shall be governed by and construed in accordance with the internal laws of the State of California in the United States without giving effect to any choice or conflict of laws provision or rule (whether of the State of California or any other jurisdiction).</p>
+           <p>Any legal suit, action or proceeding arising out of, or related to, these Terms of Use or the Demo Website shall be instituted exclusively in the federal courts of the United States or the courts of the State of California, in each case located in the Santa Clara, California although we retain the right to bring any suit, action or proceeding against you for breach of these Terms of Use in your country of residence or any other relevant country. You hereby irrevocably waive any and all objections to the exercise of jurisdiction over you by such courts and to venue in such courts.</p>
+           <p><b>Export Restrictions</b></p>
+           <p>You may not access, download, use or export materials posted to the Demo Website in violation of U.S. export laws or regulations, including the Export Administration Regulations (EAR), or in violation of any other applicable export or import laws or regulations. You agree to comply with all export laws and restrictions and regulations of any United States or foreign agency or authority.</p>
+           <p><b>Waiver and Severability</b></p>
+           <p>No waiver of these Terms of Use by ServiceNow shall be deemed a further or continuing waiver of such term or condition or any other term or condition, and any failure of ServiceNow to assert a right or provision under these Terms of Use shall not constitute a waiver of such right or provision.</p>
+           <p>If any provision of these Terms of Use is held by a court of competent jurisdiction to be invalid, illegal or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of the Terms of Use will continue in full force and effect.</p>
+           <p><b>Third Party Beneficiaries</b></p>
+           <p>There are no third‑party beneficiaries to this agreement.</p>
+           <p><b>Classification of Website and ServiceNow Products</b></p>
+           <p>In the event of a dispute, the categorization of any subject matter as either the Demo Website or a ServiceNow Product shall be made by ServiceNow in its sole discretion, and ServiceNow may reclassify as a ServiceNow Product subject matter previously included in the Demo Website.</p>
+           <p><b>Termination</b></p>
+           <p>ServiceNow may terminate these Terms of Use at any time for any reason by giving you written notice, and all licenses, permissions and other rights granted to you hereunder shall immediately terminate.&nbsp; Notwithstanding the termination of this Agreement for any reason, Sections 3 and 5 herein shall survive.</p>
+           <p><b>Entire Agreement</b></p>
+           <p>The Terms of Use and our Privacy Policy constitute the sole and entire agreement between you and ServiceNow with respect to the Demo Website and supersede all prior and contemporaneous understandings, agreements, representations and warranties, both written and oral, with respect to the Demo Website. For the avoidance of doubt, these Terms of Use do not supersede any Master Ordering Agreement, subscription agreement or other agreement pursuant to which you have been granted the right to use or access a ServiceNow product or service.</p>
+        </div> -->
+     </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <button type="button" class="btn btn-primary d-flex float-right" (click)="acceptTerms(modal1)" rippleEffect>I Accept Terms</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- /Modal -->

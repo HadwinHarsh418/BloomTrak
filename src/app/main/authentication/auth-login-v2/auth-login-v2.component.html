@@ -1,0 +1,273 @@
+<section class="login-custom">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="center-login">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="logo-top-login">
+                <img src="assets/images/logo-login.png" class="login-logo" alt="">
+                <p class="account-1">Please sign in to your account</p>
+                <p class="account-2">By continuing, you agree to <br>
+                  bloomtrak’s <a href="https://bloomtrak.com/privacy-policy/" target="_blank">Terms & Conditions and Privacy Policy</a> </p>
+              </div>
+            </div>
+            <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="onSubmit()" style="width: 100%;">
+              <div class="form-group">
+            <div class="col-lg-12">
+              <div class="mar-login">
+                <input class="input-f"  placeholder="Enter User Name"
+                 type="text" formControlName="email" 
+                [ngClass]="{ 'is-invalid error': submitted && f.email.errors }"  aria-describedby="login-email"
+                autofocus="" tabindex="1" inputDirective maxlength="50" 
+                >
+              </div>
+            
+              <div *ngIf="submitted && f.email.errors" class="invalid-feedback"
+              [ngClass]="{ 'd-block': submitted && f.email.errors }">
+                <div *ngIf="f.email.errors.required">This field is required</div>
+              </div>
+            </div>
+            </div>
+            <div class="form-group">
+            <div class="col-lg-12">
+              <div class="mar-login input-group input-group-merge form-password-toggle relative-new">
+                <input class=" input-f" type="text" placeholder="Enter Password"
+                input [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
+                [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" 
+                aria-describedby="login-password" tabindex="2" maxlength="50"
+                >
+                <div class="input-group-append">
+                  <span class="input-group-text cursor-pointer"><i class="feather font-small-4" [ngClass]="{
+                        'icon-eye-off': passwordTextType,
+                        'icon-eye': !passwordTextType
+                      }" (click)="togglePasswordTextType()"></i></span>
+                </div>
+              </div>
+              
+              <div *ngIf="submitted && f.password.errors" class="invalid-feedback"
+            [ngClass]="{ 'd-block': submitted && f.password.errors }">
+            <div *ngIf="f.password.errors.required">{{'login.pwdReq' | translate}}</div>
+          </div>
+            </div>
+            
+            </div>
+            <div class="form-group">
+            <div class="col-lg-12">
+              <div class="mar-login">
+                <button class="bt-login-bloom"
+                [disabled]="loading"  tabindex="4" rippleEffect>
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                SIGN IN</button>
+              </div>
+            </div>
+            </div>
+            </form>
+            <div class="col-lg-12">
+              <div class="mar-login" style="text-align: center;">
+                <a class="forgot-a"  [routerLink]="['forgotPassword']">Forgot Password?</a>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="mar-login">
+                <p class="if-p">If you are not already a bloomtrak<sup>tm</sup> partner, <br>
+                  schedule your demo today!</p>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="mar-login-0">
+                <ul class="bt-ul-2">
+                  <li ><a href="https://bloomtrak.com/schedule-a-demo/"  target="_blank"> <button>SCHEDULE A DEMO</button> </a></li>
+                  <li ><a href="https://www.bloomtrak.com"  target="_blank"> <button>LEARN MORE</button> </a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="footer-bottom">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="footer-content">
+          <ul>
+            <li><p>@ bloomtrak™ DEV 2023 </p></li>
+           <li><a href="https://bloomtrak.com/privacy-policy/" target="_blank">Terms of Use </a></li>
+            <li><a href="https://bloomtrak.com/privacy-policy/" target="_blank">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <div class="auth-wrapper auth-v2">
+  <div class="auth-inner row m-0">
+   <a class="brand-logo" href="javascript:void(0);">
+      <img
+        src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo/logo-dark.png' : 'assets/images/logo/logo.png' }}"
+        alt="brand-logo" height="36" />
+
+      <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }}</h2>
+    </a>
+    <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
+      <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
+        <img class="img-fluid" [src]="
+            coreConfig.layout.skin === 'dark'
+              ? 'assets/images/pages/login-v2-dark.svg'
+              : 'assets/images/pages/login-v2.svg'
+          " alt="Login V2" />
+      </div>
+    </div>
+    <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+        <img
+          src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo-blooms.png' : 'assets/images/logo-blooms.png' }}"
+          class="same-logo dark-theam" />
+        <div class="mr-minus-5 mb-2">
+        </div>
+        <h2 class="card-title font-weight-bold mb-1">{{'login.wlcmTo' | translate}} bloomtrak! 👋</h2>
+        <p class="card-text mb-2">{{'login.plzSgnAcc' | translate}}</p>
+
+        <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error">
+          <div class="alert-body">
+            <p>{{ error }}</p>
+          </div>
+        </ngb-alert>
+
+        <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+         <div class="form-group">
+            <label class="form-label" for="login-email">{{ (f.user_role.value == 6 || f.user_role.value == 3 ) ||
+              f.user_role.value == 5 ? 'Email/Username' : 'Phone Number' }} </label>
+            <input type="text" formControlName="email" class="form-control"
+              [ngClass]="{ 'is-invalid': submitted && f.email.errors }" placeholder="" aria-describedby="login-email"
+              autofocus="" tabindex="1" inputDirective maxlength="50" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+              <div *ngIf="f.email.errors.required">This field is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="d-flex justify-content-between">
+              <label for="login-password">{{'login.pswd' | translate}}</label>
+            </div>
+            <div class="input-group input-group-merge form-password-toggle">
+              <input [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
+                class="form-control form-control-merge"
+                [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" placeholder=""
+                aria-describedby="login-password" tabindex="2" maxlength="50" />
+              <div class="input-group-append">
+                <span class="input-group-text cursor-pointer"><i class="feather font-small-4" [ngClass]="{
+                      'icon-eye-off': passwordTextType,
+                      'icon-eye': !passwordTextType
+                    }" (click)="togglePasswordTextType()"></i></span>
+              </div>
+            </div>
+            <div *ngIf="submitted && f.password.errors" class="invalid-feedback"
+              [ngClass]="{ 'd-block': submitted && f.password.errors }">
+              <div *ngIf="f.password.errors.required">{{'login.pwdReq' | translate}}</div>
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+            <div class="custom-control custom-checkbox">
+              <input class="custom-control-input" id="remember-me" type="checkbox" tabindex="3" />
+              <label class="custom-control-label" for="remember-me"> {{'login.rmbrMe' | translate}}</label>
+            </div>
+          </div>
+
+          <button [disabled]="loading" class="btn btn-primary btn-block" tabindex="4" rippleEffect>
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>{{'login.sgnIn' | translate}}
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal show bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+  aria-hidden="true" [style.display]="showAuthTokenModal ? 'block' : 'none'" [style.visibilty]="'visible'">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success" id="exampleModalLabel">
+          <span class="resultTitle">{{ 'G2FA.verifyUr2Fa' | translate}}</span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeAuthMModal();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="settings-profile">
+              <div class="form-row">
+                <div class="col-12">
+                  <div>
+                    <input id="googlec1" inputDirective inptype="number" maxLimit="6" [disabled]="loadingSecurityData"
+                      trim [(ngModel)]="sixDigitCode" type="text" class="form-control" (keyup)="changedSixdigit()"
+                      placeholder="{{ 'G2FA.enter6dgt' | translate}}">
+                    <div class="user-connected-from pt-3">
+                      <button [disabled]="loadingSecurityData || !sixDigitCode" (click)="verifyGoogleAuth()"
+                        type="button" class="btn btn-primary btn-block waves-effect waves-float waves-light">{{
+                        'G2FA.verifyBtn' | translate}}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal show bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+  aria-hidden="true" [style.display]="antiphishing ? 'block' : 'none'" [style.visibilty]="'visible'">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-success" id="exampleModalLabel">
+          <span class="resultTitle">{{ 'G2FA.sgnNewdev' | translate}}</span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeAntiMModal();">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="settings-profile">
+              <div class="form-row">
+                <div class="col-12">
+                  <p>{{ 'G2FA.vrfyitsU' | translate}}</p>
+                  <div>
+                    <input id="googlec" inputDirective inptype="number" maxLimit="6" [disabled]="loadingSecurityData"
+                      trim [(ngModel)]="sixDigitCode" type="text" class="form-control" (keyup)="changedSixdigit()"
+                      placeholder="{{ 'forgotpassword.emvfCode' | translate}}">
+                    <p class="inp-text" style="padding-left: 5px;">{{ 'forgotpassword.ent6RcvBy' | translate}}
+                      {{encodedemail}}</p>
+                    <div class="user-connected-from pt-3">
+                      <button [disabled]="loadingSecurityData || !sixDigitCode" (click)="verifyAntiPhising()"
+                        type="button" class="btn btn-primary btn-block waves-effect waves-float waves-light">{{
+                        'G2FA.verifyBtn' | translate}}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>  -->

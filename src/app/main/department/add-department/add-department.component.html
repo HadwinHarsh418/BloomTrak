@@ -1,0 +1,241 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <!-- account setting page -->
+        <section id="page-account-settings">
+            <div class="row nav-vertical d-flex">
+                <div class="col-md-12 mb-2 mb-md-0">
+                    <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+                        <li class="nav-item" ngbNavItem>
+                            <!-- <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="user" class="font-medium-3 mr-1"></i>
+                  <span class="font-weight-bold">Basic Info</span>
+                </a> -->
+
+                            <div class="card">
+                                <div class=" row justify-content-between">
+                                    <div class="card-header ml-1">
+                                        <h4 class="card-title">Add Department</h4>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mt-3">
+                                        <form class="user" [formGroup]="formDepartmentData" (ngSubmit)="submitted()">
+                                            <div class="row">
+                                                <div class="col-lg-4" *ngIf="currentUser.role == 'SuperAdmin'">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Community
+                                                            Name <span class="text-danger">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8" *ngIf="currentUser.role == 'SuperAdmin'">
+                                                    <div class="common-form-left form-group">
+                                                        <select name="community_name" id="community_name"
+                                                            formControlName="community_name"
+                                                            class="form-control form-control-user">
+                                                            <option value="" selected disabled>--Select--</option>
+                                                            <option value="{{comm.id}}"
+                                                                *ngFor="let comm of allCommunity">
+                                                                {{comm.community_name}}</option>
+                                                        </select>
+                                                        <!-- <ng-multiselect-dropdown placeholder="--Select Community--"
+                                                                                        [settings]="dropdownSettings"
+                                                                                        [data]="allCommunity"
+                                                                                        [class.is-invalid]="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid"
+                                                                                        formControlName="community_name">
+                                                                                    </ng-multiselect-dropdown> -->
+                                                        <span
+                                                            *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
+                                                            <div class="invalid-feedback"
+                                                                *ngIf="FormData_Control['community_name'].hasError('required')"
+                                                                class="text text-danger">
+                                                                This field required
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Department
+                                                            Name <span class="text-danger">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group">
+                                                        <input type="text"
+                                                            [class.is-invalid]="FormData_Control['department_name'].dirty && FormData_Control['department_name'].invalid"
+                                                            formControlName="department_name"
+                                                            class="form-control form-control-user" id="department_name"
+                                                            class="form-control" placeholder="Department Name"
+                                                            aria-describedby="passwordHelpInline">
+                                                        <span
+                                                            *ngIf="FormData_Control['department_name'].dirty && FormData_Control['department_name'].invalid">
+                                                            <div class="invalid-feedback"
+                                                                *ngIf="FormData_Control['department_name'].hasError('required')"
+                                                                class="text text-danger">
+                                                                This field required
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                   
+                                                </div> -->
+
+                                                    <div class="col-lg-4">
+                                                       <div class="common-form-left">
+                                                          <label for="inputPassword6" class="col-form-label">Department Name <span class="text-danger">*</span>
+                                                          </label>
+                                                       </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                       <div class="common-form-left form-group">
+                                                          <input type="text"
+                                                             [class.is-invalid]="FormData_Control['department_name'].dirty && FormData_Control['department_name'].invalid"
+                                                             formControlName="department_name" class="form-control form-control-user"
+                                                             id="department_name" class="form-control"
+                                                             placeholder="department_name" aria-describedby="department_name">
+                  
+                                                             <!-- <select  class="form-control" formControlName="department_name">
+                                                               <option value="" selected="selected" disabled>---Select Department List---</option>
+                                                               <option value="" disabled *ngIf="!depatData.length">---No Record Founded---</option>
+                                                               <option  *ngFor="let item of depatData"  value="{{item.name}}"> {{item.name}}</option>
+                                                           </select> -->
+                  
+                                                          <span *ngIf="FormData_Control['department_name'].dirty && FormData_Control['department_name'].invalid">
+                                                             <div class="invalid-feedback"
+                                                                *ngIf="FormData_Control['department_name'].hasError('required')"
+                                                                class="text text-danger">
+                                                                This field required
+                                                             </div>
+                                                          </span>
+                                                       </div>
+                                                       <div class="row addUserbtn">
+                                                        <div class="m-1">
+                                                            <button type="submit" class="btn btn-primary"
+                                                                [disabled]="loading">
+                                                                <span *ngIf="loading"
+                                                                    class="spinner-border spinner-border-sm"
+                                                                    role="status" aria-hidden="true"></span>
+                                                                Add
+                                                            </button>
+                                                            <button type="button" (click)="goBack()"
+                                                                class="btn btn-primary ml-1">
+                                                                Cancel
+                                                            </button>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- <div class="col-lg-6" *ngIf="vendrHide">
+                                                      <div class="common-form-left form-group">
+                                                         <input type="text" #inpVal (keyup)="chckInpVal(inpVal.value)"  
+                                                            [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
+                                                            formControlName="vendor" class="form-control form-control-user"
+                                                            id="vendor" class="form-control"
+                                                            placeholder="Vendor" aria-describedby="passwordHelpInline">
+                  
+                                                         <span *ngIf="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid">
+                                                            <div class="invalid-feedback"
+                                                               *ngIf="FormData_Control['vendor'].hasError('required')"
+                                                               class="text text-danger">
+                                                               This field required
+                                                            </div>
+                                                         </span>
+                                                      </div>
+                                                   </div> -->
+                                                    <!-- <div class="col-lg-2">
+                                                      <button class="btn btn-block btn-primary" type="button" style="height: 2.714rem;font-size: smaller;"  (click)="openAddNew()">Add New Department List</button>
+                                                    </div> -->
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-12 col-md-9"></div>
+            </div>
+        </section>
+        <!--/ account setting page -->
+    </div>
+</div>
+
+<ng-template #Addnew let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Add New Department List</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+ 
+        <form class="user" [formGroup]="formData" (ngSubmit)="addNwVndr(modal)">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="common-form-field">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="welcome-logo">
+                                    <img src="assets/images/log.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6"
+                                        class="col-form-label">New Department List <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="text"
+                                        [class.is-invalid]="controls['newVendor'].dirty && controls['newVendor'].invalid"
+                                        formControlName="newVendor"
+                                        class="form-control form-control-user"
+                                        id="newVendor" id="inputPassword6"
+                                        class="form-control"
+                                        aria-describedby="passwordHelpInline">
+                                    <span
+                                        *ngIf="controls['newVendor'].dirty && controls['newVendor'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['newVendor'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+ 
+                        <button type="submit" class="btn btn-primary">
+                            Add
+                            <span *ngIf="btnShow" [disabled]="btnShow"
+                                class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                        </button>
+                        <button type="button" (click)="closeded(modal)"
+                            class="btn btn-primary ml-1" [disabled]="btnShow">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+ 
+        
+ 
+    </div>
+ 
+   
+ </ng-template>

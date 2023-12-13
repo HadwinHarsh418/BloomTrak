@@ -1,0 +1,163 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <!-- <h2 class="font-weight-bolder mt-1 w-100">
+            <button class="btn btn-info float-right" (click)="openProtectionModal()">Add New</button>
+        </h2> -->
+    </div>
+    <div class="card-body mt-1">
+
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex justify-content-between align-items-center m-1">
+                    <div class="btn-group">
+                        <!-- <div ngbDropdown>
+                            <button ngbDropdownToggle class="btn btn-flat-primary" type="button"
+                                id="dropdownMenuButton100" rippleEffect>
+                                Filter {{ftype == 'All' ? 'By Role' : ftype}}
+                            </button>
+                            <div ngbDropdownMenu aria-labelledby="dropdownMenuButton100">
+                                <a ngbDropdownItem href="javascript:void(0)" (click)="changeFilter('All')">All</a>
+                                <a ngbDropdownItem href="javascript:void(0)" (click)="changeFilter('Admin')">Admin</a>
+                                <a ngbDropdownItem href="javascript:void(0)" (click)="changeFilter('Manager')">VIP</a>
+                                <a ngbDropdownItem href="javascript:void(0)" (click)="changeFilter('Users')">Users</a>
+                            </div>
+                        </div> -->
+                    </div>
+                    <!-- <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoShow' | translate}}
+                        <select class="form-control mx-25" [(ngModel)]="page.size" (change)="setPage({ offset: 0 })">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> {{ 'DEPOSIT.depoEntry' | translate}}
+                    </label> -->
+                </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                    <label class="d-flex align-items-center"> {{ 'faq.faqSearch' | translate}}
+                        <input #searchStrInput type="text" [(ngModel)]="searchStr" placeholder="Search"
+                            class="form-control ml-25" />
+                    </label>
+                </div>
+            </div>
+        </div>
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto">
+            <ngx-datatable-column name="Amount" prop="amount">
+                <ng-template let-Amount="value" let-row="row" ngx-datatable-cell-template>
+                    <div><span  [innerHTML]="Amount"></span> </div>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Description" prop="description">
+                <ng-template let-Description="value" let-row="row" ngx-datatable-cell-template>             
+                    <div><span  [innerHTML]="Description"></span> </div>
+      
+                </ng-template>
+            </ngx-datatable-column>      
+            <ngx-datatable-column name="Actions" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+
+                                <ng-container>
+                                    <a (click)="openProtectionModal(row)" ngbDropdownItem class="d-flex align-items-center">
+                                        <i class="fa fa-eye" class="mr-50"></i> Edit
+                                    </a>
+                                </ng-container>
+
+                             
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+
+        </ngx-datatable>
+    </div>
+
+</div>
+
+
+<div class="modal-on-show-event">
+    <!-- Modal -->
+    <ng-template #addProtection let-modal>
+        <div class="modal-header bg-info">
+            <h4 class="modal-title text-white" id="myModalLabel1">Add Protection</h4>
+            <button type="button" [disabled]="addingFaq" class="close" (click)="closed(modal)" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+
+            <div class="form">
+                <div class="form-group">
+                    <label for="account-company">Amount</label>
+                    <input type="text" [(ngModel)]="amount" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="account-company">Description</label>
+                <quill-editor [(ngModel)]="description" name="quill-content">
+                    <div quill-editor-toolbar>
+                        <span class="ql-formats">
+                            <button class="ql-bold" [title]="'Bold'"></button>
+                            <button class="ql-italic" [title]="'italic'"></button>
+                            <button class="ql-underline" [title]="'underline'"></button>
+                        </span>
+                        <span class="ql-formats">
+                            <select class="ql-align" [title]="'Alignment'">
+                                <option selected></option>
+                                <option value="center"></option>
+                                <option value="right"></option>
+                                <option value="justify"></option>
+                            </select>
+                        </span>
+                        <span class="ql-formats">
+                            <button class="ql-list" value="ordered" type="button"></button>
+                        </span>
+                    </div>
+                </quill-editor>
+                </div>
+            </div>
+
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" [disabled]="addingProtection" class="btn btn-info d-flex float-right"
+                style="margin-top: 10px!important;" (click)="UpdateProtection(modal)" rippleEffect>
+                <span *ngIf="addingProtection" class="spinner-border spinner-border-sm mr-1"></span>
+                {{ toEdit?.id ? 'Update' : 'Add'}}
+            </button>
+        </div>
+    </ng-template>
+    <!-- / Modal -->
+
+    <!-- Modal -->
+    <!-- <ng-template #deleteFaq let-modal2>
+        <div class="modal-header bg-danger">
+            <h4 class="modal-title text-white" id="myModalLabel1">Delete FAQ</h4>
+            <button type="button" [disabled]="deletingNotificaion" class="close" (click)="closed(modal2)"
+                aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <h5>Are you sure you want to delete faq ?</h5>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" [disabled]="deletingFaq" class="btn btn-info d-flex float-right"
+                style="margin-top: 10px!important;" (click)="deletesFaq(modal2)" rippleEffect>
+                <span *ngIf="deletingFaq" class="spinner-border spinner-border-sm mr-1"></span> Delete
+            </button>
+        </div>
+    </ng-template> -->
+    <!-- / Modal -->
+
+
+</div>

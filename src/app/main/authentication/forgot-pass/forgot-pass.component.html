@@ -1,0 +1,142 @@
+<section class="login-custom">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="center-login">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="logo-top-login">
+                  <img src="assets/images/logo-login.png" class="login-logo" alt="">
+                  <p class="account-1">Please sign in to your account</p>
+                  <p class="account-2">By continuing, you agree to <br>
+                    bloomtrak’s <a href="https://bloomtrak.com/privacy-policy/" target="_blank">Terms of Use and Privacy Policy</a></p>
+                </div>
+              </div>
+              <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="onSubmit()" style="width: 100%;">
+                <div class="form-group">
+              <div class="col-lg-12">
+                <div class="mar-login">
+                  <input class="input-f"  placeholder="Enter Your Username"
+                   type="text" formControlName="num" 
+                  [ngClass]="{ 'is-invalid error': submitted && f.num.errors }"  aria-describedby="login-email"
+                  autofocus="" tabindex="1" inputDirective maxlength="50" 
+                  >
+                </div>
+                <div *ngIf="submitted && f.num.errors" class="invalid-feedback"
+                [ngClass]="{ 'd-block': submitted && f.num.errors }">
+                  <div *ngIf="f.num.errors.required">This field is required</div>
+                </div>
+              </div>
+              </div>
+              <!-- <div class="form-group">
+              <div class="col-lg-12">
+                <div class="mar-login">
+                  <input class="input-f" type="text" placeholder="Enter Password"
+                  input type='password' formControlName="password"
+                  [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" 
+                  aria-describedby="login-password" tabindex="2" maxlength="50"
+                  >
+                </div>
+                <div *ngIf="submitted && f.password.errors" class="invalid-feedback"
+              [ngClass]="{ 'd-block': submitted && f.password.errors }">
+              <div *ngIf="f.password.errors.required">{{'login.pwdReq' | translate}}</div>
+            </div>
+              </div>
+              
+              </div> -->
+              <div class="form-group">
+              <div class="col-lg-12">
+                <div class="mar-login">
+                  <button class="bt-login-bloom"
+                  [disabled]="loading"  tabindex="4" rippleEffect>
+              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                  VERIFY</button>
+                </div>
+              </div>
+              </div>
+              </form>
+              <div class="col-lg-12">
+                <div class="mar-login" style="text-align: center;">
+                  <a class="forgot-a"  [routerLink]="['/']">Back To Login</a>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mar-login">
+                  <p class="if-p">If you are not already a bloomtrak<sup>tm</sup> partner, <br>
+                    schedule your demo today!</p>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="mar-login-0">
+                  <ul class="bt-ul-2">
+                    <li ><a href="https://bloomtrak.com/schedule-a-demo/"  target="_blank"> <button>SCHEDULE A DEMO</button> </a></li>
+                    <li ><a href="https://www.bloomtrak.com"  target="_blank"> <button>LEARN MORE</button> </a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+  <section class="footer-bottom">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="footer-content">
+            <ul>
+              <li><p>@ bloomtrak™ DEV 2023 </p></li>
+              <li><a href="https://bloomtrak.com/privacy-policy/" target="_blank">Terms of Use </a></li>
+              <li><a href="https://bloomtrak.com/privacy-policy/" target="_blank">Privacy Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+<ng-template #otpConfirm let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">OTP</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closed(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h6 class="text-center">Please enter the one-time password (OTP) that was sent via text message to your mobile device to proceed.</h6>
+        <form class="auth-login-form mt-2" [formGroup]="otpFrm" (ngSubmit)="otpFrmSubmit(modal)" >
+            <div class="form-group">
+          <div class="col-lg-12">
+            <div class="mar-login">
+              <input class="input-f"  placeholder="Enter OTP" inputDirective inptype="number"
+               type="text" formControlName="otp" 
+              [ngClass]="{ 'is-invalid error': submitted1 && ot.otp.errors }"  aria-describedby="login-email"
+              autofocus="" tabindex="1" inputDirective maxlength="6" 
+              >
+            </div>
+            <div *ngIf="submitted1 && ot.otp.errors" class="invalid-feedback"
+            [ngClass]="{ 'd-block': submitted1 && ot.otp.errors }">
+              <div *ngIf="ot.otp.errors.required">This field is required</div>
+            </div>
+          </div>
+          </div>
+        
+          <div class="form-group">
+          <div class="col-lg-12">
+            <div class="mar-login">
+              <button class="btn-sm btn-primary"
+              [disabled]="loading1"  tabindex="4" rippleEffect>
+          <span *ngIf="loading1" class="spinner-border spinner-border-sm mr-1"></span>
+             OTP Verify</button>
+            </div>
+          </div>
+          </div>
+          </form>
+    </div>
+   
+</ng-template>
+<!-- / Modal -->

@@ -1,0 +1,555 @@
+<div class="content-wrapper">
+    <div class="content-body">
+      <!-- content-header component -->
+      <!-- <app-content-header [contentHeader]="contentHeader"></app-content-header> -->
+      <!-- account setting page -->
+      <section id="page-account-settings">
+        <!-- <div class="row nav-vertical d-flex"> -->
+          <!-- <div class="col-md-3 mb-2 mb-md-0"> -->
+            <!-- <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left"> -->
+  
+              <!-- <li class="nav-item" ngbNavItem> -->
+                <!-- <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="user" class="font-medium-3 mr-1"></i> -->
+                  <!-- <i class="feather-eye"></i> -->
+                  <!-- <span class="font-weight-bold">spendtrak Reports</span>
+                </a> -->
+                <!-- <ng-template ngbNavContent> -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">spendtrak Reports</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class=" col-lg-12 mt-2">
+                          <div class="row mb-1">
+                            <div class="col-6" *ngIf="currentUser.role != 'Agency'">
+                              <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event)" [disabled]="runPrms == 0">
+                                <option  value="" selected disabled> ---Report---</option>
+                                <option value="0"> Current Contracts Report</option>
+                               <!-- <option value="1">Incomplete Contracts Report</option>  -->
+                                <option value="2"> Not Final Report</option>
+                                <option value="4">Comparative Period Report</option> 
+                                <!-- <option value="5">Custom Spend Report</option>  -->
+                                <option value="3">Monthly Spend Report</option> 
+                                 <option value="6">Monthly Department Report</option> 
+                                 <option value="7">Variance Reports</option> 
+                                 <option value="8">Receipt Id Reports</option> 
+                              </select>
+                            </div>
+  
+                            <div class="col-6" *ngIf="currentUser.role == 'Agency'">
+                              <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event)" [disabled]="runPrms == 0" >
+                                <option  value="" selected disabled> ---Report---</option>
+                                <option value="3"> Agency Detail Time Report</option>
+                              </select>
+                            </div>
+  
+                            <div class="col-6" *ngIf="currentUser.prmsnId == '6' || currentUser.user_role == '3'  || this.currentUser.user_role == '8'">
+                              <select id="inputState" class="form-control" [(ngModel)]="community_id" (change)="chngCom($event.target.value)" [disabled]="runPrms == 0">
+                                <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                                <option value="{{currentUser.user_role == '3' ? item.cp_id : (item.id || item.community_id)}}" *ngFor="let item of allCommunity">
+                                  {{item.community_name}}</option>
+                              </select>
+                            </div>
+
+                            <div class={{mt}} *ngIf="data4 || data6 || data7 || data8 || data3">
+                              <select  class="form-control" [(ngModel)]="slctDprt">
+                                <option value="undefined" selected="selected" disabled>---Select Department---</option>
+                                <option value="all_department" *ngIf="currentUser.user_role == '3' || currentUser.user_role == '6' || currentUser.user_role == '8' || currentUser.prmsnId== '16' || currentUser.prmsnId== '24' || currentUser.prmsnId== '1'" >All Departments</option>
+                                <option value="" *ngIf="!dprtmnt?.length"  disabled>---No Data Found---</option>
+                                <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}</option>
+                            </select>
+                            </div>
+
+                            <!-- <div class="col-6 mt-1" *ngIf="data6">
+                              <select class="form-control" #slctYr (change)="chngYr(slctYr.value)">
+                                <option value="" selected="selected" disabled>---Select Year---</option>
+                                <option value="{{ item }}" *ngFor="let item of listOfYears">
+                                    {{ item }}
+                                </option>
+                            </select>
+                            </div>
+                            <div class="col-6 mt-1" *ngIf="data6">
+                              <select class="form-control" #slctMnt (change)="chngMnt(slctMnt.value)">
+                                <option value="" selected="selected" disabled>---Select Month---</option>
+                                <option value="{{ item.id }}" *ngFor="let item of mL">
+                                    {{ item.val }}
+                                </option>
+                            </select>
+                            </div> -->
+  
+                          </div>
+                        </div>
+
+                        <div class="row" *ngIf="data4">
+                          <div class="col-6 text-center" >
+                            CURRENT
+                          </div>
+                          <div class="col-6 text-center">
+                            COMPARATIVE PERIOD
+                          </div>
+                        </div> 
+  
+                        <div class="row">
+                          
+                          
+                          <div class="col-6">
+                            <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1" [markDisabled]="isDisabled"   (dateSelect)="currentDateSelection1($event,true)" *ngIf="data4" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
+                            </ngb-datepicker>
+                            
+                            <ng-template #t ngbDatepickerDay let-date let-focused="focused">
+                              <span
+                                class="custom-day12"
+                                [class.first-week]="date.weeday === 0"
+                                [class.focusedrrrr]="focused"
+                                [class.range]="currentisRange1(date)"
+                                [class.faded]="currentisHovered1(date) || currentisInside1(date)"
+                                (mouseenter)="hoveredDate1 = date"
+                                (mouseleave)="hoveredDate1 = null"
+                              >
+                                {{ date.day }}
+                              </span>
+                            </ng-template>
+                          </div>
+  
+                          <div class="col-6">
+                            <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1"  (dateSelect)="onDateSelection($event,false)" *ngIf="data4" [displayMonths]="2" [dayTemplate]="t1" outsideDays="hidden">
+                            </ngb-datepicker>
+                            
+                            <ng-template #t1 let-date let-focused="focused">
+                              <span
+                                class="custom-day"
+                                [class.focused]="focused"
+                                [class.range]="isRange(date)"
+                                [class.faded]="isHovered(date) || isInside(date)"
+                                (mouseenter)="hoveredDate = date"
+                                (mouseleave)="hoveredDate = null"
+                              >
+                                {{ date.day }}
+                              </span>
+                            </ng-template>
+                          </div>
+                        </div> 
+  
+                      
+  
+  
+  
+                       
+                      <div class=" col-lg-12">
+                        <div class="card">
+                          <div class="row" *ngIf="!trndRpt">
+                            <div class="col-6">
+                                <!-- <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange($event)" >
+                                  <option  value="" selected disabled> ---Time Period---</option>
+                                  <option value="30"> Last 30 Days</option>
+                                  <option value="60"> Last 60 Days</option>
+                                  <option value="90"> Last 90 Days</option>
+                                  <option value="year"> Custom</option>
+                                </select> -->
+                              <div class="row mt-1" *ngIf="!data4 && !data0">
+                                <!-- <div class="col-6">
+                                  <input type="date"  max={{minDate}} class="form-control" name="dt" id="dt1" (change)="stDt ? timeprd = false : timeprd = true" [(ngModel)]="stDt" >
+                                </div>
+                                <div class="col-6">
+                                  <input type="date" min={{stDt}} max={{minDate}} [disabled]="!stDt" class="form-control" name="dt" id="dt" (change)="enDt ? timeprd = false : timeprd = true"  [(ngModel)]="enDt" >
+                                </div> -->
+                                <div class="col-6">
+                                  <select id="inputState" class="form-control" [(ngModel)]="mnth" (change)="chngMnt(mnth)">
+                                    <option value="undefined" selected="selected" disabled>---Select Month---</option>
+                                    <option value="{{item.id}}"  *ngFor="let item of mL">
+                                      {{item.val}}</option>
+                                  </select>
+                                </div>
+                                <div class="col-6">
+                                  <select id="inputState" class="form-control"  [(ngModel)]="yr" (change)="chngYr(yr)">
+                                    <option value="undefined" selected="selected" disabled>---Select Year---</option>
+                                    <option value="{{item}}" *ngFor="let item of listOfYears">{{item}}</option>
+                                  </select>
+                                </div>
+                              </div>
+                              <div *ngIf="timeprd" style="color: red;">
+                                This field required
+                              </div>
+                            </div>
+                            <div class="col-6" *ngIf="agncyDrp && currentUser.role != 'Agency' ">
+                              <select id="inputState" class="form-control" [(ngModel)]="agency_id">
+                                <option value="undefined" selected="selected" disabled>---Select Agency---</option>
+                                <option value="" >All Agencies</option>
+                                <option value="{{item.id}}" *ngFor="let item of agencyListingData">
+                                  {{item.agency_name}}</option>
+                              </select>
+                            </div>
+                          </div>
+                       
+                       
+                        </div>
+                        <button type="button" (click)="goBack()"
+                        class="btn btn-primary" [disabled]="btnShow">
+                        Cancel
+                    </button>
+                        <button type="button"  (click)="submit()"
+                        class="btn btn-primary ml-2" [disabled]="btnShow">
+                        Generate Report
+                    </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="demo" class="table-responsive">
+                       <table class="table" border="0" *ngIf="data4">
+                  
+                        <thead>
+                          <tr>
+                            <th scope="col" class="btn-primary"></th>
+                            <th scope="col" class="btn-primary">Current</th>
+                            <th scope="col" class="btn-primary">Comparative Period</th> 
+                            <th scope="col" class="btn-primary">Export File</th> 
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <th scope="row">Start Date</th>
+                            <td>{{this.fromDate1?.month + '/' + this.fromDate1?.day + '/' + this.fromDate1?.year}}</td>
+                            <td>{{this.fromDate?.month + '/' + this.fromDate?.day + '/' + this.fromDate?.year}}</td>
+                            <td> <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button></td>
+                          </tr>
+                          <tr>
+                            <th scope="row">End Date</th>
+                            <td>{{this.toDate1?.month + '/' + this.toDate1?.day + '/' + this.toDate1?.year}}</td>  
+                            <td>{{this.toDate?.month + '/' + this.toDate?.day + '/' + this.toDate?.year}}</td>  
+                            <td><button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo" ngxPrint >Export to PDF</button></td>
+                          </tr>
+                          <tr>
+                            <th scope="row">Total Days</th>
+                            <td>{{Difference_In_Days2 + 1}}</td>
+                            <td>{{Difference_In_Days1 + 1}}</td>
+                          </tr>
+                        </tbody>
+                       </table>  
+                       <table>
+                        
+                        <tr>
+                          <th *ngIf="data0" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Current Contracts Report  ({{this.comName}})</th>
+                          <th *ngIf="data1" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Incomplete Contracts Report  ({{this.comName}})</th>
+                          <th *ngIf="data2" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Not Final Report  ({{this.comName}})</th>
+                          <th *ngIf="data3" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Monthly Spend Report  ({{this.comName}})</th>
+                          <th *ngIf="data4" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Comparative Period Report  ({{this.comName}})</th>
+                          <th *ngIf="data5" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Custom Spend Report  ({{this.comName}})</th>
+                          <th *ngIf="data6" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Monthly Department Report  ({{this.comName}})</th>
+                          <th *ngIf="data7" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Variance Reports  ({{this.comName}})</th>
+                          <th *ngIf="data8" style="font-size: x-large; width: 100%; padding: 0 0 20px 25px">Receipt Id Reports  ({{this.comName}})</th>
+                        </tr>
+                       </table>
+                    <table class="table" border="0" >
+                      <tbody>
+                      <tr *ngIf="DailyShowCounts">
+                        <th scope="row" *ngIf="!data0" style="width: 20%;">Start Date</th>
+                        <div *ngIf="!data0" class="col-2 row justify-content-between" style="margin-top: 15px;">
+                          {{ stDt | date:'M/d/yyyy'}}                              
+                        </div>
+                        <th scope="row">Resident Days:</th>
+                        <th scope="row">{{residentCounts}}</th>
+                        <td> 
+                          <div class="row justify-content-between">
+                         
+                          <div class="col-10">
+                            <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button>
+                          </div>
+                        </div>
+                      </td>
+                      </tr>
+                      <tr *ngIf="DailyShowCounts">
+                        <th *ngIf="!data0" scope="row" style="width: 20%;">End Date</th>
+                        <div *ngIf="!data0" class="col-2 row justify-content-between"  style="margin-top: 15px;">
+                          {{ enDt | date:'M/d/yyyy'}}                         
+                        </div>
+                        <th scope="row">Resident Count:</th>
+                        <th scope="row">{{residentDays}}</th>
+                        <td>
+                           <div class="row justify-content-between">
+                          <div class="col-10">
+                            <button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo" ngxPrint >Export to PDF</button>
+                          </div>
+                        </div></td>  
+                      </tr>
+                        <tr *ngIf="!data4 && !DailyShowCounts">
+                          <th scope="row" *ngIf="!data0" style="width: 20%;">Start Date</th>
+                          <td  style="width: 80%;"> 
+                            <div class="row">
+                            <div *ngIf="!data0" class="col-3">
+                              {{ stDt | date:'M/d/yyyy'}}                              
+                            </div>
+                      
+                            <div class="col-3">
+                              <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button>
+                            </div>
+                          </div>
+                        </td>
+                        </tr>
+                        <tr *ngIf="!data4 && !DailyShowCounts">
+                          <th *ngIf="!data0" scope="row" style="width: 20%;">End Date</th>
+                          <td> <div class="row">
+                            <div *ngIf="!data0" class="col-3">
+                              {{ enDt | date:'M/d/yyyy'}}
+                              
+                            </div>
+                  
+                            <div class="col-3">
+                              <button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo" ngxPrint >Export to PDF</button>
+                            </div>
+                          </div></td>  
+                        </tr>
+                      </tbody>
+                    </table>  
+                      <table class="table" border="0">
+                        <thead>
+                          <tr >
+                            <th scope="col" class="btn-primary"*ngIf="!data4 && !data7 && !data6 && !data8">Vendor</th>
+                            <th scope="col" class="btn-primary"*ngIf="!data4 && !data6 && !data8" >Description</th>
+                            <th scope="col" class="btn-primary"*ngIf="data6 || data4 || data3 || data5" >GL And Description</th>
+                            <th scope="col" class="btn-primary" *ngIf="!data8">Gl Account</th>
+                            <th scope="col" class="btn-primary" *ngIf="data7 || data6">Actual</th>
+                            <th scope="col" class="btn-primary" *ngIf="data7 || data6">Budget</th>
+                            <th scope="col" class="btn-primary" *ngIf="data7 || data6">Variance</th>
+                            <th scope="col" class="btn-primary" *ngIf="data6">YTD Actual</th>
+                            <th scope="col" class="btn-primary" *ngIf="data6">YTD Budget</th>
+                            <th scope="col" class="btn-primary" *ngIf="data6">Variance</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Contract Amount</th>
+                            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5 || data8">Amount</th>
+                            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5 || data4 || data7 || data8">Department</th>
+                            <th scope="col" class="btn-primary" *ngIf="data8">Receipt Id</th>
+                            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5">Final</th>
+                            <th scope="col" class="btn-primary" *ngIf="data4">Current</th>
+                            <th scope="col" class="btn-primary" *ngIf="data4">Comparative</th>
+                            <th scope="col" class="btn-primary" *ngIf="data4">Variance</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Periods</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Monthly Amount</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1 || data7">Type</th>
+                            <th scope="col" class="btn-primary"*ngIf="!data4 && !data7 && !data8 && !data6" >Payment Type</th>
+                            <th scope="col" class="btn-primary"*ngIf="!data4 && !data8 && !data6 && !data7" >{{data3 || data2 ? 'Entered Date' : 'Start Date'}}</th>
+                            <th scope="col" class="btn-primary" *ngIf="data3 || data2">Entered By</th>
+                            <th scope="col" class="btn-primary"*ngIf="!data4 && !data3 && !data2 && !data8 && !data6 && !data7" >End Date</th>
+                            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5">Purchase Date</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Cancellation Date</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Renewal Date</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Renewal Amount</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Contract Required</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Contract File</th>
+                            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Entered Date</th>
+                            <th scope="col" class="btn-primary" *ngIf="data7">Explanation</th>
+                            <th scope="col" class="btn-primary" *ngIf="data7">Add Explanation</th>
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr  *ngIf="!Alldata?.length">
+                            <td>
+                              No Data To Display
+                            </td>
+                          </tr>
+                          <tr  *ngFor="let data of Alldata"  [style.background-color]="(data.bgChng) ? '#ff66337d' : '#ffffff'">
+                            <td *ngIf="!data4 && !data7 && !data6 && !data8">{{data.vendor || '---'}}</td>
+                            <td *ngIf="!data4 && !data6 && !data8">{{data.description || '---'}}</td>
+                            <td *ngIf="data6 || data4 || data3 || data5">{{data.gl_and_description || data.gl_description || data.gl_descrp || '---'}}</td>
+                            <td *ngIf="!data8">{{data7 || data6 ? data.GLA_id : data.gl_account || '---'}}</td>
+                            <td *ngIf="data7 || data6">{{data.total_amount  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data7 || data6">{{data.budget  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data7">{{sym.symbol}} {{data.vrnce  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data6">{{data.vrnce  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data6">{{data.ytd_actual  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data6">{{data.YE_total  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data6">{{data.YTDvrnce  || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data0 || data1 ">{{data.contract_amount || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data2 || data3 || data5 || data8">{{data.Amount || data.amount || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data2 || data3 || data5 || data4 || data7 || data8">{{data.department || '---'}}</td>
+                            <td *ngIf="data8" (click)="recModal(data.receipt_id)" style="cursor: pointer;" >
+                              <span  class="badge badge-warning">{{data.receipt_id || '---'}}</span>
+                            </td>
+                            <td *ngIf="data2 || data3 || data5">{{data.final == '0' ? 'No' : 'Yes'}}</td>
+                            <td *ngIf="data4">{{data.res_amnt || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data4">{{data.res_amnt2 || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data4">{{data.variance || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data0 || data1">{{data.periods || '---'}}</td>
+                            <td *ngIf="data0 || data1">{{data.monthly_amount || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data0 || data1 || data7">{{data.type || '---'}}</td>
+                            <td *ngIf="!data4 && !data7 && !data8 && !data6">{{data.pmt_type || '---'}}</td>
+                            <td *ngIf="!data4 && !data8  && !data6 && !data7">{{data.start_date | date:'M/d/yyyy' || '---'}}</td>
+                            <td *ngIf="data3 || data2">{{data.entered_by_user || data.entered_by_Cm || '---'}}</td>
+                            <td *ngIf="!data4 && !data3 && !data2 && !data8 && !data6 && !data7">{{data.end_date | date:'M/d/yyyy' || '---'}}</td>
+                            <td *ngIf="data2 || data3 || data5">{{data.purchage_date | date:'M/d/yyyy' || '---'}}</td>
+                            <td *ngIf="data0 || data1">{{data.cencellation_date | date:'M/d/yyyy' || '---'}}</td>
+                            <td *ngIf="data0 || data1">{{data.renewal_date | date:'M/d/yyyy' || '---'}}</td>
+                            <td *ngIf="data0 || data1">{{data.renewal_amount || '0' | number : "1.2-2" }}</td>
+                            <td *ngIf="data0 || data1">{{data.contract_required == '0' ? 'Yes' : 'No'}}</td>
+                            <td *ngIf="data0 || data1">
+                              <a target="_blank" href="{{data.contract_file ? data.contract_file : 'javascript:void(0)'}}"><span *ngIf="data.contract_file" class="badge badge-warning">File</span></a>
+                              <!-- {{data.contract_file }} -->
+                            </td>
+                            <td *ngIf="data0 || data1">{{data.entered_date | date:'M/d/yyyy' || '---'}}</td>
+                            <td *ngIf="data7">{{data.department_summary ||"---"}}</td>
+                            <td *ngIf="data7"> 
+                              <button class="btn btn-sm btn-primary" *ngIf="data.bgChng" (click)="addEx(data)">{{ expltnBool ?  'Add Explanation' : 'Edit Explanation'}}</button>
+                              <span *ngIf="!data.bgChng">Not Available</span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    
+                  </div>
+               
+  
+               
+                
+                
+                <!-- </ng-template> -->
+              <!-- </li>
+  
+            </ul> -->
+          <!-- </div> -->
+          <!-- <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div> -->
+        <!-- </div> -->
+      </section>
+      <!--/ account setting page -->
+    <!-- </div>/ -->
+  </div>
+
+
+  <ng-template #addExp let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1" *ngIf="expltnBool">Add Explanation</h4>
+        <h4 class="modal-title text-white" id="myModalLabel1" *ngIf="!expltnBool">Edit Explanation</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+            <div class="form-group">
+                <label for="exampleInputEmail1" *ngIf="expltnBool ">Add Explanation</label>
+                <label for="exampleInputEmail1" *ngIf="!expltnBool">Edit Explanation</label>
+                <textarea type="text" class="form-control" [(ngModel)]="expltn" placeholder="{{expltnBool == true ? 'Add Explanation' : 'Edit Explanation'}}" >
+        </textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"   (click)="subExp(modal)">
+                {{expltnBool == true ? "Add"  : "Edit"}}
+            </button>
+            <button type="button" class="btn btn-primary ml-1"   (click)="Cancle(modal)">
+                Cancel
+            </button>
+    </div>
+</ng-template>
+
+
+
+<ng-template #UserLiST let-modal>
+  <div class="modal-header bg-danger">
+    <h4 class="modal-title text-white" id="myModalLabel1">Receipt Id Reports</h4>
+    <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+
+    <div class="table-responsive">
+      <table class="table ">
+        <thead>
+          <tr >
+            <th scope="col" class="btn-primary"*ngIf="!data4 && !data7 && !data6 && !data8">Vendor</th>
+            <th scope="col" class="btn-primary"*ngIf="!data4 && !data6 && !data8" >Description</th>
+            <th scope="col" class="btn-primary"*ngIf="data6 || data4 || data3 || data8" >GL And Description</th>
+            <th scope="col" class="btn-primary" *ngIf="!data8">Gl Account</th>
+            <th scope="col" class="btn-primary" *ngIf="data7 || data6">Actual</th>
+            <th scope="col" class="btn-primary" *ngIf="data7 || data6">Budget</th>
+            <th scope="col" class="btn-primary" *ngIf="data7 || data6">Variance</th>
+            <th scope="col" class="btn-primary" *ngIf="data6">YTD Actual</th>
+            <th scope="col" class="btn-primary" *ngIf="data6">YTD Budget</th>
+            <th scope="col" class="btn-primary" *ngIf="data6">Variance</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Contract Amount</th>
+            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5 || data8">Amount</th>
+            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5 || data4 || data7 || data8">Department</th>
+            <th scope="col" class="btn-primary" *ngIf="data8">Receipt Id</th>
+            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5 || data8">Final</th>
+            <th scope="col" class="btn-primary" *ngIf="data4">Current</th>
+            <th scope="col" class="btn-primary" *ngIf="data4">Comparative</th>
+            <th scope="col" class="btn-primary" *ngIf="data4">Variance</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Periods</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Monthly Amount</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1 || data7">Type</th>
+            <th scope="col" class="btn-primary"*ngIf="!data4 && !data7 && !data8" >Payment Type</th>
+            <th scope="col" class="btn-primary"*ngIf="!data4 && !data8" >{{data3 || data2 ? 'Entered Date' : 'Start Date'}}</th>
+            <th scope="col" class="btn-primary" *ngIf="data3 || data2 || data8">Entered By</th>
+            <th scope="col" class="btn-primary"*ngIf="!data4 && !data3 && !data2 && !data8" >End Date</th>
+            <th scope="col" class="btn-primary" *ngIf="data2 || data3 || data5 || data8">Purchase Date</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Cencellation Date</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Renewal Date</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Renewal Amount</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Contract Required</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Contract File</th>
+            <th scope="col" class="btn-primary" *ngIf="data0 || data1">Entered Date</th>
+            <th scope="col" class="btn-primary" *ngIf="data7">Explanation</th>
+            <th scope="col" class="btn-primary" *ngIf="data7">Add Explanation</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr  *ngIf="!Alldata?.length">
+            <td>
+              No Data To Display
+            </td>
+          </tr>
+          <tr  *ngFor="let data of Alldata1">
+            <td *ngIf="!data4 && !data7 && !data6 && !data8">{{data.vendor || '---'}}</td>
+            <td *ngIf="!data4 && !data6 && !data8">{{data.description || '---'}}</td>
+            <td *ngIf="data6 || data4 || data3 || data8">{{data.gl_and_description || data.gl_description || data.gl_descrp || '---'}}</td>
+            <td *ngIf="!data8">{{data7 || data6 ? data.GLA_id : data.gl_account || '---'}}</td>
+            <td *ngIf="data7 || data6">{{data.total_amount  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data7 || data6">{{data.budget  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data7">{{sym.symbol}} {{data.vrnce  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data6">{{data.vrnce  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data6">{{data.ytd_actual  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data6">{{data.YE_total  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data6">{{data.YTDvrnce  || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data0 || data1 ">{{data.contract_amount || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data2 || data3 || data5 || data8">{{data.Amount || data.amount || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data2 || data3 || data5 || data4 || data7 || data8">{{data.department || '---'}}</td>
+            <td *ngIf="data8">{{data.receipt_id || '---'}}</td>
+            <td *ngIf="data2 || data3 || data5 || data8">{{data.final == '0' ? 'No' : 'Yes'}}</td>
+            <td *ngIf="data4">{{data.res_amnt || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data4">{{data.res_amnt2 || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data4">{{data.variance || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data0 || data1">{{data.periods || '---'}}</td>
+            <td *ngIf="data0 || data1">{{data.monthly_amount || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data0 || data1 || data7">{{data.type || '---'}}</td>
+            <td *ngIf="!data4 && !data7 && !data8">{{data.pmt_type || '---'}}</td>
+            <td *ngIf="!data4 && !data8">{{data.start_date | date:'M/d/yyyy' || '---'}}</td>
+            <td *ngIf="data3 || data2 || data8">{{data.entered_by_user || data.entered_by_Cm || '---'}}</td>
+            <td *ngIf="!data4 && !data3 && !data2 && !data8">{{data.end_date | date:'M/d/yyyy' || '---'}}</td>
+            <td *ngIf="data2 || data3 || data5 || data8">{{data.purchage_date | date:'M/d/yyyy' || '---'}}</td>
+            <td *ngIf="data0 || data1">{{data.cencellation_date | date:'M/d/yyyy' || '---'}}</td>
+            <td *ngIf="data0 || data1">{{data.renewal_date | date:'M/d/yyyy' || '---'}}</td>
+            <td *ngIf="data0 || data1">{{data.renewal_amount || '0' | number : "1.2-2" }}</td>
+            <td *ngIf="data0 || data1">{{data.contract_required == '0' ? 'Yes' : 'No'}}</td>
+            <td *ngIf="data0 || data1">
+              <a target="_blank" href="{{data.contract_file ? data.contract_file : 'javascript:void(0)'}}"><span *ngIf="data.contract_file" class="badge badge-warning">File</span></a>
+              <!-- {{data.contract_file }} -->
+            </td>
+            <td *ngIf="data0 || data1">{{data.entered_date | date:'M/d/yyyy' || '---'}}</td>
+            <td *ngIf="data7">{{data.department_summary ||"---"}}</td>
+            <td *ngIf="data7"> 
+              <button class="btn btn-sm btn-primary" *ngIf="data.bgChng" (click)="addEx(data)">{{ expltnBool ?  'Add Explanation' : 'Edit Explanation'}}</button>
+              <span *ngIf="!data.bgChng">Not Available</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- </div>
+          </div> -->
+
+
+
+  </div>
+
+
+</ng-template>

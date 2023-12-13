@@ -1,0 +1,790 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <p class="font-weight-bolder">Department Summary List</p>
+    </div>
+    <div class="d-flex justify-content-center">
+      <div class="load">
+         <span *ngIf="loadSpinner" class="spinner-border spinner-border-sm"></span>
+      </div>
+      </div>
+    <div class="card-body">
+        <div class="row mb-1" *ngIf="currentUser.prmsnId == 6 || currentUser.user_role == 3 || currentUser.user_role == 8">
+            <div class="col-2 form-group">Community :</div>
+            <div class="col-4">
+                <select class="form-control" (change)="slct($event)">
+                    <!-- <option value="" selected="selected" disabled>---Select Community---</option> -->
+                    <option value="{{ currentUser.user_role =='3' ? item.cp_id :  (item.id || item.community_id) }}" *ngFor="let item of allCommunity">
+                        {{ item.community_name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-2 form-group">Department :</div>
+            <div class="col-4">
+                <select class="form-control" #slctDprt (change)="chngDprt(slctDprt.value)">
+                    <option value="" *ngIf="!dprtmnt?.length" disabled>
+                        ---No Data Found---
+                    </option>
+                    <option value="{{ item.name }}" *ngFor="let item of dprtmnt">
+                        {{ item.name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-2 form-group">Year :</div>
+            <div class="col-4">
+                <select class="form-control" #slctYr (change)="chngYr(slctYr.value)">
+                    <!-- <option value="" selected="selected" disabled>---Select Year---</option> -->
+                    <option value="{{ item }}" *ngFor="let item of listOfYears">
+                        {{ item }}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col-2 form-group">Month :</div>
+            <div class="col-4">
+                <select class="form-control" #slctMnt (change)="chngMnt(slctMnt.value)">
+                    <!-- <option value="" selected="selected" disabled>---Select Month---</option> -->
+                    <option value="{{ item.id }}" [selected]="item.id == curMnt" *ngFor="let item of mL">
+                        {{ item.val }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-1">
+                <button type="button" class="btn-sm btn-info" (click)="getDpartSmmry()" [disabled]="btnShow">
+                    Search
+                </button>
+            </div>
+            <div class="col-3">
+               <button type="button" class="btn-sm btn-info" (click)="addRecSub('0')" [disabled]="loadSpinner">
+                   Add Missing GL Reconciliation
+               </button>
+           </div>
+        </div>
+
+        <div class="row mb-2">
+         <div class="col-2 form-group">Total Residents :</div>
+         <div class="col-4">
+            <input type="number" [(ngModel)]="updResVal" 
+            class="form-control form-control-user"
+            id="amount" class="form-control"
+            placeholder="Total Residents" aria-describedby="passwordHelpInline">
+         </div>
+
+         <div class="col-1" *ngIf="assPrms == '1' || this.currentUser.user_role == 1 || this.currentUser.user_role == 6">
+            <button type="button" class="btn-sm btn-info" (click)="updREs()">Update</button>
+         </div>
+     </div>
+
+     <div class="row mb-2">
+      <div class="col-2 form-group">Total Resident Days :</div>
+      <div class="col-4">
+         {{resValCal  || '00' | number : '1.2-2'}}
+      </div>
+
+      <div class="col-1">
+      </div>
+  </div>
+
+        <!-- <div class="row">
+            <div class="col-lg-12">
+                <div class="flex-row-1">
+                    <div class="wd-common form-group">
+                        {{ slctDpt || frstDp }} - Department Summary :
+                    </div>
+                    <div class="wd-common">
+                        {{ "$" }} {{ dataByCom[0].actual || "0" | number : "1.2-2" }}
+                    </div>
+                    <div class="wd-common">
+                        {{ "$" }} {{ dataByCom[0].totBudget || "0" | number : "1.2-2" }}
+                    </div>
+                    <div class="wd-common">
+                        {{ "$" }} {{ dataByCom[0].totVarnc || "0" | number : "1.2-2" }}
+                    </div>
+                    <div class="wd-common">
+                        {{ "$" }} {{ dataByCom[0].actual_ytd || "0" | number : "1.2-2" }}
+                    </div>
+                    <div class="wd-common">
+                        {{ "$" }} {{ dataByCom[0].totBudget_ytd || "0" | number : "1.2-2" }}
+                    </div>
+                    <div class="wd-common">
+                        {{ "$" }} {{ dataByCom[0].totVarnc_ytd || "0" | number : "1.2-2" }}
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+
+
+        <div style="overflow: auto" *ngIf="boolVal">
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="dataByCom" [columnMode]="'force'"
+                [headerHeight]="50" [footerHeight]="50" rowHeight="auto"  [count]="1" [offset]="" [externalPaging]="false"
+                [limit]="1"  [scrollbarH]="true" [rowClass]="getRowClass">
+                <ngx-datatable-column name="Department Summary" prop="" [width]="190">
+                    <ng-template let-GLA_id="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ slctDpt || frstDp }} - Department Summary
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column   [width]="150" [sortable]="false">
+                 
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="actual" prop="actual" [width]="150">
+                    <ng-template let-actual="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }} {{ actual || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="budget" prop="totBudget" [width]="150">
+                    <ng-template let-totBudget="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ totBudget || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="variance" prop="totVarnc" [width]="150">
+                    <ng-template let-totVarnc="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ totVarnc || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="ytd actual" prop="actual_ytd" [width]="150">
+                    <ng-template let-actual_ytd="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ actual_ytd || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="ytd budget" prop="totBudget_ytd" [width]="150">
+                    <ng-template let-totBudget_ytd="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ totBudget_ytd || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="variance" prop="totVarnc_ytd" [width]="150">
+                    <ng-template let-totVarnc_ytd="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }} {{ totVarnc_ytd || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column [width]="200" [sortable]="false">
+                  <ng-template let-totVarnc_ytd="value" let-expanded="expanded" ngx-datatable-cell-template>
+                     <button type="button" class="btn btn-primary btn-sm" (click)="Fnlreconciliation()"> Finalize Reconciliation </button>
+                 </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column [width]="150" [sortable]="false">
+                   
+                </ngx-datatable-column>
+
+            </ngx-datatable>
+        </div>
+
+        <div class="text-center" *ngIf="!boolVal">
+         No Data To Display
+        </div>
+
+
+        <!-- Working User -->
+        <div style="overflow: auto" *ngIf="boolVal">
+            <ngx-datatable #gltablesss class="gltable bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+                [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [count]="" (page)="changeNow($event)" [offset]="glPage"
+                [limit]="10" [scrollbarH]="true" [rowClass]="getRowClass">
+                <ngx-datatable-column name="gl account" prop="GLA_id" [width]="150">
+                    <ng-template let-GLA_id="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ GLA_id || "---" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="gl and description" prop="gl_and_description" [width]="190">
+                    <ng-template let-gl_and_description="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ gl_and_description || "---" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="actual" prop="total_amount" [width]="150">
+                    <ng-template let-total_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }} {{ total_amount || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="budget" prop="budget" [width]="150">
+                    <ng-template let-budget="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ budget || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="variance" prop="vrnce" [width]="150">
+                    <ng-template let-vrnce="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ vrnce || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="ytd actual" prop="ytd_actual" [width]="150">
+                    <ng-template let-ytd_actual="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ ytd_actual || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="ytd budget" prop="YE_total" [width]="150">
+                    <ng-template let-YE_total="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }}{{ YE_total || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="variance" prop="YE_variance" [width]="150">
+                    <ng-template let-YE_variance="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ "$ " }} {{ YE_variance || "0" | number : "1.2-2" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="variance explanation" prop="department_summary" [width]="200">
+                    <ng-template let-department_summary="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ department_summary || "---" }}
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Reconciled" prop="pmt_type" [width]="200">
+                  <ng-template let-pmt_type="value" let-expanded="expanded" ngx-datatable-cell-template>
+                      {{ pmt_type == 'Reconciliation' ? 'Y' :  ' ' }}
+                  </ng-template>
+              </ngx-datatable-column>
+
+                <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="150">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <div class="d-flex align-items-center">
+                            <div ngbDropdown container="body">
+                                <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow"
+                                    id="dropdownBrowserState" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                    <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                                </a>
+                                <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                    <a ngbDropdownItem class="d-flex align-items-center" (click)="addEx(row)" *ngIf="row.editHide">
+                                        <i class="fa fa-plus mr-50"></i> Add Explanation
+                                    </a>
+                                    <a ngbDropdownItem class="d-flex align-items-center" (click)="addEx(row)" *ngIf="row.editHide1">
+                                        <i class="fa fa-edit mr-50"></i> Edit Explanation
+                                    </a>
+                                    <a ngbDropdownItem class="d-flex align-items-center" (click)="addRecSub(row)">
+                                        <i class="fa fa-plus mr-50"></i> Add Reconciliation
+                                    </a>
+                                    <!-- (click)="dltDprtmnt(row)" *ngIf="dltPrms ==1" -->
+                                    <!-- <a  ngbDropdownItem class="d-flex align-items-center" [routerLink]="['/department/edit-department',row.id,row.name]" *ngIf="edtPrms ==1">
+                                <i class="fa fa-trash mr-50"></i> Edit
+                            </a> -->
+                                    <!-- [routerLink]="['/department/edit-department',row.id,row.name]" -->
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>
+
+<ng-template #addExp let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1" *ngIf="expltnBool">Add Explanation</h4>
+        <h4 class="modal-title text-white" id="myModalLabel1" *ngIf="!expltnBool">Edit Explanation</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+            <div class="form-group">
+                <label for="exampleInputEmail1" *ngIf="expltnBool ">Add Explanation</label>
+                <label for="exampleInputEmail1" *ngIf="!expltnBool">Edit Explanation</label>
+                <textarea type="text" class="form-control" [(ngModel)]="expltn" placeholder="{{expltnBool == true ? 'Add Explanation' : 'Edit Explanation'}}" >
+        </textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"   (click)="subExp(modal)">
+                {{expltnBool == true ? "Add"  : "Edit"}}
+            </button>
+            <button type="button" class="btn btn-primary ml-1"   (click)="Cancle(modal)">
+                Cancel
+            </button>
+    </div>
+</ng-template>
+
+<ng-template #addRec let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1" >{{dsbFld == 'true' ? 'Add Reconciliation' : 'Add Missing GL Reconciliation'}}</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+              <form class="user" [formGroup]="formRoleData" (ngSubmit)="submitted(modal)">
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Community Name <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <!-- <input type="text"
+                                             [class.is-invalid]="FormData_Control['com_name'].dirty && FormData_Control['com_name'].invalid"
+                                             formControlName="com_name" class="form-control form-control-user"
+                                             id="com_name" class="form-control"
+                                             placeholder="Community Name" aria-describedby="passwordHelpInline">
+   -->                                     <span *ngIf="roleData1.includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+                                             <select  class="form-control" formControlName="com_name" (change)="slctComm($event.target.value,1)" *ngIf="currentUser.prmsnId == '6' || currentUser.user_role == '3' || currentUser.user_role == '8'" disabled>
+                                               <option value="" selected="selected" disabled>---Select Community---</option>
+                                               <option value="{{currentUser.user_role =='3' ? item.cp_id :  (item.id || item.community_id)}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                                           </select>
+                                          <span *ngIf="FormData_Control['com_name'].dirty && FormData_Control['com_name'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['com_name'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+  
+                                 <div class="row">
+                                   <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                           <label for="inputPassword6" class="col-form-label">Department <span class="text-danger">*</span>
+                                           </label>
+                                       </div>
+                                   </div>
+                                   <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                           <!-- <input type="text"
+                                               [class.is-invalid]="FormData_Control['department'].dirty && FormData_Control['department'].invalid"
+                                               formControlName="department" class="form-control form-control-user"
+                                               id="department" class="form-control"
+                                               placeholder="Department" aria-describedby="passwordHelpInline"> -->
+  
+                                               <select  class="form-control" formControlName="department" (change)="chngD($event)" disabled>
+                                                   <option value="" selected="selected" disabled>---Select Department---</option>
+                                                   <option value="" disabled *ngIf="!dprtmnt?.length">---No Record Founded---</option>
+                                                   <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}</option>
+                                               </select>
+  
+                                               <span *ngIf="FormData_Control['department'].dirty && FormData_Control['department'].invalid">
+                                               <div class="invalid-feedback"
+                                                   *ngIf="FormData_Control['department'].hasError('required')"
+                                                   class="text text-danger">
+                                                   This field required
+                                               </div>
+                                           </span>
+                                       </div>
+                                      
+                                   </div>
+                               </div>
+  
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Purchase Date <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="date"
+                                             [class.is-invalid]="FormData_Control['pur_date'].dirty && FormData_Control['pur_date'].invalid"
+                                             formControlName="pur_date" class="form-control form-control-user"
+                                             id="pur_date" class="form-control"
+                                             placeholder="Purchase Date" aria-describedby="passwordHelpInline" disabled>
+                                          <span *ngIf="FormData_Control['pur_date'].dirty && FormData_Control['pur_date'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['pur_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <!-- <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Vendor <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="text"
+                                             [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
+                                             formControlName="vendor" class="form-control form-control-user"
+                                             id="vendor" class="form-control"
+                                             placeholder="Vendor" aria-describedby="passwordHelpInline">
+  
+                                             <select  class="form-control" formControlName="vendor" [attr.disabled]="dsbFld == 'true' ? 'disabled' : null">
+                                               <option value="" selected="selected" disabled>---Select Vendor---</option>
+                                               <option value="" disabled *ngIf="!vendorData?.length">---No Record Founded---</option>
+                                               <option value="{{item.vendor_name}}" *ngFor="let item of vendorData">{{item.vendor_name}}</option>
+                                           </select>
+  
+                                          <span *ngIf="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['vendor'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-6" *ngIf="vendrHide">
+                                      <div class="common-form-left form-group">
+                                         <input type="text" #inpVal (keyup)="chckInpVal(inpVal.value)"  
+                                            [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
+                                            formControlName="vendor" class="form-control form-control-user"
+                                            id="vendor" class="form-control"
+                                            placeholder="Vendor" aria-describedby="passwordHelpInline">
+  
+                                         <span *ngIf="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid">
+                                            <div class="invalid-feedback"
+                                               *ngIf="FormData_Control['vendor'].hasError('required')"
+                                               class="text text-danger">
+                                               This field required
+                                            </div>
+                                         </span>
+                                      </div>
+                                   </div>
+                                 </div> -->
+  
+                                 <!-- <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Description <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="text"
+                                             [class.is-invalid]="FormData_Control['desc'].dirty && FormData_Control['desc'].invalid"
+                                             formControlName="desc" class="form-control form-control-user"
+                                             id="desc" class="form-control"
+                                             placeholder="Description" aria-describedby="passwordHelpInline">
+                                          <span *ngIf="FormData_Control['desc'].dirty && FormData_Control['desc'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['desc'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div> -->
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">GL Account <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <!-- <input type="text"
+                                             [class.is-invalid]="FormData_Control['gl_acc'].dirty && FormData_Control['gl_acc'].invalid"
+                                             formControlName="gl_acc" class="form-control form-control-user"
+                                             id="gl_acc" class="form-control"
+                                             placeholder="GL Account" aria-describedby="passwordHelpInline"> -->
+  
+                                             <select  class="form-control" formControlName="gl_acc">
+                                               <option value="" selected="selected" disabled>---Select GL Account---</option>
+                                               <option value="" disabled *ngIf="!ledgerData1?.length">---No Record Founded---</option>
+                                               <option value="{{item.gl_acc}}" *ngFor="let item of ledgerData1">{{item.gl_and_description}}</option>
+                                           </select>
+  
+                                          <span *ngIf="FormData_Control['gl_acc'].dirty && FormData_Control['gl_acc'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['gl_acc'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Month End Financials <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="number" (keyup)="monFin()"
+                                             [class.is-invalid]="FormData_Control['mntEdFin'].dirty && FormData_Control['mntEdFin'].invalid"
+                                             formControlName="mntEdFin" class="form-control form-control-user"
+                                             id="mntEdFin" class="form-control"
+                                             placeholder="Month End Financials" aria-describedby="passwordHelpInline" >
+                                          <span *ngIf="FormData_Control['mntEdFin'].dirty && FormData_Control['mntEdFin'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['mntEdFin'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row" *ngIf="dsbFld=='true'">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">spendtrak Actual <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="number"
+                                             [class.is-invalid]="FormData_Control['spAct'].dirty && FormData_Control['spAct'].invalid"
+                                             formControlName="spAct" class="form-control form-control-user"
+                                             id="spAct" class="form-control"
+                                             placeholder="spendtrak Actual " aria-describedby="passwordHelpInline" [attr.disabled]="dsbFld == 'true' ? 'disabled' : null">
+                                          <span *ngIf="FormData_Control['spAct'].dirty && FormData_Control['spAct'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['spAct'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Reconciliation Amount <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="number"
+                                             [class.is-invalid]="FormData_Control['amount'].dirty && FormData_Control['amount'].invalid"
+                                             formControlName="amount" class="form-control form-control-user"
+                                             id="amount" class="form-control"
+                                             placeholder="Amount" aria-describedby="passwordHelpInline" [attr.disabled]="dsbFld == 'true' ? 'disabled' : null">
+                                          <span *ngIf="FormData_Control['amount'].dirty && FormData_Control['amount'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['amount'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Payment Type <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <!-- <input type="text"
+                                             [class.is-invalid]="FormData_Control['pay_type'].dirty && FormData_Control['pay_type'].invalid"
+                                             formControlName="pay_type" class="form-control form-control-user"
+                                             id="pay_type" class="form-control"
+                                             placeholder="Payment Type" aria-describedby="passwordHelpInline"> -->
+  
+                                             <select  class="form-control" formControlName="pay_type" disabled>
+                                               <option value="" selected="selected" disabled>---Select Payment Type---</option>
+                                               <option value="{{item}}" *ngFor="let item of paymentType">{{item}}</option>
+                                           </select>
+  
+                                          <span *ngIf="FormData_Control['pay_type'].dirty && FormData_Control['pay_type'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['pay_type'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                   <div class="col-lg-4">
+                                      <div class="common-form-left">
+                                         <label for="inputPassword6" class="col-form-label">Final <span class="text-danger">*</span>
+                                         </label>
+                                      </div>
+                                   </div>
+                                   <div class="col-lg-8">
+                                      <div class="common-form-left form-group">
+                                         <!-- <input type="text"
+                                            [class.is-invalid]="FormData_Control['pay_type'].dirty && FormData_Control['pay_type'].invalid"
+                                            formControlName="pay_type" class="form-control form-control-user"
+                                            id="pay_type" class="form-control"
+                                            placeholder="Payment Type" aria-describedby="passwordHelpInline"> -->
+  
+                                            <select  class="form-control" formControlName="final" disabled>
+                                              <option value="" selected="selected" disabled>---Select Final---</option>
+                                              <option value="0">No</option>
+                                              <option value="1">Yes</option>
+                                          </select>
+  
+                                         <span *ngIf="FormData_Control['final'].dirty && FormData_Control['final'].invalid">
+                                            <div class="invalid-feedback"
+                                               *ngIf="FormData_Control['final'].hasError('required')"
+                                               class="text text-danger">
+                                               This field required
+                                            </div>
+                                         </span>
+                                      </div>
+                                   </div>
+                                </div>
+                                 <!-- <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Invoice Date 
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="date"
+                                             [class.is-invalid]="FormData_Control['invoice_date'].dirty && FormData_Control['invoice_date'].invalid"
+                                             formControlName="invoice_date" class="form-control form-control-user"
+                                             id="invoice_date" class="form-control"
+                                             placeholder="Invoice Date" aria-describedby="passwordHelpInline">
+                                          <span *ngIf="FormData_Control['invoice_date'].dirty && FormData_Control['invoice_date'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['invoice_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div> -->
+                                 <!-- <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Invoice Number
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                          <input type="text"
+                                             [class.is-invalid]="FormData_Control['invoice_number'].dirty && FormData_Control['invoice_number'].invalid"
+                                             formControlName="invoice_number" class="form-control form-control-user"
+                                             id="invoice_number" class="form-control"
+                                             placeholder="Invoice Number" aria-describedby="passwordHelpInline">
+                                          <span *ngIf="FormData_Control['invoice_number'].dirty && FormData_Control['invoice_number'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['invoice_number'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div> -->
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Entered Date <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                         <span>
+                                            {{minDate | date:'MM-dd-yyyy'}}
+                                         </span>
+                                          <!-- <input type="date"
+                                             [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
+                                             formControlName="start_date" class="form-control form-control-user"
+                                             id="start_date" class="form-control"
+                                             placeholder="Start Date" aria-describedby="passwordHelpInline"> -->
+                                          <span *ngIf="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['start_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                    <div class="col-lg-4">
+                                       <div class="common-form-left">
+                                          <label for="inputPassword6" class="col-form-label">Entered By <span class="text-danger">*</span>
+                                          </label>
+                                       </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                       <div class="common-form-left form-group">
+                                         
+                                             <span *ngIf="['1'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+                                             <span *ngIf="['6'].includes(currentUser.prmsnId)">Admin</span>
+                                             <span *ngIf="currentUser.user_role == '3'">{{comName?.mg_name}}</span>
+                                             <span *ngIf="roleData2.includes(currentUser.prmsnId)">{{userName?.first_name+' '+userName?.last_name}}</span>
+                                          <span *ngIf="FormData_Control['entered_by'].dirty && FormData_Control['entered_by'].invalid">
+                                             <div class="invalid-feedback"
+                                                *ngIf="FormData_Control['entered_by'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                             </div>
+                                          </span>
+                                       </div>
+                                       <div class="row addUserbtn">
+                                          <div class="m-1">
+                                             <button type="submit" class="btn btn-primary" [disabled]="loading">
+                                             <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                             {{ prmsUsrId?.id ? 'Save' : 'Add'}} 
+                                             </button>
+                                             <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" >
+                                             Cancel
+                                             </button>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 </form> 
+    </div>
+</ng-template>
+
+
+<!-- Reconciliation Finalization Process modal -->
+<ng-template #rfp let-modal>
+   <div class="modal-header bg-danger">
+       <h4 class="modal-title text-white" id="myModalLabel1">Reconciliation Finalization Process</h4>
+       <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+       </button>
+   </div>
+   <div class="modal-body" tabindex="0" ngbAutofocus>
+     <h5>{{FnlreconciliationText}}</h5>
+       <div class="row mt-1">
+           <button type="button" (click)="yesFinalization(modal)"  class="btn btn-primary btn-sm">
+               Yes
+               <span *ngIf="btnShow" [disabled]="btnShow"
+                   class="spinner-border spinner-border-sm" role="status"
+                   aria-hidden="true"></span>
+           </button>
+           <button type="button" (click)="closeded(modal)"
+               class="btn btn-primary btn-sm ml-1" [disabled]="btnShow">
+               No
+           </button>
+       </div>
+   </div>
+
+  
+</ng-template>
+<!-- /Reconciliation Finalization Process modal -->

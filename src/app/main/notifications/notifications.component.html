@@ -1,0 +1,120 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <h2 class="font-weight-bolder mt-1 w-100">
+            {{ 'Notification.ntnfcs' | translate}} 
+            <button class="btn btn-info float-right" (click)="openNotificaitonModal()">Add Notificaiton</button>
+        </h2>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex justify-content-between align-items-center m-1">
+                    <!-- <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoShow' | translate}}
+                        <select class="form-control mx-25" [(ngModel)]="page.size" (change)="setPage({ offset: 0 })">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> {{ 'DEPOSIT.depoEntry' | translate}}
+                    </label> -->
+                </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                <!-- <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+              <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}} 
+                <input type="search" placeholder="Search" class="form-control ml-25"/>
+              </label>
+            </div> -->
+            </div>
+        </div>
+
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+            <ngx-datatable-column [name]="'Notification.dt' | translate" prop="created_at">
+            </ngx-datatable-column>
+            <ngx-datatable-column [name]="'Notification.frusr' | translate" prop="to_everyone">
+                <ng-template let-status="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" [ngClass]="{ 
+                      'badge-light-success': status == 1,
+                      'badge-light-primary': status == 0 }">
+                        {{ (status == 1) ? 'Everyone' : 'Selected Users' }}
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column [name]="'Notification.ttle' | translate" prop="title">
+            </ngx-datatable-column>
+            <ngx-datatable-column [name]="'Notification.ntfcn' | translate" prop="description">
+            </ngx-datatable-column>
+            <ngx-datatable-column [name]="'Notification.atcn' | translate" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill badge-light-primary cursor-pointer" (click)="openDelNotification(row)">
+                        <i class="fa fa-trash"></i> Delete
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+</div>
+
+<div class="modal-on-show-event">
+    <!-- Modal -->
+    <ng-template #addNotificaion let-modal>
+      <div class="modal-header bg-info">
+        <h4 class="modal-title" id="myModalLabel1">Add Notification</h4>
+        <button type="button" [disabled]="addingNotificaion" class="close" (click)="closed(modal)" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Enter notification details below : </h5>
+        <div class="form">
+            <div class="form-group">
+                <label for="account-company">Title</label>
+                <input type="text" inputDirective inptype="alphaNumParagraph" maxLimit="30" [(ngModel)]="title" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="account-company">Description</label>
+                <textarea inputDirective maxLimit="250" [(ngModel)]="description" class="form-control" ></textarea>
+            </div>
+            <div class="form-group">
+                <label for="account-company">Security Code</label>
+                <input type="password" [(ngModel)]="securityCode" class="form-control" />
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" [disabled]="addingNotificaion" class="btn btn-info d-flex float-right" 
+            style="margin-top: 10px!important;" (click)="addNotification(modal)" rippleEffect>
+            <span  *ngIf="addingNotificaion" class="spinner-border spinner-border-sm mr-1"></span> Add
+          </button>
+      </div>
+    </ng-template>
+    <!-- / Modal -->
+
+    <!-- Modal -->
+    <ng-template #deleteNotificaion let-modal2>
+        <div class="modal-header bg-danger">
+            <h4 class="modal-title" id="myModalLabel1">Delete Notification</h4>
+            <button type="button" [disabled]="deletingNotificaion" class="close" (click)="closed(modal2)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <h5>Are you sure you want to delete notification ?</h5>
+            <div class="form">
+                <div class="form-group">
+                    <label for="account-company">Security Code</label>
+                    <input type="password" [(ngModel)]="securityCode" class="form-control" />
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" [disabled]="deletingNotificaion" class="btn btn-info d-flex float-right" 
+                style="margin-top: 10px!important;" (click)="deleteNotification(modal2)" rippleEffect>
+                <span  *ngIf="deletingNotificaion" class="spinner-border spinner-border-sm mr-1"></span> Delete
+            </button>
+        </div>
+    </ng-template>
+    <!-- / Modal -->
+</div>

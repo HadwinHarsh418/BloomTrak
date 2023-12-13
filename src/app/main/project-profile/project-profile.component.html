@@ -1,0 +1,1199 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <!-- account setting page -->
+    <section id="page-account-settings">
+      <div class="row nav-vertical d-flex">
+        <div class="col-md-3 mb-2 mb-md-0">
+          <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Basic Information</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Shift Information</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" *ngFor="let mng of snglShftDtls">
+                      <div class="card" style="margin-bottom:auto ;">
+                        
+                        <div class="row space  mb-1" *ngIf="currentUser.role =='User' || currentUser.role =='Agency' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Community Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.community_name}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.role =='User' || currentUser.role =='Agency' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Community Phone No : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.community_phone_no | numberFormat}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Agency Applicable Rates : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.agcy_app_rate}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Rate Type : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.rate_type}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Department : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.department}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Position : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.positions}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Minimum Certification : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.certification}}</span></div>
+                        </div>
+                        
+                        <div class="row space  mb-1" *ngIf="currentUser.role =='User' || currentUser.role =='Agency'">
+                          <div class="col-md-6">
+                            <h6>Allow Overtime : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="overtime"> {{mng.overtime == 1 ? 'Yes' : 'No'}}</span></div>
+                        </div>
+
+                        <!-- <div class="row space  mb-1">
+                                <div class="col-md-6">
+                                  <h6>Cancellation Period : </h6>
+                                </div>
+                                <div class="col-md-6"><span class="description"> {{mng.cancellation_period}}</span></div>
+                              </div> -->
+
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Description : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.description}}</span></div>
+                        </div>
+                        
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift Start Date : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.start_time | customDateTime}}</span>
+                          </div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift Start Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.start_time | customTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift End Date : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.end_time | customDateTime}}</span>
+                          </div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift End Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.end_time | customTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift Duration : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{duration}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift Posted At : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng?.cr}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '4'">
+                          <div class="col-md-6">
+                            <h6>Additional Note : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="additional_note"> {{mng.additional_note ? mng.additional_note : '---' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.role != 'User' && currentUser.role != 'Agency'">
+                          <div class="col-md-6">
+                            <h6>Delay : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.delay + ' '+ mng.h_m}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '5' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Variance Clock In Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.user_start_time | customDateTime}} {{mng.user_start_time | customTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '5' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Variance Clock Out Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.user_end_time | customDateTime}} {{mng.user_end_time | customTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '5' || currentUser.user_role == '4' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Adjusted Clock In Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.adj_start_time | customDateTime}} {{mng.adj_start_time | customTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '5' || currentUser.user_role == '4' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Adjusted Clock Out Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.adj_end_time | customDateTime}} {{mng.adj_end_time | customTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '5' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Break : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description">{{mng.breakTime}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1" *ngIf="currentUser.user_role == '5' || currentUser.role =='SuperAdmin'">
+                          <div class="col-md-6">
+                            <h6>Adjusted Break : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.adj_break_time}}</span></div>
+                        </div>
+                        
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Community Address1 : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng?.community_address1}} </span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Community Address2 : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description">{{mng?.community_address2}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>City : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng?.city}} </span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>State : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng?.state}} </span></div>
+                        </div>
+                        
+                        <div class="row space  mb-1" >
+                          <div class="col-md-6">
+                            <h6>Zip Code : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng?.zipcode}} </span></div>
+                        </div>
+
+                        <div class="row addUserbtn">
+                          <div class="m-1">
+                            <span *ngIf="!aplHide">
+                              <button type="button" class="btn btn-primary mr-1" (click)="applyShift(mng)"
+                                [disabled]="btnShow"
+                                *ngIf="(currentUser.user_role == '4' || currentUser.role == 'Agency') && checkVal == '1'">Apply</button>
+                            </span>
+                            <button type="button" (click)="goBack()" class="btn btn-primary" [disabled]="btnShow">
+                              <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex justify-content-center" *ngIf="!snglShftDtls">
+                      <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                    </div>
+                  </div>
+                  <div *ngIf="!snglShftDtls.length" class="text-center mb-1">
+                    No Data To Display
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li class="nav-item" ngbNavItem *ngIf="currentUser.role == 'Agency' && aplHide">
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Clock In/Out</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Details of Assigned User</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" *ngFor="let snglUsr of usrAssg">
+                      <div class="card">
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>First Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="first_name"> {{snglUsr?.item?.first_name || '---' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Last Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="last_name"> {{snglUsr?.item?.user_lastname || '---' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Phone Number : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="phone_number"> {{(snglUsr?.item?.phone_number ? snglUsr.item?.phone_number
+                                  :'---') | mask: '(000) 000-0000' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift Start Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftStartTime"> {{shiftStartTime || '---'  }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Shift End Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{shiftEndTime || '---'  }}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Clock In Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{clkInTm || '---'  }} </span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Clock Out Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{clkOtTm || '---'}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Variance Form Complete: </h6>
+                          </div>
+                        <div class="col-md-6"><span class="shiftEndTime"> {{shftData?.varFrmCmpl == '0'  ? 'No' : 'Yes'}}</span></div>
+                        </div>
+
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjust Start Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{adjSrtTime || '---' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjust End Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{adjEndTime || '---'}} </span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Break: </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{shftData?.adj_break_time ?shftData?.adj_break_time: '30'}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjusted Break: </h6>
+                          </div>
+                          <div class="col-md-6" *ngIf="shftData?.adj_break_time"><span class="shiftEndTime"> {{shftData?.adj_break_time}} </span></div>
+                          <div class="col-md-6" *ngIf="clockDetails.adj_break_time"><span class="shiftEndTime"> {{clockDetails.adj_break_time}} </span></div>
+                        </div>
+                        <span *ngFor="let mng of snglShftDtls">
+
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Agency Applicable Rates : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.agcy_app_rate}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Rate Type : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.rate_type}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role =='User'">
+                            <div class="col-md-6">
+                              <h6>Community Name : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.community_name}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Department : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.department}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Position : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.positions}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Certification : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.certification}}</span></div>
+                          </div>
+                          
+                          <div class="row space  mb-1" *ngIf="currentUser.role =='User' || currentUser.role =='Agency'">
+                            <div class="col-md-6">
+                              <h6>Allow Overtime : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="overtime"> {{mng.overtime == 1 ? 'Yes' : 'No'}}</span></div>
+                          </div>
+  
+                          <!-- <div class="row space  mb-1">
+                                  <div class="col-md-6">
+                                    <h6>Cancellation Period : </h6>
+                                  </div>
+                                  <div class="col-md-6"><span class="description"> {{mng.cancellation_period}}</span></div>
+                                </div> -->
+  
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Description : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.description}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role != 'User' && currentUser.role != 'Agency'">
+                            <div class="col-md-6">
+                              <h6>Delay : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.delay + ' '+ mng.h_m}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role == 'User'">
+                            <div class="col-md-6">
+                              <h6>Variance Clock In Time : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.user_start_time | customDateTime}} {{mng.user_start_time | customTime}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role == 'User'">
+                            <div class="col-md-6">
+                              <h6>Variance Clock Out Time : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.user_end_time | customDateTime}} {{mng.user_end_time | customTime}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role == 'User'">
+                            <div class="col-md-6">
+                              <h6>Adjusted Clock In Time : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.adj_start_time | customDateTime}} {{mng.adj_start_time | customTime}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role == 'User'">
+                            <div class="col-md-6">
+                              <h6>Adjusted Clock Out Time : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.adj_end_time | customDateTime}} {{mng.adj_end_time | customTime}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role == 'User'">
+                            <div class="col-md-6">
+                              <h6>Break : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.adj_break_time}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" *ngIf="currentUser.role == 'User'">
+                            <div class="col-md-6">
+                              <h6>Adjusted Break : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng.adj_break_time}}</span></div>
+                          </div>
+                          
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Community Address1 : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng?.community_address1}} </span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>Community Address2 : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description">{{mng?.community_address2}}</span></div>
+                          </div>
+  
+                          <div class="row space  mb-1" >
+                            <div class="col-md-6">
+                              <h6>Zip Code : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng?.zipcode}} </span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>City : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng?.city}} </span></div>
+                          </div>
+  
+                          <div class="row space  mb-1">
+                            <div class="col-md-6">
+                              <h6>State : </h6>
+                            </div>
+                            <div class="col-md-6"><span class="description"> {{mng?.state}} </span></div>
+                          </div>
+  
+  
+                        </span>
+
+                        <div class="row addUserbtn">
+                          <div class="m-1">
+                            <button type="button" (click)="goBack()" class="btn btn-primary" [disabled]="btnShow">
+                              <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="card" *ngIf="!usrAssg">
+                        <div >
+                            No data to display
+                        </div>
+                      </div>
+                    </div>
+                    <!-- <div class="d-flex justify-content-center" *ngIf="!usrAssg?.length">
+                      <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                    </div> -->
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li class="nav-item" ngbNavItem *ngIf="currentUser.role == 'Community' && aplHide">
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Clock In/Out</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Details of Assigned User</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" >
+                      <div class="card">
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>First Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="first_name"> {{usrCmAssg?.first_name || '---'}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Last Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="last_name"> {{usrCmAssg?.last_name || '---' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Phone Number : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="phone_number"> {{usrCmAssg?.phone_number | mask: '(000) 000-0000'}}</span></div>
+                        </div>
+                        
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Scheduled Start Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftStartTime"> {{shiftStartTime  || '---'}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Scheduled End Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{shiftEndTime || '---'   }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Clock In Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{clkInTm || '---'  }} </span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Clock Out Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{clkOtTm || '---'}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Variance Form Complete: </h6>
+                          </div>
+                        <div class="col-md-6"><span class="shiftEndTime"> {{shftData?.varFrmCmpl == '0'  ? 'No' : 'Yes'}}</span></div>
+                        </div>
+
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjust Start Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{adjSrtTime || '---' }}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjust End Time : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{adjEndTime || '---'}} </span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Break: </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{shftData?.adj_break_time}}</span></div>
+                        </div>
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjusted Break: </h6>
+                          </div>
+                          <div class="col-md-6"><span class="shiftEndTime"> {{shftData?.adj_break_time}} </span></div>
+                        </div>
+
+
+                        
+
+                        <!-- <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Adjusted Break: </h6>
+                          </div>
+                        </div> -->
+
+                        <div class="row addUserbtn">
+                          <div class="m-1">
+                            <button type="button" (click)="goBack()" class="btn btn-primary" [disabled]="btnShow">
+                              <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                              Cancel
+                            </button>
+
+                            <button type="button" (click)="editOpen()" class="btn btn-primary ml-1" >
+                              <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                              Edit
+                            </button>
+
+                          </div>
+                        </div>
+                      </div>
+                      <!-- <div class="card">
+                        <div *ngIf="!usrCmAssg">
+                          <div>
+                            No data to display
+                          </div>
+                        </div>
+                      </div> -->
+                    </div>
+                    <!-- <div class="d-flex justify-content-center" *ngIf="!usrCmAssg">
+                      <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                    </div> -->
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <!-- || ((snglShftDtls[0].assigned != 0 && snglShftDtls[0].status !='0') && snglShftDtls[0].approved == 1 && (snglShftDtls[0].assigned ==2 || snglShftDtls[0].assigned ==3)) -->
+            <!-----------------Upload Variance-------------------------->
+            <li class="nav-item" ngbNavItem *ngIf="currentUser.user_role =='2' && (checkVal =='0' && snglShftDtls[0]?.assigned == 3)"> 
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Upload Variance</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Upload Variance</h4>
+                  </div>
+                  <div class="col-md-6" style="color: green;" *ngIf="snglShftDtls[0]?.files"><span class="first_name"> {{usrCmAssg?.first_name || 'Agency Variance Form Uploaded'}}</span></div>
+
+                  <div class="card-body">
+
+                    <form [formGroup]="varianceForm" (ngSubmit)="varianceSubmit()">
+
+                      <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6"
+                                    class="col-form-label">Variance Name </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                          <!-- <div class="common-form-left form-group">
+                            <input type="file" [class.is-invalid]="vf['file'].dirty && vf['file'].invalid"
+                              formControlName="file" class="form-control form-control-user" id="file" (change)="fileChange($event)"
+                              id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                            <span *ngIf="vf['file'].dirty && vf['file'].invalid">
+                              <div class="invalid-feedback" *ngIf="vf['file'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                              </div>
+                            </span>
+                          </div> -->
+                          <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Community'|| currentUser.role == 'Agency' || currentUser.role == 'Admin' || currentUser.user_role =='5'" >
+                            <i class="fa fa-file "></i>   Import File
+                            <input #fileInput type="file"  (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                          </button>
+                        </div>
+                    </div>
+                      <div class="row addUserbtn">
+                        <div class="m-1">
+                          <button type="button" (click)="goBack()" class="btn btn-primary" [disabled]="btnShow">
+                            <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                              aria-hidden="true"></span>
+                            Cancel
+                          </button>
+
+                          <!-- <button type="submit" class="btn btn-primary ml-1" >
+                            <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                              aria-hidden="true"></span>
+                            Upload
+                          </button> -->
+                          </div>
+                        </div>
+                      </form>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            
+            <!-----------------View Variance------------------------->
+            <li class="nav-item" ngbNavItem *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Community'|| currentUser.role == 'Agency' && this.fileToUpload?.length"> 
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">View Variance</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Details of Variance</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" >
+                      <div class="card">
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Variance Name : </h6>
+                          </div>
+                          <div class="col-md-6" *ngIf="snglShftDtls[0]?.files"><span class="first_name"> {{usrCmAssg?.first_name || 'Agency Variance Form'}}</span>
+                          
+                            <button type="button"  class="btn-sm btn-info ml-1" >
+                              <a href="{{snglShftDtls[0]?.files}}" download style="color:#fff">
+                            <i class="fa fa-download "></i>   Download File
+                              </a>
+                          </button>
+                          </div>
+                          <div class="col-md-6" *ngIf="!snglShftDtls[0]?.files"><span class="first_name">No Form Uploaded</span>
+                            </div>
+                        </div>
+
+                        <div class="row addUserbtn">
+                          <div class="m-1">
+                            <button type="button" (click)="goBack()" class="btn btn-primary" [disabled]="btnShow">
+                              <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                              Cancel
+                            </button>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+          </ul>
+
+        </div>
+        <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+      </div>
+    </section>
+    <!--/ account setting page -->
+  </div>
+</div>
+
+<!-- Users List -->
+<ng-template #UserLiST let-modal>
+  <div class="modal-header bg-danger">
+    <h4 class="modal-title text-white" id="myModalLabel1">Users List</h4>
+    <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+
+    <div class="table-responsive">
+      <table class="table ">
+        <thead>
+          <tr>
+            <th scope="col" class="col btn-primary">No.</th>
+            <th scope="col" class="col btn-primary">Assign</th>
+            <th scope="col" class="col btn-primary">Firstname</th>
+            <th scope="col" class="col btn-primary">Lastname</th>
+            <th scope="col" class="col btn-primary"> Phone No.</th>
+            <th scope="col" class="col btn-primary"> Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let snglUsr of agncyUsr; let i = index" style="font-size: 12px !important;">
+            <td class="col">{{i + 1}}</td>
+            <td class="col">
+              <button class="btn-sm btn-primary" (click)="assignShift(snglUsr,modal)">Assign
+              </button>
+              <!-- <b *ngIf="snglUsr.asgnBtn">Assigned</b> -->
+            </td>
+            <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name :
+                                      snglUsr?.agency_name}} </td>
+            <td class="col">{{snglUsr?.user_lastname ? snglUsr?.user_lastname :
+                                      '---' }} </td>
+            <!-- <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : 'Not Assign'}} ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td> -->
+            <td class="col">{{(snglUsr?.phone_number ? snglUsr.phone_number
+                                      : snglUsr.agency_contact_cell_number) | numberFormat }}</td>
+            <td class="col">{{snglUsr?.email ? snglUsr?.email :
+                                      snglUsr?.agency_contact_email_address}}</td>
+            <!-- <td class="col">{{snglUsr?.hourly_rate}}</td> -->
+            
+          </tr>
+          <tr *ngIf="!agncyUsr?.length">
+            <td>
+              No data to display
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn-sm btn-primary" (click)="openAddNew()">Add New User</button>
+    </div>
+    <!-- </div>
+          </div> -->
+
+
+
+  </div>
+
+
+</ng-template>
+<!-- / Users List -->
+
+
+<!-- Addnew List -->
+<ng-template #Addnew let-modal>
+  <div class="modal-header bg-danger">
+    <h4 class="modal-title text-white" id="myModalLabel1">Add New User</h4>
+    <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+
+    <form class="user" [formGroup]="formData" (ngSubmit)="submitted()">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="common-form-field">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="welcome-logo">
+                  <img src="assets/images/log.png" alt="">
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">First Name <span
+                      class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+                  <input type="text" [class.is-invalid]="controls['first_name'].dirty && controls['first_name'].invalid"
+                    formControlName="first_name" class="form-control form-control-user" id="first_name"
+                    id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                  <span *ngIf="controls['first_name'].dirty && controls['first_name'].invalid">
+                    <div class="invalid-feedback" *ngIf="controls['first_name'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-4">
+                  <div class="common-form-left">
+                      <label for="inputPassword6"
+                          class="col-form-label">Last Name <span class="text-danger">*</span></label>
+                  </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+                  <input type="text" [class.is-invalid]="controls['last_name'].dirty && controls['last_name'].invalid"
+                    formControlName="last_name" class="form-control form-control-user" id="last_name"
+                    id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                  <span *ngIf="controls['last_name'].dirty && controls['last_name'].invalid">
+                    <div class="invalid-feedback" *ngIf="controls['last_name'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+          </div>
+    
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label"> Phone Number
+                    <span class="text-danger">*</span></label>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+                  <input type="text" phoneMask [preValue]="formData.value.phone_number" maxlength="14"
+                    [class.is-invalid]="controls['phone_number'].dirty && controls['phone_number'].invalid"
+                    formControlName="phone_number" class="form-control form-control-user" id="phone_number">
+                  <span *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
+                    <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                    <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('pattern')"
+                      class="text text-danger">
+                      Enter valid phone number
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-4">
+                  <div class="common-form-left">
+                      <label for="inputPassword6"
+                          class="col-form-label"> Pin Code
+                          <span class="text-danger">*</span></label>
+                  </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+                  <input inputDirective inptype="number" type="text" [class.is-invalid]="controls['pin'].dirty && controls['pin'].invalid"
+                    formControlName="pin" class="form-control form-control-user" id="pin" maxlength="5"
+                    id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                  <span *ngIf="controls['pin'].dirty && controls['pin'].invalid">
+                    <div class="invalid-feedback" *ngIf="controls['pin'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+          </div>
+
+            <button type="submit" class="btn btn-primary">
+              Add
+              <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm" role="status"
+                aria-hidden="true"></span>
+            </button>
+            <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+
+  </div>
+
+
+</ng-template>
+<!-- / Addnew List -->
+
+<!-- Edit modal -->
+<ng-template #editModal let-modal>
+  <div class="modal-header bg-danger">
+    <h4 class="modal-title text-white" id="myModalLabel1">Variance Form Adjustments</h4>
+    <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+
+    <form class="user" [formGroup]="editModalForm" (ngSubmit)="editModalsubmitted()">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="common-form-field">
+
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Variance Form Completed</label>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+
+                  <div class="row">
+                    <div class="col-lg-8">
+                      <div class="common-form-left form-group d-flex">
+                          <div class="form-check">
+                              <input class="form-check-input" 
+                                  value='1' formControlName="varFrmCmpl"  type="radio"
+                                  id="flexRadioDefault1">
+                              <label class="form-check-label" for="flexRadioDefault1">
+                                  Yes
+                              </label>
+                          </div>
+                          <div class="form-check ml-3">
+                              <input class="form-check-input" formControlName="varFrmCmpl"  
+                                  value='0' 
+                                  type="radio" id="flexRadioDefault2" >
+                              <label class="form-check-label" for="flexRadioDefault2">
+                                  No
+                              </label>
+                          </div>
+                      </div>
+                  </div>
+                  </div>
+                  <span *ngIf="ec['varFrmCmpl'].dirty && ec['varFrmCmpl'].invalid">
+                    <div class="invalid-feedback" *ngIf="ec['varFrmCmpl'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Variance Clock In Time</label>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+
+                  <div class="row">
+                    <div class="input-group col-lg-12">
+                      <input type="date"  class="form-control"
+                        formControlName="holi_strDate" aria-label="Text input with dropdown button">
+
+                      <select placeholder="HH:MM" formControlName="holi_strTime" name="startTime"
+                        class="form-control">
+                        <option disabled value="">Hours</option>
+                        <option *ngFor="let tm of hrs">
+                          {{tm}}</option>
+                      </select>
+
+                      <select placeholder="HH:MM" formControlName="holi_strTime1" name="startTime"
+                      class="form-control">
+                      <option disabled value="">Minutes</option>
+                      <option *ngFor="let tm of count">
+                        {{tm}}</option>
+                    </select>
+
+                    </div>
+                  </div>
+                  <span *ngIf="ec['holi_strDate'].dirty && ec['holi_strDate'].invalid">
+                    <div class="invalid-feedback" *ngIf="ec['holi_strDate'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Variance Clock Out Time</label>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+
+                  <div class="row">
+                    <div class="input-group col-lg-12">
+                      <input input type="date" min="{{ec['holi_strDate'].value}}"
+                         formControlName="holi_endDate"
+                        class="form-control" aria-label="Text input with dropdown button">
+
+                      <select placeholder="HH:MM" formControlName="holi_endTime" class="form-control"
+                        >
+                        <option disabled value="">Hours</option>
+                        <option *ngFor="let tm of hrs">
+                          {{tm}}</option>
+                      </select>
+
+                      <select placeholder="HH:MM" formControlName="holi_endTime1" class="form-control"
+                        >
+                        <option disabled value="">Minutes</option>
+                        <option *ngFor="let tm of count">
+                          {{tm}}</option>
+                      </select>
+
+                    </div>
+                  </div>
+                  <span *ngIf="ec['holi_endDate'].dirty && ec['holi_endDate'].invalid">
+                    <div class="invalid-feedback" *ngIf="ec['holi_endDate'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Adjusted Break</label>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="common-form-left form-group">
+
+                  <div class="row">
+                    <div class="input-group col-lg-12">
+                      <!-- <input input type="date" 
+                         formControlName="adj_Brk"
+                        class="form-control" aria-label="Text input with dropdown button"> -->
+
+                      <select placeholder="HH:MM" formControlName="adj_BrkTime" class="form-control"
+                        >
+                        <option disabled value="">---Adjusted Break In Minutes---</option>
+                        <option *ngFor="let tm of count2">
+                          {{tm}}</option>
+                      </select>
+
+                    </div>
+                  </div>
+                  <span *ngIf="ec['adj_BrkTime'].dirty && ec['adj_BrkTime'].invalid">
+                    <div class="invalid-feedback" *ngIf="ec['adj_BrkTime'].hasError('required')"
+                      class="text text-danger">
+                      This field required
+                    </div>
+                  </span>
+                </div>
+              </div>
+            </div>
+        
+
+            <button type="submit" class="btn btn-primary">
+              Save
+              <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm" role="status"
+                aria-hidden="true"></span>
+            </button>
+            <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+
+
+
+  </div>
+
+
+</ng-template>
+<!-- / Edit modal -->
+
+<!-- <ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
+    [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view>contentHeader -->

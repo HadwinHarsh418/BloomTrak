@@ -1,0 +1,673 @@
+<div class="col-lg-12">
+    <div class="card card-statistics">
+        <div class="card-header">
+            <h4 class="card-title text-center">Welcome to bloomtrak</h4>
+            <h6 class="card-title text-danger" *ngIf="showPermisionError?.length  == 0">You Have No Permisions Please Contact To Your Admin</h6>
+
+        </div>
+    </div>
+
+</div>
+<div class="row match-height" *ngIf="shftTrk&&showPermisionError?.length">
+    <!-- Medal Card -->
+    <ng-container *ngFor="let dashuser of dashusers">
+        <div class="col-xl-4 col-md-6 col-12" *ngIf="dashuser.roles.includes(currentUser.role)">
+            <div class="card card-congratulation-medal">
+                <div class="card-body">
+                    <!-- <h5>Welcome 🎉 {{ dashuser?.username }}!</h5> -->
+                    <!-- <p class="card-text font-small-3">to bloomtrak</p> -->
+                    <h3 class="mb-75 mt-2 pt-50">
+                        <a href="javascript:void(0);">Total {{dashuser?.name}} {{dashuser?.total_username || 0}}</a>
+                    </h3>
+                    <button type="button" class="btn btn-primary" routerLink="{{rLink}}">
+                        <i class="fa fa-eye"></i>
+                        {{viewStat}}
+                    </button>
+                    <!-- <img src="assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" /> -->
+                </div>
+            </div>
+        </div>
+    </ng-container>
+
+    <!-- <div class="col-xl-4 col-md-6 col-12">
+    <div class="card card-congratulation-medal">
+        <div class="card-body">
+            <h5>Wlecome 🎉 {{ currentUser?.username }}!</h5>
+            <p class="card-text font-small-3">to bloomtrak</p>
+            <h3 class="mb-75 mt-2 pt-50">
+                <a href="javascript:void(0);">Tot. Communities {{data?.total_user || 0}}</a>
+            </h3>
+            <button type="button" class="btn btn-primary" rippleEffect>View Communities</button>
+            <img src="assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" />
+        </div>
+    </div>
+</div> -->
+    <!--/ Medal Card -->
+    <!-- Statistics Card -->
+    <div class="col-xl-8 col-md-6 col-12">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">shiftrak Statistics</h4>
+                <!-- <div class="d-flex align-items-center">
+                    <p class="card-text font-small-2 mr-25 mb-0">For bloomtrak</p>
+                </div> -->
+            </div>
+            <div class="card-body statistics-body">
+                <div class="row d-flex " *ngIf="currentUser.role != 'User'">
+                    <ng-container *ngFor="let dispStat of stats">
+
+                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="dispStat.roles.includes(currentUser.role)">
+                            <div class="media">
+                                <div class="avatar {{dispStat.iconColor}} mr-2">
+                                    <div class="avatar-content">
+                                        <i class="{{dispStat.icon}} avatar-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="media-body my-auto">
+                                    <h4 class="font-weight-bolder mb-0">{{ dispStat.stat || 0 }}</h4>
+                                    <p class="card-text font-small-3 mb-0">{{dispStat.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-container>
+
+                    <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                        <div class="media">
+                            <div class="avatar bg-light-info mr-2">
+                                <div class="avatar-content">
+                                    <i class="fa fa-building-o  avatar-icon"></i>
+                                </div>
+                            </div>
+                            <div class="media-body my-auto">
+                                <h4 class="font-weight-bolder mb-0">{{ data?.total_vehicle || 0 }}</h4>
+                                <p class="card-text font-small-3 mb-0">Agencies</p>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                        <div class="media">
+                            <div class="avatar bg-light-danger mr-2">
+                                <div class="avatar-content">
+                                    <i class="fa fa-car avatar-icon"></i>
+                                </div>
+                            </div>
+                            <div class="media-body my-auto">
+                                <h4 class="font-weight-bolder mb-0">{{ data?.active_booking || 0}}</h4>
+                                <p class="card-text font-small-3 mb-0">Employees</p>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- <div  *ngIf="currentUser.role == 'User'">
+                        <button type="button" class="btn btn-primary" [routerLink]="['/dashboard/clock-stepper']">
+                            <i class="fa fa-clock mr-50"></i>Start Shift
+                        </button>
+                    </div> -->
+                </div>
+
+                <div class="row d-flex justify-content-between" *ngIf="currentUser.role == 'User'">
+                    <ng-container *ngFor="let dispStat of stats">
+
+                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="dispStat.roles.includes(currentUser.role)">
+                            <div class="media">
+                                <div class="avatar {{dispStat.iconColor}} mr-2">
+                                    <div class="avatar-content">
+                                        <i class="{{dispStat.icon}} avatar-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="media-body my-auto">
+                                    <h4 class="font-weight-bolder mb-0">{{ dispStat.stat || 0 }}</h4>
+                                    <p class="card-text font-small-3 mb-0">{{dispStat.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-container>
+
+                    <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                        <div class="media">
+                            <div class="avatar bg-light-info mr-2">
+                                <div class="avatar-content">
+                                    <i class="fa fa-building-o  avatar-icon"></i>
+                                </div>
+                            </div>
+                            <div class="media-body my-auto">
+                                <h4 class="font-weight-bolder mb-0">{{ data?.total_vehicle || 0 }}</h4>
+                                <p class="card-text font-small-3 mb-0">Agencies</p>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
+                        <div class="media">
+                            <div class="avatar bg-light-danger mr-2">
+                                <div class="avatar-content">
+                                    <i class="fa fa-car avatar-icon"></i>
+                                </div>
+                            </div>
+                            <div class="media-body my-auto">
+                                <h4 class="font-weight-bolder mb-0">{{ data?.active_booking || 0}}</h4>
+                                <p class="card-text font-small-3 mb-0">Employees</p>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- <div *ngIf="currentUser?.user_role == '5'">
+                        <button type="button" class="btn btn-primary" [routerLink]="['/clockin']">
+                            <i class="fa fa-clock mr-50"></i>Start Shift
+                        </button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--/ Statistics Card -->
+    <!-- Todays -->
+    <!-- <div class="col-xl-8 col-md-6 col-12">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">Today's</h4>
+            </div>
+            <div class="card-body">
+
+                <ul ngbNav #nav="ngbNav" class="nav-tabs">
+                    <li ngbNavItem>
+                        <a ngbNavLink>Reservations</a>
+                        <ng-template ngbNavContent>
+                            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="todayBooking"
+                                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" rowHeight="auto">
+                                <ngx-datatable-column [name]="'Departure Time'" prop="start_period">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                    
+                                        {{ row.start_period | date : 'MMM dd yyyy'}}, {{ '1/1/2021 '+row.start_time |
+                                        date : 'h:mm a'}}
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column [name]="'Vehicle'" prop="name">
+                                    <ng-template let-vehicle_row="row" ngx-datatable-cell-template>
+                                        {{vehicle_row.name}}
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column [name]="'user.usrName' | translate" prop="username">
+                                </ngx-datatable-column>
+
+                            </ngx-datatable>
+                        </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                        <a ngbNavLink>Departures</a>
+                        <ng-template ngbNavContent>
+                            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="todays_Departure"
+                                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
+                                [limit]="10">
+                                <ngx-datatable-column [name]="'Departure Time'" prop="end_period">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                     
+                                        {{ row.start_period | date : 'MMM dd yyyy'}}, {{ '1/1/2021 '+row.start_time |
+                                        date : 'h:mm a'}}
+
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column [name]="'Vehicle'" prop="name">
+                                    <ng-template let-vehicle_row="row" ngx-datatable-cell-template>
+                                        {{vehicle_row.name}}
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column [name]="'user.usrName' | translate" prop="username">
+                                </ngx-datatable-column>
+
+                            </ngx-datatable>
+                        </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                        <a ngbNavLink>Returning</a>
+                        <ng-template ngbNavContent>
+                            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="todays_Returning"
+                                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
+                                [limit]="10">
+                                <ngx-datatable-column [name]="'Arrival Time'" prop="end_period">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                     
+                                        {{ row.end_period | date : 'MMM dd yyyy'}}, {{ '1/1/2021 '+row.end_time | date :
+                                        'h:mm a'}}
+
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column [name]="'Vehicle'" prop="name">
+                                    <ng-template let-vehicle_row="row" ngx-datatable-cell-template>
+                                        {{vehicle_row.name}}
+                                    </ng-template>
+                                </ngx-datatable-column>
+
+                                <ngx-datatable-column [name]="'user.usrName' | translate" prop="username">
+                                </ngx-datatable-column>
+
+                            </ngx-datatable>
+                        </ng-template>
+                    </li>
+                </ul>
+                <div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+            </div>
+        </div>
+
+    </div> -->
+    <!-- Memo -->
+    <!-- <div class="col-xl-4 col-md-6 col-12">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">Memo</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+        
+                    <textarea class="form-control" id="account-memo" name="account-memo" [(ngModel)]="memoText" row="5"
+                        placeholder="Enter Memo"> </textarea>
+                </div>
+                <div class="form-group text-right">
+                    <button class="btn btn-primary" (click)="updateMemo()" [disabled]="loadingMemo">
+                        Update Memo <span *ngIf="loadingMemo" class="spinner-border spinner-border-sm mr-1"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div> -->
+
+    <!-- <div class="col-xl-8 col-md-6 col-12">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">Availability</h4>
+            </div>
+            <div class="card-body">
+
+            </div>
+        </div>
+    </div> -->
+</div>
+<div class="row match-height" *ngIf="spndTrk && currentUser.prmsnId != '2'&&showPermisionError?.length">
+
+    <div class="col-4">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">Last Entry Summary</h4>
+            </div>
+
+
+            <div class="row mx-1" *ngIf="['6','3','8'].includes(currentUser.prmsnId)">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label for="inputPassword6" class="col-form-label">Communities :
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <select class="form-control" (change)="chngCom($event.target.value)"
+                            *ngIf="currentUser.user_role !='3'  && this.currentUser.user_role !='8'">
+                            <!-- <option value="undefined" selected="selected" disabled>---Select Community---</option> -->
+                            <!-- <option value="" >All Communities</option> -->
+                            <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}
+                            </option>
+                        </select>
+                        <select class="form-control"
+                            *ngIf="currentUser.user_role=='3'  || this.currentUser.user_role=='8'"
+                            (change)="chngCom($event.target.value)">
+                            <!-- <option value="undefined" selected="selected" disabled>---Select Community---</option> -->
+                            <!-- <option value="" >All Community</option> -->
+                            <option value="{{item.cp_id || item.community_id}}" *ngFor="let item of allCommunity">
+                                {{item.community_name}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row mx-1">
+                <div class="col-lg-5">
+                    <div class="common-form-left">
+                        <label for="inputPassword6" class="col-form-label">Select Time Period :
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="common-form-left form-group">
+                        <select name="overtime" class="form-control" (change)="chngDay($event.target.value)">
+                            <!-- <option value="undefined" selected="selected" disabled>---Allow Overtime---</option> -->
+                            <option value="1">1 Day</option>
+                            <option value="3" selected>3 Days</option>
+                            <option value="5">5 Days</option>
+                            <option value="7">7 Days</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body width-fix">
+                <!-- <div class="avatar bg-light-primary mr-2">
+                                <div class="avatar-content">
+                                    <i class="fa fa-users avatar-icon"></i>
+                                </div>
+                            </div> -->
+                <!-- <h4 class="font-weight-bolder mb-0">$ {{dispStat.expense | number : "1.2-2"}}</h4>
+                                <p class="card-text font-small-3 mb-0">{{dispStat.department}}</p> -->
+                <ul>
+                    <li class="mb-2"><b class="mr-5 ml-1">Department</b><b>Latest Date</b>
+                        <hr>
+                    </li>
+
+                    <li *ngFor="let dispStat of lastEntry"><b class="mr-5 ml-1">{{dispStat.department}}
+                            :</b>{{dispStat.latest_entry | date: 'MM/dd/yyyy'}}
+                        <hr>
+                    </li>
+                    <li *ngIf="!lastEntry.length" class="text-center"><b class="mx-2">No Data To Display</b></li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-8">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">spendtrak Statistics : Monthly Expense</h4>
+
+            </div>
+            <div class="card-body statistics-body">
+                <div class="row d-flex">
+                    <ng-container *ngFor="let dispStat of allResData">
+
+                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-1">
+                            <div class="media">
+                                <div class="avatar bg-light-primary mr-2">
+                                    <div class="avatar-content">
+                                        <i class="fa fa-users avatar-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="media-body my-auto">
+                                    <h6 class="font-weight-bolder mb-0">$ {{dispStat.expense | number : "1.2-2"}}</h6>
+                                    <p class="card-text font-small-3 mb-0">{{dispStat.department}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">Added By Other List : {{showAddedOther.length}}</h4>
+
+            </div>
+            <div class="card-body statistics-body">
+                <div class="col-sm-6 col-xl-3 mb-2 mb-xl-1">
+                    <div class="media" routerLink="/spend-for-other-department">
+                        <div class="avatar bg-light-primary mr-2">
+                            <div class="avatar-content">
+                                <i class="fa fa-users avatar-icon"></i>
+                            </div>
+                        </div>
+                        <div class="media-body my-auto">
+                            <h6 class="font-weight-bolder mb-0">{{showAddedOther?.length}}</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!----------------------------Monthly Chart Card----------------------------->
+<div class="row match-height" *ngIf="currentUser.prmsnId != '2' && spndTrk &&showPermisionError?.length">
+    <div class="col-md-12 mb-2">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="head">Month to Date - Spend to Budget</p>
+            </div>
+            <!-- <div class="col-md-6">
+                <select  class="form-control" [(ngModel)]="com_name" *ngIf="['6'].includes(currentUser.prmsnId)" (change)="comNames()">
+                    <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                    <option value="" >All Communities</option>
+                    <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                </select>
+
+                <select  class="form-control" [(ngModel)]="com_name" *ngIf="currentUser.user_role=='3'  || this.currentUser.user_role=='8'" (change)="mgnComNames(com_name)">
+                    <option value="{{item.cp_id || item.community_id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                </select>
+            </div> -->
+        </div>
+    </div>
+    <ng-container>
+        <div class="col-xl-2 col-md-2 col-2">
+            <div style="border-bottom: 1px solid #000;">
+                <p class="label-opt"><b>Key</b></p>
+            </div>
+            <div class="row my-1">
+                <div
+                    style="border-radius: 5px !important;border-color: #e70909;background-color:#e70909;padding: 12px;">
+                </div>
+                <div class="mx-1">
+                    <span class="label-opt">Over Budget</span>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div
+                    style="border-radius: 5px !important;border-color: #ede50e;background-color:#ede50e;padding: 12px;">
+                </div>
+                <div class="mx-1">
+                    <span class="label-opt">Approaching Budget</span>
+                </div>
+            </div>
+            <div class="row my-1">
+                <div
+                    style="border-radius: 5px !important;border-color: #14802e;background-color:#14802e;padding: 12px;">
+                </div>
+                <div class="mx-1">
+                    <span class="label-opt">Under Budget</span>
+                </div>
+            </div>
+            <!-- <div class="d-block">
+                <div style="border-bottom: 1px solid #000;margin-bottom: 5px !important;">
+                    <p class="label-opt"><b>Months</b></p>
+                </div>
+                <form [formGroup]="form" novalidate>
+                    <div *ngFor="let data of Data; let i=index" class="d-flex opt">
+                        <div>
+                            <input type="checkbox" [value]="data.value" (change)="onCheckboxChange($event)" />
+                        </div>
+                        <div class="mx-2">
+                            <label>
+                                <span class="label-opt">{{data.name}}</span>
+                            </label>
+                        </div>
+                        
+                      </div>
+                </form>
+            </div> -->
+        </div>
+        <div class="col-xl-10 col-md-10 col-10">
+            <div class="card card-congratulation-medal">
+                <div class="card-body">
+                    <!----------------Month/Year Buttons---------------->
+                    <!-- <ng-container>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group text-right">
+                                <button class="btn btn-primary" (click)="monthSpDownDashboard()" [disabled]="loading">
+                                    Month <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                </button>
+                            </div>
+                            <div class="form-group text-right mx-1" (click)="yearSpDownDashboard()">
+                                <button class="btn btn-primary" [disabled]="loadingYear">
+                                    Year <span *ngIf="loadingYear" class="spinner-border spinner-border-sm mr-1"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container> -->
+                    <!-- Apexchart component-->
+                    <div id="monthlyChartoptions">
+                        <apx-chart #monthlyChartRef [series]="monthlyChartoptions.series"
+                            [chart]="monthlyChartoptions.chart" [stroke]="monthlyChartoptions.stroke"
+                            [fill]="monthlyChartoptions.fill" [plotOptions]="monthlyChartoptions.plotOptions"
+                            [tooltip]="monthlyChartoptions.tooltip" [colors]="monthlyChartoptions.colors"
+                            [xaxis]="monthlyChartoptions.xaxis" [yaxis]="monthlyChartoptions.yaxis"
+                            [dataLabels]="monthlyChartoptions.dataLabels"></apx-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="col-xl-3 col-md-3 col-3">
+        <div style="border-bottom: 1px solid #000;">
+            <p class="label-opt"><b>Key</b></p>
+        </div>
+        <div class="row my-1">
+            <div style="border-radius: 5px !important;border-color: #e70909;background-color:#e70909;padding: 12px;"></div>
+            <div class="mx-2">
+                <span class="label-opt">Over Budget</span>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div style="border-radius: 5px !important;border-color: #ede50e;background-color:#ede50e;padding: 12px;"></div>
+            <div class="mx-2">
+                <span class="label-opt">Approaching Budget</span>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div style="border-radius: 5px !important;border-color: #14802e;background-color:#14802e;padding: 12px;"></div>
+            <div class="mx-2">
+                <span class="label-opt">Under Budget</span>
+            </div>
+        </div>
+    </div> -->
+    </ng-container>
+
+</div>
+<!---------------------------/Monthly Chart Card----------------------------->
+
+<!----------------------------Yearly Chart Card----------------------------->
+<div class="row match-height" *ngIf="currentUser.prmsnId != '2' && spndTrk &&showPermisionError?.length">
+    <div class="col-md-12">
+        <div class="row">
+            <p class="head">Year to Date - Spend to Budget</p>
+        </div>
+    </div>
+    <ng-container>
+        <div class="col-xl-2 col-md-2 col-2">
+            <div class="d-block">
+                <div style="border-bottom: 1px solid #000;margin-bottom: 5px !important;">
+                    <p class="label-opt"><b>Months</b></p>
+                </div>
+                <!-- <form  novalidate> -->
+                <!-- <div *ngFor="let data of monthDataName; let i=index" class="d-flex opt">
+                        <div>
+                            <input type="checkbox" [(ngModel)]="data.isChecked" [checked]="i === 0" (change)="onCheckboxChange(data)" />{{data.name}}
+                        </div>
+                      </div> -->
+                <div *ngFor="let data of monthDataName; let i = index" style="line-height: 1.5 !important;">
+                    <input type="checkbox" [(ngModel)]="data.isChecked" [disabled]="data.isDisable"
+                        (change)="onCheckboxChange(data.value, $event.target.checked, i)"> {{data.name}}<br>
+                </div>
+                <!-- </form> -->
+            </div>
+        </div>
+        <div class="col-xl-10 col-md-10 col-10">
+            <div class="card card-congratulation-medal">
+                <div class="card-body">
+                    <!----------------Month/Year Buttons---------------->
+                    <!-- <ng-container>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="form-group text-right">
+                                <button class="btn btn-primary" (click)="monthSpDownDashboard()" [disabled]="loading">
+                                    Month <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                </button>
+                            </div>
+                            <div class="form-group text-right mx-1" (click)="yearSpDownDashboard()">
+                                <button class="btn btn-primary" [disabled]="loadingYear">
+                                    Year <span *ngIf="loadingYear" class="spinner-border spinner-border-sm mr-1"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container> -->
+                    <!-- Apexchart component-->
+                    <div id="gainedChartoptions">
+                        <apx-chart #gainedChartRef [series]="gainedChartoptions.series"
+                            [chart]="gainedChartoptions.chart" [stroke]="gainedChartoptions.stroke"
+                            [fill]="gainedChartoptions.fill" [plotOptions]="gainedChartoptions.plotOptions"
+                            [tooltip]="gainedChartoptions.tooltip" [colors]="gainedChartoptions.colors"
+                            [xaxis]="gainedChartoptions.xaxis" [yaxis]="gainedChartoptions.yaxis"
+                            [dataLabels]="gainedChartoptions.dataLabels"></apx-chart>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div class="col-xl-2 col-md-2 col-2">
+        <div style="border-bottom: 1px solid #000;">
+            <p class="label-opt"><b>Key</b></p>
+        </div>
+        <div class="row my-1">
+            <div style="border-radius: 5px !important;border-color: #e70909;background-color:#e70909;padding: 12px;"></div>
+            <div class="mx-2">
+                <span class="label-opt">Over Budget</span>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div style="border-radius: 5px !important;border-color: #ede50e;background-color:#ede50e;padding: 12px;"></div>
+            <div class="mx-2">
+                <span class="label-opt">Approaching Budget</span>
+            </div>
+        </div>
+        <div class="row my-1">
+            <div style="border-radius: 5px !important;border-color: #14802e;background-color:#14802e;padding: 12px;"></div>
+            <div class="mx-2">
+                <span class="label-opt">Under Budget</span>
+            </div>
+        </div>
+    </div> -->
+    </ng-container>
+
+</div>
+<!------------------------------/Yearly Chart Card-------------------------->
+
+<!----------Shift Started Card---------->
+<!-- Shift Card -->
+<!-- <div class="row match-height" *ngIf="currentUser?.user_role == '5'">
+    <ng-container>
+        <div class="col-xl-4 col-md-6 col-12">
+            <div class="card card-congratulation-medal">
+                <div class="card-body">
+                    <h5>Started Shift</h5>
+                    <app-schedule-timer></app-schedule-timer>
+                </div>
+        </div>
+        </div>
+    </ng-container>
+</div> -->
+<!--/ Shift Card -->
+<!-- 
+<ng-template #reserveDateModal let-modal14>
+    <div class="modal-header bg-primary">
+        <h4 class="modal-title text-white" id="myModalLabel1">{{unReserveDt? 'Remove' :'Add'}} Holiday</h4>
+        <button type="button" [disabled]="reservingDate" class="close" (click)="closed(modal14)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure you want to {{unReserveDt? 'remove' :'Add'}} this date as holiday?</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="reservingDate" (click)="reserveDate(modal14)"
+            class="btn btn-info d-flex float-right" style="margin-top: 10px!important;" rippleEffect>
+            <span *ngIf="reservingDate" class="spinner-border spinner-border-sm mr-1"></span> Yes
+        </button>
+    </div>
+</ng-template> -->

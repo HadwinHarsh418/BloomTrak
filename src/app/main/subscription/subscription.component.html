@@ -1,0 +1,134 @@
+<div class="card">
+   <div class="card-header d-flex flex-column align-items-start pb-0">
+       <h2 class="font-weight-bolder mt-1">Subscription List </h2>
+   </div>
+   
+   <div class="card-body">
+    <div class="row mb-1">
+        <div class="col-md-6 col-12">
+            <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
+                <i class="fa fa-file "></i>   Import File
+                <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+              </button>
+        </div>
+       </div>
+
+       
+       <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+           [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+           [count]="rows.length" [offset]="page.pageNumber" [limit]="10" >
+           <ngx-datatable-column name="Category Name" prop="community_name" [width]="100">
+            <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ community_name }}
+            </ng-template>
+        </ngx-datatable-column>
+    
+           <ngx-datatable-column name="Modules" prop="access_to" [width]="100">
+               <ng-template let-access_to="value" let-expanded="expanded" ngx-datatable-cell-template>
+                   <span *ngIf="access_to=='1'"> shiftrak </span>
+                   <span *ngIf="access_to=='0'"> spendtrak  </span>
+                   <span *ngIf="access_to=='2'"> shiftrak , spendtrak </span>
+               </ng-template>
+           </ngx-datatable-column>
+           <ngx-datatable-column name="Start Date" prop="start_date" [width]="100">
+               <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                   {{ start_date | customDateTime}}
+               </ng-template>
+           </ngx-datatable-column>
+           <ngx-datatable-column name="End Date" prop="end_date" [width]="80">
+               <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                   {{ end_date | customDateTime}}
+               </ng-template>
+           </ngx-datatable-column>
+           <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50" *ngIf="dltPrms==1">
+               <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                      <i class="fa fa-trash-o" aria-hidden="true" (click)="delete(row)"></i>
+               </ng-template>
+           </ngx-datatable-column>
+
+           <!--------------------for admin----------------->
+           <!-- <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80" >
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <div class="d-flex align-items-center">
+                    <div ngbDropdown container="body">
+                        <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                        </a>
+                        <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                            <a [routerLink]="['/subscriptions/view',row.id,0]" ngbDropdownItem 
+                                class="d-flex align-items-center">
+                                <i class="fa fa-eye mr-50"></i> View
+                            </a>
+                            <a [routerLink]="['/subscriptions/view',row.id,1]" ngbDropdownItem class="d-flex align-items-center">
+                                <i class="fa fa-edit mr-50"></i> Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ngx-datatable-column> -->
+
+       </ngx-datatable>
+   </div>
+</div>
+
+
+<!-- Modal -->
+<ng-template #deleteActivity let-modal>
+   <div class="modal-header bg-danger">
+       <h4 class="modal-title text-white" id="myModalLabel1">Reject Agency</h4>
+       <button type="button" [disabled]="deletingUser" class="close" (click)="closed(modal)" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+       </button>
+   </div>
+   <div class="modal-body" tabindex="0" ngbAutofocus>
+       <h5>Are you sure you want to Reject this Agency ?</h5>
+   </div>
+   <div class="modal-footer">
+       <button type="button" [disabled]="deletingUser" class="btn btn-danger d-flex float-right"
+           style="margin-top: 10px!important;" (click)="deletesUser(modal)" rippleEffect>
+           <span *ngIf="deletingUser" class="spinner-border spinner-border-sm mr-1"></span> Reject
+       </button>
+   </div>
+</ng-template>
+<!-- / Modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

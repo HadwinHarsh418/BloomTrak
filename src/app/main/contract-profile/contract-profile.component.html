@@ -1,0 +1,292 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <!-- account setting page -->
+    <section id="page-account-settings">
+      <div class="row nav-vertical d-flex">
+        <div class="col-md-3 mb-2 mb-md-0">
+          <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Basic Info</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Contracts</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <form class="user" [formGroup]="formData" (ngSubmit)="submitted()">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="common-form-field">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <div class="welcome-logo">
+                                  <img src="assets/images/log.png" alt="">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-12">
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">Project</label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <input type="text"
+                                    [class.is-invalid]="controls['project_name'].dirty && controls['project_name'].invalid"
+                                    formControlName="project_name" class="form-control form-control-user"
+                                    id="project_name" id="inputPassword6" class="form-control"
+                                    aria-describedby="passwordHelpInline" readonly>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">
+                                    Community</label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <input type="text"
+                                    [class.is-invalid]="controls['community_name'].dirty && controls['community_name'].invalid"
+                                    formControlName="community_name" class="form-control form-control-user"
+                                    id="community_name" id="inputPassword6" class="form-control"
+                                    aria-describedby="passwordHelpInline" readonly>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">
+                                    Budget</label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <input type="text"
+                                    [class.is-invalid]="controls['budget'].dirty && controls['budget'].invalid"
+                                    formControlName="budget" class="form-control form-control-user" id="budget"
+                                    id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline"
+                                    readonly>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">
+                                    Estimate</label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <input type="text"
+                                    [class.is-invalid]="controls['estimate'].dirty && controls['estimate'].invalid"
+                                    formControlName="estimate" class="form-control form-control-user" id="estimate"
+                                    id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline"
+                                    readonly>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">
+                                    Status</label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <input type="text"
+                                    [class.is-invalid]="controls['status'].dirty && controls['status'].invalid"
+                                    formControlName="status" class="form-control form-control-user" id="status"
+                                    id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline"
+                                    readonly>
+                                  <span *ngIf="controls['status'].dirty && controls['status'].invalid">
+                                    <div class="invalid-feedback" *ngIf="controls['status'].hasError('required')"
+                                      class="text text-danger">
+                                      This field required
+                                    </div>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="arrow-right" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Assign</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Assign</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <form class="user" [formGroup]="assignData" (ngSubmit)="assignSubmitted()">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="common-form-field">
+                            <div class="row">
+                              <div class="col-lg-12">
+                                <div class="welcome-logo">
+                                  <img src="assets/images/log.png" alt="">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">Agency
+                                  </label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <select placeholder="Agency" formControlName="assigned_to_agency"
+                                    id="assigned_to_agency" type="select" class="form-control">
+                                    <option value="disabled">Select Agency</option>
+                                    <option *ngFor="let agency of allAgency" [value]="agency.id">
+                                      {{agency?.agency_name}}
+                                    </option>
+                                  </select>
+                                  <span
+                                    *ngIf="dcontrols['assigned_to_agency'].dirty && dcontrols['assigned_to_agency'].invalid">
+                                    <div class="invalid-feedback"
+                                      *ngIf="dcontrols['assigned_to_agency'].hasError('required')"
+                                      class="text text-danger">
+                                      This field required
+                                    </div>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-lg-4">
+                                <div class="common-form-left">
+                                  <label for="inputPassword6" class="col-form-label">User
+                                  </label>
+                                </div>
+                              </div>
+                              <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                  <select placeholder="assigned_to_user" formControlName="assigned_to_user"
+                                    id="assigned_to_user" type="select" class="form-control">
+                                    <option value="disabled">Select User</option>
+                                    <option *ngFor="let user of allUsers" [value]="user.id">
+                                      {{user?.email}}
+                                    </option>
+                                  </select>
+                                  <span
+                                    *ngIf="dcontrols['assigned_to_user'].dirty && dcontrols['assigned_to_user'].invalid">
+                                    <div class="invalid-feedback"
+                                      *ngIf="dcontrols['assigned_to_user'].hasError('required')"
+                                      class="text text-danger">
+                                      This field required
+                                    </div>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary nexts">
+                              Assign
+
+                              <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li class="nav-item" ngbNavItem *ngIf="hideCalendar1">
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="calendar" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Calendar</span>
+
+              </a>
+
+
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Calendar</h4>
+                    <div class="row mr-1">
+                      <div class=" mr-1" *ngIf="hideTimer" >
+                        <div [innerHtml]="startDateTime | timer : fromTime"></div>
+                        </div>
+
+                      <div class=" mr-1" *ngIf="!hideTimer">
+                       
+                        <button class="start-btn btn-sm" (click)="startTime()">
+                          Start work
+                        </button>
+                      </div>
+
+                      <div *ngIf="hideTimer">
+                        <button class="start-btn btn-sm" (click)="endTime()">
+                          End work
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <div class="card-body">
+
+                    <app-shared-calender></app-shared-calender>
+
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+        </div>
+        <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+      </div>
+    </section>
+    <!--/ account setting page -->
+  </div>
+</div>
+
+<ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
+  [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view>

@@ -1,0 +1,270 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <h2 class="font-weight-bolder mt-1">Contracts list </h2>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex justify-content-between align-items-center m-1">
+                    <button type="button" class="btn btn-info" (click)="openAddUser()">
+                        <i class="fa fa-trash" class="mr-50"></i> Add Contracts
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                    <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                        <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                            [(ngModel)]="searchStr" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"> -->
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+            <!-- [columns]="[{ name: 'Date' }, { name: 'From' }, { name: 'To' }, { name: 'Description' }, { name: 'Amount' }]" -->
+
+            <ngx-datatable-column name="Project" prop="project_name" [width]="50">
+                <ng-template let-project_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{project_name}}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Community" prop="community_name" [width]="50">
+                <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ community_name }}
+                </ng-template>
+            </ngx-datatable-column>
+            <!-- <ngx-datatable-column name="Agency" prop="agency_name" [width]="50">
+                <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ agency_name }}
+                </ng-template>
+            </ngx-datatable-column> -->
+
+            <!-- <ngx-datatable-column name="User" prop="email" [width]="50">
+                <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ email }}
+                </ng-template>
+            </ngx-datatable-column> -->
+
+            <ngx-datatable-column name="Status" prop="status" [width]="50">
+                <ng-template let-status="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ status }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Actions" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                <a [routerLink]="['/contractProfile', row.id]" ngbDropdownItem
+                                    class="d-flex align-items-center">
+                                    <i class="fa fa-eye" class="mr-50"></i> View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+</div>
+
+<!-- Add Community -->
+
+<ng-template #addUsers let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel">Add Contracts</h4>
+        <button type="button" [disabled]="delUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+
+        <!-- Register -->
+        <div>
+            <form class="user" [formGroup]="formData" (ngSubmit)="submitted(modal)">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="common-form-left">
+                            <label for="inputPassword6" class="col-form-label">
+                                Project</label>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="common-form-left form-group">                                        
+                            <select
+                            placeholder="title"
+                            formControlName="project_id"
+                            id="project_id"
+                            type="select"
+                            class="form-control">
+                            <option value="">Select Project</option>                            
+                            <option *ngFor="let project of allProject" [value]="project.id">
+                              {{project?.title}}
+                            </option>
+                            </select>
+                            <span
+                                *ngIf="controls['project_id'].dirty && controls['project_id'].invalid">
+                                <div class="invalid-feedback"
+                                    *ngIf="controls['project_id'].hasError('required')"
+                                    class="text text-danger">
+                                    This field required
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="common-form-field">
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Community
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">                                        
+                                        <select
+                                        placeholder="Community"
+                                        formControlName="community_id"
+                                        id="community_id"
+                                        type="select"
+                                        class="form-control">
+                                        <option value="">Select Community</option>
+                                        <option *ngFor="let communite of allCommunity" [value]="communite.id">
+                                          {{communite?.community_name}}
+                                        </option>
+                                        </select>
+                                        <span
+                                            *ngIf="controls['community_id'].dirty && controls['community_id'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['community_id'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Budget ($)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="text"
+                                            [class.is-invalid]="controls['budget'].dirty && controls['budget'].invalid"
+                                            formControlName="budget" class="form-control form-control-user" id="budget">
+                                        <span *ngIf="controls['budget'].dirty && controls['budget'].invalid">
+                                            <div class="invalid-feedback" *ngIf="controls['budget'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>    
+                            
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Estimate (hours)
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="number"
+                                            [class.is-invalid]="controls['estimate'].dirty && controls['estimate'].invalid"
+                                            formControlName="estimate" class="form-control form-control-user" id="estimate">
+                                        <span *ngIf="controls['estimate'].dirty && controls['estimate'].invalid">
+                                            <div class="invalid-feedback" *ngIf="controls['estimate'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>  
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Status
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">                                        
+                                        <select
+                                        placeholder="status"
+                                        formControlName="status"
+                                        id="status"
+                                        type="select"
+                                        class="form-control">
+                                        <option value="disabled">Select Status Id</option>
+                                        <!-- <option>active</option>
+                                        <option>completed</option>
+                                        <option>onhold</option> -->
+                                        <option>pending</option>
+                                        <!-- <option *ngFor="let communite of allCommunity" [value]="communite.id">
+                                          {{communite?.community_name}}
+                                        </option> -->
+                                        </select>
+                                        <span
+                                            *ngIf="controls['status'].dirty && controls['status'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['status'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                Add
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                            </button>
+
+
+                            <!-- <div class="row addUserbtn">
+                                <div class="m-1">
+                                    <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                        <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        Add
+                                    </button>
+                                </div>                                
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</ng-template>
+

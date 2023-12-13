@@ -1,0 +1,589 @@
+<div class="content-wrapper">
+    <div class="content-body">
+      <!-- content-header component -->
+      <app-content-header [contentHeader]="contentHeader"></app-content-header>
+  
+      <!-- account setting page -->
+      <section id="page-account-settings">
+        <div class="row nav-vertical d-flex">
+          <div class="col-md-2 mb-2 mb-md-0">
+            <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+  
+                <li class="nav-item" ngbNavItem>
+                    <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                      href="#account-vertical-general" aria-expanded="true">
+                      <i data-feather="user" class="font-medium-3 mr-1"></i>
+                      <span class="font-weight-bold">Applied List</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                      <div class="card">
+                        <div class="card-header">
+                          <h4 class="card-title">Shift Information</h4>
+                        </div>
+                        <div class="card-body">
+      
+                          <div class=" col-lg-12 mt-2" >
+                            <div class="card">
+                                <div>
+                                    <div class="row col-12">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <b>
+                                                Position
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Time
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Time
+                                            </b>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row mt-2 col-12" *ngFor="let snglUsr of singleShiftdtail">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.positions}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customDateTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customDateTime}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customTime}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive table-fixed-width">
+                                        <table class="table ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="col btn-primary">Assign</th>
+                                                    <th scope="col" class="col btn-primary">Firstname</th>
+                                                    <th scope="col" class="col btn-primary">Lastname</th>
+                                                    <th scope="col" class="col btn-primary">Assigned User</th>
+                                                    <th scope="col" class="col btn-primary"> Phone No.</th>
+                                                    <th scope="col" class="col btn-primary"> Email</th>
+                                                    <th scope="col" class="col btn-primary">Hourly Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let snglUsr of appliedUserdtail" style="font-size: 12px !important;">
+                                                    <td class="col">
+                                                        <button class="btn btn-primary" (click)="assignShift(snglUsr)"
+                                                            *ngIf="snglUsr?.approved == 0">Assign 
+                                                        </button>                                                       
+                                                         <span class="badge badge-primary" *ngIf="snglUsr?.approved == 1 && snglUsr?.status == 0 && assingToAgncy != 3 && snglUsr.end_time >= tDate"><a  (click)="cancelAppliedShift(snglUsr)">Cancel</a> </span>
+                                                       
+                                                        <b [innerHTML]="snglUsr?.approved == 0 ? '' : snglUsr?.assigned == 3 && snglUsr?.status == 1 ? 'Started' : snglUsr?.status == 3 ? 'Completed'  : snglUsr?.status == 2 ? 'Canceled' : snglUsr?.approved == 1 ?  'Assigned' : ''"></b>
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name : snglUsr?.agency_name}}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : '---' }}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col" >
+                                                        <span>
+                                                            {{snglUsr?.chngVal}}
+                                                        </span>
+                                                       </td>
+                                                    <td class="col">
+                                                        {{(snglUsr?.user_id != null ? snglUsr?.phone_number  : snglUsr?.agency_contact_cell_number) | numberFormat  }}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.email ? snglUsr?.email : snglUsr?.agency_contact_email_address}}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.hourly_rate ||  snglUsr?.hourly_rates  | number : '1.2-2' }}</td>
+                                                    
+                                                </tr>
+                                                <tr *ngIf="!appliedUserdtail?.length">
+                                                    <td>
+                                                        No data to display
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+      
+                            </div>
+                          </div>
+                          <!-- <div class="d-flex justify-content-center" *ngIf="!snglShftDtls"> 
+                            <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div> -->
+                        </div>
+                      </div>
+                     
+                    </ng-template>
+                  </li>
+
+
+
+                  <li class="nav-item" ngbNavItem  *ngIf="appliedUserdtail?.length && appliedUserdtail[0].end_time >= tDate && !(appliedUserdtail[0]?.assigned == 3 && appliedUserdtail[0]?.status == '1')">
+                    <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                      href="#account-vertical-general" aria-expanded="true">
+                      <i data-feather="user" class="font-medium-3 mr-1"></i>
+                      <span class="font-weight-bold" (click)="cnclAndArch(1)">Cancel : Archive Shift</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                      <div class="card">
+                        <div class="card-header">
+                          <h4 class="card-title">Shift Information</h4>
+                        </div>
+                        <div class="card-body">
+      
+                          <div class=" col-lg-12 mt-2" >
+                            <div class="card">
+                                <div>
+                                    <div class="row col-12">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <b>
+                                                Position
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Time
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Time
+                                            </b>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row mt-2 col-12" *ngFor="let snglUsr of singleShiftdtail">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.positions}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customDateTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customDateTime}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customTime}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive table-fixed-width">
+                                        <table class="table ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="col btn-primary">Assign</th>
+                                                    <th scope="col" class="col btn-primary">Firstname</th>
+                                                    <th scope="col" class="col btn-primary">Lastname</th>
+                                                    <th scope="col" class="col btn-primary">Assigned User</th>
+                                                    <th scope="col" class="col btn-primary"> Phone No.</th>
+                                                    <th scope="col" class="col btn-primary"> Email</th>
+                                                    <th scope="col" class="col btn-primary">Hourly Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let snglUsr of appliedUserdtail" style="font-size: 12px !important;">
+                                                    <td class="col">
+                                                        <button class="btn btn-primary" (click)="assignShift(snglUsr)"
+                                                            *ngIf="snglUsr?.approved == 0">Assign
+                                                        </button>
+
+                                                        <span class="badge badge-primary" *ngIf="snglUsr?.approved == 1 && snglUsr?.status == 0 && assingToAgncy != 3 && snglUsr.end_time >= tDate"><a  (click)="cancelAppliedShift(snglUsr)">Cancel</a> </span>
+                                                       
+                                                        <b [innerHTML]="snglUsr?.approved == 0 ? '' : snglUsr?.assigned == 3 && snglUsr?.status == 1 ? 'Started' : snglUsr?.status == 3 ? 'Completed'  : snglUsr?.status == 2 ? 'Canceled' : snglUsr?.approved == 1 ?  'Assigned' : ''"></b>
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name : snglUsr?.agency_name}}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : '---' }}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col" >
+                                                        <span>
+                                                            {{snglUsr?.chngVal}}
+                                                        </span>
+                                                       </td>
+                                                    <td class="col">
+                                                        {{(snglUsr?.user_id != null ? snglUsr?.phone_number  : snglUsr?.agency_contact_cell_number) | numberFormat  }}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.email ? snglUsr?.email : snglUsr?.agency_contact_email_address}}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.hourly_rate ||  snglUsr?.hourly_rates }}</td>
+                                                    
+                                                </tr>
+                                                <tr *ngIf="!appliedUserdtail?.length">
+                                                    <td>
+                                                        No data to display
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+      
+                            </div>
+                          </div>
+                          <!-- <div class="d-flex justify-content-center" *ngIf="!snglShftDtls"> 
+                            <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div> -->
+                        </div>
+                      </div>
+                     
+                    </ng-template>
+                  </li>
+
+
+                  <li class="nav-item" ngbNavItem *ngIf="assingToAgncy == 3 && appliedUserdtail?.length && appliedUserdtail[0].end_time >= tDate && !(appliedUserdtail[0]?.assigned == 3 && appliedUserdtail[0]?.status == '1')" >
+                    <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                      href="#account-vertical-general" aria-expanded="true">
+                      <i data-feather="user" class="font-medium-3 mr-1"></i>
+                      <span class="font-weight-bold" (click)="openMOdl(2)">Cancel : Agency May Reapply</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                      <div class="card">
+                        <div class="card-header">
+                          <h4 class="card-title">Shift Information</h4>
+                        </div>
+                        <div class="card-body">
+      
+                          <div class=" col-lg-12 mt-2" >
+                            <div class="card">
+                                <div>
+                                    <div class="row col-12">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <b>
+                                                Position
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Time
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Time
+                                            </b>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row mt-2 col-12" *ngFor="let snglUsr of singleShiftdtail">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.positions}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customDateTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customDateTime}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customTime}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive table-fixed-width">
+                                        <table class="table ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="col btn-primary">Assign</th>
+                                                    <th scope="col" class="col btn-primary">Firstname</th>
+                                                    <th scope="col" class="col btn-primary">Lastname</th>
+                                                    <th scope="col" class="col btn-primary">Assigned User</th>
+                                                    <th scope="col" class="col btn-primary"> Phone No.</th>
+                                                    <th scope="col" class="col btn-primary"> Email</th>
+                                                    <th scope="col" class="col btn-primary">Hourly Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let snglUsr of appliedUserdtail" style="font-size: 12px !important;">
+                                                    <td class="col">
+                                                        <button class="btn btn-primary" (click)="assignShift(snglUsr)"
+                                                            *ngIf="snglUsr?.approved == 0">Assign
+                                                        </button>
+
+                                                        <span class="badge badge-primary" *ngIf="snglUsr?.approved == 1 && snglUsr?.status == 0 && assingToAgncy != 3"><a  (click)="cancelAppliedShift(snglUsr)">Cancel</a> </span>
+                                                       
+                                                        <b [innerHTML]="snglUsr?.approved == 0 ? '' : snglUsr?.assigned == 3 && snglUsr?.status == 1 ? 'Started' : snglUsr?.status == 3 ? 'Completed'  : snglUsr?.status == 2 ? 'Canceled' : snglUsr?.approved == 1 ?  'Assigned' : ''"></b>
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name : snglUsr?.agency_name}}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : '---' }}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col" >
+                                                        <span>
+                                                            {{snglUsr?.chngVal}}
+                                                        </span>
+                                                       </td>
+                                                    <td class="col">
+                                                        {{(snglUsr?.user_id != null ? snglUsr?.phone_number  : snglUsr?.agency_contact_cell_number) | numberFormat  }}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.email ? snglUsr?.email : snglUsr?.agency_contact_email_address}}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.hourly_rate ||  snglUsr?.hourly_rates }}</td>
+                                                    
+                                                </tr>
+                                                <tr *ngIf="!appliedUserdtail?.length">
+                                                    <td>
+                                                        No data to display
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+      
+                            </div>
+                          </div>
+                          <!-- <div class="d-flex justify-content-center" *ngIf="!snglShftDtls"> 
+                            <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div> -->
+                        </div>
+                      </div>
+                     
+                    </ng-template>
+                  </li>
+
+                  <li class="nav-item" ngbNavItem *ngIf="assingToAgncy == 3 && appliedUserdtail?.length && appliedUserdtail[0].end_time >= tDate && !(appliedUserdtail[0]?.assigned == 3 && appliedUserdtail[0]?.status == '1')" >
+                    <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                      href="#account-vertical-general" aria-expanded="true">
+                      <i data-feather="user" class="font-medium-3 mr-1"></i>
+                      <span class="font-weight-bold" (click)="openMOdl(3)">Cancel : Agency May Not Reapply</span>
+                    </a>
+                    <ng-template ngbNavContent>
+                      <div class="card">
+                        <div class="card-header">
+                          <h4 class="card-title">Shift Information</h4>
+                        </div>
+                        <div class="card-body">
+      
+                          <div class=" col-lg-12 mt-2" >
+                            <div class="card">
+                                <div>
+                                    <div class="row col-12">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <b>
+                                                Position
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                Start Time
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Date
+                                            </b>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <b>
+                                                End Time
+                                            </b>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row mt-2 col-12" *ngFor="let snglUsr of singleShiftdtail">
+                                        <div class="col-3 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.positions}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customDateTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.start_time | customTime }}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customDateTime}}
+                                            </p>
+                                        </div>
+                                        <div class="col-2 d-flex justify-content-center">
+                                            <p>
+                                                {{snglUsr.end_time | customTime}}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive table-fixed-width">
+                                        <table class="table ">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col" class="col btn-primary">Assign</th>
+                                                    <th scope="col" class="col btn-primary">Firstname</th>
+                                                    <th scope="col" class="col btn-primary">Lastname</th>
+                                                    <th scope="col" class="col btn-primary">Assigned User</th>
+                                                    <th scope="col" class="col btn-primary"> Phone No.</th>
+                                                    <th scope="col" class="col btn-primary"> Email</th>
+                                                    <th scope="col" class="col btn-primary">Hourly Rate</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let snglUsr of appliedUserdtail" style="font-size: 12px !important;">
+                                                    <td class="col">
+                                                        <button class="btn btn-primary" (click)="assignShift(snglUsr)"
+                                                            *ngIf="snglUsr?.approved == 0">Assign
+                                                        </button>
+
+                                                        <span class="badge badge-primary" *ngIf="snglUsr?.approved == 1 && snglUsr?.status == 0 && assingToAgncy != 3 && snglUsr.end_time >= tDate"><a  (click)="cancelAppliedShift(snglUsr)">Cancel</a> </span>
+                                                       
+                                                        <b [innerHTML]="snglUsr?.approved == 0 ? '' : snglUsr?.assigned == 3 && snglUsr?.status == 1 ? 'Started' : snglUsr?.status == 3 ? 'Completed'  : snglUsr?.status == 2 ? 'Canceled' : snglUsr?.approved == 1 ?  'Assigned' : ''"></b>
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name : snglUsr?.agency_name}}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : '---' }}
+                                                        ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                                    <td class="col" >
+                                                        <span>
+                                                            {{snglUsr?.chngVal}}
+                                                        </span>
+                                                       </td>
+                                                    <td class="col">
+                                                        {{(snglUsr?.user_id != null ? snglUsr?.phone_number  : snglUsr?.agency_contact_cell_number) | numberFormat  }}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.email ? snglUsr?.email : snglUsr?.agency_contact_email_address}}
+                                                    </td>
+                                                    <td class="col">{{snglUsr?.hourly_rate ||  snglUsr?.hourly_rates }}</td>
+                                                    
+                                                </tr>
+                                                <tr *ngIf="!appliedUserdtail?.length">
+                                                    <td>
+                                                        No data to display
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+      
+                            </div>
+                          </div>
+                          <!-- <div class="d-flex justify-content-center" *ngIf="!snglShftDtls"> 
+                            <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div> -->
+                        </div>
+                      </div>
+                     
+                    </ng-template>
+                  </li>
+            </ul>
+          </div>
+          <div [ngbNavOutlet]="navVertical" class="col-12 col-md-10"></div>
+        </div>
+      </section>
+      <!--/ account setting page -->
+    </div>
+  </div>
+  
+  <!-- <ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
+    [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view>contentHeader -->
+
+
+    <!-- Reason modal -->
+<ng-template #reasonMdl let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Add Reason</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
+        <div class="invalid-feedback"
+            *ngIf="resonIsNull"
+            class="text text-danger">
+            This field required
+        </div>
+        <div class="row mt-1">
+            <button type="button" (click)="cnclAndArch()" class="btn btn-primary btn-sm">
+                Add
+                <span *ngIf="btnShow" [disabled]="btnShow"
+                    class="spinner-border spinner-border-sm" role="status"
+                    aria-hidden="true"></span>
+            </button>
+            <button type="button" (click)="closeded(modal)"
+                class="btn btn-primary btn-sm ml-1" [disabled]="btnShow">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+   
+</ng-template>
+<!-- /Reason modal -->

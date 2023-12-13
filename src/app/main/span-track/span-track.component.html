@@ -1,0 +1,48 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <p class="font-weight-bolder ml-1" >Menu List</p>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex">
+
+                  <button type="button" class="btn-sm btn-info" [routerLink]="['add-menu']">   <i class="fa fa-plus mr-50"></i>Add Menu
+                    </button> 
+                </div>
+            </div>
+        </div>
+       </div> 
+       
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+            [count]="" [offset]="" [limit]="10" >
+           
+            <ngx-datatable-column name="Name" prop="name" [width]="100" >
+                <ng-template let-name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                              
+                                <!-- <a ngbDropdownItem class="d-flex align-items-center" (click)="dltPrmsnFctn(row)">
+                                    <i class="fa fa-trash mr-50"></i> Delete
+                                </a> -->
+                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-menu',row.id,row.name]">
+                                    <i class="fa fa-edit mr-50"></i> Edit Menu
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>

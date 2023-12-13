@@ -1,0 +1,95 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <h2 class="font-weight-bolder mt-1">Management Company List </h2>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex justify-content-between align-items-center m-1">
+                    <!-- <button type="button" class="btn btn-info" (click)="openAddcommunity()"
+                        style="margin-top: 10px;">Add community</button> -->
+
+                    <button type="button" class="btn-sm btn-info" [routerLink]="['/management/add-management']">
+                        <i class="fa fa-plus mr-50"></i> Add Management Company
+                    </button>
+                   
+                </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                    <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                        <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                            [(ngModel)]="searchStr" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+
+            <ngx-datatable-column name="MGMT COMPANY" prop="mg_name" [width]="150">
+                <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ email }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Email" prop="mg_email" [width]="250" *ngIf="currentUser.role != 'Agency'">
+                <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ community_name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Phone" prop="mg_phone" [width]="100" *ngIf="currentUser.role != 'Community'">
+                <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ agency_name | numberFormat}}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                <a [routerLink]="['/management/view-management', row]" ngbDropdownItem
+                                    class="d-flex align-items-center">
+                                    <i class="fa fa-eye mr-50"></i> View
+                                </a>
+                                <a [routerLink]="['/management/edit-management', row]" ngbDropdownItem class="d-flex align-items-center">
+                                    <i class="fa fa-edit mr-50"></i> Edit
+                                </a>
+                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center">
+                                    <i class="fa fa-trash mr-50"></i> Archive
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+</div>
+
+<!-- DeleteModal -->
+<ng-template #deleteUser let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Archive Management Company</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure you want to Archive this Management Company ?</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="deletesUser(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Archive
+        </button>
+    </div>
+</ng-template>

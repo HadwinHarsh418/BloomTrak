@@ -1,0 +1,207 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <p class="font-weight-bolder ml-1" >Role List</p>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex">
+
+                  <button type="button" class="btn-sm btn-info"
+                  [routerLink]="['add-role']" >  <i class="fa fa-plus mr-50"></i>Add Role
+                    </button> 
+                </div>
+            </div>
+        </div>
+       </div> 
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="tableRoleData" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+            [count]="" [offset]="" [limit]="10" >
+           
+            <ngx-datatable-column name="Name" prop="name" [width]="100" >
+                <ng-template let-name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ name ? name : '----' }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="community name" prop="community_name" [width]="100"  *ngIf="currentUser.prmsnId != '2'">
+                <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ community_name || '---'}}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="agency name" prop="agency_name" [width]="100"  *ngIf="currentUser.prmsnId != '1'">
+                <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ agency_name || '---'}}
+                </ng-template>
+            </ngx-datatable-column>
+
+
+             <!-- <ngx-datatable-column name="status" prop="is_deleted" [width]="100">
+                <ng-template let-is_deleted="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ is_deleted == 0 ? 'Active' : 'Deleted' }}
+                </ng-template>
+            </ngx-datatable-column> -->
+            
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50"  *ngIf="currentUser.prmsnId == '6' || currentUser.user_role =='1'">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                              
+                                <a ngbDropdownItem class="d-flex align-items-center" (click)="dltRoleFctn(row)">
+                                    <i class="fa fa-trash mr-50"></i> Delete
+                                </a>
+                                <a ngbDropdownItem class="d-flex align-items-center" (click)="open(content,row,'Edit')"  *ngIf="currentUser.prmsnId == '6'|| currentUser.user_role =='1'">
+                                    <i class="fa fa-edit mr-50" ></i> Edit Role
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+
+
+        <ng-template #content let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title" id="modal-basic-title">{{popup == 'Edit' ? 'Edit Add New Roles' : popup == 'Add' ? 'Add New Roles' : 'Add New Roles'}}</h4>
+                <i><div class="modal-header bg-danger">
+                    <button type="button" [disabled]="deletingUser" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div></i>
+            </div>
+            <div class="modal-body">
+                <section id="page-account-settings">
+                    <div class="row nav-vertical d-flex">
+                        <div class="col-md-12 mb-2 mb-md-0">
+                            <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+        
+                                <li class="nav-item" ngbNavItem>
+                                    <div class="">
+                                        <div class="card-body">
+                                            <div class="mt-3">
+                                                <form class="user" [formGroup]="formRoleNewAdd" (ngSubmit)="submittedNew()">
+                                                    <div class="row"
+                                                        *ngIf="currentUser.user_role =='6' || currentUser.user_role =='3'">
+                                                        <div class="col-lg-4">
+                                                            <div class="common-form-left">
+                                                                <label for="inputPassword6" class="col-form-label">Community
+                                                                    Name <span class="text-danger">*</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-8">
+                                                            <div class="common-form-left form-group">
+                                                                <select class="form-control" formControlName="community_id" >
+                                                                    <!-- <option value="undefined" selected="selected" disabled>---Select Community---</option> -->
+                                                                    <option value="">All Communities</option>
+                                                                    <option value="{{item.id}}"
+                                                                        *ngFor="let item of allCommunity">
+                                                                        {{item.community_name}}</option>
+                                                                </select>
+                                                                <span
+                                                                    *ngIf="formRoleNew['community_id'].dirty && formRoleNew['community_id'].invalid">
+                                                                    <div class="invalid-feedback"
+                                                                        *ngIf="formRoleNew['community_id'].hasError('required')"
+                                                                        class="text text-danger">
+                                                                        This field required
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="common-form-left">
+                                                                <label for="inputPassword6" class="col-form-label">New Role Name
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-8"> 
+                                                            <div class="common-form-left form-group"
+                                                                *ngIf="currentUser.user_role =='6' || currentUser.prmsnId =='6' ||currentUser.prmsnId =='1' || currentUser.user_role =='3'|| currentUser.user_role =='2' ">
+                                                                <input type="text"
+                                                                    [class.is-invalid]="formRoleNew['role_name'].dirty && formRoleNew['role_name'].invalid"
+                                                                    formControlName="role_name"
+                                                                    class="form-control form-control-user" id="role_name"
+                                                                    class="form-control" placeholder="Role Name"
+                                                                    aria-describedby="passwordHelpInline">
+                                                                <span
+                                                                    *ngIf="formRoleNew['role_name'].dirty && formRoleNew['role_name'].invalid">
+                                                                    <div class="invalid-feedback"
+                                                                        *ngIf="formRoleNew['role_name'].hasError('required')"
+                                                                        class="text text-danger">
+                                                                        This field required
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="common-form-left">
+                                                                <label for="inputPassword6" class="col-form-label">Trak Module
+                                                                    <span class="text-danger">*</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-8 mb-2">
+                                                            <div class="common-form-left form-group">
+                                                                <select class="form-control" formControlName="trak_type">
+                                                                    <option value="">---Select Type---</option>
+                                                                    <option value="0" *ngIf="currentUser.access_to == 'spend_trak' || currentUser.access_to == 'both'">
+                                                                        Spendtrak</option>
+                                                                    <option value="1" *ngIf="currentUser.access_to == 'shift_trak' || currentUser.access_to == 'both'">
+                                                                        Shiftrak</option>
+                                                                </select>
+                                                                <span
+                                                                    *ngIf="formRoleNew['trak_type'].dirty && formRoleNew['trak_type'].invalid">
+                                                                    <div class="invalid-feedback"
+                                                                        *ngIf="formRoleNew['trak_type'].hasError('required')"
+                                                                        class="text text-danger">
+                                                                        This field required
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                        </div>
+                                                        <div class="col-lg-8">
+                                                            <div class="row addUserbtn">
+                                                                <div class="m-1">
+                                                                    <button type="submit" class="btn btn-primary"
+                                                                        [disabled]="loading">
+                                                                        <span *ngIf="loading"
+                                                                            class="spinner-border spinner-border-sm"
+                                                                            role="status" aria-hidden="true"></span>
+                                                                        {{ popup == 'Edit' ? 'Edit' : popup == 'Add' ? 'Add' : 'Add'}}
+                                                                    </button>
+                                                                    <button type="button" (click)="modal.dismiss('Cross click')"
+                                                                        class="btn btn-primary ml-1">
+                                                                        Cancel
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </ng-template>

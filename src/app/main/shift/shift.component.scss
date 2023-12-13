@@ -1,0 +1,52 @@
+input.sd ,.ed {
+    width: 70px;
+}
+
+input[type=text]{
+    height : 38px;
+}
+
+label.input-group-text {
+    height: 38px;
+
+}
+
+.dpwImg{
+    width: 25px;
+}
+
+.has-search .form-control {
+    padding-left: 2.375rem;
+}
+
+.has-search .form-control-feedback {
+    position: absolute;
+    z-index: 2;
+    display: block;
+    width: 2.375rem;
+    height: 2.375rem;
+    line-height: 2.375rem;
+    text-align: center;
+    pointer-events: none;
+    color: #aaa;
+}
+
+// .modal-footer{
+//     justify-content: space-between;
+// }
+
+// ::ng-deep {
+//     .multiselect-dropdown {
+//       .dropdown-btn {
+//         .selected-item-container .selected-item span{
+//             max-width: 200px !important;
+//             background-color: #337ab7;
+//         }
+//       }
+//     }
+//   }
+
+.stflter{
+    margin-top: 10px;
+    font-weight: bold
+}

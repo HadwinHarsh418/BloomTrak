@@ -1,0 +1,608 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <!-- account setting page -->
+        <section id="page-account-settings">
+            <div class="row nav-vertical d-flex">
+                <div class="col-md-12 mb-2 mb-md-0">
+                    <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+                        <li class="nav-item" ngbNavItem>
+                            <!-- <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="user" class="font-medium-3 mr-1"></i>
+                  <span class="font-weight-bold">Basic Info</span>
+                </a> -->
+
+                            <div class="card" *ngFor="let obj of blankArray; let i = index">
+                                <div class=" row justify-content-between">
+                                    <div class="card-header ml-1">
+                                        <h4 class="card-title">Add Shift {{i + 1}}</h4>
+                                    </div>
+                                    <div class="close card-header mr-1 " *ngIf="i!=0" style="color: #ff6633;">
+                                        <p (click)="removeCard(i)" style="font-size: xxx-large;font-weight: bolder;cursor: pointer;">&times;</p>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mt-3">
+                                        <form class="user">
+                                            <div class="row" hidden>
+                                                <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">
+                                                            hidden </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group ">
+                                                        <input type="text" value="confirmation"
+                                                            placeholder="Communication for Confirmation" disabled
+                                                            name="shift" [(ngModel)]="obj.shift">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">
+                                                            Shift Type <span class="text-danger">*</span></label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group d-flex"> -->
+                                                        <!-- <div class="form-check">
+                                                            <input class="form-check-input" name='is_urgent'
+                                                                value='urgent' [(ngModel)]="obj.is_urgent" type="radio"
+                                                                id="flexRadioDefault1">
+                                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                                Urgent
+                                                            </label>
+                                                        </div> -->
+                                                        <!-- <div class="form-check ml-3">
+                                                            <input class="form-check-input" name='is_urgent'
+                                                                value='standard' [(ngModel)]="obj.is_urgent"
+                                                                type="radio" id="flexRadioDefault2" checked>
+                                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                                Standard
+                                                            </label>
+                                                        </div> -->
+                                                    <!-- </div>
+                                                    <div *ngIf="submit && !obj.is_urgent">
+                                                        <div [ngClass]="{'is-invalid': true}" style="color: red;">This
+                                                            field is Required</div>
+                                                    </div>
+                                                </div>
+                                            </div> -->
+
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="common-form-field">
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Team Member Type <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group d-flex">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" name='for_cp'
+                                                                            value='1' [(ngModel)]="obj.for_cp"
+                                                                            type="radio" name="flexRadioDefault"
+                                                                            id="flexRadioDefault1">
+                                                                        <label class="form-check-label"
+                                                                            for="flexRadioDefault1">
+                                                                            Team Members
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="form-check ml-3">
+                                                                        <input class="form-check-input" name='for_cp'
+                                                                            value='2' [(ngModel)]="obj.for_cp"
+                                                                            type="radio" name="flexRadioDefault"
+                                                                            id="flexRadioDefault2" checked>
+                                                                        <label class="form-check-label"
+                                                                            for="flexRadioDefault2">
+                                                                            Contract Agencies
+                                                                        </label>
+                                                                    </div>
+
+                                                                    <div class="form-check ml-3">
+                                                                        <input class="form-check-input" name='for_cp'
+                                                                            value='0' [(ngModel)]="obj.for_cp"
+                                                                            type="radio" name="flexRadioDefault"
+                                                                            id="flexRadioDefault2" checked>
+                                                                        <label class="form-check-label"
+                                                                            for="flexRadioDefault2">
+                                                                            Both Team Members And Contract Agencies
+                                                                        </label>
+                                                                    </div>
+                                                                    <!-- <div class="form-check ml-3">
+                                                                        <input class="form-check-input" name='for_cp'
+                                                                            value='3' [(ngModel)]="obj.for_cp"
+                                                                            type="radio" name="flexRadioDefault"
+                                                                            id="flexRadioDefault2" checked>
+                                                                        <label class="form-check-label"
+                                                                            for="flexRadioDefault2">
+                                                                            Other agencies
+                                                                        </label>
+                                                                    </div> -->
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.for_cp">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Admin' ">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Community List <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                        <!-- <ng-multiselect-dropdown placeholder="--Select Community--"
+                                                                            [settings]="dropdownSettings3" name="community"
+                                                                            [data]="currentUser.role =='Admin' ? mngmCommunity : allCommunity"
+                                                                            [(ngModel)]="obj.community" (keyUp.enter)="search()">
+                                                                        </ng-multiselect-dropdown> -->
+                                                                        <select *ngIf="currentUser.role == 'Admin'"
+                                                                            [(ngModel)]="obj.community" name="community"
+                                                                            class="form-control" (change)="cmntyCng($event.target.value)">
+                                                                            <option value="undefined" selected="selected" disabled>----Community List----</option>
+                                                                            <option   [ngValue]="tm.cp_id" *ngFor="let tm of mngmCommunity">
+                                                                                {{tm.community_name}}</option>
+                                                                        </select>
+
+                                                                        <select *ngIf="currentUser.role == 'SuperAdmin'"
+                                                                        [(ngModel)]="obj.community" name="community"
+                                                                        class="form-control" (change)="cmntyCng($event.target.value)">
+                                                                        <option value="undefined" selected="selected" disabled>----Community List----</option>
+                                                                        <option   [ngValue]="tm.id" *ngFor="let tm of allCommunity">
+                                                                            {{tm.community_name}}</option>
+                                                                    </select>
+
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.community">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                             </div>
+                                                        </div>
+
+                                                       
+
+
+                                                        <div class="row" >
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Rate Type <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <select 
+                                                                    [(ngModel)]="obj.rate_type" name="rate_type"
+                                                                    class="form-control">
+                                                                    <!-- <option value="undefined" selected="selected" disabled>---Rate Type List---</option> -->
+                                                                    <option value="Normal" >Normal</option>
+                                                                    <option value="Hazard" >Hazard</option>
+                                                                </select>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.rate_type">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row" >
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Department <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <!-- <ng-multiselect-dropdown placeholder="--Department List--"
+                                                                    [settings]="dropdownSettings" name="department"
+                                                                    [data]="department"
+                                                                    [(ngModel)]="obj.department" (keyUp.enter)="search()">
+                                                                </ng-multiselect-dropdown> -->
+                                                                <select 
+                                                                [(ngModel)]="obj.department" name="department"
+                                                                class="form-control">
+                                                                <option value="undefined" selected="selected" disabled>---Departments List---</option>
+                                                                <option value="{{item.name}}" *ngFor="let item of departmentDpw">{{item.name}}</option>
+                                                            </select>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.department">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Position <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <!-- <ng-multiselect-dropdown placeholder="--Positions List--"
+                                                                    [settings]="dropdownSettings1" name="position"
+                                                                    [data]="position"
+                                                                    [(ngModel)]="obj.position" (keyUp.enter)="search()">
+                                                                    </ng-multiselect-dropdown> -->
+                                                                        <select 
+                                                                        [(ngModel)]="obj.position" name="positions"
+                                                                        class="form-control">
+                                                                        <option value="undefined" selected="selected" disabled>---Positions List---</option>
+                                                                        <option value="{{item.name}}" *ngFor="let item of positionDpw">{{item.name}}</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.position">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Certification Required <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <!-- <ng-multiselect-dropdown placeholder="--Certifications List--"
+                                                                    [settings]="dropdownSettings2" name="certification"
+                                                                    [data]="certification"
+                                                                    [(ngModel)]="obj.certification" (keyUp.enter)="search()">
+                                                                    </ng-multiselect-dropdown> -->
+                                                                        <select 
+                                                                        [(ngModel)]="obj.certification" name="crtfReq"
+                                                                        class="form-control">
+                                                                        <option value="undefined" selected="selected" disabled>---Certification Required List---</option>
+                                                                        <option value="{{item.name}}" *ngFor="let item of certificationDpw">{{item.name}}</option>
+                                                                        
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.certification">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Allow Overtime <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                        <select 
+                                                                        [(ngModel)]="obj.overtime" name="overtime"
+                                                                        class="form-control">
+                                                                        <!-- <option value="undefined" selected="selected" disabled>---Allow Overtime---</option> -->
+                                                                        <option value="1">Yes</option>
+                                                                        <option value="0">No</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.overtime">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Cancellation Period<span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                        <select 
+                                                                        [(ngModel)]="obj.cancellation_period" name="crtfReq"
+                                                                        class="form-control">
+                                                                        <option value="undefined" selected="selected" disabled>---Cancellation Period In Hour---</option>
+                                                                        <option [ngValue]="tm.hour" *ngFor="let tm of cancellation_period">{{tm.hour}}</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.cancellation_period">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div> -->
+                                                     
+
+                                                       
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Delay <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="d-flex common-form-left form-group">
+                                                                    <div class="input-group ">
+                                                                        <select placeholder="MM" [(ngModel)]="obj.h_m"
+                                                                        name="h_m" class="form-control">
+                                                                        <option value="Hours" selected>Hours
+                                                                        </option>
+                                                                        <option value="Minutes"> Minutes</option>
+                                                                    </select>
+                                                                    </div>
+                                                                    <div class="input-group ml-1">
+                                                                        <select placeholder="HH"
+                                                                        *ngIf="obj.h_m == 'Hours'"
+                                                                        [(ngModel)]="obj.delay" name="delay"
+                                                                        class="form-control">
+                                                                        <option value="" disabled selected="selected">Hours</option>
+                                                                        <option *ngFor="let tm of Hours">
+                                                                            {{tm.hour}}</option>
+                                                                    </select>
+
+                                                                    <select placeholder="HH"
+                                                                        *ngIf="obj.h_m == 'Minutes'"
+                                                                        [(ngModel)]="obj.delay" name="delay"
+                                                                        class="form-control">
+                                                                        <option value="" disabled selected="selected">Minutes</option>
+                                                                        <option *ngFor="let tm of Minutes">
+                                                                            {{tm.minute}}</option>
+                                                                    </select>
+
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.delay">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Description <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <textarea [(ngModel)]="obj.description"
+                                                                        name="des{{i}}" placeholder="Description"
+                                                                        class="form-control form-control-user"
+                                                                        id="description"></textarea>
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.description">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Additional Note 
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <textarea [(ngModel)]="obj.additional_note"
+                                                                        name="additional_note{{i}}" placeholder="Additional Note"
+                                                                        class="form-control form-control-user"
+                                                                        id="additional_note"></textarea>
+                                                                </div>
+                                                                <!-- <div *ngIf="submit && !obj.additional_note">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div> -->
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Shift Start <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group col-lg-8 mb-1">
+                                                                <input type="date" min="{{todaysDate}}"
+                                                                    class="form-control" max="9999-01-01"
+                                                                    [(ngModel)]="obj.start_date" name="start_date{{i}}"
+                                                                    aria-label="Text input with dropdown button" (ngModelChange)="getTm1($event,i)">
+                                                                <!-- <div ngbDropdown >
+                                                                <button type="button" class=" form-control " id="dropdownBasic1" ngbDropdownToggle>Time</button>
+                                                                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                                                                  <button ngbDropdownItem>10:00 Am</button>
+                                                                  <button ngbDropdownItem>10:30 Am</button>
+                                                                  <button ngbDropdownItem>11:00 Am</button>
+                                                                </div>
+                                                          </div> -->
+
+                                                                <select placeholder="HH:MM" [(ngModel)]="obj.startTime"
+                                                                    name="startTime" class="form-control"   (ngModelChange)="getTm2($event,i)">
+                                                                    <option disabled value="">HH:MM</option>
+                                                                    <option *ngFor="let tm of timeslots">
+                                                                        {{tm.label}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <!-- <div *ngIf="submit && !obj.startTime">
+                                                                <div [ngClass]="{'is-invalid': true}"
+                                                                    style="color: red;">This field is Required</div>
+                                                            </div> -->
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Shift End <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group col-lg-8 mb-1">
+                                                                <input type="date" min="{{obj.start_date}}" max="9999-01-01"
+                                                                    [disabled]="!obj.start_date || !obj.startTime "
+                                                                    (ngModelChange)="getTm3($event,i)"
+                                                                    [(ngModel)]="obj.end_date" name="end_date{{i}}"
+                                                                    class="form-control"
+                                                                    aria-label="Text input with dropdown button">
+
+                                                                <!-- <div ngbDropdown >
+                                                            <button type="button" class=" form-control " id="dropdownBasic1" ngbDropdownToggle>Time</button>
+                                                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" >
+                                                              <button  class=" form-control btn-sm " ngbDropdownItem>10:00 Am</button>
+                                                              <button class="form-control btn-sm "  ngbDropdownItem>10:30 Am</button>
+                                                              <button class="form-control btn-sm "  ngbDropdownItem>11:00 Am</button>
+                                                            </div>
+                                                      </div> -->
+
+                                                                <select placeholder="HH:MM" [(ngModel)]="obj.endTime"
+                                                                    [disabled]="!obj.start_date || !obj.startTime "
+                                                                    name="endTime" class="form-control" (ngModelChange)="getTm4($event,i)"> 
+                                                                    <option disabled value="">HH:MM</option>
+                                                                    <option *ngFor="let tm of timeslots">
+                                                                        {{tm.label}}</option>
+                                                                </select>
+                                                            </div>
+                                                            <!-- <div *ngIf="submit && !obj.startTime">
+                                                                <div [ngClass]="{'is-invalid': true}"
+                                                                    style="color: red;">This field is Required</div>
+                                                            </div> -->
+                                                        </div>
+
+                                                        <div class="row" *ngIf="obj.for_cp != '1'">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Agency Applicable Rates <span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                    <select 
+                                                                    [(ngModel)]="obj.agcy_app_rate" name="agcy_app_rate"
+                                                                    class="form-control">
+                                                                    <option value="undefined" selected="selected" disabled>---Agency Applicable Rates---</option>
+                                                                    <option value="7a_3p" >7a to 3p</option>
+                                                                    <option value="3p_11p" >3p to 11p</option>
+                                                                    <option value="11p_7a" >11p to 7a</option>
+                                                                    <option value="7a_7p" >7a to 7p</option>
+                                                                    <option value="7p_7a" >7p to 7a</option>
+                                                                </select>
+                                                                </div>
+                                                                <div *ngIf="submit && obj.agcy_app_rate == 'undefined'">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Shift Duration
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="input-group col-lg-4 mb-1">
+                                                                <input type="text"
+                                                                    [(ngModel)]="obj.duration" name="duration"
+                                                                    class="form-control" placeholder="HH:MM"
+                                                                    aria-label="Text input with dropdown button" readonly >
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- <div class="row addUserbtn">
+                                            <div class="m-1">
+                                                <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                                        aria-hidden="true"></span>
+                                                    Add
+                                                </button>
+                                            </div>                                
+                                        </div> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" (click)="addForm()" class="btn btn-primary" [disabled]="btnShow">
+                                Add Another Shift
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                            </button>
+
+                            <button type="button" (click)="duplctSft()" class="btn btn-primary ml-1" [disabled]="btnShow">
+                                Duplicate Shift
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                            </button>
+
+                            <button type="button" (click)="submitted()" class="btn btn-primary ml-1"
+                                [disabled]="btnShow">
+                                Submit
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                            </button>
+
+                            <button type="button" (click)="goBack()" class="btn btn-primary ml-1"
+                                [disabled]="btnShow">
+                                Cancel
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+            </div>
+        </section>
+        <!--/ account setting page -->
+    </div>
+</div>
+<!-- <ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
+    [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view> -->

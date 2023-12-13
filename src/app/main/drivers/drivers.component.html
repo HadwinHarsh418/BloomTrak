@@ -1,0 +1,61 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <h2 class="font-weight-bolder mt-1">{{ 'user.drvrList' | translate}} </h2>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex justify-content-between align-items-center m-1">
+                    <!-- <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoShow' | translate}}
+                        <select class="form-control mx-25" [(ngModel)]="page.size" (change)="setPage({ offset: 0 })">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> {{ 'DEPOSIT.depoEntry' | translate}}
+                    </label> -->
+                </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                    <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}} 
+                        <input #searchStrInput type="search" placeholder="Search" class="form-control ml-25" [(ngModel)]="searchStr" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+            <!-- [columns]="[{ name: 'Date' }, { name: 'From' }, { name: 'To' }, { name: 'Description' }, { name: 'Amount' }]" -->
+            <ngx-datatable-column [name]="'user.drvName' | translate" prop="driver_name">
+            </ngx-datatable-column>
+            <ngx-datatable-column [name]="'user.usrEml' | translate" prop="email" [width]="200"></ngx-datatable-column>
+            <ngx-datatable-column [name]="'user.cntctNum' | translate" prop="contact_no"></ngx-datatable-column>
+            <ngx-datatable-column [name]="'user.rgstd' | translate" prop="created_at">
+                <ng-template let-dat="value" ngx-datatable-cell-template>
+                    {{dat | date : 'MMM dd yyyy, h:mm a'}}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column [name]="'user.sts' | translate" prop="status">
+                <ng-template let-status="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill" [ngClass]="{ 
+                      'badge-light-success': status == 1,
+                      'badge-light-primary': status == 0,
+                      'badge-light-danger': status == 2 }">
+                        {{ (status == 2) ? 'Deleted' : (status == 1) ? 'Active' :
+                        'Inactive' }}
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Actions" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="badge badge-pill badge-light-primary cursor-pointer">
+                        <i class="fa fa-eye"></i> View Driver
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+span.description {
+    margin-left: 6px;
+}
+.space{
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+}
+
+
+::ng-deep ng-multiselect-dropdown .multiselect-dropdown .dropdown-btn .selected-item-container .selected-item {
+    border: none !important;
+    margin-right: none !important;
+    background: none !important;
+    padding: 0px 0px 0px 0px !important;
+    color: #000 !important;
+    border-radius: 2px !important;
+    float: left !important;
+    max-width: none !important;
+}
+
+::ng-deep ng-multiselect-dropdown .multiselect-dropdown .dropdown-btn .selected-item:hover {
+    box-shadow: none !important; 
+}
+.modal-header .btn-close {
+    padding: calc(var(--bs-modal-header-padding-y) * .5) calc(var(--bs-modal-header-padding-x) * .5) !important;
+    margin: calc(-.5 * var(--bs-modal-header-padding-y)) calc(-.5 * var(--bs-modal-header-padding-x)) calc(-.5 * var(--bs-modal-header-padding-y)) auto !important;
+}
+.dp-hidden {
+    width: 0;
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+.custom-day {
+    text-align: center;
+    padding: 0.185rem 0.25rem;
+    display: inline-block;
+    height: 2rem;
+    width: 2rem;
+}
+.custom-day.focused {
+    background-color: #e6e6e6;
+}
+.custom-day.range,
+.custom-day:hover {
+    background-color: rgb(2, 117, 216);
+    color: white;
+}
+.custom-day.faded {
+    background-color: rgba(2, 117, 216, 0.5);
+}

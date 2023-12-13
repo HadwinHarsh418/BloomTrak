@@ -1,0 +1,1186 @@
+<div class="d-flex justify-content-center  align-content-center" *ngIf="welcomeClockIN">
+    <div class="card p-2">
+        <div class="card-header d-flex justify-content-center">
+            <div>
+                <h5 class="text-center"> Welcome To</h5>
+                <h1 class="text-center" style="color: #ff6633;">bloomtrak</h1>
+            </div>
+        </div>
+        <div class="card-body d-flex justify-content-center p-1 flwr-png">
+            <div *ngIf="activeTab == 1" style="width: 100%;">
+
+                <form class="auth-login-form mt-2" [formGroup]="form2Data" (ngSubmit)="form2DataSubmit()">
+
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Select Your Agency: </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                                <select name="agency" formControlName="agency" class="form-control"
+                                    (change)="agncyCng($event)"
+                                    [ngClass]="{ 'is-invalid': fc2['agency'].dirty && fc2['agency'].invalid }">
+                                    <option value="" disabled>---Select Your Agency---</option>
+                                    <option value="{{agney.id}}" *ngFor="let agney of srt_endStts">{{agney.agency_name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="fc2['agency'].dirty && fc2['agency'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc2['agency'].hasError('required')">This field is required
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="row" *ngIf="currentUser.user_role == '4'">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Select Your Community: </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <select name="agency" formControlName="agency" class="form-control"
+                                    (change)="agncyCng($event)"
+                                    [ngClass]="{ 'is-invalid': fc2['agency'].dirty && fc2['agency'].invalid }">
+                                    <option value="" disabled>---Select Your Community---</option>
+                                    <option value="{{cmnt.id}}" *ngFor="let cmnt of linked_with">{{cmnt.community_name}}
+                                    </option>
+                                </select>
+                                <div *ngIf="fc2['agency'].dirty && fc2['agency'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc2['agency'].hasError('required')">This field is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Select Your Shift: </label>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <select name="shift" formControlName="chooseShift" class="form-control">
+                                    <option value="" selected disabled>---Select Your shift---</option>
+                                    <option value="{{shift.shift_id}}" *ngFor="let shift of rows1">{{shift.positions}} ( {{shift.start_time | customDateTime}} {{shift.start_time | customTime}} )
+                                    </option>
+                                </select>
+                                <div *ngIf="fc2['chooseShift'].dirty && fc2['chooseShift'].invalid"
+                                    class="invalid-feedback">
+                                    <div *ngIf="fc2['chooseShift'].hasError('required')">This field is
+                                        required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter Your User Name: </label>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="common-form-left form-group">
+                                <input type="text"
+                                    [class.is-invalid]="fc2['username'].dirty && fc2['username'].invalid"
+                                    formControlName="username" class="form-control form-control-user" id="username">
+                                    <div *ngIf="fc2['username'].dirty && fc2['username'].invalid" class="invalid-feedback">
+                                        <div *ngIf="fc2['username'].hasError('required')">This field is required
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter Your Password: </label>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="common-form-left form-group">
+                                <input type="password"
+                                    [class.is-invalid]="fc2['password'].dirty && fc2['password'].invalid"
+                                    formControlName="password" class="form-control form-control-user" id="password">
+                                    <div *ngIf="fc2['password'].dirty && fc2['password'].invalid" class="invalid-feedback">
+                                        <div *ngIf="fc2['password'].hasError('required')">This field is required
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter Your Pin Number: </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="number" onKeyPress="if(this.value.length==5) return false;"
+                                    formControlName="pin" class="form-control"
+                                    [ngClass]="{ 'is-invalid': fc2['pin'].dirty && fc2['pin'].invalid }">
+                                <div *ngIf="fc2['pin'].dirty && fc2['pin'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc2['pin'].hasError('required')">This field is
+                                        required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <div class="row mb-2">
+                        <b>
+                        Note : You will only see your shifts that start within 1 hour. Check your bloomtrak portal for a list of your assigned shifts.
+                        </b>
+                    </div>
+                    <div class="row d-flex ">
+                        <div>
+                            <button type="submit " class="btn btn-primary btn-block" [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    Continue
+                            </button>
+                        </div>
+                        <div class="ml-1">
+                            <button type="button " class="btn btn-primary btn-block" [disabled]="btnShow" (click)="rfsh()">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    Refresh
+                            </button>
+                        </div>
+                        <div>
+                            <!-- <button type="button" class="btn btn-primary btn-block " (click)="disAgree()">
+                                Do Not Agree
+                            </button> -->
+                        </div>
+                    </div>
+                   
+                </form>
+            </div>
+
+            <div *ngIf="activeTab == 2">
+                <p class="h6 small">Your Cell Phone is not found. Please enter the following information. You will only
+                    do this one time.
+                </p>
+
+                <form class="auth-login-form mt-2" [formGroup]="formData" (ngSubmit)="formDataSubmit()">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Phone Number: </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="text" phoneMask [preValue]="formData.value.phone" maxlength="14"
+                                    [class.is-invalid]="fc['phone'].dirty && fc['phone'].invalid"
+                                    formControlName="phone" class="form-control form-control-user" id="phone">
+                                <div *ngIf="fc['phone'].dirty && fc['phone'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc['phone'].hasError('required')">This field required
+                                    </div>
+                                    <div *ngIf="fc['phone'].hasError('pattern')">This field required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter Your Pin Nummber: </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="text" inputDirective inptype="number" maxlength="5"
+                                    formControlName="pin" class="form-control"
+                                    [ngClass]="{ 'is-invalid': fc['pin'].dirty && fc['pin'].invalid }" placeholder=""
+                                    aria-describedby="login-email">
+                                <div *ngIf="fc['pin'].dirty && fc['pin'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc['pin'].hasError('required')">This field required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter Your Date of Birth: </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="date" formControlName="dob" class="form-control" max="{{todaysDate}}"
+                                    [ngClass]="{ 'is-invalid': fc['dob'].dirty && fc['dob'].invalid }" tabindex="1">
+                                <div *ngIf="fc['dob'].dirty && fc['dob'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc['dob'].hasError('required')">This field required</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter the last 4 of your SSN Number:
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="number" onKeyPress="if(this.value.length==4) return false;"
+                                    formControlName="ssn" class="form-control"
+                                    [ngClass]="{ 'is-invalid': fc['ssn'].dirty && fc['ssn'].invalid }" placeholder=""
+                                    aria-describedby="login-email">
+                                <div *ngIf="fc['ssn'].dirty && fc['ssn'].invalid" class="invalid-feedback">
+                                    <div *ngIf="fc['ssn'].hasError('required')">This field is required
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <span class="mb-1 d-flex small">Sign off on T&Cs and Privacy Policy. </span>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button [disabled]="loading" type="submit" class="btn btn-primary btn-block" tabindex="4"
+                                rippleEffect>
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button [disabled]="loading" type="button" class="btn btn-primary btn-block" tabindex="0"
+                                rippleEffect (click)="disAgree()">
+                                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>I Do Not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab == 3">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit(1)">
+                    <p>
+                        I understand and agree that 30 minutes will be deducted from my time for any shift that
+                        is 6 hours or longer unless the Agency Variance Form is filled out in full and signed by
+                        the appropriate community personnel. I understand and agree that it is my responsibility to take this break and that nearly no exceptions shall be made.
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block" (click)="submit(0)">
+                                I Do Not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab == 4">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit2(1)">
+                    <p>
+                        I understand and agree that it is my responsibility to notify my Agency and
+                        the supervisor on duty immediately if I do not have the resources I need to completed
+                        my job. I will not wait until the end of my shift to communicate this information.
+                    </p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit2(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab== 5">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit3(1)">
+                    <p>
+                        I attest that I have the credentials and training necessary to work
+                        this shift at this location.
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit3(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab== 6">
+
+                <form class="auth-login-form mt-2" (ngSubmit)="submit6(1)">
+                    <p>
+                        I certify that I do not have any COVID-19 symptoms including fever,
+                        cough, sore throat and that I have not been exposed to anyone with COVID-19
+                        in the last 10 days.
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit6(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab== 7">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit4(1)">
+                    <p>
+                        I understand and agree that my role is vital to safety and wellbeing of those I
+                        will be assisting and that I will carry out my duties to the best of my abilities.
+                    </p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit4(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab== 8">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit5()">
+                    <!-- <h5 [innerHtml]="startDateTime | timer : fromTime" class="d-flex justify-content-center">
+                    </h5>> -->
+                    <!-- <app-schedule-timer></app-schedule-timer> -->
+                    <div>
+                        <p *ngIf="strtShft">
+                           Start Shift : ( <b>{{strtShft | customDateTime}} {{strtShft | customTime}}</b> )  
+                        </p>
+                        <p *ngIf="endShft && cmpltHide">
+                            End Shift : ( <b>{{endShft | customDateTime}} {{endShft | customTime}}</b> )  
+                         </p>
+                        <p class="text-center">
+                            Thank you for helping us bloom!
+                            <!-- <b>({{ srt_endStts.community_name ? srt_endStts.community_name : rows1[0].community_name}})
+                            </b>  -->
+                        </p>
+                    </div>
+                    <div class="d-flex justify-content-center"  *ngIf="!cmpltHide && showClockOut != '2' || showClockOut == '0' || showClockOut == '1'">
+                        <div >
+                            <button type="submit" class="btn btn-primary btn-sm " *ngIf="!btnHide && showClockOut == '0'">
+                                Clock In
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm " (click)="clkOut('fhfh')" *ngIf="showClockOut == '1'">
+                                Start the Clock-Out Process
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center mt-1">
+
+                        <button type="button" class="btn btn-primary btn-sm" (click)="bckHome()" *ngIf="!btnHide && showClockOut == '0'">
+                        Back To Clock In-Out
+                    </button>
+                    </div>
+                    <div class="row justify-content-center mt-1" *ngIf="showClockOut == '1' || showClockOut == '2'">
+                        <button type="button" class="btn btn-primary btn-sm" (click)="goToHome()">
+                            Go To Home
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+<!-- Clock out stepper------------------------------------------------------ -->
+
+ <div *ngIf="activeTab== 10">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit10(1)">
+                    <p>
+                        I attest that I was able to successfully complete
+                        my shift and was able to provide care and
+                        services as required. If I was unable to
+                        complete any tasks, I notified the supervisor on
+                        duty.
+                    </p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit10(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div *ngIf="activeTab== 11">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit11(1)">
+                    <p>
+                        I understand that I will not be paid for time I was
+clocked in prior to the start of my shift and for
+time I was clocked in after my scheduled shift
+ended unless an Agency Shift Variance form is
+completed.
+                    </p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit11(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div *ngIf="activeTab== 12">
+                <form class="auth-login-form mt-2" (ngSubmit)="submit12(1)">
+                    <p>
+                        I have completed all requested paperwork and
+                        any additional end of shift reporting that the
+                        community has requested.
+                    </p>
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Agree
+                            </button>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary btn-block " (click)="submit12(0)">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                    I Do not Agree
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+<!-- Clock out stepper------------------------------------------------------ -->
+
+            
+        </div>
+    </div>
+</div>
+
+<!-- Disagree -->
+<ng-template #Disagree let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Do Not Agree Statement</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure 
+            you want to select “Do Not Agree” to this statement? By doing so, you are not eligible to work the shift and you should contact your Agency 
+            immediately to inform them that you are not eligible to work at this community.</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="closeDismiss(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span>Yes, I Do not Agree
+        </button>
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="goback(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Cancel
+        </button>
+    </div>
+</ng-template>
+<!-- / Disagree -->
+
+
+<!-- Select Shift & Pin -->
+<ng-template #slcSft let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Select Shift</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <form class="auth-login-form mt-2" [formGroup]="slcSftForm" (ngSubmit)="slcSftFormSubmit()">
+          
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label class="form-label" for="login-email">Select Your Shift: </label>
+
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <select name="shift" formControlName="chooseShift" class="form-control" (change)="shiftCng2($event)">
+                            <option value="" selected disabled>---Select Your shift---</option>
+                            <option value="{{shift.shift_id}}" *ngFor="let shift of frstFrmData">{{shift.positions}} ( {{shift.start_time | customDateTime}} {{shift.start_time | customTime}} )
+                            </option>
+                        </select>
+                        <div *ngIf="fc3['chooseShift'].dirty && fc3['chooseShift'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="fc3['chooseShift'].hasError('required')">This field is
+                                required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+         
+            <!-- <div class="row">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label class="form-label" for="login-email">Enter Your Pin Number: </label>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <input inputDirective inptype="number" maxlength="5"
+                            formControlName="pin" class="form-control"
+                            [ngClass]="{ 'is-invalid': fc3['pin'].dirty && fc3['pin'].invalid }">
+                        <div *ngIf="fc3['pin'].dirty && fc3['pin'].invalid" class="invalid-feedback">
+                            <div *ngIf="fc3['pin'].hasError('required')">This field is
+                                required</div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+           
+                <div>
+                    <button type="submit " class="btn btn-primary " [disabled]="btnShow">
+                        <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                            Continue
+                    </button>
+                </div>
+                
+        </form>
+    </div>
+   
+</ng-template>
+<!-- / Select Shift & Pin -->
+
+<!-- Add new register -->
+<ng-template #newReg let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Add New User</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <form class="user" [formGroup]="newUser" (ngSubmit)="newUsersubmitted(modal)">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label for="inputPassword6" class="col-form-label">User First Name <span class="text-danger">*</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <input type="text"
+                            [class.is-invalid]="controls['first_name'].dirty && controls['first_name'].invalid"
+                            formControlName="first_name" class="form-control form-control-user"
+                            id="first_name" class="form-control"
+                            placeholder="Firstname" aria-describedby="passwordHelpInline" >
+                        <span *ngIf="controls['first_name'].dirty && controls['first_name'].invalid">
+                            <div class="invalid-feedback"
+                                *ngIf="controls['first_name'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label for="inputPassword6" class="col-form-label">User Last Name <span class="text-danger">*</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <input type="text"
+                            [class.is-invalid]="controls['last_name'].dirty && controls['last_name'].invalid"
+                            formControlName="last_name" class="form-control form-control-user"
+                            id="last_name" class="form-control"
+                            placeholder="LastName" aria-describedby="passwordHelpInline" >
+                        <span *ngIf="controls['last_name'].dirty && controls['last_name'].invalid">
+                            <div class="invalid-feedback"
+                                *ngIf="controls['last_name'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label for="inputPassword6" class="col-form-label">User Cell Phone Number <span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <input type="text" mask="(000) 000-0000" maxlength="14" readonly
+                            [class.is-invalid]="controls['phone_number'].dirty && controls['phone_number'].invalid"
+                            formControlName="phone_number" class="form-control form-control-user" id="phone_number" >
+                        <span *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
+                            <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                            </div>
+                            <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('pattern')"
+                                class="text text-danger">
+                                Enter valid Phone number
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="common-form-field">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">User Email Address <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="text"
+                                        [class.is-invalid]="controls['email'].dirty && controls['email'].invalid"
+                                        formControlName="email" class="form-control form-control-user" id="email"
+                                        class="form-control"
+                                        aria-describedby="passwordHelpInline">
+                                    <span *ngIf="controls['email'].dirty && controls['email'].invalid">
+                                        <div class="invalid-feedback" *ngIf="controls['email'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                        <div class="invalid-feedback" *ngIf="controls['email'].hasError('email')"
+                                            class="text text-danger">
+                                            Please enter valid email
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <!-- <div class="row">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">User Date Of Birth <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="date" max={{minDate}}
+                                        [class.is-invalid]="controls['DOB'].dirty && controls['DOB'].invalid"
+                                        formControlName="DOB" class="form-control form-control-user" id="DOB">
+                                    <span *ngIf="controls['DOB'].dirty && controls['DOB'].invalid">
+                                        <div class="invalid-feedback" *ngIf="controls['DOB'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+
+                                    </span>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="row" *ngIf="currentUser.role == 'Admin'">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Management Co. User <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="mb-2">
+                                    <div class=" ">
+                                        <div class="row">
+                                            <div  class="col-12">
+                                                <select name="management_co_user"
+                                                    [class.is-invalid]="controls['management_co_user'].dirty && controls['management_co_user'].invalid"
+                                                    formControlName="management_co_user" class="form-control form-control-user">
+                                                    <option value="" selected disabled>[Could be y/n]??</option>
+                                                    <option value="0">YES</option>
+                                                    <option value="1">NO</option>
+                                                </select>
+                                                <span *ngIf="controls['management_co_user'].dirty && controls['management_co_user'].invalid">
+                                                    <div class="invalid-feedback"
+                                                        *ngIf="controls['management_co_user'].hasError('required')"
+                                                        class="text text-danger">
+                                                        This field required
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="row" *ngIf="currentUser.role != 'Agency' && currentUser.role != 'Community' && currentUser.role != 'Admin'">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Management Co. 
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="mb-2">
+                                    <div class=" ">
+                                        <div class="row">
+                                            <div  class="col-12">
+                                                <ng-multiselect-dropdown placeholder="--Select Management Co.--"
+                                                    [settings]="dropdownSettings2" [data]="mngmNames"
+                                                    [class.is-invalid]="controls['management_Co'].dirty && controls['management_Co'].invalid"
+                                                    formControlName="management_Co" (keyUp.enter)="search()">
+                                                </ng-multiselect-dropdown>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="row" *ngIf="currentUser.role != 'Agency' && currentUser.role != 'Community'">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Community List <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="mb-2">
+                                    <div class=" ">
+                                        <div class="row">
+                                            <div  class="col-12">
+                                                <ng-multiselect-dropdown placeholder="--Select Community--"
+                                                    [settings]="currentUser.role == 'Admin' ? dropdownSettings4 : dropdownSettings"
+                                                    [data]="currentUser.role == 'Admin' ? cmmntNames : allCommunity"
+                                                    [disabled]="controls['agency_id'].value?.length"
+                                                    [class.is-invalid]="controls['community_id'].dirty && controls['community_id'].invalid"
+                                                    formControlName="community_id" (keyUp.enter)="search()">
+                                                </ng-multiselect-dropdown>
+                                                <span
+                                                    *ngIf="controls['community_id'].dirty && controls['community_id'].invalid">
+                                                    <div class="invalid-feedback"
+                                                        *ngIf="controls['community_id'].hasError('required')"
+                                                        class="text text-danger">
+                                                        This field required
+                                                    </div>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="row" *ngIf="currentUser.role != 'Agency' && currentUser.role != 'Community' && currentUser.role != 'Admin'">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Agency List 
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="mb-2">
+                                    <div class=" ">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <ng-multiselect-dropdown placeholder="--Select Agency--"
+                                                    [settings]="dropdownSettings1" [data]="allAgenciesID"
+                                                    [disabled]="controls['community_id'].value?.length"
+                                                    [class.is-invalid]="controls['agency_id'].dirty && controls['agency_id'].invalid"
+                                                    formControlName="agency_id" (keyUp.enter)="search()">
+                                                </ng-multiselect-dropdown>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- <div class="row" *ngIf="controls['community_id'].value?.length || currentUser.role == 'Community'">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Hourly Rate <span class="text-danger">*</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="text"
+                                        [class.is-invalid]="controls['hourly_rate'].dirty && controls['hourly_rate'].invalid"
+                                        inputDirective inptype="number"
+                                        formControlName="hourly_rate" class="form-control form-control-user"
+                                        id="hourly_rate" class="form-control"
+                                        placeholder="Hourly Rate" aria-describedby="passwordHelpInline">
+                                    <span *ngIf="controls['hourly_rate'].dirty && controls['hourly_rate'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['hourly_rate'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div> -->
+                        
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Pin Code <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="text" inputDirective inptype="number" maxlength="5"
+                                        [class.is-invalid]="controls['PIN_code'].dirty && controls['PIN_code'].invalid"
+                                        formControlName="PIN_code" class="form-control form-control-user"
+                                        id="PIN_code" readonly>
+                                    <span *ngIf="controls['PIN_code'].dirty && controls['PIN_code'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['PIN_code'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Password <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="password"
+                                        [class.is-invalid]="controls['password'].dirty && controls['password'].invalid"
+                                        formControlName="password" class="form-control form-control-user"
+                                        id="password">
+                                    <span *ngIf="controls['password'].dirty && controls['password'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['password'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['password'].hasError('pattern')"
+                                            class="text text-danger">
+                                            A minimum 8 characters password contains a combination of
+                                            uppercase and lowercase letter and special character are
+                                            required.
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Confirm Password <span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <input type="password"
+                                        [class.is-invalid]="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid"
+                                        formControlName="cnfrmpassword" class="form-control form-control-user"
+                                        id="cnfrmpassword">
+                                    <span
+                                        *ngIf="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['cnfrmpassword'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                        
+                                        <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <!-- <div class="row" *ngIf="userRoles2.includes(currentUser?.role)">
+                            <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">
+                                        Community </label>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="common-form-left form-group">                                        
+                                    <select
+                                    placeholder="community_id"
+                                    formControlName="community_id"
+                                    id="community_id"
+                                    type="select"
+                                    class="form-control">
+                                    <option value="" selected>Select Community Id</option>
+                                    <option *ngFor="let communite of allCommunity" value="{{communite.id}}">
+                                      {{communite?.community_name}}
+                                    </option>
+                                    </select>
+                                    <span
+                                        *ngIf="controls['community_id'].dirty && controls['community_id'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['community_id'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!-- <div class="row" *ngIf="userRoles.includes(currentUser?.role)">
+                            <!-- *ngIf="currentUser?.role == 'User'" -->
+                        <!-- <div class="col-lg-4">
+                                <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">
+                                        Agency</label>
+                                </div>
+                            </div> -->
+                        <!-- <div class="col-lg-8">
+                                <div class="common-form-left form-group">
+                                    <select placeholder="agency_id" formControlName="agency_id" id="agency_id"
+                                        type="select" class="form-control">
+                                        <option value="" selected>Select agency Id</option>
+                                        <option *ngFor="let agency of allAgenciesID" value="{{agency.id}}">
+                                            {{agency?.agency_name}}
+                                        </option>
+                                    </select>
+                                    <span *ngIf="controls['agency_id'].dirty && controls['agency_id'].invalid">
+                                        <div class="invalid-feedback"
+                                            *ngIf="controls['agency_id'].hasError('required')"
+                                            class="text text-danger">
+                                            This field required
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="row addUserbtn">
+                            <div class="m-1">
+                                <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Add
+                                </button>
+                                <button type="button" (click)="closeded(modal)"
+                            class="btn btn-primary ml-1" [disabled]="btnShow">
+                            Cancel
+                        </button>
+                            </div>
+
+                            <!-- <div class="m-1">
+                                <button type="button" [disabled]="btnShow" class="btn btn-danger "
+                                    (click)="closeAddCommunity(modal)">
+                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm "></span>Cancel
+                                </button>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+</ng-template>
+<!-- / Add new register -->
+
+
+<!-- Confrm -->
+<ng-template #Confrm let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Statement</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>You are not currently registered in bloomtrak. Register now to clock-in.</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-primary d-flex float-right"
+            style="margin-top: 10px!important;" (click)="ConfrmOk(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Ok
+        </button>
+    </div>
+</ng-template>
+<!-- / Confrm -->
+
+
+<!-- key modal -->
+<!-- <ng-template #keyModal let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Enter Secret Key</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="row my-5 mx-2">
+        <div class="col-lg-4">
+            <div class="common-form-left">
+                <label for="inputPassword6" class="col-form-label">Secret Key : </label>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="common-form-left form-group">
+                <input type="password"
+                [(ngModel)]="sec_key" class="form-control form-control-user"
+                    id="cnfrmpassword">
+                <div *ngIf="submit1 && !sec_key">
+                   <div [ngClass]="{'is-invalid': true}"
+                         style="color: red;">This field is Required</div>
+                  </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-primary d-flex float-right"
+            style="margin-top: 10px!important;" (click)="sumtKey(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Ok
+        </button>
+    </div>
+</ng-template> -->
+<!-- / key modal -->
+
+<section class="login-custom" *ngIf="!welcomeClockIN">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="center-login">
+            <img src="assets/images/logo-login.png" alt="" class="login-logo-page">
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Enter Secret Key</h4>
+                <!-- <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="common-form-left">
+                        <label for="inputPassword6" class="col-form-label">Secret Key : </label>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="common-form-left form-group">
+                        <input type="password"
+                        [(ngModel)]="sec_key" class="form-control form-control-user"
+                            id="cnfrmpassword">
+                        <div *ngIf="submit1 && !sec_key">
+                           <div [ngClass]="{'is-invalid': true}"
+                                 style="color: red;">This field is Required</div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="modal-footer">
+                <button type="button" [disabled]="btnShow" class="btn btn-primary d-flex float-right"
+                     (click)="sumtKey()" rippleEffect>
+                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Ok
+                </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>

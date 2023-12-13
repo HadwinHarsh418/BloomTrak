@@ -1,0 +1,31 @@
+.my_class{
+    display: none;
+}
+.flex-row-1 {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}.flex-row-1 {}
+
+.wd-common {
+    padding: 0 5px;
+    margin: 0 0 15px 0;
+}
+.load span{
+    font-size: 40px;
+    width: 7rem;
+    height: 7rem;
+    overflow: auto;
+    position: absolute;
+    z-index: 1;
+    bottom: 5rem;
+    top: 36rem;
+    color: #ff6633;
+}
+::ng-deep .row-color1 {
+    background-color: #fcb097 !important;
+    // color: #fff !important;
+}
+::ng-deep .row-color2 {
+    background-color: #ffffff !important;
+}

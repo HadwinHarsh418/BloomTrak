@@ -1,0 +1,135 @@
+<span class="badge badge-primary"><a [routerLink]="['/shift']">View In Table List</a> </span>
+<div class="row d-flex">
+    <div class=" col-lg-4 mt-2" *ngFor="let shift of allShifts; let i = index">
+        <a (click)="applied(shift)">
+            <div class="card">
+                <div class="row justify-content-between">
+                    <div class="card-header ml-1">
+                        <h5 class="card-title">{{shift.title}}</h5>
+                    </div>
+                    <div class="card-header  mr-1">
+                        <h5>{{i + 1}}</h5>
+                    </div>
+                </div>
+
+                <!-- <div class="card-header bg-danger ">
+                    <div class="col-12  justify-content-between">
+                        <div class="col-6">
+                            <p class="text-white">{{shift.title}} </p>
+                        </div>
+                        <div class="col-6 ">
+                            <p class="text-white "> {{i + 1}}</p>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="row ml-1 ">
+                    <p>Description : </p><span class="description"> {{ shift.description}}</span>
+                </div>
+                <div class="row ml-1 start">
+                    <p>Start Time : </p><span class="description"> {{shift.start_time}}</span>
+                </div>
+                <div class="row ml-1 end">
+                    <p>End Time : </p><span class="description"> {{shift.end_time}}</span>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Applied list -->
+<ng-template #appliedList let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel">Applied List</h4>
+        <button type="button" [disabled]="delUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <div>
+            <div class="row ">
+                <div class="col-4 d-flex justify-content-center">
+                    <b>
+                        Shift Position
+                    </b>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                    <b>
+                        Start Date
+                    </b>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                    <b>
+                        End Date
+                    </b>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngFor="let snglUsr of singleShiftdtail">
+                <div class="col-4 d-flex justify-content-center">
+                    <p>
+                        {{snglUsr.positions}}
+                    </p>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                    <p>
+                        {{snglUsr.start_time}}
+                    </p>
+                </div>
+                <div class="col-4 d-flex justify-content-center">
+                    <p>
+                        {{snglUsr.end_time}}
+                    </p>
+                </div>
+            </div>
+            <div class="row d-flex justify-content-center mt-2">
+                <!-- <ol>
+                    <li *ngFor="let snglUsr of appliedUserdtail" >
+                        <div class="row ">
+                            <div class="col-6 mt-2">
+                               
+                                <p>
+                                    {{snglUsr.first_name}}
+                                </p>
+                            </div>
+                            <div class="col-6 mt-1">
+                               <button class="btn btn-primary" (click)="assignShift(snglUsr,modal)">Assign</button>
+                            </div>
+                        </div>
+                    </li>
+                </ol> -->
+
+                <table class="table ">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="btn-primary">User Name</th>
+                            <th scope="col" class="btn-primary">User Phone No.</th>
+                            <th scope="col" class="btn-primary">User Email</th>
+                            <th scope="col" class="btn-primary">User DOB</th>
+                            <th scope="col" class="btn-primary">Assign</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let snglUsr of appliedUserdtail">
+                            <th scope="row">{{snglUsr.first_name}}</th>
+                            <td>{{snglUsr.phone_number}}</td>
+                            <td>{{snglUsr.email}}</td>
+                            <td>{{snglUsr.DOB}}</td>
+                            <td><button class="btn btn-primary" (click)="assignShift(snglUsr,modal)"
+                                    *ngIf="snglUsr.approved != 1">Assign</button>
+                                <b
+                                    [innerHTML]="snglUsr.approved == 0 ? 'Pending' : snglUsr.approved == 1 ?  'Assigned' : 'Cancled'"></b>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr *ngIf="!appliedUserdtail?.length">
+                            <td>
+                                <p class="tex">No data to display</p>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,476 @@
+<div class="content-wrapper">
+    <div class="content-body">
+      <!-- content-header component -->
+      <app-content-header [contentHeader]="contentHeader"></app-content-header>
+  
+      <!-- account setting page -->
+      <section id="page-account-settings">
+        <div class="row nav-vertical d-flex">
+          <div class="col-md-3 mb-2 mb-md-0">
+            <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left" (navChange)="tabChanged($event)">
+  
+              <li class="nav-item" ngbNavItem>
+                <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="user" class="font-medium-3 mr-1"></i>
+                  <span class="font-weight-bold" [innerHTML]="currentUser.role == 'Agency' ? 'Agency Personnel Info' : userNo == '1' ? 'Management User' : 'User Info'"></span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title" [innerHTML]="currentUser.role == 'Agency' ? 'Agency Personnel' : userNo == '1' ? 'Management User': 'User'"></h4>
+                    </div>
+                    <div class="card-body"  *ngIf="curComDetails">
+                      <form class="user" [formGroup]="formData" (ngSubmit)="submitted()">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="common-form-field">
+                              <div class="row">
+                                <div class="col-lg-12">
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">First Name
+                                      </label>
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input type="text" maxlength="12"
+                                      formControlName="first_name" inputDirective inptype="name"
+                                      class="form-control form-control-user" id="first_name" disabled>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Last Name
+                                      </label>
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input type="text" maxlength="12"
+                                      formControlName="last_name" inputDirective inptype="name"
+                                      class="form-control form-control-user" id="last_name" disabled>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Username
+                                      </label>
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input type="text" maxlength="12"
+                                      formControlName="username" inputDirective inptype="name"
+                                      class="form-control form-control-user" id="username" disabled>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Phone Number
+                                      </label>
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input  type="text" mask="(000) 000-0000"
+                                    formControlName="phone_number"  class="form-control " disabled>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">Email
+                                      </label>
+  
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input type="email"
+                                      formControlName="email" class="form-control form-control-user"
+                                      id="email" disabled>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label">DOB
+                                      </label>
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input type="text"
+                                      formControlName="DOB" 
+                                      class="form-control form-control-user" id="DOB" disabled>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>          
+                      </form>
+                      
+                    </div>
+                    
+                    <div class="card-body" *ngIf="!curComDetails">
+                      <div>
+                        <p  class="text-center">
+                          No Data To Display
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+
+              
+              <li class="nav-item" ngbNavItem>
+                <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="users" class="font-medium-3 mr-1"></i>
+                  <span class="font-weight-bold">Update Hourly Rate</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Hourly Rate</h4>
+                    </div>
+                    <div class="card-body">
+  
+                      <form class="user" [formGroup]="editUsrRate" (ngSubmit)="editUsrRatesubmitted()">
+                        <div class="row">
+                          <div class="col-lg-12">
+                            <div class="common-form-field">
+                              <div class="row">
+                                <div class="col-lg-12">
+                                
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-lg-4">
+                                  <div class="common-form-left">
+                                    <label for="inputPassword6" class="col-form-label"> Hourly Rate
+                                      </label>
+                                  </div>
+                                </div>
+                                <div class="col-lg-8">
+                                  <div class="common-form-left form-group">
+                                    <input type="number"
+                                      [class.is-invalid]="eurC['rate'].dirty && eurC['rate'].invalid"
+                                      formControlName="rate" class="form-control form-control-user"
+                                      id="rate" id="inputPassword6" class="form-control"
+                                      aria-describedby="passwordHelpInline" >
+                                    <span *ngIf="eurC['rate'].dirty && eurC['rate'].invalid">
+                                      <div class="invalid-feedback"
+                                        *ngIf="eurC['rate'].hasError('required')" class="text text-danger">
+                                        This field required
+                                      </div>
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            
+                            </div>
+                          </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                          <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                              aria-hidden="true"></span>
+                          Update
+                      </button>
+
+                      </form>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+
+              <li class="nav-item" ngbNavItem *ngIf="currentUser.role == 'SuperAdmin'">
+                <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="codesandbox" class="font-medium-3 mr-1"></i>
+                  <!-- <i class="feather-eye"></i> -->
+                  <span class="font-weight-bold">Communities/Agencies</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Communities/Agencies</h4>
+                    </div>
+                    <div class="card-body">
+  
+                      <table class="table ">
+                        <thead >
+                            <tr >
+                              <th scope="col-4" class="col-4 btn-primary">No.</th>
+                                <th scope="col-4" class="col-4 btn-primary">Community Name</th>
+                                <th scope="col-4" class="col-4 btn-primary">Agency Name</th>
+                            </tr>
+                        </thead>
+                        <tbody >
+                            <tr *ngFor="let snglUsr of rows2; let i = index" style="font-size: 12px !important;" >
+                              <td scope="row">{{i + 1}} </td>
+                                <td class="col-4">{{snglUsr?.community_name ? snglUsr.community_name : '---' }} </td>
+                                <td class="col-4">{{snglUsr?.agency_name ? snglUsr.agency_name : '---'}} </td>
+                               
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr *ngIf="!rows2?.length">
+                                <td class="col-12">
+                                    <p class="text-center">No data to display</p>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+              <!-- currentUser.role != 'Agency' -->
+
+              <li class="nav-item" ngbNavItem *ngIf="currentUser.role != 'User'">
+                <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="activity" class="font-medium-3 mr-1"></i>
+                  <!-- <i class="feather-eye"></i> -->
+                  <span class="font-weight-bold">Roles</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">User Roles</h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="common-form-left " *ngFor="let item of role">
+                        <span>{{item.name }}</span>
+                      </div>
+                      <button type="submit" class="btn btn-primary mt-1" (click)="openUpdateRole()">
+                       Update Role
+                  </button>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+              <li class="nav-item" ngbNavItem *ngIf="this.userNo == '1'">
+                <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="activity" class="font-medium-3 mr-1"></i>
+                  <!-- <i class="feather-eye"></i> -->
+                  <span class="font-weight-bold">Add Community</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">All Communities</h4>
+                    </div>
+                    <div class="card-body">
+                      <!-- <div class="common-form-left " *ngFor="let item of exstMangComs; let i = index">
+                       {{i+1+'. '}} <span>{{item.community_name }}</span>
+                      </div> -->
+                      <button type="submit" class="btn btn-primary mb-1" (click)="openUpdateCom()">
+                        Update Community
+                   </button>
+
+                      <table class="table table-responsive">
+                        <thead>
+                          <tr>
+                            <th>No</th>
+                            <th>Community</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let user of exstMangComs; let i = index">
+                            <td>{{ i+1 }}</td>
+                            <td>{{ user.community_name }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+
+              <!-- <li class="nav-item" ngbNavItem>
+                <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                  href="#account-vertical-general" aria-expanded="true">
+                  <i data-feather="activity" class="font-medium-3 mr-1"></i>
+                  <span class="font-weight-bold">Add Username</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="card">
+                    <div class="card-header">
+                      <h4 class="card-title">Add Username</h4>
+                    </div>
+                    <div class="card-body">
+                      <form class="user" [formGroup]="addUsrnm" (ngSubmit)="addUsrnmsubmitted()" *ngIf="!curComDetails.username">
+                        <div class="row">
+                          <div class="col-lg-12">
+                              <div class="common-form-field">
+                        <div class="row">
+                          <div class="col-lg-4">
+                              <div class="common-form-left">
+                                  <label for="inputPassword6"
+                                      class="col-form-label">Community
+                                      Name <span class="text-danger">*</span></label>
+                              </div>
+                          </div>
+                          <div class="col-lg-8">
+                              <div class="common-form-left form-group">
+                                <select  class="form-control" formControlName="community_name" (change)="slctCom($event.target.value)" >
+                                  <option value="" selected="selected" disabled>---Select Community---</option>
+                                  <option value="{{item.id}}" *ngFor="let item of allCommunity1">{{item.community_name}}</option>
+                              </select>
+                                  <span
+                                      *ngIf="controls1['community_name'].dirty && controls1['community_name'].invalid">
+                                      <div class="invalid-feedback"
+                                          *ngIf="controls1['community_name'].hasError('required')"
+                                          class="text text-danger">
+                                          This field required
+                                      </div>
+                                  </span>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6" class="col-form-label">Username <span class="text-danger">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text">{{slctSrtNm || '---'}}</span>
+                                    </div>
+                                    <input formControlName="username" type="text" class="form-control" placeholder="Username" aria-label="Username">
+                                  </div>
+                                <span *ngIf="controls1['username'].dirty && controls1['username'].invalid">
+                                    <div class="invalid-feedback"
+                                        *ngIf="controls1['username'].hasError('required')"
+                                        class="text text-danger">
+                                        This field required
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                      <button type="submit" class="btn btn-primary">
+                        Add
+                        <span *ngIf="btnShow"
+                            class="spinner-border spinner-border-sm" role="status"
+                            aria-hidden="true"></span>
+                    </button>
+                    <button type="button" (click)="goBack()"
+                        class="btn btn-primary ml-1" [disabled]="btnShow">
+                        Cancel
+                    </button>
+                      </div>
+                      </div>
+                    </div>
+                      </form>
+                      <h3  *ngIf="curComDetails.username" class="text-center">{{curComDetails.username || '---'}}</h3>
+                    </div>
+                  </div>
+                </ng-template>
+              </li> -->
+
+            </ul>
+          </div>
+          <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+        </div>
+      </section>
+      <!--/ account setting page -->
+    </div>
+  </div>
+  
+  <!-- <ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
+    [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view>contentHeader -->
+
+
+    <!-- UpdateModal -->
+<ng-template #updateRole let-modal>
+  <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white" id="myModalLabel1">Update Role</h4>
+      <button type="button" class="close" (click)="closeded(modal)" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+        select roles
+        <ng-multiselect-dropdown placeholder="--Select Role--"
+        [settings]="dropdownSettings" [(ngModel)]="pickedROle"
+        [data]="data1"
+        >
+    </ng-multiselect-dropdown>
+       <!-- <select class="form-control">
+        <option value="" *ngFor="let i of data1">{{i.name}}</option>
+       </select> -->
+       
+  </div>
+  <div class="modal-footer">
+      <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+          style="margin-top: 10px!important;" (click)="Update(modal)" rippleEffect>
+          <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Update
+      </button>
+  </div>
+</ng-template>
+<!-- / Modal -->
+
+    <!-- UpdateComModal -->
+    <ng-template #updateCom let-modal>
+      <div class="modal-header bg-danger">
+          <h4 class="modal-title text-white" id="myModalLabel1">Update Community</h4>
+          <button type="button" class="close" (click)="closeded(modal)" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div class="modal-body" tabindex="0" ngbAutofocus>
+            <!-- select Community -->
+            <ng-multiselect-dropdown placeholder="--Select Community--"
+            [settings]="dropdownSettings1" [(ngModel)]="ComId"
+            [data]="mangComs"
+            >
+        </ng-multiselect-dropdown>
+
+        <!-- <ng-multiselect-dropdown placeholder="--Select Community--" *ngIf="currentUser.user_role =='3'"
+            [settings]="dropdownSettings2" [(ngModel)]="ComId"
+            [data]="mangComs"
+            >
+        </ng-multiselect-dropdown> -->
+           <!-- <select class="form-control">
+            <option value="" *ngFor="let i of data1">{{i.name}}</option>
+           </select> -->
+           
+      </div>
+      <div class="modal-footer">
+          <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+              style="margin-top: 10px!important;" (click)="UpdateComSub(modal)" rippleEffect>
+              <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Update
+          </button>
+      </div>
+    </ng-template>
+    <!-- / Modal -->
+    

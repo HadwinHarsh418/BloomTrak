@@ -1,0 +1,179 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <p class="font-weight-bolder ml-1" >Holiday List</p>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex">
+
+                  <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6' ||  currentUser.prmsnId== '1'"
+                     [routerLink]="['add-holiday']" >  <i class="fa fa-plus mr-50"></i>Add Holiday
+                   
+                </button>
+                    <!-- <button type="button"  class=" btn-info  btn-sm ml-1" (click)="getBLockedUser()">
+                        <i class="fa fa-lock"></i> Block Users
+                    </button> -->
+                </div>
+            </div>
+
+            <div class="col-md-6 col-12 d-flex justify-content-md-end mb-1">
+
+                <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                    <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                        <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                            <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                                [(ngModel)]="searchStr" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+        <!-- Working User -->
+
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+            [count]="" [offset]="" [limit]="10" [scrollbarH]='true' >
+           
+            <ngx-datatable-column name="agency" prop="agency_name" [width]="100">
+                <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ agency_name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Holiday" prop="holiday_name" [width]="100">
+                <ng-template let-holiday_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ holiday_name  }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Holiday Start Date" prop="start_date" [width]="150">
+                <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ start_date | customDateTime  }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Holiday Start Time" prop="start_date" [width]="150">
+                <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ start_date | customTime  }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Holiday End Date" prop="end_date" [width]="150">
+                <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ end_date | customDateTime  }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Holiday End Time" prop="end_date" [width]="150">
+                <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ end_date | customTime }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Notes" prop="description" [width]="100">
+                <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ description  }}
+                </ng-template>
+            </ngx-datatable-column>
+
+          
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="100">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                              
+                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-holiday',row.id]" *ngIf="edtPrms == 1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                                    <i class="fa fa-edit mr-50"></i> Edit Holiday
+                                </a>
+                                <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="edtPrms == 0">
+                                    <i class="fa fa-trash mr-50"></i>  You have no Permissions for any actions. 
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+
+        <!-- /Working User -->
+
+            <!-- block User -->
+
+            <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10"  >
+           
+            <ngx-datatable-column name="lastName" prop="last_name" [width]="100">
+                <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ last_name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="FirstName" prop="first_name" [width]="100">
+                <ng-template let-first_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ first_name }}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Email" prop="email" [width]="100">
+                <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ email }}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Phone No." prop="phone_number" [width]="80">
+                <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ phone_number |numberFormat}}
+                </ng-template>
+            </ngx-datatable-column>
+            
+          
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                <a  ngbDropdownItem class="d-flex align-items-center"  (click)="deletedBLockedUser(row)" *ngIf="!blckBtnHide">
+                                    <i class="fa fa-check mr-50"></i> Unblock
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable> -->
+
+        <!-- /block User -->
+
+    </div>
+</div>
+
+
+<!-- Modal -->
+<!-- <ng-template #deleteActivity let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Reject Agency</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closed(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure you want to Reject this Agency ?</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="deletingUser" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="deletesUser(modal)" rippleEffect>
+            <span *ngIf="deletingUser" class="spinner-border spinner-border-sm mr-1"></span> Reject
+        </button>
+    </div>
+</ng-template> -->
+<!-- / Modal -->

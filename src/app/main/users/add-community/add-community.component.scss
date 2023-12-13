@@ -1,0 +1,23 @@
+::ng-deep ng-multiselect-dropdown .multiselect-dropdown .dropdown-btn .selected-item-container .selected-item {
+    border: none !important;
+    margin-right: none !important;
+    background: none !important;
+    padding: 0px 0px 0px 0px !important;
+    color: #000 !important;
+    border-radius: 2px !important;
+    float: left !important;
+    max-width: none !important;
+}
+
+::ng-deep ng-multiselect-dropdown .multiselect-dropdown .dropdown-btn .selected-item:hover {
+    box-shadow: none !important; 
+}
+.dpwImg{
+    width: 25px;
+}
+.eyeBtn{
+    position: absolute;
+    top: 4px;
+    right: 19px;
+    border: 0;
+}

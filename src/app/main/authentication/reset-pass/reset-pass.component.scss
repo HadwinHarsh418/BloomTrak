@@ -1,0 +1,231 @@
+@import '@core/scss/base/bootstrap-extended/include'; // Bootstrap includes
+@import '@core/scss/base/pages/page-auth.scss';
+
+.auth-help-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.login-custom {
+  background-image: url(/assets/images/flawer.png);
+  background-size: 65%;
+  background-repeat: no-repeat;
+  background-position: top;
+  padding: 30px 0 30px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.center-login {
+  border: 4px solid #ccc;
+  border-radius: 12px;
+  max-width: 480px;
+  margin: auto;
+  padding: 20px 60px 30px 60px;
+  background: #fff;
+}
+.login-logo {
+  max-width: 187px;
+  display: block;
+  margin: auto auto 20px;
+  width: 100%;
+}
+.account-1 {
+  color: #369;
+  font-size: 19px;
+  margin: 0 0 15px;
+  line-height: 0px;
+  text-align: center;
+  font-weight: bold;
+}
+.account-2 {
+  font-size: 14px;
+  color: #000;
+  margin: 0 0 0px;
+  line-height: 25px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.account-2 a {
+  color: #ff6633;
+  font-family: 'Comfortaa', cursive;
+}
+
+.input-f {
+  background: #e4e9ef;
+  width: 100%;
+  border: 1px solid #ccc;
+  height: 35px!important;
+  border-radius: 8px;
+  padding: 0 15px;
+  font-size: 14px;
+}
+.mar-login {
+  margin: 0 0 15px 0;
+}
+.bt-login-bloom {
+  background: #369;
+  border-radius: 6px;
+  border: none;
+  height: 35px;
+  padding: 0 15px;
+  min-width: 129px;
+  color: #fff;
+  margin: auto;
+  display: block;
+  font-weight: bold;
+}
+.forgot-a {
+  color: #000;
+    display: inline-block;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin: auto auto 0px;
+    font-weight: bold;
+}
+.if-p {
+  font-size: 14px;
+  color: #369;
+  margin: 0px 0 15px;
+  font-family: Comfortaa,cursive;
+  line-height: 20px;
+  text-align: center;
+}
+.bt-ul-2 {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bt-ul-2 li:first-child button {
+  background: #ff6633;
+  border-radius: 6px;
+  border: none;
+  height: 50px;
+  padding: 0 15px;
+  min-width: 180px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  margin: auto;
+  display: block;
+  width: 100%;
+  max-width: 230px;
+  font-family: 'Comfortaa', cursive;
+}
+.bt-ul-2 li:last-child button {
+  background: #ccffff;
+  border-radius: 6px;
+  border: none;
+  height: 50px;
+  padding: 0 15px;
+  min-width: 180px;
+  color: #000;
+  font-size: 16px;
+  font-weight: bold;
+  margin: auto;
+  display: block;
+  width: 100%;
+  max-width: 230px;
+  font-family: 'Comfortaa', cursive;
+}
+.bt-ul-2 {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.bt-ul-2 li {
+  width: 48%;
+}
+.input-f:hover, .input-f.active {
+  outline: 3px solid #336699;
+}
+.bt-login-bloom:hover {
+  box-shadow: 0 8px 25px -8px #369;
+}
+.bt-ul-2 li:first-child button:hover {
+  box-shadow: 0 8px 25px -8px #f63;
+}
+.bt-ul-2 li:last-child button:hover {
+  box-shadow: 0 8px 25px -8px #cff;
+}
+.footer-content ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.footer-content li {
+  margin: 0 3%;
+}
+.footer-bottom {
+  padding: 0 0 0px;
+  position: relative;
+}
+.footer-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: whitesmoke;
+}
+.footer-content li p {
+  font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    font-family: Comfortaa,cursive;
+    line-height: 30px;
+}
+.footer-content ul li a {
+  color: #ff6633;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0 0 0px 0;
+  font-family: "Comfortaa", cursive;
+  line-height: 30px;
+}
+form.auth-login-form.mt-2 {
+  margin-top: 15px !important;
+}
+.bt-ul-2 li:first-child button, .bt-ul-2 li:last-child button {
+  border-radius: 6px;
+  border: none;
+  height: 35px;
+  line-height: 35px;
+  padding: 0 15px;
+  min-width: auto;
+  font-size: 12px;
+  font-weight: 700;
+  margin: auto;
+  display: block;
+  width: 100%;
+  max-width: 174px;
+  font-family: Comfortaa, cursive;
+}
+
+@media(min-width: 1500px){
+.login-custom {
+  background-size: 52%;
+}
+}
+
+
+@media(max-width: 767px){
+  .center-login {
+    padding: 20px 20px 30px 20px;
+}
+.bt-ul-2 li {
+  width: 100%;
+  margin: 0 0 15px 0;
+}
+.bt-ul-2 li:last-child {
+  margin: 0 0 0 0;
+}
+.login-custom {
+  padding: 100px 0 70px 0;
+}
+}

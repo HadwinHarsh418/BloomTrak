@@ -1,0 +1,393 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <!-- account setting page -->
+    <section id="page-account-settings">
+      <div class="row nav-vertical d-flex">
+        <div class="col-md-3 mb-2 mb-md-0">
+          <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Basic Information</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Agency Information</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" *ngFor="let agency of allAgency">
+                      <div class="card" *ngIf="allAgency">
+                        <!-- <div class="card-header  pb-0">
+                                        <div class="row">
+                                            <h5 class="ml-1">{{agency.agency_name}} </h5>
+                                        </div>
+                                    </div> -->
+                        <div class="row space mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Name : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{ agency.agency_name}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Phone : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_phone |numberFormat}}</span>
+                          </div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Email : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_email}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Website : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_website}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Address 1 : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.address1}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Address 2 : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.address2}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency City : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.city}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency State : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.state}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Zipcode : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.zipcode}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Contact First Name : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_firstname}}</span>
+                          </div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Contact Last Name : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_lastname}}</span>
+                          </div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Contact Person Title : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_person_title}}</span>
+                          </div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Contact Cell Number : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_cell_number
+                              |numberFormat}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Contact Email Address : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description ">
+                              {{agency.agency_contact_email_address}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Username : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description ">
+                              {{agency.username}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-4">
+                            <h6>Agency Short Code : </h6>
+                          </div>
+                          <div class="col-md-8"><span class="description ">
+                              {{agency.sort_name}}</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" (click)="closeded()" class="btn btn-primary ml-1" [disabled]="btnShow" *ngIf="allAgency">
+                      Cancel
+                    </button>
+                    <div class="d-flex justify-content-center" *ngIf="!allAgency"> 
+                      <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                  </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Upload Agency Contract </span>
+              </a>
+              <ng-template ngbNavContent>
+                 <form class="user" [formGroup]="contractform" (ngSubmit)="uploadNow()">
+
+                 <div class="card">
+                   <div class="card-header">
+                     <h1 class="card-title">Upload File</h1>
+                   </div>
+
+                   <div class="d-flex">
+                    <div><h4 class="card-title" style="margin-left: 10px;">Upload Agency Contract :</h4></div>
+                    <div><button type="button"  (click)="fileInput.click()"  class="btn-sm btn-info ml-2">
+                       <i class="fa fa-file "></i>   Import File
+                       <input #fileInput type="file" formControlName="fileToUpload" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                     </button>
+                    </div>
+                     <div style="margin-left: 15px;" *ngIf="fileInput.value.length">{{filename}}</div>                     
+                   </div>
+
+                                                            
+
+
+               <div class="row">
+                 <div class="col-lg-4">
+                     <div class="common-form-left">
+                         <label  class="col-form-label" style="margin-left: 10px;">
+                             Start Date <span class="text-danger">*</span></label>
+                     </div>
+                 </div>
+                 <div class="col-lg-8">
+                     <div class="common-form-left form-group">
+                         <input type="date"
+                             [class.is-invalid]="contractform_Control['contract_start_date'].dirty && contractform_Control['contract_start_date'].invalid"
+                             formControlName="contract_start_date"
+                             class="form-control form-control-user" id="contract_start_date"
+                              class="form-control" placeholder="Start Date"
+                             aria-describedby="passwordHelpInline">
+                         <span
+                             *ngIf="contractform_Control['contract_start_date'].dirty && contractform_Control['contract_start_date'].invalid">
+                             <div class="invalid-feedback"
+                                 *ngIf="contractform_Control['contract_start_date'].hasError('required')"
+                                 class="text text-danger">
+                                 This field required
+                             </div>
+                         </span>
+                     </div>
+                 </div>                                                  
+         </div>                                                        
+
+     
+     <div class="row">
+         <div class="col-lg-4">
+             <div class="common-form-left">
+                 <label  class="col-form-label" style="margin-left: 10px;">
+                     End Date <span class="text-danger">*</span></label>
+             </div>
+         </div>
+         <div class="col-lg-8">
+             <div class="common-form-left form-group">
+                 <input type="date"
+                     [class.is-invalid]="contractform_Control['contract_end_date'].dirty && contractform_Control['contract_end_date'].invalid"
+                     formControlName="contract_end_date"
+                     class="form-control form-control-user" id="contract_end_date"
+                      class="form-control" placeholder="End Date"
+                     aria-describedby="passwordHelpInline">
+                 <span
+                     *ngIf="contractform_Control['contract_end_date'].dirty && contractform_Control['contract_end_date'].invalid">
+                     <div class="invalid-feedback"
+                         *ngIf="contractform_Control['contract_end_date'].hasError('required')"
+                         class="text text-danger">
+                         This field required
+                     </div>
+                 </span>
+             </div>
+         </div>                                                  
+ </div>     
+ <div class="col-lg-4">
+ <button type="submit" class="btn btn-primary">save</button>
+</div>
+</div>  
+
+ </form>
+
+
+             </ng-template>
+           </li>
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">View Agency Contract </span>
+              </a>
+              <ng-template ngbNavContent>
+                 <div class="card">
+                   <div class="card-header">
+                     <h4 class="card-title">Download File</h4>
+                   </div>
+                   <div class="main-menu-content">
+                    <ul class="navigation navigation-main mt-1"></ul>
+                    <div class="text-center my-2">
+                      <!-- <a (click)="download()" [download]="myFileName"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; " *ngIf="fileUrl">Download Agency Contract Form</h4></a> -->
+                      <a [href]="fileUrl" [download]="myFileName"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; " *ngIf="fileUrl">Download Agency Contract Form</h4></a>
+                      <h4 style="color: #ff6633 ; font-weight: bold;" *ngIf="!fileUrl">No Contract Found</h4>
+                  </div>
+                  </div> 
+                  
+                  <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+                  [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+                  [count]="" [offset]="" [limit]="10">
+                 
+                  <ngx-datatable-column name="Start Date" prop="contract_start_date" [width]="100">
+                      <ng-template let-contract_start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                          {{ contract_start_date }}
+                      </ng-template>
+                  </ngx-datatable-column>
+      
+                  <ngx-datatable-column name="End date" prop="contract_end_date" [width]="100">
+                      <ng-template let-contract_end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                          {{ contract_end_date }}
+                      </ng-template>
+                  </ngx-datatable-column>
+
+                  <ngx-datatable-column name="File" prop="contract" [width]="100">
+                    <ng-template let-contract="value" let-expanded="expanded" ngx-datatable-cell-template>
+                      <!-- <a (click)="download()"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; ">Download</h4></a> -->
+                      <a [href]="contract" download="myFileName"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; ">Download</h4></a>
+                    </ng-template>
+                </ngx-datatable-column>
+                </ngx-datatable>
+
+                </div>        
+                
+
+             </ng-template>
+           </li>
+
+            <li class="nav-item" ngbNavItem *ngIf="currentUser.role == 'SuperAdmin'">
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="bell" class="font-medium-3 mr-1"></i>
+                <!-- <i class="feather-eye"></i> -->
+                <span class="font-weight-bold">Notification</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Sms And Email</h4>
+                  </div>
+                  <div class="card-body">
+                   <div class="row"> 
+                      <div class="col-md-4">
+                          For Sms Notification :
+                      </div>
+                      <div class="col-md-8">
+                          <app-switch-button size="small"  name="skip_notification" (change)="forNoti()" [(ngModel)]="value"></app-switch-button>
+                      </div>
+                  </div> 
+
+                  <div class="row"> 
+                      <div class="col-md-4">
+                          For Email Notification:
+                      </div>
+                      <div class="col-md-8">
+                          <app-switch-button size="small"  name="skip_notification" (change)="forEml()" [(ngModel)]="value2"></app-switch-button>
+                      </div>
+                  </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+
+            <!-- <li class="nav-item" ngbNavItem *ngIf="currentUser.role == 'Community'">
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-info" data-toggle="pill"
+                href="#account-vertical-info" aria-expanded="false">
+                <i data-feather="dollar-sign" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Budget</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card" >
+                  <div class="card-header">
+                    <h4 class="card-title d-flex justify-content-between w-100">
+                      <span>Budget Amount</span>
+                    </h4>
+                  </div>
+                  <div class="card-body">
+                    <form [formGroup]="budgetForm">
+                      <div class="col-lg-12">
+                        <div class="common-form-field">
+                          <div class="row">
+                            <div class="col-lg-4">
+                              <div class="common-form-left">
+                                <label class="col-form-label">Budget</label>
+                              </div>
+                            </div>
+                            <div class="col-lg-8">
+                              <div class="common-form-left form-group">
+                                <input type="text"
+                                  [class.is-invalid]="bControls['budget'].dirty && bControls['budget'].invalid"
+                                  formControlName="budget" class="form-control form-control-user" id="budget">
+                                <span *ngIf="bControls['budget'].dirty && bControls['budget'].errors">
+                                  <div class="invalid-feedback" *ngIf="bControls['budget'].hasError('required')"
+                                    class="text text-danger">
+                                    This field required
+                                  </div>
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <button type="button" (click)="addBgt()" class="btn btn-primary nexts">
+                            Add
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
+                              aria-hidden="true"></span>
+                          </button>
+                          <button type="button" (click)="updtBgt()" class="btn btn-primary ml-1" [disabled]="loading">
+                            Update
+                          </button>
+
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                   
+                </div>
+              
+              </ng-template>
+            </li> -->
+          </ul>
+        </div>
+        <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+      </div>
+    </section>
+    <!--/ account setting page -->
+  </div>
+</div>
+
+<ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
+  [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view>

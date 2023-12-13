@@ -1,0 +1,347 @@
+
+<h1 class="text-center">
+    Coming Soon!
+</h1>
+
+<!-- <div class="auth-wrapper auth-v2">
+    <div class="auth-inner row m-0">
+       <a class="brand-logo" href="javascript:void(0);">
+            <img src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo/logo-dark.png' : 'assets/images/logo/logo.png' }}"
+                alt="brand-logo" height="36" />
+
+            <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }}</h2>
+        </a>
+       
+        <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
+
+            <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
+
+                <img class="img-fluid" [src]="
+              coreConfig.layout.skin === 'dark'
+                ? 'assets/images/pages/login-v2-dark.svg'
+                : 'assets/images/pages/login-v2.svg'
+            " alt="Login V2" />
+            </div>
+        </div>
+        
+        <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+                <img src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo-blooms.png' : 'assets/images/logo-blooms.png' }}"
+                    class="same-logo dark-theam" />
+                <div class="mr-minus-5 mb-2">
+                </div>
+
+                <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error">
+                    <div class="alert-body">
+                        <p>{{ error }}</p>
+                    </div>
+                </ngb-alert>
+
+                <div *ngIf="activeTab == 1">
+                    <h2 class="card-title font-weight-bold mb-1"> Primary contact details</h2>
+
+                    <form class="auth-login-form mt-2" [formGroup]="Primary" (ngSubmit)="primarySubmit()">
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Primary Contact Name</label>
+                            <input type="text" formControlName="primary_contact_name" class="form-control"
+                                [ngClass]="{ 'is-invalid': controls['primary_contact_name'].dirty && controls['primary_contact_name'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50" />
+                            <div *ngIf="controls['primary_contact_name'].dirty && controls['primary_contact_name'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="controls['primary_contact_name'].hasError('required')">This field required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Primary Contact Title</label>
+                            <input type="text" formControlName="primary_contact_title" class="form-control"
+                                [ngClass]="{ 'is-invalid': controls['primary_contact_title'].dirty && controls['primary_contact_title'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50">
+                            <div *ngIf="controls['primary_contact_title'].dirty && controls['primary_contact_title'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="controls['primary_contact_title'].hasError('required')">This field required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Primary Contact Phone</label>
+                            <input type="text" phoneMask [preValue]="Primary.value.primary_contact_phone" maxlength="14"
+                                formControlName="primary_contact_phone" class="form-control"
+                                [ngClass]="{ 'is-invalid': controls['primary_contact_phone'].dirty && controls['primary_contact_phone'].invalid }"
+                                 tabindex="1" >
+                            <div *ngIf="controls['primary_contact_phone'].dirty && controls['primary_contact_phone'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="controls['primary_contact_phone'].hasError('pattern')">Please select number
+                                </div>
+                                <div *ngIf="controls['primary_contact_phone'].hasError('required')">This field required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Primary Contact Email</label>
+                            <input type="email" formControlName="primary_contact_email" class="form-control"
+                                [ngClass]="{ 'is-invalid': controls['primary_contact_email'].dirty && controls['primary_contact_email'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50">
+                            <div *ngIf="controls['primary_contact_email'].dirty && controls['primary_contact_email'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="controls['primary_contact_email'].hasError('email')">Please enter valid
+                                    email</div>
+                                <div *ngIf="controls['primary_contact_email'].hasError('required')">This field required
+                                </div>
+                            </div>
+                        </div>
+
+                     
+                        <button [disabled]="loading" type="submit" class="btn btn-primary btn-block" tabindex="4"
+                            rippleEffect>
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>Next
+                        </button>
+
+                    </form>
+                </div>
+             
+                    <h2 class="card-title font-weight-bold mb-1"> Survey Compliance Details </h2>
+                    <form class="auth-login-form mt-2" [formGroup]="Servey" (ngSubmit)="serveySubmit()">
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Survey Compliance Name</label>
+                            <input type="text" formControlName="survey_compliance_name" class="form-control"
+                                [ngClass]="{ 'is-invalid': sc['survey_compliance_name'].dirty && sc['survey_compliance_name'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50" />
+                            <div *ngIf="sc['survey_compliance_name'].dirty && sc['survey_compliance_name'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="sc['survey_compliance_name'].hasError('required')">This field required
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Survey Compliance Title</label>
+                            <input type="text" formControlName="survey_compliance_title" class="form-control"
+                                [ngClass]="{ 'is-invalid': sc['survey_compliance_title'].dirty && sc['survey_compliance_title'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50">
+                            <div *ngIf="sc['survey_compliance_title'].dirty && sc['survey_compliance_title'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="sc['survey_compliance_title'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Survey Compliance Phone</label>
+                            <input type="text" phoneMask [preValue]="Servey.value.survey_compliance_phone" maxlength="14"
+                                formControlName="survey_compliance_phone" class="form-control"
+                                [ngClass]="{ 'is-invalid': sc['survey_compliance_phone'].dirty && sc['survey_compliance_phone'].invalid }"
+                                tabindex="1">
+                            <div *ngIf="sc['survey_compliance_phone'].dirty && sc['survey_compliance_phone'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="sc['survey_compliance_phone'].hasError('pattern')">Please enter valid phone 
+                                    number </div>
+                                <div *ngIf="sc['survey_compliance_phone'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Survey Compliance Email</label>
+                            <input type="email" formControlName="survey_compliance_email" class="form-control"
+                                [ngClass]="{ 'is-invalid': sc['survey_compliance_email'].dirty && sc['survey_compliance_email'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50">
+                            <div *ngIf="sc['survey_compliance_email'].dirty && sc['survey_compliance_email'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="sc['survey_compliance_email'].hasError('pattern')">Please enter valid
+                                    emial</div>
+                                <div *ngIf="sc['survey_compliance_email'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+                      
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-primary btn-block " (click)="activeTab = 1" >
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="submit " class="btn btn-primary btn-block" [disabled]="btnShow" >
+                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Next
+                                </button>
+                            </div>
+
+                        </div>
+                        <div class="mt-1">
+                            <button type="button" class="btn btn-primary btn-block " (click)="activeTab = 3">
+                                Skip
+                            </button>
+                        </div>
+                    </form>
+                </div> -->
+
+                <!-- <div *ngIf="activeTab == 2">
+                    <h2 class="card-title font-weight-bold mb-1"> Single Community or Management Company </h2>
+                    <form class="auth-login-form mt-2" [formGroup]="radioData" (ngSubmit)="radioData1()">
+                        <div class="form-group">
+                            <input class="form-check-input "  formControlName="single_community" type="radio"
+                                name="single_community" id="flexRadioDefault1" value="0">
+                            <label class="form-label" for="login-email">Single Community</label>
+                        </div>
+
+                        <div class="form-group">
+                            <input class="form-check-input "  formControlName="single_community" type="radio"
+                                name="single_community" id="flexRadioDefault" value="1">
+                            <label class="form-label" for="login-email">Management Company</label>
+                        </div>
+                        
+
+                     
+                        <div class="row mt-3">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-primary btn-block" (click)="activeTab = 1">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Next
+                                </button>
+                               
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div *ngIf="activeTab == 3">
+                    <h2 class="card-title font-weight-bold mb-1"> Management Company Details </h2>
+                    <form class="auth-login-form mt-2" [formGroup]="managementServey" (ngSubmit)="managementSubmit()">
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Management Company Name</label>
+                            <input type="text" formControlName="management_company_name" class="form-control"
+                                [ngClass]="{ 'is-invalid': mc['management_company_name'].dirty && mc['management_company_name'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50" />
+                            <div *ngIf="mc['management_company_name'].dirty && mc['management_company_name'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="mc['management_company_name'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Management Company Address</label>
+                            <textarea formControlName="management_company_address" class="form-control"
+                                [ngClass]="{ 'is-invalid': mc['management_company_address'].dirty && mc['management_company_address'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50"></textarea>
+                            <div *ngIf="mc['management_company_address'].dirty && mc['management_company_address'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="mc['management_company_address'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Management company Phone</label>
+                            <input type="text" phoneMask [preValue]="managementServey.value.management_company_phone" maxlength="14"
+                                formControlName="management_company_phone" class="form-control"
+                                [ngClass]="{ 'is-invalid': mc['management_company_phone'].dirty && mc['management_company_phone'].invalid }"
+                                 tabindex="1" >
+                            <div *ngIf="mc['management_company_phone'].dirty && mc['management_company_phone'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="mc['management_company_phone'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Management Company Email</label>
+                            <input type="email" formControlName="management_company_email" class="form-control"
+                                [ngClass]="{ 'is-invalid': mc['management_company_email'].dirty && mc['management_company_email'].invalid }"
+                                placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                                maxlength="50">
+                            <div *ngIf="mc['management_company_email'].dirty && mc['management_company_email'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="mc['management_company_email'].hasError('email')">Please enter valid
+                                    emial</div>
+                                <div *ngIf="mc['management_company_email'].hasError('required')">This field
+                                    required</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="login-email">Management Company Contact Person</label>
+                            <input type="text" phoneMask [preValue]="managementServey.value.management_company_contact_person" maxlength="14"
+                                formControlName="management_company_contact_person" class="form-control"
+                                [ngClass]="{ 'is-invalid': mc['management_company_contact_person'].dirty && mc['management_company_contact_person'].invalid }"
+                                 tabindex="1" >
+                            <div *ngIf="mc['management_company_contact_person'].dirty && mc['management_company_contact_person'].invalid"
+                                class="invalid-feedback">
+                                <div *ngIf="mc['management_company_contact_person'].hasError('required')">This
+                                    field required</div>
+                            </div>
+                        </div>
+
+
+
+                     
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <button type="button" class="btn btn-primary btn-block " (click)="activeTab = 2">
+                                    Previous
+                                </button>
+                            </div>
+                            <div class="col-lg-6">
+                                <button type="submit" class="btn btn-primary btn-block " [disabled]="btnShow">
+                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                        aria-hidden="true"></span>
+                                    Finish
+                                </button>
+                               
+                            </div>
+
+                        </div>
+
+                       
+                    </form>
+                </div>
+
+                <div *ngIf="activeTab== 5">
+                    <form  [formGroup]="drpForm" (ngSubmit)="drpForm1(modal)">
+                        <div class="row">
+                            <div class="col-6">
+        
+                                <div class="form-group" *ngIf="dpw">
+                                    <ng-multiselect-dropdown placeholder="--Select Management--" [settings]="dropdownSettings"
+                                        [data]="getMangemntId_names"  [(ngModel)]="getMangemntId"  (keyUp.enter)="search()">
+                                    </ng-multiselect-dropdown>
+                                </div>
+                            </div>
+                         
+                        </div>
+                        <button type="button" class="btn btn-primary" (click)="activeTab = 2">
+                            Previous
+                        </button>
+                        <button type="submit" class="btn btn-primary nexts" [disabled]="btnShow">
+                            Finish
+                            <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </div>
+               -->
+            <!-- </div> -->
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- </div> -->

@@ -1,0 +1,111 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <p class="font-weight-bolder ml-1" >Fixed Expense Table</p>
+    </div>
+    <div class="card-body mt-1">
+        <div class="row mb-1">
+            <div class="col-md-6 col-12">
+                <div class="d-flex">
+                  <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6'"
+                     [routerLink]="['add-fixed-expence']" >  <i class="fa fa-plus mr-50"></i>Add Fixed Expense
+                    </button> 
+
+                    <!-- <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Community' || currentUser.role == 'Admin'" >
+                        <i class="fa fa-file "></i>   Import File
+                        <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                      </button> -->
+                </div>
+            </div>
+        </div> 
+        
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows"  [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+            [count]="" [offset]="" [limit]="10" [scrollbarH]="true">
+           <ngx-datatable-column name="Community" prop="community_name" [width]="150" >
+                <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ community_name }}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Purchase Date" prop="purchage_date" [width]="150" >
+                <ng-template let-purchage_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ purchage_date |  date:'M/d/yyyy'}}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Vendor" prop="vendor" [width]="150" >
+                <ng-template let-vendor="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ vendor }}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Description" prop="description" [width]="150" >
+                <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ description }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="department" prop="department" [width]="150" >
+                <ng-template let-department="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ department }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="GL Account" prop="gl_account" [width]="150" >
+                <ng-template let-gl_account="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ gl_account }}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Amount" prop="amount" [width]="150" >
+                <ng-template let-amount="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{'$ '}} {{ amount  || '0' | number}}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Payment Type" prop="pmt_type" [width]="150" >
+                <ng-template let-pmt_type="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ pmt_type }}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name=" Invoice Date" prop="pmt_type" [width]="150" >
+                <ng-template let-pmt_type="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    12-5-22
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name=" Invoice Number" prop="pmt_type" [width]="150" >
+                <ng-template let-pmt_type="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    S221C46
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Entered By" prop="entered1" [width]="150" >
+                <ng-template let-entered1="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ entered1}}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Entered date" prop="start_date" [width]="150" >
+                <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ start_date |  date:'M/d/yyyy'}}
+                </ng-template>
+            </ngx-datatable-column>
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="150">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle  class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-fixed-expence',row.id]" *ngIf="edtPrms ==1 || currentUser.user_role == '6'">
+                                    <i class="fa fa-edit mr-50"></i> Edit 
+                                </a>
+                                <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)" *ngIf="dltPrms ==1 || currentUser.user_role == '6'">
+                                    <i class="fa fa-trash mr-50"></i> Delete 
+                                </a>
+                                <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="dltPrms ==0 && edtPrms == 0">
+                                    <i class="fa fa-trash mr-50"></i>  You have no Permissions for any actions. 
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>

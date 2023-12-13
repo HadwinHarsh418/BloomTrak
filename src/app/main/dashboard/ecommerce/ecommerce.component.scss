@@ -1,0 +1,51 @@
+@import '@core/scss/base/pages/dashboard-ecommerce.scss';
+@import '@core/scss/base/plugins/charts/chart-apex.scss';
+@import '@core/scss/angular/libs/toastr.component.scss';
+
+// Earning Chart Tooltip
+#earnings-donut-chart {
+  .apexcharts-tooltip {
+    &.apexcharts-theme-dark {
+      background: rgba($black, 0.8) !important;
+    }
+  }
+}
+.fa.avatar-icon {
+  font-size: 20px;
+}
+textarea#account-memo {
+  min-height: 150px;
+}
+
+.loaderdiv {
+  width: 100%;
+  text-align: center;
+}
+.loaderdiv i {
+  font-size: 32px;
+}
+.label-opt{
+  font-size: 1rem !important;
+}
+.opt{
+  align-items: center;
+  flex-wrap: wrap;
+  // justify-content: space-between;
+}
+.head{
+  font-size: 18px;
+  // background: #000;
+  color: #000;
+  font-weight: 500;
+  margin-left: 13px;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0px;
+}
+
+.card-body.width-fix li b {
+  display: inline-block;
+  min-width: 130px;
+}

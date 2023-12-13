@@ -1,0 +1,339 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section id="page-account-settings">
+      <div class="row nav-vertical d-flex">
+        <div class="col-md-3 mb-2 mb-md-0">
+          <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="user" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Basic Information</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Management Company Information</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" *ngFor="let mng of managementDtls">
+                      <div class="card">
+                        <!-- <div class="card-header  pb-0">
+                                        <div class="row">
+                                            <h5 class="ml-1">{{agency.agency_name}} </h5>
+                                        </div>
+                                    </div> -->
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Contact Person First Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.contact_person_firstname}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Contact Person Last Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.contact_person_lastname}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Contact Person Phone : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.contact_person |numberFormat }}</span>
+                          </div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Contact Person Email Address : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.contact_email}}</span></div>
+                        </div>
+                        <div class="row space mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Name : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{ mng.mg_name }}</span></div>
+                        </div>
+                        <div class="row space mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Phone : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{ mng.mg_phone |numberFormat }}</span></div>
+                        </div>
+                        <div class="row space mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Address 1 : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{ mng.mg_address1 }}</span></div>
+                        </div>
+                        <div class="row space mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Address 2 : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{ mng.mg_address2 }}</span></div>
+                        </div>
+                        <div class="row space mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Email Address : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{ mng.mg_email }}</span></div>
+                        </div>
+                        <div class="row space mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Website : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{ mng.website}}</span></div>
+                        </div>
+
+
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Community Email : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.community_email}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. City : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.city}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. State : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.state}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Zip : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.zipcode}}</span></div>
+                        </div>
+                        <div class="row space  mb-1">
+                          <div class="col-md-6">
+                            <h6>Management Co. Contact Person Title : </h6>
+                          </div>
+                          <div class="col-md-6"><span class="description"> {{mng.contact_person_title}}</span></div>
+                        </div>
+                      </div>
+                      <button type="button" (click)="goBack()"
+                      class="btn btn-primary " [disabled]="btnShow">
+                      Cancel
+                   </button>
+                    </div>
+                    <div class="d-flex justify-content-center" *ngIf="!allManagement"> 
+                      <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                  </div>
+                  </div>
+                </div>
+               
+              </ng-template>
+            </li>
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-general" data-toggle="pill"
+                href="#account-vertical-general" aria-expanded="true">
+                <i data-feather="users" class="font-medium-3 mr-1"></i>
+                <span class="font-weight-bold">Communities</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Communities</h4>
+                  </div>
+                  <div class="card-body">
+
+                    <div class=" col-lg-12 mt-2" >
+                      <div class="card">
+                    
+                        <div class="row">
+                          <table class="table table-responsive">
+                            <thead >
+                                <tr >
+                                  <th scope="col" class="col btn-primary">No.</th>
+                                    <th scope="col" class="col btn-primary">Community Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let snglUsr of allManagement; let i = index" style="font-size: 12px !important;" >
+                                  <td class="col">{{i + 1}} </td>
+                                    <td class="col">{{snglUsr?.community_name ? snglUsr.community_name : '---' }} </td>
+                                   
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr *ngIf="!allManagement?.length">
+                                    <td class="col-12">
+                                        <p class="text-center">No data to display</p>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <li class="nav-item" ngbNavItem>
+              <a ngbNavLink class="nav-link d-flex py-75" id="account-pill-info" data-toggle="pill"
+                 href="#account-vertical-info" aria-expanded="false">
+              <i data-feather="edit-3" class="font-medium-3 mr-1"></i>
+              <span class="font-weight-bold">Add Access To </span>
+              </a>
+              <ng-template ngbNavContent>
+                 <div class="card">
+                    <!-- <div class="card-header">
+                       <h4 class="card-title d-flex justify-content-between w-100">
+                         <span>Reset Password</span>
+                       </h4>
+                       </div> -->
+                    <div class="card-body">
+                       <form [formGroup]="addAccTo" (ngSubmit)="addAccToSubmit()">
+                       <div class="col-lg-12 my-2">
+                          <div class="common-form-field">
+                             <div class="row">
+                                <div class="col-lg-4">
+                                   <div class="common-form-left">
+                                      <label for="inputPassword6" class="col-form-label">
+                                      Trak Type <span class="text-danger">*</span></label>
+                                   </div>
+                                </div>
+                                <div class="col-lg-8">
+                                   <div class="common-form-left form-group ">
+                                      <div class="form-check">
+                                         <input class="form-check-input" formControlName="trak_type"  
+                                            value='0'  type="radio"
+                                            id="flexRadioDefault1" (change)="chckBx($event)">
+                                         <label class="form-check-label" for="flexRadioDefault1">
+                                          spendtrak
+                                         </label>
+                                      </div>
+                                      <div class="form-check my-1">
+                                         <input class="form-check-input" 
+                                            value='1' formControlName="trak_type"  (change)="chckBx($event)"
+                                            type="radio" id="flexRadioDefault2" >
+                                         <label class="form-check-label" for="flexRadioDefault2">
+                                          shiftrak
+                                         </label>
+                                      </div>
+                                      <div class="form-check my-1">
+                                         <input class="form-check-input"  (change)="chckBx($event)"
+                                            value='2' formControlName="trak_type"
+                                            type="radio" id="flexRadioDefault2" >
+                                         <label class="form-check-label" for="flexRadioDefault2">
+                                         Both
+                                         </label>
+                                      </div>
+                                      <div class="form-check my-1">
+                                         <hr />
+                                      </div>
+                                   </div>
+                                   <span *ngIf="errTru" style="color:#ea5455;">
+                                   This field required
+                                   </span>
+                                </div>
+                             </div>
+                             <div class="row">
+                                <div class="col-lg-4">
+                                   <div class="common-form-left">
+                                      <label for="inputPassword6" class="col-form-label">
+                                      Select Date Range <span class="text-danger">*</span></label>
+                                   </div>
+                                </div>
+                                <div class="col-lg-8">
+                                   <div class="row">
+                                      <div class="col-6">
+                                         <div class="dp-hidden position-absolute">
+                                            <div class="input-group">
+                                               <input
+                                               name="datepicker"
+                                               class="form-control"
+                                               ngbDatepicker
+                                               #datepicker="ngbDatepicker"
+                                               [autoClose]="'outside'"
+                                               (dateSelect)="onDateSelection($event)"
+                                               [displayMonths]="2"
+                                               [dayTemplate]="t"
+                                               outsideDays="hidden"
+                                               [startDate]="fromDate!"
+                                               tabindex="-1"
+                                               />
+                                               <ng-template #t let-date let-focused="focused">
+                                                  <span
+                                                  class="custom-day"
+                                                  [class.focused]="focused"
+                                                  [class.range]="isRange(date)"
+                                                  [class.faded]="isHovered(date) || isInside(date)"
+                                                  (mouseenter)="hoveredDate = date"
+                                                  (mouseleave)="hoveredDate = null"
+                                                  >
+                                                  {{ date.day }}
+                                                  </span>
+                                               </ng-template>
+                                            </div>
+                                         </div>
+                                         <div class="input-group">
+                                            <input
+                                            #dpFromDate
+                                            class="form-control"
+                                            placeholder="mm/dd/yyy"
+                                            name="dpFromDate"
+                                            [value]="formatter.format(fromDate)"
+                                            (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                                            />
+                                            <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+                                         </div>
+                                      </div>
+                                      <div class="col-6">
+                                         <div class="input-group">
+                                            <input
+                                            #dpToDate
+                                            class="form-control"
+                                            placeholder="mm/dd/yyy"
+                                            name="dpToDate"
+                                            [value]="formatter.format(toDate)"
+                                            (input)="toDate = validateInput(toDate, dpToDate.value)"
+                                            />
+                                            <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+                                         </div>
+                                      </div>
+                                   </div>
+                                   <span *ngIf="errTru" style="color:#ea5455;">
+                                   This field required
+                                   </span>
+                                </div>
+                             </div>
+                          </div>
+                       </div>
+                       <div class="row addUserbtn ml-1">
+                          <button type="submit" class="btn btn-primary" [disabled]="loading">
+                          <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
+                             aria-hidden="true"></span>
+                          Add
+                          </button>
+                          <button type="button" (click)="goBack()" class="btn btn-primary ml-1" >
+                          Cancel
+                          </button>
+                       </div>
+                       </form>
+                    </div>
+                 </div>
+              </ng-template>
+           </li>
+          </ul>
+        </div>
+        <div [ngbNavOutlet]="navVertical" class="col-12 col-md-9"></div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,183 @@
+<div class="auth-wrapper auth-v2">
+    <div class="auth-inner row m-0">
+        <!-- Brand logo--><a class="brand-logo" href="javascript:void(0);">
+            <!-- <img src="{{ coreConfig.app.appLogoImage}}" alt="brand-logo" height="36" /> -->
+            <img src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo/logo-dark.png' : 'assets/images/logo/logo.png' }}"
+                alt="brand-logo" height="36" />
+
+            <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }}</h2>
+        </a>
+        <!-- /Brand logo-->
+        <!-- Left Text-->
+        <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
+            <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
+                <img class="img-fluid" [src]="
+              coreConfig.layout.skin === 'dark'
+                ? 'assets/images/pages/login-v2-dark.svg'
+                : 'assets/images/pages/login-v2.svg'
+            " alt="Login V2" />
+            </div>
+        </div>
+        <!-- /Left Text-->
+        <!-- Login-->
+        <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
+                <img src="{{ coreConfig.layout.skin == 'dark' ? 'assets/images/logo-blooms.png' : 'assets/images/logo-blooms.png' }}"
+                    class="same-logo dark-theam" />
+                <!-- <img src="assets/images/logo-revena.png" class="same-logo simple-theam" /> -->
+                <div class="mr-minus-5 mb-2">
+                    <!-- <app-langselector></app-langselector> -->
+                </div>
+                <h2 class="card-title font-weight-bold mb-1"> Register Your Management Company</h2>
+
+                <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error">
+                    <div class="alert-body">
+                        <p>{{ error }}</p>
+                    </div>
+                </ngb-alert>
+
+                <form class="auth-login-form mt-2" [formGroup]="formData" (ngSubmit)="submitted()">
+                    <div class="form-group">
+                        <label class="form-label" for="login-email">Management Company Name</label>
+                        <input type="text" formControlName="mg_name" class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['mg_name'].dirty && controls['mg_name'].invalid }"
+                            placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                            maxlength="50" />
+                            <span
+                            *ngIf="controls['mg_name'].dirty && controls['mg_name'].invalid">
+                            <div class="invalid-feedback"
+                                *ngIf="controls['mg_name'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                            </div></span>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label" for="mg_title">Management Company Title</label>
+                        <input type="text" formControlName="mg_title" class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['mg_title'].dirty && controls['mg_title'].invalid }"
+                            placeholder="" aria-describedby="mg_title" autofocus="" tabindex="1" inputDirective
+                            maxlength="50">
+                        <div *ngIf="controls['mg_title'].dirty && controls['mg_title'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="controls['mg_title'].hasError('required')">This field required</div>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label" for="mg_phone">Management Company Phone</label>
+                        <input type="text" formControlName="mg_phone"
+                            class="form-control" phoneMask [preValue]="formData.value.mg_phone" maxlength="14"
+                            [ngClass]="{ 'is-invalid': controls['mg_phone'].dirty && controls['mg_phone'].invalid }"
+                            placeholder="" aria-describedby="mg_phone" autofocus="" tabindex="1" >
+                        <div *ngIf="controls['mg_phone'].dirty && controls['mg_phone'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="controls['mg_phone'].hasError('pattern')">Please enter valid phone number </div>
+                            <div *ngIf="controls['mg_phone'].hasError('required')">This field required</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="mg_email">Management Company Email</label>
+                        <input inputDirective inptype="email" type="text" formControlName="mg_email"
+                            class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['mg_email'].dirty && controls['mg_email'].invalid }"
+                            placeholder="" aria-describedby="mg_email" autofocus="" tabindex="1" 
+                            maxlength="50">
+                            <span
+                            *ngIf="controls['mg_email'].dirty && controls['mg_email'].invalid">
+                            <div class="invalid-feedback"
+                                *ngIf="controls['mg_email'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                            </div>
+                            <div class="invalid-feedback"
+                                *ngIf="controls['mg_email'].hasError('email')"
+                                class="text text-danger">
+                                Please enter valid email
+                            </div>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact_person">Contact Person</label>
+                        <input  type="text" formControlName="contact_person" phoneMask [preValue]="formData.value.contact_person" maxlength="14"
+                            class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['contact_person'].dirty && controls['contact_person'].invalid }"
+                            placeholder="" aria-describedby="contact_person" autofocus="" tabindex="1">
+                        <div *ngIf="controls['contact_person'].dirty && controls['contact_person'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="controls['contact_person'].hasError('required')">This field required</div>
+                        </div>
+                        <div *ngIf="controls['contact_person'].dirty && controls['contact_person'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="controls['contact_person'].hasError('pattern')">Please enter valid phone number</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="contact_person_name">Contact Person Name</label>
+                        <input inputDirective inptype="text" type="text" formControlName="contact_person_name"
+                            class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['contact_person_name'].dirty && controls['contact_person_name'].invalid }"
+                            placeholder="" aria-describedby="contact_person_name" autofocus="" tabindex="1" inputDirective
+                            maxlength="50">
+                        <div *ngIf="controls['contact_person_name'].dirty && controls['contact_person_name'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="controls['contact_person_name'].hasError('required')">This field required</div>
+                        </div>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label" for="mg_email">Contact Person Email</label>
+                        <input  type="text" formControlName="contact_email"
+                            class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['contact_email'].dirty && controls['contact_email'].invalid }"
+                            placeholder="" aria-describedby="contact_email" autofocus="" tabindex="1" 
+                            maxlength="50">
+                            <span
+                            *ngIf="controls['contact_email'].dirty && controls['contact_email'].invalid">
+                            <div class="invalid-feedback"
+                                *ngIf="controls['contact_email'].hasError('required')"
+                                class="text text-danger">
+                                This field required
+                            </div>
+                            <div class="invalid-feedback"
+                                *ngIf="controls['contact_email'].hasError('email')"
+                                class="text text-danger">
+                                Please enter valid email
+                            </div>
+                        </span>
+                    </div>
+    
+                    <div class="form-group">
+                        <label class="form-label" for="login-email">Password</label>
+                        <input type="password" formControlName="password" class="form-control"
+                            [ngClass]="{ 'is-invalid': controls['password'].dirty && controls['password'].invalid }"
+                            placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
+                            maxlength="50">
+                        <div *ngIf="controls['password'].dirty && controls['password'].invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="controls['password'].hasError('required')">This field required</div>
+                        </div>
+                        <div class="invalid-feedback" *ngIf="controls['password'].hasError('pattern')"
+                        class="text text-danger">
+                        A minimum 8 characters password contains a combination of
+                        uppercase and lowercase letter and special character are
+                        required.
+                    </div>
+                    </div>
+                    <!-- <div class="form-group captcha">
+              <re-captcha (resolved)="resolved($event)"
+                                      siteKey="6Lcy7N4ZAAAAAHpYHlxEitgnmnAWUJaCCe5cNUzk"></re-captcha>
+            </div> -->
+                    <button [disabled]="loading" type="submit" class="btn btn-primary btn-block" tabindex="4"
+                        rippleEffect>
+                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>Next
+                    </button>
+                </form>
+                <div class="mt-1">
+                    <a routerLink="/login" >Log in</a>
+                </div>
+            </div>
+        </div>
+        <!-- /Login-->
+    </div>
+</div>

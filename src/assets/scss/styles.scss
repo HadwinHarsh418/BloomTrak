@@ -1,0 +1,29 @@
+/*================================================================================
+	Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+@import '@core/scss/angular/libs/datatables.component.scss';
+
+.main-menu .navbar-header .navbar-brand .brand-logo img {
+	max-width: 100px;
+}
+
+.ngx-datatable.bootstrap .datatable-body .empty-row {
+	text-align: center;
+}
+
+button.btn.btn-primary.btn-block.waves-effect.waves-float.waves-light {
+	background: #ff6633 !important;
+	border: none;
+}
+
+.btn-info {
+	background-color: $primary !important;
+}

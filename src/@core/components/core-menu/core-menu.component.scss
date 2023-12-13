@@ -1,0 +1,28 @@
+//  Hide collapsible menu while menu is collapsed
+.vertical-layout:not(.vertical-overlay-menu) {
+  .main-menu:not(.expanded) {
+    .nav-item.has-sub.open {
+      .menu-content {
+        display: none;
+      }
+    }
+  }
+}
+.nav-item {
+  &.disabled {
+    outline: none;
+  }
+}
+
+
+span.font-icon.fa {
+  margin-right: 20px;
+}
+
+.main-menu.menu-light .navigation > li ul li > a {
+    padding: 0px 15px 10px 20px;
+}
+
+.main-menu.menu-light .navigation > li > a {
+  margin: -5px 15px;
+}

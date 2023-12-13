@@ -1,0 +1,486 @@
+<div class="card">
+    <div class="card-header d-flex flex-column align-items-start pb-0">
+        <h2 class="font-weight-bolder mt-1">Project list </h2>
+    </div>
+
+    <div >
+       
+
+    </div>
+    <div class="card-body mt-1">
+        <div class="row">
+            <div class="col-md-6 col-12">
+                <div class="d-flex justify-content-between align-items-center m-1">
+                    <!-- <button type="button" class="btn btn-info" (click)="openAddcommunity()"
+                        style="margin-top: 10px;">Add community</button> -->
+
+                    <button type="button" class="btn btn-info" (click)="openAddUser()">
+                        <i class="fa fa-trash" class="mr-50"></i> Add project
+                    </button>
+
+                    <!-- <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoShow' | translate}}
+                        <select class="form-control mx-25" [(ngModel)]="page.size" (change)="setPage({ offset: 0 })">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select> {{ 'DEPOSIT.depoEntry' | translate}}
+                    </label> -->
+                </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                    <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                        <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                            [(ngModel)]="searchStr" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"> -->
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+            <!-- [columns]="[{ name: 'Date' }, { name: 'From' }, { name: 'To' }, { name: 'Description' }, { name: 'Amount' }]" -->
+
+            <ngx-datatable-column name="title" prop="title" [width]="50">
+                <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{title}}
+                </ng-template>
+            </ngx-datatable-column>
+            <!-- <ngx-datatable-column name="Address" prop="email" [width]="50">
+                <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ id }}
+                </ng-template>
+            </ngx-datatable-column> -->
+            <ngx-datatable-column name="Description" prop="description" [width]="50">
+                <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ description }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Budget" prop="budget" [width]="50">
+                <ng-template let-budget="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ budget }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Start date" prop="start_date" [width]="50">
+                <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ start_date | date: 'dd-MM-yyyy'}}
+                </ng-template>
+            </ngx-datatable-column>
+
+
+            <ngx-datatable-column name="End date" prop="end_date" [width]="50">
+                <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ end_date | date: 'dd-MM-yyyy'}}
+                </ng-template>
+            </ngx-datatable-column>
+
+
+            <ngx-datatable-column name="Actions" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                <a [routerLink]="['/projectProfile', row.id]" ngbDropdownItem
+                                    class="d-flex align-items-center">
+                                    <i class="fa fa-eye" class="mr-50"></i> View
+                                </a>
+                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center">
+                                    <i class="fa fa-trash" class="mr-50"></i> Delete
+                                </a>
+                                <a (click)="EditUser(row)" ngbDropdownItem class="d-flex align-items-center">
+                                    <i class="fa fa-trash" class="mr-50"></i> Edit
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+
+        </ngx-datatable>
+    </div>
+</div>
+
+
+<!-- DeleteModal -->
+<ng-template #deleteUser let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Delete project</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closed(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure you want to delete this project ?</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="deletesUser(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Delete
+        </button>
+    </div>
+</ng-template>
+<!-- / Modal-->
+
+
+<!-- Add Community -->
+
+<ng-template #addUsers let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel">Add project</h4>
+        <button type="button" [disabled]="delUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+
+        <!-- Register -->
+        <div>
+            <form class="user" [formGroup]="formData" (ngSubmit)="submitted(modal)">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="common-form-left">
+                            <label for="inputPassword6" class="col-form-label">Title
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="common-form-left form-group">
+                            <input type="text" maxlength="12"
+                                [class.is-invalid]="controls['title'].dirty && controls['title'].invalid"
+                                formControlName="title" class="form-control form-control-user" id="title">
+                            <span *ngIf="controls['title'].dirty && controls['title'].invalid">
+                                <div class="invalid-feedback" *ngIf="controls['title'].hasError('required')"
+                                    class="text text-danger">
+                                    This field required
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="common-form-field">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Description
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <textarea type="text"
+                                            [class.is-invalid]="controls['description'].dirty && controls['description'].invalid"
+                                            formControlName="description" class="form-control form-control-user"
+                                            id="description" id="inputPassword6" class="form-control"
+                                            aria-describedby="passwordHelpInline"></textarea>
+                                        <span *ngIf="controls['description'].dirty && controls['description'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['description'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Budget
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="text"  inputDirective inptype="phonenumber"
+                                            [class.is-invalid]="controls['budget'].dirty && controls['budget'].invalid"
+                                            formControlName="budget" class="form-control form-control-user" id="budget">
+                                        <span *ngIf="controls['budget'].dirty && controls['budget'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['budget'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="controls['budget'].hasError('pattern')"
+                                                class="text text-danger">
+                                                Enter only number
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Start date</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="date" min={{minDate}}
+                                            [class.is-invalid]="controls['start_date'].dirty && controls['start_date'].invalid"
+                                            formControlName="start_date" class="form-control form-control-user"
+                                            id="start_date" >
+                                        <span *ngIf="controls['start_date'].dirty && controls['start_date'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['start_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">End date</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="date" min={{minDate}}
+                                            [class.is-invalid]="controls['end_date'].dirty && controls['end_date'].invalid"
+                                            formControlName="end_date" class="form-control form-control-user"
+                                            id="end_date">
+                                        <span *ngIf="controls['end_date'].dirty && controls['end_date'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['end_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">
+                                            Community</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <select formControlName="community_id" id="community_id" type="select"
+                                            class="form-control">
+                                            <option value="" selected>Select community id</option>
+                                            <option *ngFor="let communite of allCommunity" value="{{communite.id}}">
+                                                {{communite?.community_name}}
+                                            </option>
+                                        </select>
+                                        <span
+                                            *ngIf="controls['community_id'].dirty && controls['community_id'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['community_id'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div> -->
+
+                            <div class="row addUserbtn">
+                                <div class="m-1">
+                                    <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                        <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        Add
+                                    </button>
+                                </div>
+
+                                <!-- <div class="m-1">
+                                    <button type="button" [disabled]="btnShow" class="btn btn-danger "
+                                        (click)="closeAddCommunity(modal)">
+                                        <span *ngIf="btnShow" class="spinner-border spinner-border-sm "></span>Cancel
+                                    </button>
+                                </div> -->
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+</ng-template>
+
+<!-- editUserModal -->
+
+  <ng-template #editUsers let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel">Edit Project</h4>
+        <button type="button" [disabled]="delUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <div>
+            <form class="user" [formGroup]="editFormData" (ngSubmit)="editSubmitted(modal)">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="common-form-left">
+                            <label for="inputPassword6" class="col-form-label">Title
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="common-form-left form-group">
+                            <input type="text" maxlength="12"
+                                [class.is-invalid]="ef['title'].dirty && ef['title'].invalid"
+                                formControlName="title" class="form-control form-control-user" id="title">
+                            <span *ngIf="ef['title'].dirty && ef['title'].invalid">
+                                <div class="invalid-feedback" *ngIf="ef['title'].hasError('required')"
+                                    class="text text-danger">
+                                    This field required
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="common-form-field">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Description
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <textarea type="text"
+                                            [class.is-invalid]="ef['description'].dirty && ef['description'].invalid"
+                                            formControlName="description" class="form-control form-control-user"
+                                            id="description" id="inputPassword6" class="form-control"
+                                            aria-describedby="passwordHelpInline"></textarea>
+                                        <span *ngIf="ef['description'].dirty && ef['description'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="ef['description'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Budget
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="text"  inputDirective inptype="phonenumber"
+                                            [class.is-invalid]="ef['budget'].dirty && ef['budget'].invalid"
+                                            formControlName="budget" class="form-control form-control-user" id="budget">
+                                        <span *ngIf="ef['budget'].dirty && ef['budget'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="ef['budget'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                            <div class="invalid-feedback" *ngIf="ef['budget'].hasError('pattern')"
+                                                class="text text-danger">
+                                                Enter only number
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">Start date</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="date" min={{minDate}}
+                                            [class.is-invalid]="ef['start_date'].dirty && ef['start_date'].invalid"
+                                            formControlName="start_date" class="form-control form-control-user"
+                                            id="start_date" >
+                                        <span *ngIf="ef['start_date'].dirty && ef['start_date'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="ef['start_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="common-form-left">
+                                        <label for="inputPassword6" class="col-form-label">End date</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="common-form-left form-group">
+                                        <input type="date" min={{minDate}}
+                                            [class.is-invalid]="ef['end_date'].dirty && ef['end_date'].invalid"
+                                            formControlName="end_date" class="form-control form-control-user"
+                                            id="end_date">
+                                        <span *ngIf="ef['end_date'].dirty && ef['end_date'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="ef['end_date'].hasError('required')"
+                                                class="text text-danger">
+                                                This field required
+                                            </div>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                         
+
+                            <div class="row addUserbtn">
+                                <div class="m-1">
+                                    <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                        <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        Add
+                                    </button>
+                                </div>
+
+                                <div class="m-1">
+                                    <button type="button" [disabled]="btnShow" class="btn btn-danger "
+                                        (click)="closeAddCommunity(modal)">
+                                        <span *ngIf="btnShow" class="spinner-border spinner-border-sm "></span>Cancel
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

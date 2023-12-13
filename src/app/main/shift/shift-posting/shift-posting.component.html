@@ -1,0 +1,137 @@
+<div class="content-wrapper">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <!-- account setting page -->
+        <section id="page-account-settings">
+            <div class="row nav-vertical d-flex">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Communication for Posting</h4>
+                        </div>
+                        <div class="card-body">
+
+                            <form class="user" [formGroup]="formData">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="common-form-field">
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Shift Type
+                                              </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group">
+                                                        <select formControlName="shift_Types" id="shift_Types" type="select" class="form-control">
+                                                <option disabled value="">Select Shift Type</option>
+                                                <option value="urgent">Urgent</option>
+                                                <option value="standard">Standard</option>
+                                              </select>
+                                                        <span *ngIf="controls['shift_Types'].dirty && controls['shift_Types'].invalid">
+                                                <div class="invalid-feedback"
+                                                  *ngIf="controls['shift_Types'].hasError('required')"
+                                                  class="text text-danger">
+                                                  This field required
+                                                </div>
+                                              </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Employee Type
+                                              </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group">
+                                                        <select placeholder="Agency" formControlName="employee_Types" id="employee_Types" type="select" class="form-control">
+                                                            <option disabled value="">Select Employee Type</option>
+                                                            <option value="community">Community</option>
+                                                            <option value="agency">Agency</option>
+                                                          </select>
+                                                        <span *ngIf="controls['employee_Types'].dirty && controls['employee_Types'].invalid">
+                                                <div class="invalid-feedback"
+                                                  *ngIf="controls['employee_Types'].hasError('required')"
+                                                  class="text text-danger">
+                                                  This field required
+                                                </div>
+                                              </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Title
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group">
+                                                        <input type="text" 
+                                                        formControlName="title" class="form-control form-control-user" id="title">
+                                                        <span *ngIf="controls['title'].dirty && controls['title'].invalid">
+                                                            <div class="invalid-feedback" *ngIf="controls['title'].hasError('required')"
+                                                                class="text text-danger">
+                                                                This field required
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-4">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Description
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8">
+                                                    <div class="common-form-left form-group">
+                                                        <textarea type="text" formControlName="description" class="form-control form-control-user" id="description" id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline"></textarea>
+                                                        <span *ngIf="controls['description'].dirty && controls['description'].invalid">
+                                                            <div class="invalid-feedback"
+                                                                *ngIf="controls['description'].hasError('required')"
+                                                                class="text text-danger">
+                                                                This field required
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary nexts">
+                                          Assign
+            
+                                          <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+                </div>
+
+            </div>
+        </section>
+        <!--/ account setting page -->
+    </div>
+</div>
