@@ -8,7 +8,7 @@
             <div class="load">
                <span *ngIf="loadSpinner" class="spinner-border spinner-border-sm"></span>
             </div>
-            </div>
+         </div>
          <div class="row nav-vertical d-flex">
             <div class="col-md-12 mb-2 mb-md-0">
                <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
@@ -19,8 +19,9 @@
                                <h4 class="card-title" >{{prmsUsrId?.id ? 'Edit Spend Down' : 'Add Spend Down'}}</h4>
                             </div>
                          </div> -->
-                        <div class="card-header ml-1">
-                           <h4 class="card-title">{{ prmsUsrId?.id ? 'Edit Spend Down' : 'Add Spend Down'}} {{i + 1}}</h4>
+                        <div class="card-header">
+                           <h4 class="card-title">{{ prmsUsrId?.id ? 'Edit Spend Down' : 'Add Spend Down'}} {{i + 1}}
+                           </h4>
                         </div>
                         <div class="close card-header mr-1 " *ngIf="i!=0"
                            style="color: #ff6633;position: absolute;right: 0;">
@@ -28,7 +29,7 @@
                               &times;</p>
                         </div>
                         <div class="card-body">
-                           <div class="mt-2">
+                           <div class="new">
                               <!-- <form class="user" [formGroup]="formRoleData" (ngSubmit)="submitted()">
                                  <div class="row">
                                     <div class="col-lg-4">
@@ -54,7 +55,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['com_name'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -86,7 +87,7 @@
                                                <div class="invalid-feedback"
                                                    *ngIf="FormData_Control['department'].hasError('required')"
                                                    class="text text-danger">
-                                                   This field required
+                                                   This field is Required
                                                </div>
                                            </span>
                                        </div>
@@ -112,7 +113,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['pur_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -143,7 +144,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['vendor'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -160,7 +161,7 @@
                                             <div class="invalid-feedback"
                                                *ngIf="FormData_Control['vendor'].hasError('required')"
                                                class="text text-danger">
-                                               This field required
+                                               This field is Required
                                             </div>
                                          </span>
                                       </div>
@@ -188,7 +189,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['desc'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -219,7 +220,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['gl_acc'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -243,7 +244,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['amount'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -273,7 +274,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['pay_type'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -304,7 +305,7 @@
                                             <div class="invalid-feedback"
                                                *ngIf="FormData_Control['final'].hasError('required')"
                                                class="text text-danger">
-                                               This field required
+                                               This field is Required
                                             </div>
                                          </span>
                                       </div>
@@ -328,7 +329,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['invoice_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -352,7 +353,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['invoice_number'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -379,7 +380,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['start_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -402,7 +403,7 @@
                                              <div class="invalid-feedback"
                                                 *ngIf="FormData_Control['entered_by'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                              </div>
                                           </span>
                                        </div>
@@ -425,30 +426,34 @@
                               <div class="user" [formGroup]="formRoleData">
                                  <div formArrayName="items">
                                     <div class="row" [formGroupName]="i">
-                                       <div class="col-lg-4">
+                                       <div class="col-lg-4" *ngIf="currentUser.user_role != 1">
                                           <div class="common-form-left">
                                              <label for="inputPassword6" class="col-form-label">Community Name <span
                                                    class="text-danger">*</span>
                                              </label>
                                           </div>
                                        </div>
-                                       <div class="col-lg-8">
+                                       <div class="col-lg-8" *ngIf="currentUser.user_role != 1 || currentUser.prmsnId == '62'">
                                           <div class="common-form-left form-group">
                                              <select class="form-control" formControlName="community_name"
-                                               (change)="slctCom($event,1)"
+                                                (change)="slctCom($event,1)"
                                                 *ngIf="currentUser.prmsnId == 6 || currentUser.user_role == 3 || currentUser.user_role == 8">
                                                 <option value="" selected="selected" disabled>---Select Community---
                                                 </option>
-                                                <option value="{{currentUser.user_role == 3 ? item.cp_id : (item.id || item.community_id )}}" *ngFor="let item of allCommunity">
+                                                <option
+                                                   value="{{currentUser.user_role == 3 ? item.cp_id : (item.id || item.community_id )}}"
+                                                   *ngFor="let item of allCommunity">
                                                    {{item.community_name}}</option>
                                              </select>
                                              <span
-                                                *ngIf="this.roleData1.includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
-                                             <span *ngIf="getControlsOfArray(i)['community_name'].dirty && getControlsOfArray(i)['community_name'].invalid">
+                                                *ngIf="this.roleData1.includes(currentUser.prmsnId) || this.currentUser?.user_role == 1">{{prmsUsrId.id ?
+                                                   patchData.community_name : comName?.community_name}}</span>
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['community_name'].dirty && getControlsOfArray(i)['community_name'].invalid">
                                                 <div class="invalid-feedback"
                                                    *ngIf="getControlsOfArray(i)['community_name'].hasError('required')"
                                                    class="text text-danger">
-                                                   This field required
+                                                   This field is Required
                                                 </div>
                                              </span>
                                           </div>
@@ -472,20 +477,23 @@
 
                                              <select class="form-control" formControlName="department"
                                                 (click)="chngD($event)">
-                                                <option value="" selected="selected" *ngIf="['6'].includes(currentUser.prmsnId)" disabled>---Select Department---
+                                                <option value="" selected="selected"
+                                                   *ngIf="['6'].includes(currentUser.prmsnId)" disabled>---Select
+                                                   Department---
                                                 </option>
                                                 <option value="" disabled *ngIf="!dprtmnt.length">---No Record
                                                    Founded---</option>
                                                 <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}
                                                 </option>
                                              </select>
-                                                <span *ngIf="getControlsOfArray(i)['department'].dirty && getControlsOfArray(i)['department']?.invalid">
-                                                   <span class="invalid-feedback"
-                                                       *ngIf="getControlsOfArray(i)['department']?.hasError('required')"
-                                                       class="text text-danger">
-                                                       This field required
-                                                   </span>
-                                               </span>
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['department'].dirty && getControlsOfArray(i)['department']?.invalid">
+                                                <span class="invalid-feedback"
+                                                   *ngIf="getControlsOfArray(i)['department']?.hasError('required')"
+                                                   class="text text-danger">
+                                                   This field is Required
+                                                </span>
+                                             </span>
                                           </div>
 
                                        </div>
@@ -501,17 +509,18 @@
                                        </div>
                                        <div class="col-lg-8">
                                           <div class="common-form-left form-group">
-                                             <input type="date" max={{minDate}} formControlName="purchage_date"
-                                               class="form-control form-control-user" id="purchage_date"
+                                             <input type="date" max={{minDate}} onkeydown="return false" formControlName="purchage_date"
+                                                class="form-control form-control-user" id="purchage_date"
                                                 class="form-control" placeholder="Purchase Date"
                                                 aria-describedby="passwordHelpInline">
-                                             <span *ngIf="getControlsOfArray(i)['purchage_date'].dirty && getControlsOfArray(i)['purchage_date'].invalid">
-                                                 <div class="invalid-feedback"
-                                                    *ngIf="getControlsOfArray(i)['purchage_date'].hasError('required')"
-                                                    class="text text-danger">
-                                                    This field required
-                                                 </div>
-                                              </span>
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['purchage_date'].dirty && getControlsOfArray(i)['purchage_date'].invalid">
+                                                <div class="invalid-feedback"
+                                                   *ngIf="getControlsOfArray(i)['purchage_date'].hasError('required')"
+                                                   class="text text-danger">
+                                                   This field is Required
+                                                </div>
+                                             </span>
                                           </div>
                                        </div>
                                     </div>
@@ -525,31 +534,16 @@
                                        </div>
                                        <div class="col-lg-6">
                                           <div class="common-form-left form-group">
-                                             <!-- <input type="text"
-                                                 [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
-                                                 formControlName="vendor" class="form-control form-control-user"
-                                                 id="vendor" class="form-control"
-                                                 placeholder="Vendor" aria-describedby="passwordHelpInline"> -->
-
-                                             <!-- <select class="form-control" formControlName="vendor">
-                                                <option value="" selected="selected" disabled>---Select Vendor---
-                                                </option>
-                                                <option value="" disabled *ngIf="!vendorData.length">---No Record
-                                                   Founded---</option>
-                                                <option value="{{item.vendor_name}}" *ngFor="let item of vendorData">
-                                                   {{item.vendor_name}}</option>
-                                             </select> -->
-
                                              <ng-multiselect-dropdown placeholder="---Select Vendor---"
-                                             [settings]="dropdownSettings"
-                                             [data]="vendorData"
-                                             formControlName="vendor" >
-                                         </ng-multiselect-dropdown>
-                                             <span *ngIf="getControlsOfArray(i)['vendor'].dirty && getControlsOfArray(i)['vendor'].invalid">
+                                                [settings]="dropdownSettings" [data]="vendorData"
+                                                formControlName="vendor">
+                                             </ng-multiselect-dropdown>
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['vendor'].dirty && getControlsOfArray(i)['vendor'].invalid">
                                                 <div class="invalid-feedback"
                                                    *ngIf="getControlsOfArray(i)['vendor'].hasError('required')"
                                                    class="text text-danger">
-                                                   This field required
+                                                   This field is Required
                                                 </div>
                                              </span>
 
@@ -563,12 +557,13 @@
                                                 id="vendor" class="form-control"
                                                 placeholder="Vendor" aria-describedby="passwordHelpInline">
        -->
-                                            
-                                          <!-- </div>
+
+                                       <!-- </div>
                                        </div> -->
                                        <div class="col-lg-2">
                                           <button class="btn btn-block btn-primary" type="button"
-                                             style="height: 2.714rem;font-size: smaller;" (click)="openAddNew(i)">Add New
+                                             style="height: 2.714rem;font-size: smaller;" (click)="openAddNew(1)">Add
+                                             New
                                              Vendor</button>
                                        </div>
                                     </div>
@@ -587,13 +582,14 @@
                                                 class="form-control form-control-user" id="description"
                                                 class="form-control" placeholder="Description"
                                                 aria-describedby="passwordHelpInline">
-                                                <span *ngIf="getControlsOfArray(i)['description'].dirty && getControlsOfArray(i)['description']?.invalid">
-                                                   <span class="invalid-feedback"
-                                                       *ngIf="getControlsOfArray(i)['description']?.hasError('required')"
-                                                       class="text text-danger">
-                                                       This field required
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['description'].dirty && getControlsOfArray(i)['description']?.invalid">
+                                                <span class="invalid-feedback"
+                                                   *ngIf="getControlsOfArray(i)['description']?.hasError('required')"
+                                                   class="text text-danger">
+                                                   This field is Required
                                                 </span>
-                                               </span>
+                                             </span>
 
                                           </div>
                                        </div>
@@ -623,13 +619,14 @@
                                                    {{item.gl_and_description}}</option>
                                              </select>
                                           </div>
-                                          <span *ngIf="getControlsOfArray(i)['gl_account'].dirty && getControlsOfArray(i)['gl_account']?.invalid">
+                                          <span
+                                             *ngIf="getControlsOfArray(i)['gl_account'].dirty && getControlsOfArray(i)['gl_account']?.invalid">
                                              <span class="invalid-feedback"
-                                                 *ngIf="getControlsOfArray(i)['gl_account']?.hasError('required')"
-                                                 class="text text-danger">
-                                                 This field required
+                                                *ngIf="getControlsOfArray(i)['gl_account']?.hasError('required')"
+                                                class="text text-danger">
+                                                This field is Required
+                                             </span>
                                           </span>
-                                         </span>
                                        </div>
                                     </div>
                                     <div class="row" [formGroupName]="i">
@@ -646,13 +643,14 @@
                                                 class="form-control form-control-user" id="amount" class="form-control"
                                                 placeholder="Amount" aria-describedby="passwordHelpInline">
                                           </div>
-                                          <span *ngIf="getControlsOfArray(i)['amount'].dirty && getControlsOfArray(i)['amount']?.invalid">
+                                          <span
+                                             *ngIf="getControlsOfArray(i)['amount'].dirty && getControlsOfArray(i)['amount']?.invalid">
                                              <span class="invalid-feedback"
-                                                 *ngIf="getControlsOfArray(i)['amount']?.hasError('required')"
-                                                 class="text text-danger">
-                                                 This field required
+                                                *ngIf="getControlsOfArray(i)['amount']?.hasError('required')"
+                                                class="text text-danger">
+                                                This field is Required
                                              </span>
-                                         </span>
+                                          </span>
                                        </div>
                                     </div>
                                     <div class="row" [formGroupName]="i">
@@ -678,16 +676,17 @@
                                                 </option>
                                              </select>
 
-                                             <span  class="form-control" *ngIf="conTrue">
+                                             <span class="form-control" *ngIf="conTrue">
                                                 Contract
                                              </span>
-                                             <span *ngIf="getControlsOfArray(i)['pmt_type'].dirty && getControlsOfArray(i)['pmt_type']?.invalid">
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['pmt_type'].dirty && getControlsOfArray(i)['pmt_type']?.invalid">
                                                 <span class="invalid-feedback"
-                                                    *ngIf="getControlsOfArray(i)['pmt_type']?.hasError('required')"
-                                                    class="text text-danger">
-                                                    This field required
+                                                   *ngIf="getControlsOfArray(i)['pmt_type']?.hasError('required')"
+                                                   class="text text-danger">
+                                                   This field is Required
                                                 </span>
-                                            </span>
+                                             </span>
                                           </div>
                                        </div>
                                     </div>
@@ -713,13 +712,14 @@
                                                 <option value="0">No</option>
                                                 <option value="1">Yes</option>
                                              </select>
-                                             <span *ngIf="getControlsOfArray(i)['final'].dirty && getControlsOfArray(i)['final']?.invalid">
+                                             <span
+                                                *ngIf="getControlsOfArray(i)['final'].dirty && getControlsOfArray(i)['final']?.invalid">
                                                 <div class="invalid-feedback"
-                                                    *ngIf="getControlsOfArray(i)['final']?.hasError('required')"
-                                                    class="text text-danger">
-                                                    This field required
+                                                   *ngIf="getControlsOfArray(i)['final']?.hasError('required')"
+                                                   class="text text-danger">
+                                                   This field is Required
                                                 </div>
-                                            </span>
+                                             </span>
                                           </div>
                                        </div>
                                     </div>
@@ -741,7 +741,7 @@
                                                  <div class="invalid-feedback"
                                                     *ngIf="FormData_Control['invoice_date'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                               </span>
                                            </div>
@@ -792,7 +792,7 @@
                                                  <div class="invalid-feedback"
                                                     *ngIf="FormData_Control['start_date'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                               </span> -->
                                           </div>
@@ -821,7 +821,7 @@
                                        <div class="col-lg-8">
                                           <div class="common-form-left form-group">
                                              <span>
-                                                {{minDate | date:'MM-dd-yyyy'}}
+                                                {{minDate | date:'MM/dd/yyyy'}}
                                              </span>
                                              <!-- <input type="date"
                                                  [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
@@ -832,7 +832,7 @@
                                                  <div class="invalid-feedback"
                                                     *ngIf="FormData_Control['start_date'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                               </span> -->
                                           </div>
@@ -849,11 +849,12 @@
                                        <div class="col-lg-8">
                                           <div class="common-form-left form-group">
 
-                                             <span
-                                                *ngIf="['1'].includes(currentUser.prmsnId)">{{prmsUsrId.id ? prmsUsrId.name : comName?.community_name}}</span>
-                                             <span *ngIf="['6'].includes(currentUser.prmsnId)">{{prmsUsrId.id ? prmsUsrId.name : 'Admin'}}</span>
-                                             <span
-                                                *ngIf="roleData2.includes(currentUser.prmsnId)">{{prmsUsrId.id ? prmsUsrId.name : userName?.first_name+' '+userName?.last_name}}</span>
+                                             <span *ngIf="['1'].includes(currentUser.prmsnId)">{{prmsUsrId.id ?
+                                                patchData.community_name : comName?.community_name}}</span>
+                                             <span *ngIf="['6'].includes(currentUser.prmsnId)">{{prmsUsrId.id ?
+                                                prmsUsrId.name : 'Admin'}}</span>
+                                             <span *ngIf="roleData2.includes(currentUser.prmsnId)">{{prmsUsrId.id ?
+                                                prmsUsrId.name : userName?.first_name+' '+userName?.last_name}}</span>
                                           </div>
                                           <!-- <div class="row addUserbtn">
                                               <div class="m-1">
@@ -875,23 +876,26 @@
                         </div>
                      </div>
                      <div class="row addUserbtn">
-                        <div class="m-1">
-                           <button class="btn btn-primary mr-1" (click)="addItem()" *ngIf="!prmsUsrId?.id">Add Another Expense</button>
-                           <button class="btn btn-primary mr-1" (click)="addReceipt()" *ngIf="!prmsUsrId?.id">Add to Split Receipt</button>
-                           <button class="btn btn-primary mr-1" (click)="submitted(1)" *ngIf="!prmsUsrId?.id">Split Receipt - Other Department</button>
-                           <button type="button" class="btn btn-primary" [disabled]="loading" *ngIf="!prmsUsrId?.id"
+                        <div class="d-flex custom-button">
+                           <button class="btn btn-primary mr-1" (click)="addItem()" *ngIf="!prmsUsrId?.id">Add Another
+                              Expense</button>
+                           <button class="btn btn-primary mr-1" (click)="addReceipt()" *ngIf="!prmsUsrId?.id">Add to
+                              Split Receipt</button>
+                           <button class="btn btn-primary mr-1" (click)="submitted(1)" *ngIf="!prmsUsrId?.id">Split
+                              Receipt - Other Department</button>
+                           <button type="button" class="btn btn-primary mr-1" [disabled]="loading" *ngIf="!prmsUsrId?.id"
                               (click)="submitted(0)">
                               <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
                                  aria-hidden="true"></span>
                               Submit
                            </button>
-                           <button type="button" class="btn btn-primary" [disabled]="loading" *ngIf="prmsUsrId?.id"
+                           <button type="button" class="btn btn-primary mr-1" [disabled]="loading" *ngIf="prmsUsrId?.id"
                               (click)="submitted(0)">
                               <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
                                  aria-hidden="true"></span>
                               Save
                            </button>
-                           <button type="button" (click)="goBack()" class="btn btn-primary ml-1">
+                           <button type="button" (click)="goBack()" class="btn btn-primary cancel">
                               Cancel
                            </button>
                         </div>
@@ -945,7 +949,7 @@
                            <span *ngIf="controls['newVendor'].dirty && controls['newVendor'].invalid">
                               <div class="invalid-feedback" *ngIf="controls['newVendor'].hasError('required')"
                                  class="text text-danger">
-                                 This field required
+                                 This field is Required
                               </div>
                            </span>
                         </div>
@@ -955,7 +959,8 @@
                   <div class="row">
                      <div class="col-lg-4">
                         <div class="common-form-left">
-                           <label for="inputPassword6" class="col-form-label">Description <span class="text-danger">*</span>
+                           <label for="inputPassword6" class="col-form-label">Description <span
+                                 class="text-danger">*</span>
                            </label>
                         </div>
                      </div>
@@ -963,14 +968,12 @@
                         <div class="common-form-left form-group">
                            <input type="text"
                               [class.is-invalid]="controls['description'].dirty && controls['description'].invalid"
-                              formControlName="description" class="form-control form-control-user"
-                              id="description" class="form-control"
-                              placeholder="Description" aria-describedby="passwordHelpInline">
+                              formControlName="description" class="form-control form-control-user" id="description"
+                              class="form-control" placeholder="Description" aria-describedby="passwordHelpInline">
                            <span *ngIf="controls['description'].dirty && controls['description'].invalid">
-                              <div class="invalid-feedback"
-                                 *ngIf="controls['description'].hasError('required')"
+                              <div class="invalid-feedback" *ngIf="controls['description'].hasError('required')"
                                  class="text text-danger">
-                                 This field required
+                                 This field is Required
                               </div>
                            </span>
                         </div>
@@ -983,6 +986,93 @@
                         aria-hidden="true"></span>
                   </button>
                   <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
+                     Cancel
+                  </button>
+               </div>
+            </div>
+         </div>
+      </form>
+
+
+
+   </div>
+
+
+</ng-template>
+<ng-template #Addnew1 let-modal>
+   <div class="modal-header bg-danger">
+      <h4 class="modal-title text-white" id="myModalLabel1">Add New Vendor</h4>
+      <button type="button" [disabled]="deletingUser" class="close" (click)="closeded1(modal)" aria-label="Close">
+         <span aria-hidden="true">&times;</span>
+      </button>
+   </div>
+   <div class="modal-body" tabindex="0" ngbAutofocus>
+
+      <form class="user" [formGroup]="formData" (ngSubmit)="addNwVndr(modal)">
+         <div class="row">
+            <div class="col-lg-12">
+               <div class="common-form-field">
+                  <div class="row">
+                     <div class="col-lg-12">
+                        <div class="welcome-logo">
+                           <img src="assets/images/log.png" alt="">
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-lg-4">
+                        <div class="common-form-left">
+                           <label for="inputPassword6" class="col-form-label">New Vendor <span
+                                 class="text-danger">*</span></label>
+                        </div>
+                     </div>
+                     <div class="col-lg-8">
+                        <div class="common-form-left form-group">
+                           <input type="text" placeholder="New Vendor"
+                              [class.is-invalid]="controls['newVendor'].dirty && controls['newVendor'].invalid"
+                              formControlName="newVendor" class="form-control form-control-user" id="newVendor"
+                              id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+                           <span *ngIf="controls['newVendor'].dirty && controls['newVendor'].invalid">
+                              <div class="invalid-feedback" *ngIf="controls['newVendor'].hasError('required')"
+                                 class="text text-danger">
+                                 This field is Required
+                              </div>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div class="row">
+                     <div class="col-lg-4">
+                        <div class="common-form-left">
+                           <label for="inputPassword6" class="col-form-label">Description <span
+                                 class="text-danger">*</span>
+                           </label>
+                        </div>
+                     </div>
+                     <div class="col-lg-8">
+                        <div class="common-form-left form-group">
+                           <input type="text"
+                              [class.is-invalid]="controls['description'].dirty && controls['description'].invalid"
+                              formControlName="description" class="form-control form-control-user" id="description"
+                              class="form-control" placeholder="Description" aria-describedby="passwordHelpInline">
+                           <span *ngIf="controls['description'].dirty && controls['description'].invalid">
+                              <div class="invalid-feedback" *ngIf="controls['description'].hasError('required')"
+                                 class="text text-danger">
+                                 This field is Required
+                              </div>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">
+                     Add
+                     <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm" role="status"
+                        aria-hidden="true"></span>
+                  </button>
+                  <button type="button" (click)="closeded1(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
                      Cancel
                   </button>
                </div>
@@ -1019,18 +1109,17 @@
             </div>
             <div class="col-lg-8">
                <div class="common-form-left form-group">
-                     <select  class="form-control" formControlName="community_name" (change)="slctCom($event,1)" *ngIf="['6'].includes(currentUser.prmsnId)">
-                       <option value="" selected="selected" disabled>---Select Community---</option>
-                       <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
-                   </select>
-                   <span
-                   *ngIf="!['6'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+                  <select class="form-control" formControlName="community_name" (change)="slctCom($event,1)"
+                     *ngIf="['6'].includes(currentUser.prmsnId)">
+                     <option value="" selected="selected" disabled>---Select Community---</option>
+                     <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                  </select>
+                  <span *ngIf="!['6'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
 
                   <span *ngIf="ogt['community_name'].dirty && ogt['community_name'].invalid">
-                     <div class="invalid-feedback"
-                        *ngIf="ogt['community_name'].hasError('required')"
+                     <div class="invalid-feedback" *ngIf="ogt['community_name'].hasError('required')"
                         class="text text-danger">
-                        This field required
+                        This field is Required
                      </div>
                   </span>
                </div>
@@ -1038,62 +1127,59 @@
          </div>
 
          <div class="row">
-           <div class="col-lg-4">
+            <div class="col-lg-4">
                <div class="common-form-left">
-                   <label for="inputPassword6" class="col-form-label">Department <span class="text-danger">*</span>
-                   </label>
+                  <label for="inputPassword6" class="col-form-label">Department <span class="text-danger">*</span>
+                  </label>
                </div>
-           </div>
-           <div class="col-lg-8">
+            </div>
+            <div class="col-lg-8">
                <div class="common-form-left form-group">
-                   <!-- <input type="text"
+                  <!-- <input type="text"
                        [class.is-invalid]="FormData_Control['department'].dirty && FormData_Control['department'].invalid"
                        formControlName="department" class="form-control form-control-user"
                        id="department" class="form-control"
                        placeholder="Department" aria-describedby="passwordHelpInline"> -->
 
-                       <select  class="form-control" formControlName="department" (change)="chngD($event)">
-                           <option value="" selected="selected">---Select Department---</option>
-                           <option value="0" *ngIf="!dprtmnt?.length">No Department</option>
-                           <option value="{{item.name}}" *ngFor="let item of dprtmnt1">{{item.name}}</option>
-                       </select>
+                  <select class="form-control" formControlName="department" (change)="chngD($event)">
+                     <option value="" selected="selected">---Select Department---</option>
+                     <option value="0" *ngIf="!dprtmnt?.length">No Department</option>
+                     <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}</option>
+                  </select>
 
-                       <span *ngIf="ogt['department'].dirty && ogt['department'].invalid">
-                       <div class="invalid-feedback"
-                           *ngIf="ogt['department'].hasError('required')"
-                           class="text text-danger">
-                           This field required
-                       </div>
-                   </span>
+                  <span *ngIf="ogt['department'].dirty && ogt['department'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['department'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
                </div>
-              
-           </div>
-       </div>
 
-       <div class="row">
-          <div class="col-lg-4">
-             <div class="common-form-left">
-                <label for="inputPassword6" class="col-form-label">Purchase Date 
-                </label>
-             </div>
-          </div>
-          <div class="col-lg-8">
-             <div class="common-form-left form-group">
-                <input type="date"
-                   [class.is-invalid]="ogt['purchage_date'].dirty && ogt['purchage_date'].invalid"
-                   formControlName="purchage_date" max={{minDate}} class="form-control form-control-user"
-                   id="purchage_date" class="form-control"
-                   placeholder="Renewal Date" aria-describedby="passwordHelpInline">
-                <span *ngIf="ogt['purchage_date'].dirty && ogt['purchage_date'].invalid">
-                   <div class="invalid-feedback"
-                      *ngIf="ogt['purchage_date'].hasError('required')"
-                      class="text text-danger">
-                      This field required
-                   </div>
-                </span>
-             </div>
-          </div>
-       </div>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Purchase Date
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="date" [class.is-invalid]="ogt['purchage_date'].dirty && ogt['purchage_date'].invalid"
+                     formControlName="purchage_date" max={{minDate}} class="form-control form-control-user"
+                     id="purchage_date" class="form-control" placeholder="Renewal Date"
+                     aria-describedby="passwordHelpInline">
+                  <span *ngIf="ogt['purchage_date'].dirty && ogt['purchage_date'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['purchage_date'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+         </div>
 
          <!-- <div class="row">
            <div class="col-lg-4">
@@ -1113,36 +1199,33 @@
                     <div class="invalid-feedback"
                        *ngIf="FormData_Control['vendor'].hasError('required')"
                        class="text text-danger">
-                       This field required
+                       This field is Required
                     </div>
                  </span>
               </div>
            </div>
         </div> -->
 
-        <div class="row" >
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">Vendor <span
-                       class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-6">
-              <div class="common-form-left form-group">
-                 <!-- <input type="text"
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Vendor <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-6">
+               <div class="common-form-left form-group">
+                  <!-- <input type="text"
                      [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
                      formControlName="vendor" class="form-control form-control-user"
                      id="vendor" class="form-control"
                      placeholder="Vendor" aria-describedby="passwordHelpInline"> -->
 
-                     <ng-multiselect-dropdown placeholder="---Select Vendor---"
-                     [settings]="dropdownSettings"
-                     [data]="vendorData"
-                     formControlName="vendor" >
-                 </ng-multiselect-dropdown>
+                  <ng-multiselect-dropdown placeholder="---Select Vendor---" [settings]="dropdownSettings"
+                     [data]="vendorData" formControlName="vendor">
+                  </ng-multiselect-dropdown>
 
-                 <!-- <select class="form-control" formControlName="vendor">
+                  <!-- <select class="form-control" formControlName="vendor">
                     <option value="" selected="selected" disabled>---Select Vendor---
                     </option>
                     <option value="" disabled *ngIf="!vendorData.length">---No Record
@@ -1150,16 +1233,14 @@
                     <option value="{{item.vendor_name}}" *ngFor="let item of vendorData">
                        {{item.vendor_name}}</option>
                  </select> -->
-                 <span *ngIf="ogt['vendor'].dirty && ogt['vendor'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="ogt['vendor'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-           <!-- <div class="col-lg-6" *ngIf="vendrHide">
+                  <span *ngIf="ogt['vendor'].dirty && ogt['vendor'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['vendor'].hasError('required')" class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+            <!-- <div class="col-lg-6" *ngIf="vendrHide">
               <div class="common-form-left form-group">
                  <input type="text" #inpVal (keyup)="chckInpVal(inpVal.value)"  
                     [class.is-invalid]="FormData_Control['vendor'].dirty && FormData_Control['vendor'].invalid"
@@ -1167,202 +1248,186 @@
                     id="vendor" class="form-control"
                     placeholder="Vendor" aria-describedby="passwordHelpInline">
 -->
-                
-              <!-- </div>
+
+            <!-- </div>
            </div> -->
-           <div class="col-lg-2">
-              <button class="btn btn-block btn-primary" type="button"
-                 style="height: 2.714rem;font-size: smaller;" (click)="openAddNew()">Add New
-                 Vendor</button>
-           </div>
-        </div>
+            <div class="col-lg-2">
+               <button class="btn btn-block btn-primary" type="button" style="height: 2.714rem;font-size: smaller;"
+                  (click)="openAddNew(2)">Add New
+                  Vendor</button>
+            </div>
+         </div>
 
 
-        <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">Description <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-                 <input type="text"
-                    [class.is-invalid]="ogt['description'].dirty && ogt['description'].invalid"
-                    formControlName="description" class="form-control form-control-user"
-                    id="description" class="form-control"
-                    placeholder="Description" aria-describedby="passwordHelpInline">
-                 <span *ngIf="ogt['description'].dirty && ogt['description'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="ogt['description'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-        </div>
-        <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">GL Account <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-                 <!-- <input type="text"
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Description <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="text" [class.is-invalid]="ogt['description'].dirty && ogt['description'].invalid"
+                     formControlName="description" class="form-control form-control-user" id="description"
+                     class="form-control" placeholder="Description" aria-describedby="passwordHelpInline">
+                  <span *ngIf="ogt['description'].dirty && ogt['description'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['description'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">GL Account <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <!-- <input type="text"
                     [class.is-invalid]="FormData_Control['gl_account'].dirty && FormData_Control['gl_account'].invalid"
                     formControlName="gl_account" class="form-control form-control-user"
                     id="gl_account" class="form-control"
                     placeholder="GL Account" aria-describedby="passwordHelpInline"> -->
 
-                    <select  class="form-control" formControlName="gl_account">
-                      <option value="" selected="selected" disabled>---Select GL Account---</option>
-                      <option value="{{nullDep == true ? item.GLA_id : item.gl_acc}}" *ngFor="let item of ledgerData1" >{{nullDep == true ? item.GLA_id :item.gl_and_description}}</option>
+                  <select class="form-control" formControlName="gl_account">
+                     <option value="" selected="selected" disabled>---Select GL Account---</option>
+                     <option value="{{nullDep == true ? item.GLA_id : item.gl_acc}}" *ngFor="let item of ledgerData1">
+                        {{nullDep == true ? item.GLA_id :item.gl_and_description}}</option>
                   </select>
 
-                 <span *ngIf="ogt['gl_account'].dirty && ogt['gl_account'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="ogt['gl_account'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-        </div>
+                  <span *ngIf="ogt['gl_account'].dirty && ogt['gl_account'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['gl_account'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+         </div>
 
-        <div class="row">
-          <div class="col-lg-4">
-             <div class="common-form-left">
-                <label for="inputPassword6" class="col-form-label">Amount <span class="text-danger">*</span>
-                </label>
-             </div>
-          </div>
-          <div class="col-lg-8">
-             <div class="common-form-left form-group">
-                <input type="number"
-                   [class.is-invalid]="ogt['amount'].dirty && ogt['amount'].invalid"
-                   formControlName="amount" class="form-control form-control-user"
-                   id="amount" class="form-control"
-                   placeholder="Amount" aria-describedby="passwordHelpInline">
-                <span *ngIf="ogt['amount'].dirty && ogt['amount'].invalid">
-                   <div class="invalid-feedback"
-                      *ngIf="ogt['amount'].hasError('required')"
-                      class="text text-danger">
-                      This field required
-                   </div>
-                </span>
-             </div>
-          </div>
-       </div>
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Amount <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="number" [class.is-invalid]="ogt['amount'].dirty && ogt['amount'].invalid"
+                     formControlName="amount" class="form-control form-control-user" id="amount" class="form-control"
+                     placeholder="Amount" aria-describedby="passwordHelpInline">
+                  <span *ngIf="ogt['amount'].dirty && ogt['amount'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['amount'].hasError('required')" class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+         </div>
 
-       <div class="row">
-          <div class="col-lg-4">
-              <div class="common-form-left">
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
                   <label for="inputPassword6" class="col-form-label">Payment Type <span class="text-danger">*</span>
                   </label>
-              </div>
-          </div>
-          <div class="col-lg-8">
-              <div class="common-form-left form-group">
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
 
-                      <select  class="form-control" formControlName="pmt_type">
-                          <option value="" selected="selected">---Select Payment Type---</option>
-                          <option value="{{item}}" *ngFor="let item of paymentType">{{item}}
-                      </select>
+                  <select class="form-control" formControlName="pmt_type">
+                     <option value="" selected="selected">---Select Payment Type---</option>
+                     <option value="{{item}}" *ngFor="let item of paymentType">{{item}}
+                  </select>
 
-                      <span *ngIf="ogt['pmt_type'].dirty && ogt['pmt_type'].invalid">
-                      <div class="invalid-feedback"
-                          *ngIf="ogt['pmt_type'].hasError('required')"
-                          class="text text-danger">
-                          This field required
-                      </div>
+                  <span *ngIf="ogt['pmt_type'].dirty && ogt['pmt_type'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['pmt_type'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
                   </span>
-              </div>
-             
-          </div>
-      </div>
+               </div>
 
-      <div class="row">
-          <div class="col-lg-4">
-              <div class="common-form-left">
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
                   <label for="inputPassword6" class="col-form-label">Final <span class="text-danger">*</span>
                   </label>
-              </div>
-          </div>
-          <div class="col-lg-8">
-              <div class="common-form-left form-group">
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
 
                   <select class="form-control" formControlName="final">
-                      <option value="" selected="selected" disabled>---Select Final---
-                      </option>
-                      <option value="0">No</option>
-                      <option value="1">Yes</option>
-                   </select>
+                     <option value="" selected="selected" disabled>---Select Final---
+                     </option>
+                     <option value="0">No</option>
+                     <option value="1">Yes</option>
+                  </select>
 
-                      <span *ngIf="ogt['final'].dirty && ogt['final'].invalid">
-                      <div class="invalid-feedback"
-                          *ngIf="ogt['final'].hasError('required')"
-                          class="text text-danger">
-                          This field required
-                      </div>
+                  <span *ngIf="ogt['final'].dirty && ogt['final'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['final'].hasError('required')" class="text text-danger">
+                        This field is Required
+                     </div>
                   </span>
-              </div>
-             
-          </div>
-      </div>
+               </div>
 
-      <div class="row">
-          <div class="col-lg-4">
-             <div class="common-form-left">
-                <label for="inputPassword6" class="col-form-label">Invoice Number <span class="text-danger">*</span>
-                </label>
-             </div>
-          </div>
-          <div class="col-lg-8">
-             <div class="common-form-left form-group">
-                <input type="text"
-                   [class.is-invalid]="ogt['invoice_number'].dirty && ogt['invoice_number'].invalid"
-                   formControlName="invoice_number" class="form-control form-control-user"
-                   id="invoice_number" class="form-control"
-                   placeholder="Invoice Number" aria-describedby="passwordHelpInline">
-                <span *ngIf="ogt['invoice_number'].dirty && ogt['invoice_number'].invalid">
-                   <div class="invalid-feedback"
-                      *ngIf="ogt['invoice_number'].hasError('required')"
-                      class="text text-danger">
-                      This field required
-                   </div>
-                </span>
-             </div>
-          </div>
-       </div>
+            </div>
+         </div>
 
-       <div class="row">
-        <div class="col-lg-4">
-           <div class="common-form-left">
-              <label for="inputPassword6" class="col-form-label">Receipt Id <span class="text-danger">*</span>
-              </label>
-           </div>
-        </div>
-        <div class="col-lg-8">
-           <div class="common-form-left form-group">
-              <input type="text"
-                 [class.is-invalid]="ogt['receipt_id'].dirty && ogt['receipt_id'].invalid"
-                 formControlName="receipt_id" class="form-control form-control-user"
-                 id="receipt_id" class="form-control"
-                 placeholder="Receipt Id" aria-describedby="passwordHelpInline" readonly>
-              <span *ngIf="ogt['receipt_id'].dirty && ogt['receipt_id'].invalid">
-                 <div class="invalid-feedback"
-                    *ngIf="ogt['receipt_id'].hasError('required')"
-                    class="text text-danger">
-                    This field required
-                 </div>
-              </span>
-           </div>
-        </div>
-     </div>
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Invoice Number <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="text" [class.is-invalid]="ogt['invoice_number'].dirty && ogt['invoice_number'].invalid"
+                     formControlName="invoice_number" class="form-control form-control-user" id="invoice_number"
+                     class="form-control" placeholder="Invoice Number" aria-describedby="passwordHelpInline">
+                  <span *ngIf="ogt['invoice_number'].dirty && ogt['invoice_number'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['invoice_number'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+         </div>
+
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Receipt Id <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="text" [class.is-invalid]="ogt['receipt_id'].dirty && ogt['receipt_id'].invalid"
+                     formControlName="receipt_id" class="form-control form-control-user" id="receipt_id"
+                     class="form-control" placeholder="Receipt Id" aria-describedby="passwordHelpInline" readonly>
+                  <span *ngIf="ogt['receipt_id'].dirty && ogt['receipt_id'].invalid">
+                     <div class="invalid-feedback" *ngIf="ogt['receipt_id'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+         </div>
 
          <div class="row">
             <div class="col-lg-4">
@@ -1374,8 +1439,8 @@
             <div class="col-lg-8">
                <div class="common-form-left form-group">
                   <span>
-                      {{minDate | date:'MM-dd-yyyy'}}
-                   </span>
+                     {{minDate | date:'MM-dd-yyyy'}}
+                  </span>
                </div>
             </div>
          </div>
@@ -1388,38 +1453,37 @@
             </div>
             <div class="col-lg-8">
                <div class="common-form-left form-group">
-                 
-                   <span *ngIf="['1'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
-                   <span *ngIf="['6'].includes(currentUser.prmsnId)">Admin</span>
-                   <span
-                   *ngIf="roleData2.includes(currentUser.prmsnId)">{{prmsUsrId.id ? prmsUsrId.name : userName?.first_name+' '+userName?.last_name}}</span>
-          
+
+                  <span *ngIf="['1'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+                  <span *ngIf="['6'].includes(currentUser.prmsnId)">Admin</span>
+                  <span *ngIf="roleData2.includes(currentUser.prmsnId)">{{prmsUsrId.id ? prmsUsrId.name :
+                     userName?.first_name+' '+userName?.last_name}}</span>
+
                   <span *ngIf="ogt['entered_by'].dirty && ogt['entered_by'].invalid">
-                     <div class="invalid-feedback"
-                        *ngIf="ogt['entered_by'].hasError('required')"
+                     <div class="invalid-feedback" *ngIf="ogt['entered_by'].hasError('required')"
                         class="text text-danger">
-                        This field required
+                        This field is Required
                      </div>
                   </span>
                </div>
-               
+
             </div>
          </div>
-        
+
          <div class="row addUserbtn">
-           <div class="m-1">
-              <button type="submit" class="btn btn-primary" [disabled]="loading">
-              <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
-                 aria-hidden="true"></span>
-              {{ prmsUsrId?.id ? 'Save' : 'Add'}} 
-              </button>
-              <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" >
-              Cancel
-              </button>
-           </div>
-        </div>
-       
-         </form>  
+            <div class="m-1">
+               <button type="submit" class="btn btn-primary" [disabled]="loading">
+                  <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status"
+                     aria-hidden="true"></span>
+                  {{ prmsUsrId?.id ? 'Save' : 'Add'}}
+               </button>
+               <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1">
+                  Cancel
+               </button>
+            </div>
+         </div>
+
+      </form>
    </div>
 
 

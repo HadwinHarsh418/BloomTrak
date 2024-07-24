@@ -20,6 +20,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { ScheduleTimerModule } from '../schedule-timer/schedule-timer.module';
 import { CustomDateTimePipeModule } from 'app/auth/helpers/custom-date-time.pipe';
+import { AllNotificationComponent } from 'app/all-notification/all-notification.component';
 
 FullCalendarModule.registerPlugins([
   interactionPlugin,
@@ -30,7 +31,6 @@ const routes = [
   {
     path: '',
     component: EcommerceComponent,
-    canActivate: [AuthGuard],
     resolve: {
       css: DashboardService
     }
@@ -47,16 +47,19 @@ const routes = [
   {
     path: 'ecommerce',
     component: EcommerceComponent,
-    canActivate: [AuthGuard],
     resolve: {
       css: DashboardService
     }
     
   },
+  {
+    path: 'allnotify',
+    component: AllNotificationComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [AnalyticsComponent, EcommerceComponent],
+  declarations: [AnalyticsComponent, EcommerceComponent,AllNotificationComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -69,7 +72,7 @@ const routes = [
     FullCalendarModule,
     PhoneMaskDirectiveModule,
     ScheduleTimerModule,
-    CustomDateTimePipeModule
+    CustomDateTimePipeModule,
   ],
   providers: [DashboardService],
   exports: [EcommerceComponent]

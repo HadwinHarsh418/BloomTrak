@@ -66,13 +66,17 @@ export class ExpenseTypeComponent implements OnInit {
 
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     

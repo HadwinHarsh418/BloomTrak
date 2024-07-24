@@ -1,634 +1,1514 @@
-<div class="card">
-    <div class="d-flex row justify-content-between">
-        <div class="card-header d-flex flex-column align-items-start pb-0">
-            <span class="font-weight-bolder ml-1" *ngIf="(currentUser.role != 'User' && currentUser.role != 'Agency')">Shift List</span>
-        </div>
-        <div class="card-header pb-0 mr-1" *ngIf="shiftData?.length">
-        </div>
-    </div>
-    <div>
-
-    </div>
-    <div class="card-body mt-1" *ngFor="let data of getAgencyMonthlyBudgetData">
-        <div class="row " *ngIf="currentUser.role == 'Community' || permision.addPrms == '1'">
-            <div class="input-group col-3 stflter">
-                <label for=""> <h6>Budgeted Agency Shifts : {{data.budgetAgencyShifts || '0' | number}}</h6></label>
-            </div>
-
-            <div class="input-group col-4 stflter">
-                <label for=""> <h6>Budgeted Agency Spend : ${{data.budgetAgencySpend || '0' | number}}</h6></label>
-            </div>
-            
-            <div class="input-group col-1 stflter ">
-                <label for=""> <p  style="font-size: smaller;"><b>Start Filter</b> </p></label>
-            </div>
-
-            <div class="input-group col-4 mb-1 ">
-                <input type="date" class="form-control" (keypress)="return" [(ngModel)]="start_date" name="start_date"
-                    aria-label="Text input with dropdown button">
-
-                    <select placeholder="HH:MM" [(ngModel)]="startTime" name="startTime" class="form-control">
-                        <option disabled value="undefined">HH:MM</option>
-                        <option *ngFor="let tm of timeslots">
-                            {{tm.label}}</option>
-                    </select>
-            </div>
-
-        </div>
-        <div class="row" *ngIf="currentUser.role == 'Community' || permision.addPrms == '1'">
-            <div class="input-group col-3 stflter">
-                <label for=""> <h6>Actual Agency Shifts : {{data.actualAgencyShifts || '0' | number}}</h6></label>
-            </div>
-
-            <div class="input-group col-4 stflter">
-                <label for=""> <h6>Actual Agency Spend : ${{data.actualAgencySpend || '0' | number}}</h6></label>
-            </div>
-            <div class="input-group col-1 stflter">
-                <label for=""> <p style="font-size: smaller;"><b>End Filter</b> </p></label>
-            </div>
-            <div class="input-group col-4 mb-1">
-                <input type="date" [disabled]="!start_date || !startTime " [(ngModel)]="end_date" name="end_date"
-                    class="form-control" aria-label="Text input with dropdown button">
-
-                    <select placeholder="HH:MM" [(ngModel)]="endTime" [disabled]="!start_date || !startTime " name="endTime"
-                    class="form-control">
-                    <option disabled value="undefined">HH:MM</option>
-                    <option *ngFor="let tm of timeslots">
-                        {{tm.label}}</option>
-                </select>
-                <div>
-                    <label class="input-group-text" (click)="getCommunityRecords()">
-                        <i class="fa fa-search"></i></label>
-                </div>
-                <div>
-                    <label class="input-group-text" (click)="resetFilterValue()">
-                        <i class="fa fa-refresh"></i></label>
-                </div>
-            </div>
-
-
-        </div>
+<i class="fa fa-spinner fa-spin loader" *ngIf="loadingSite"></i>
+<i class="fa fa-spinner fa-spin loader" *ngIf="loadingrefresh && !loadingSite"></i>
+<div class="card cus-card-newshift" *ngIf="!loadingSite">
+    <div class="card-header card-header-new">
         <div class="row">
-            <div class="col-md-6 col-12">
-                <div class="d-flex">
-
-                    <button type="button" *ngIf="permision.addPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin'"
-                        class="btn-sm btn-info " [routerLink]="['/shift/shift-confirmation']">
-                        <i class="fa fa-plus "></i> Add Shift
-                    </button>
-
-                    <button type="button" (click)="getShiftAccToRole()"
-                        class=" btn-info  btn-sm" style="margin-left: 14px; margin-right: 14px;">
-                        <i class="fa fa-refresh"></i> Refresh
-                    </button>
-                    <select *ngIf="currentUser.role != 'SuperAdmin' && currentUser.role != 'Community'" class="custom-select" id="inputGroupSelect01" [(ngModel)]="clickedBtn" (change)="SelectShiftType($event)">
-                        <option value="null" disabled selected>---Select Shifts---</option>
-                        <option value="AllShift" *ngIf="permision.addPrms == '1'">All Shifts</option>
-                        <option value="MyShift" *ngIf="permision.aplyPrms == '1' || currentUser.user_role == 4  || currentUser.user_role == 2 || currentUser.user_role == 5">My Shifts </option>
-                        <option value="AllAvailShift" *ngIf="permision.aplyPrms == '1' || currentUser.user_role == 4 || currentUser.user_role == 2  || currentUser.user_role == 5">Available Shifts</option>
-                    </select>
-                    
+            <div class="col-lg-12">
+                <div class="d-flexjustify-content-between">
+                    <div class="d-flex flex-column align-items-start pb-0">
+                        <span class="font-weight-bolder ml-1">Shift List</span>
+                    </div>
+                    <div class="pb-0 mr-1" *ngIf="shiftData?.length">
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="col-md-6 col-12 d-flex mb-1">
+    <div class="lr-pd">
+        <div class="row" *ngIf="currentUser.user_role == 8 || currentUser.user_role == 3">
+            <div class="col-md-10 col-12">
+                <div class="d-flex">
+                </div>
+                <div class="col-4">
+                    <select id="inputState" class="form-control" (change)="selectCommunity($event.target.value)"
+                        [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                        <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                        <option value="{{item.community_id || item?.cp_id || item.id}}"
+                            *ngFor="let item of allCommunity">
+                            {{item.community_name}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-div-shift">
+            <div class="card-body" *ngFor="let data of getAgencyMonthlyBudgetData">
 
-                <div class="input-group"
-                    [class.hidden]="currentUser.role == 'Admin' || currentUser.user_role == 6">
-                    <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
-                        <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
-                            <input #searchStrInput type="text" (change)="seachShift($event)" placeholder="Search" class="form-control ml-25"
-                                [(ngModel)]="searchStr" />
-                        </label>
+                <div class="row"
+                    *ngIf="currentUser.role == 'Community' || (permision.addPrms == '1' && currentUser.user_role != 8 && currentUser.user_role != 5 && currentUser.user_role != 2)">
+                    <div class="col-lg-7">
+                        <div class="left-ul-shift">
+                            <ul class="shift-ul-1">
+                                <li>
+                                    <h6>Budgeted Agency Shifts : {{data.budgetAgencyShifts || '0'}}</h6>
+                                </li>
+                                <li>
+                                    <h6>Completed Agency Shifts : {{data.actualAgencyShifts || '--'}}</h6>
+                                </li>
+                                <li>
+                                    <h6>Filled Agency Shifts : {{agencySpend.filledByAgency1 || '--'}}</h6>
+                                </li>
+                                <li>
+                                    <h6>Open Shifts (Posted) : {{agencySpend.postedShifts || '--'}}</h6>
+                                </li>
+                            </ul>
+                            <ul class="shift-ul-1">
+                                <li>
+                                    <h6>Budgeted Agency Spend : ${{data.budgetAgencySpend || '0' | number : '1.2-2'}}
+                                    </h6>
+                                </li>
+                                <li>
+                                    <h6>Completed Agency Spend : {{data.actualAgencySpend ? '$'+(data.actualAgencySpend | number : '1.2-2') : '--'}}
+                                    </h6>
+                                </li>
+                                <li>
+                                    <h6>Filled Agency Spend : {{agencySpend.agencySpend ? '$'+(agencySpend.agencySpend | number : '1.2-2') : '--'}}
+                                    </h6>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="right-ul-shift">
+
+                            <div class="flx-shift">
+                                <p style="font-size: smaller;"><b>Start Filter</b> </p>
+                                <input type="date" class="form-control date-input" (keypress)="return" [(ngModel)]="start_date" (ngModelChange)="onStartDateChange()"
+                                    name="start_date" aria-label="Text input with dropdown button">
+                                <select placeholder="HH:MM" [(ngModel)]="startTime" name="startTime" class="form-control">
+                                    <option *ngFor="let tm of timeslots">{{ tm.label }}</option>
+                                   <option value="undefined">00:00</option>
+    
+                                </select>
+                               </div>
+
+                            <div class="flx-shift-1">
+                                <p style="font-size: smaller;"><b>End Filter</b> </p>
+                                <input type="date" placeholder="mm/dd/yyyy date-input" pattern="\d{2}-\d{2}-\d{4}" onchange="this.className=(this.value!=''?'form-control has-value':'form-control')" [disabled]="!start_date || !startTime " [(ngModel)]="end_date"
+                                    name="end_date" class="form-control" aria-label="Text input with dropdown button">
+                                    <!-- <app-ng-date [disabled]="!start_date || !startTime " (updateDate)="updateDate($event,end_date)" [currentVal]="end_date" ></app-ng-date> -->
+
+                                <select placeholder="HH:MM" [(ngModel)]="endTime"
+                                    [disabled]="!start_date || !startTime " name="endTime" class="form-control">
+                                    <option *ngFor="let tm of timeslots">{{ tm.label }}</option>
+                                    <option value="undefined">24:00</option>
+                                </select>
+                                <div class="text-12">
+                                    <label class="input-group-text" (click)="getCommunityRecords1('refresh')">
+                                        <i class="fa fa-search"></i></label>
+                                </div>
+                                <div class="text-13">
+                                    <label class="input-group-text" (click)="resetFilterValue()">
+                                        <i class="fa fa-refresh"></i></label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="input-group" *ngIf="currentUser.user_role == 6 || currentUser.user_role == 1 || permision.addPrms == '1'">
-                    <select class="custom-select" id="inputGroupSelect01" [(ngModel)]="shiftType" (change)="cngShft($event)">
-                        <option value="null" disabled selected>---Select Shift Type---</option>
-                        <option value="5">Show All</option>
-                        <option value="1">Posted</option>
-                        <option value="2">Pending</option>
-                        <option value="3">Filled by Agency</option>
-                        <option value="4"  *ngIf="currentUser.role != 'Agency'">Filled by Community</option>
-                        <option value="9" *ngIf="currentUser.role != 'User'">Closed</option>
-                        <option value="6" *ngIf="currentUser.role != 'Community'">Archived Shifts</option>
-                        <option value="7">Completed by Agency</option>
-                        <option value="8">Started by Agency</option>
+
+                <!-- <div class="row" *ngIf="currentUser.role == 'Community' || (permision.addPrms == '1' && currentUser.user_role != 8 && currentUser.user_role != 5 && currentUser.user_role != 2)">          
+                    <div class="input-group col-3 stflter">
+                        <label for="">
+                           
+                        </label>
+                    </div>
+
+                    <div class="input-group col-4 stflter">
+                        <label for="">
+                        </label>
+                    </div>
+
+
+                </div>
+                <div class="row"
+                *ngIf="currentUser.role == 'Community' || (permision.addPrms == '1' && currentUser.user_role != 8 && currentUser.user_role != 5 && currentUser.user_role != 2)"> 
+                    <div class="input-group col-3 stflter">
+                        <label for="">
+                        </label>
+                    </div>
+
+                    <div class="input-group col-4 stflter">
+                        <label for="">
+                        </label>
+                    </div>
+                    <div class="input-group col-1 stflter">
+                        <label for="">
+                        </label>
+                    </div>
+                    <div class="input-group col-4">
+                        
+                    </div>
+
+                    <div class="input-group col-3 stflter">
+                        <label for="">
+                        </label>
+                    </div>
+
+                    <div class="input-group col-9 stflter">
+                        <label for="">
+                        </label>
+                    </div>
+                    <div class="input-group col-3 stflter ">
+                        <label for="">
+                        </label>
+                    </div>
+
+
+                </div> -->
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-lg-7"></div>
+            <div class="col-lg-5">
+                <div class="card-body">
+                    <div class="row "
+                        *ngIf="currentUser.user_role == 2 || currentUser.user_role == 6  || currentUser.user_role == 5  || permision.addPrms == '0' && currentUser.user_role == 4 ">
+
+                            <div class="input-group col-lg-3">
+                                <label for="">
+                                    <p style="font-size: smaller;"><b>Start Filter</b> </p>
+                                </label>
+                            </div>
+    
+                            <div class="input-group col-lg-9 mb-1 ">
+                                <input type="date" class="form-control date-input" (keypress)="return" [(ngModel)]="start_date" (ngModelChange)="onStartDateChange()"
+                                    name="start_date" aria-label="Text input with dropdown button">
+    
+                                    <select placeholder="HH:MM" [(ngModel)]="startTime" name="startTime" class="form-control">
+                                        <option *ngFor="let tm of timeslots">{{ tm.label }}</option>
+                                    </select>
+                            </div>
+
+                    </div>
+                    <div class="row"
+                    *ngIf="currentUser.user_role == 2 || currentUser.user_role == 6  || currentUser.user_role == 5  || permision.addPrms == '0' && currentUser.user_role == 4 ">
+                        <div class="input-group col-lg-3 ">
+                            <label for="">
+                                <p style="font-size: smaller;"><b>End Filter</b> </p>
+                            </label>
+                        </div>
+
+                                <div class="input-group col-lg-9 mb-1">
+                                    <input type="date" placeholder="mm/dd/yyyy" pattern="\d{2}-\d{2}-\d{4}" onchange="this.className=(this.value!=''?'form-control has-value':'form-control')" [disabled]="!start_date || !startTime " [(ngModel)]="end_date"
+                                        name="end_date" class="form-control"
+                                        aria-label="Text input with dropdown button">
+
+                                    <select placeholder="HH:MM" [(ngModel)]="endTime"
+                                        [disabled]="!start_date || !startTime " name="endTime" class="form-control">
+
+                                        <option disabled value="undefined">HH:MM</option>
+                                        <option *ngFor="let tm of timeslots">
+                                            {{tm.label}}</option>
+                                    </select>
+                                    <div>
+                                        <label class="input-group-text" (click)="getShiftAccToRole()">
+                                            <i class="fa fa-search"></i></label>
+                                    </div>
+                                    <div>
+                                        <label class="input-group-text" (click)="resetFilterValue()">
+                                            <i class="fa fa-refresh"></i></label>
+                                    </div>
+                                </div>
+                            </div> 
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+                <div class="row">
+                    <div class="col-md-4 col-12 pb-1">
+                        <div class="d-flex">
+
+                            <button type="button"
+                                *ngIf="(permision.addPrms == '1' && currentUser.user_role !=5 && currentUser.user_role !=2) || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3"
+                                class="btn-sm btn-info " (click)="addBtn()">
+                                <i class="fa fa-plus "></i> Add Shift
+                            </button>
+
+                    <button type="button" (click)="getShiftAccToRole('refresh')" class=" btn-info  btn-sm"
+                        style="margin-left: 14px; margin-right: 14px;">
+                        <i class="fa fa-refresh"></i> Refresh
+                    </button>
+                    <select
+                        *ngIf="currentUser.role != 'SuperAdmin' && currentUser.role != 'Community' && currentUser.role != 'Management User' && currentUser.user_role != 3"
+                        class="custom-select" id="inputGroupSelect01" [(ngModel)]="clickedBtn"
+                        (change)="SelectShiftType($event)">
+                        <option value="null" disabled selected>---Select Shifts---</option>
+                        <option value="AllShift"
+                            *ngIf="permision.addPrms == '1'&& currentUser.user_role !=5 && currentUser.user_role !=2">
+                            All Shifts</option>
+                        <option value="MyShift"
+                            *ngIf="permision.aplyPrms == '1' || currentUser.user_role == 4  || currentUser.user_role == 2 || currentUser.user_role == 5">
+                            My Shifts </option>
+                        <option value="AllAvailShift"
+                            *ngIf="permision.aplyPrms == '1' || currentUser.user_role == 4 || currentUser.user_role == 2  || currentUser.user_role == 5">
+                            Available Shifts</option>
+                    </select>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 col-12 d-flex mb-1">
+
+                        <div class="input-group" style=" box-shadow: none;"
+                            *ngIf="currentUser.role == 'Admin' || currentUser.user_role == 6 || currentUser.user_role == 3 || currentUser.user_role == 8">
+                            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                                <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                                    <input #searchStrInput type="text" (keyup)="seachShift($event)" placeholder="Search"
+                                        class="form-control ml-25" [(ngModel)]="searchStr" />
+                                </label>
+                            </div>
+                        </div>
+
+                <div class="col-md-6 col-12 all-communities"
+                    *ngIf="currentUser.user_role == 2 || currentUser.user_role == 5">
+                    <select id="inputState" class="form-control" (change)="selectCommunity1($event.target.value)"
+                        [(ngModel)]="community" [disabled]="runPrms == 0">
+                        <option value="undefined" selected="selected">---All Communities---</option>
+                        <option value="{{item.community_id}}" *ngFor="let item of allCommunity1">
+                            {{item.community_name}}</option>
                     </select>
                 </div>
 
-                <div class="input-group" *ngIf="currentUser.role == 'SuperAdmin'">
-                    <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="slctCpType">
-                        <option value="null" selected disabled>---Select Shift Status---</option>
+                        <div class="col-md-6 col-12 input-group" style="max-width: max-content;"
+                            *ngIf="(currentUser.user_role == 6 || currentUser.user_role == 3 || this.currentUser?.user_role == 8 || currentUser.user_role == 1 || (permision.addPrms == '1' && clickedBtn == 'AllShift')) && clickedBtn == 'AllShift'">
+                            <select class="custom-select" id="inputGroupSelect01" [(ngModel)]="shiftType"
+                                (change)="cngShft($event)">
+                                <option value="null" disabled selected>---Select Shift Type---</option>
+                                <option value="5">Show All</option>
+                                <option value="1">Posted</option>
+                                <option value="2">Pending</option>
+                                <option value="4" *ngIf="currentUser.role != 'Agency'">Filled by Community</option>
+                                <option value="3">Filled by Agency</option>
+                                <!-- <option value="11">Canceled</option> -->
+                                <!-- <option value="6" *ngIf="currentUser.role != 'Community'">Archived Shifts</option> -->
+                                <option value="8">Started by Agency</option>
+                                <option value="7">Completed by Agency</option>
+                                <option value="9" *ngIf="currentUser.role != 'User'">Closed</option>
+                                <option value="11">Archived</option>
+                            </select>
+                        </div>
+
+                <div class="input-group" style="width: auto!important;" 
+                    *ngIf="(currentUser.user_role == 5 || currentUser.user_role == 2) && clickedBtn == 'MyShift'">
+                    <select class="custom-select" id="inputGroupSelect02" [(ngModel)]="shiftTypeStatus"
+                        (change)="cngShft1($event)">
+                        <option value="null" selected>---Select Shift Status---</option>
                         <!-- <option value="0">Pending</option> -->
+                        <!-- <option value=" ">Show All</option> -->
                         <option value="1">Assigned</option>
                         <option value="2">Completed</option>
                         <option value="3">Not Assigned</option>
                         <option value="4">Canceled</option>
+                        <option value="6">Canceled by User</option>
                     </select>
                     <div>
                     </div>
                 </div>
-                
-            </div>
-            <div class="col-12">
-                <ngx-datatable  class="bootstrap core-bootstrap sz-1000" *ngIf="clickedBtn == 'AllShift' && currentUser.user_role != 2" [rows]="shiftData" [columnMode]="'force'"
-                [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" [count]="page.totalElements"
-                [offset]="page.pageNumber" [limit]="page.size" (page)='pageChanged($event)'
-                >
-                <ngx-datatable-column name="community Name" prop="community_name" [width]="80">
-                    <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{title}}
-                    </ng-template>
-                </ngx-datatable-column>
 
-                <ngx-datatable-column name="Position" prop="positions" [width]="50">
-                    <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{title}}
-                    </ng-template>
-                </ngx-datatable-column>
-                <ngx-datatable-column name="Description" prop="description" [width]="50"
-                    *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User'">
-                    <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ description.slice(0,25) }}
-                    </ng-template>
-                </ngx-datatable-column>
+                    </div>
+                    <div class="col-12 ovr-flow">
+                        <ngx-datatable class="bootstrap core-bootstrap" #table [virtualization]="false"
+                            *ngIf="clickedBtn == 'AllShift' && currentUser.user_role != 2 || this.currentUser?.user_role == 6 || currentUser.user_role == 3 || this.currentUser?.user_role == 8"
+                            [rows]="shiftData" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+                            rowHeight="auto" [externalPaging]="true" [count]="page.totalElements"
+                            [offset]="page.pageNumber" [limit]="page.size" (page)='pageChanged($event)'
+                            (sort)="sort($event)" [scrollbarH]="true" [draggable]="false">
+                            <ngx-datatable
+                            class="material"
+                            [rows]="rows"
+                            [columns]="columns"
+                            [footerTemplate]="noDataTemplate"
+                            ></ngx-datatable>
+                            <ngx-datatable-column name="community Name" prop="community_name" [width]="200">
+                                <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{title}}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="delay" prop="delay" [width]="50"
-                    *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User'">
-                    <ng-template let-delay="value" let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ delay }} {{row.h_m}}
-                    </ng-template>
-                </ngx-datatable-column>
+                            <ngx-datatable-column name="Position" prop="positions" [width]="150">
+                                <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{title}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ngx-datatable-column name="Description" prop="description" [width]="150"
+                        *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User'">
+                        <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+                            {{ description.slice(0,20) }}
+                        </ng-template>
+                    </ngx-datatable-column> -->
+                            <ngx-datatable-column name="Member Type" prop="for_cp" [width]="150"
+                                *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User' && clickedBtn != 'MyShift'">
+                                <ng-template let-for_cp="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ for_cp == '0' ? 'Both' : for_cp == '1' ? 'Team' :for_cp =='2'?'External':''
+                                    }}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="Start date" prop="start_time" [width]="50">
-                    <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ start_time | customDateTime}}
-                    </ng-template>
-                </ngx-datatable-column>
+                            <ngx-datatable-column name="delay" prop="delay" [width]="120" [sortable]="false"
+                                *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User'">
+                                <ng-template let-delay="value" let-row="row" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ delay }} {{row.h_m}}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="Start Time" prop="start_time" [width]="50">
-                    <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ start_time | customTime}}
-                    </ng-template>
-                </ngx-datatable-column>
+                            <ngx-datatable-column name="Start date" prop="start_time" [width]="120">
+                                <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ start_time | customDateTime}}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="End date" prop="end_time" [width]="50">
-                    <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ end_time | customDateTime}}
-                    </ng-template>
-                </ngx-datatable-column>
+                            <ngx-datatable-column name="Start Time" prop="start_time" [width]="120">
+                                <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ start_time | customTime}}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="End Time" prop="end_time" [width]="50">
-                    <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ end_time | customTime }}
-                    </ng-template>
-                </ngx-datatable-column>
+                            <ngx-datatable-column name="End date" prop="end_time" [width]="130">
+                                <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ end_time | customDateTime}}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="Status" prop="approvalStatus" [width]="50" >
-                    <ng-template let-approvalStatus="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ approvalStatus }}
-                    </ng-template>
-                </ngx-datatable-column>
+                            <ngx-datatable-column name="End Time" prop="end_time" [width]="100">
+                                <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ end_time | customTime }}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="Variance Upload" prop="is_varience_form_uploaded" [width]="50">                    
-                    <ng-template let-delay="value" let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ delay == 0 ? '----' :'Yes' }}
-                    </ng-template>
-                </ngx-datatable-column>
+                        <ngx-datatable-column name="Shift Id" prop="id" [width]="100" [sortable]="false" *ngIf="(currentUser.user_role == 2 || (currentUser.user_role == 5 && permision.aplyPrms == '1'))&& clickedBtn == 'MyShift'">
+                                <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    ****{{start_time.slice(start_time.length-5)}}
+                                </ng-template>
+                            </ngx-datatable-column>
 
-                <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50">
-                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                        <div class="d-flex align-items-center">
-                            <div ngbDropdown container="body">
-                                <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow"
-                                    id="dropdownBrowserState" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
-                                </a>
-                                <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                    <a [routerLink]="['/projectProfile',(currentUser.user_role == 2 || currentUser.user_role== 5) && clickedBtn == 'MyShift' ? row.shift_id : row.id,(this.currentUser.user_role == 2 || this.currentUser.user_role ==4 || this.currentUser.user_role ==5) && clickedBtn == 'AllAvailShift' ? '1' : '0']"
-                                        ngbDropdownItem class="d-flex align-items-center" *ngIf="permision.vwPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin'">
-                                        <i class="fa fa-eye mr-50"></i> View
-                                    </a>
-                                    <a [routerLink]="['/shift/edit-shift', row]" ngbDropdownItem
-                                        class="d-flex align-items-center" *ngIf="(permision.edtPrms == '1'  && clickedBtn == 'AllShift' || (currentUser.role == 'Community' || currentUser.role == 'SuperAdmin') &&clickedBtn == 'AllShift' && (row.approvalStatus =='Posted')) ||  (row.approvalStatus =='Posted' && (this.currentUser.user_role == 1 || this.currentUser.user_role == 6))"
-                                        >
-                                        <i class="fa fa-edit mr-50"></i> Edit
-                                    </a>
+                        <ngx-datatable-column name="Status" prop="approvalStatus" [width]="200" [sortable]="false">
+                            <ng-template let-approvalStatus="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                {{ approvalStatus }}
+                            </ng-template>
+                        </ngx-datatable-column>
 
-                                    <a (click)="applyShiftToAgency(row)" ngbDropdownItem class="d-flex align-items-center"  *ngIf="(permision.aplyPrms == '1' && ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending')&& currentUser.user_role == 5) && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending') && permision.aplyPrms == '1' && currentUser.user_role == 4 && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending') && clickedBtn == 'AllAvailShift' && currentUser.user_role == 2)"                                    >
-                                        <i class="fa fa-check mr-50"></i> Apply
-                                    </a>
-                                    
-                                    <!-- <a (click)="assignShift(snglUsr)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' && (row.approvalStatus =='Posted' || row.approvalStatus =='Pending')">
+                            <!-- <ngx-datatable-column name="Requested" prop="request_status" [width]="200" [sortable]="false"
+                    *ngIf="currentUser.user_role == 2 && clickedBtn == 'AllAvailShift'">
+                        <ng-template let-request_status="value" let-expanded="expanded" ngx-datatable-cell-template>
+                            {{ request_status || '---'}}
+                        </ng-template>
+                    </ngx-datatable-column> -->
+
+                            <!--   <ngx-datatable-column name="Requested" prop="aprrovedStat" [width]="200" [sortable]="false"
+                    *ngIf="currentUser.user_role == 2 && clickedBtn == 'AllAvailShift'">
+                        <ng-template let-aprrovedStat="value" let-expanded="expanded" ngx-datatable-cell-template>
+                            {{ aprrovedStat }}
+                        </ng-template>
+                    </ngx-datatable-column> -->
+
+                            <ngx-datatable-column name="Filled by" prop="agency_name" [width]="200" [sortable]="false"
+                                *ngIf="(this.currentUser?.user_role == 1 || this.currentUser?.user_role == 4 && this.permision.addPrms == '1') && clickedBtn == 'AllShift'">
+                                <ng-template let-row="row" let-value="value" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{row.approvalStatus == 'Closed' || row.approvalStatus == 'Posted' ? '---' :
+                                    (row?.first_name == null && row?.last_name == null) ? '----' : row?.agency_name
+                                    + '(' +
+                                    row?.first_name + ' ' + row?.user_lastname + ')'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Applied for By" prop="applied_for_by" [width]="200"
+                                [sortable]="false" *ngIf="currentUser.user_role == 2 && this.clickedBtn == 'MyShift'">
+                                <ng-template let-applied_for_by="value" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ applied_for_by || '---'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Var. Form" prop="is_varience_form_uploaded" [width]="100"
+                                [sortable]="false">
+                                <ng-template let-delay="value" let-row="row" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ delay == 0 ? '----' :'Yes' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Var. Comp." prop="varFrmCmpl" [width]="100" [sortable]="false">
+                                <ng-template let-delay="value" let-row="row" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ delay == 0 ? '----' :'Yes' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Actions" [sortable]="false" prop="id" [width]="100">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <div class="d-flex align-items-center">
+                                        <div ngbDropdown container="body">
+                                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow"
+                                                id="dropdownBrowserState" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                                <i data-feather="more-vertical"
+                                                    class="text-primary cursor-pointer mr-50"></i>
+                                            </a>
+                                            <div ngbDropdownMenu class="dropdown-menu-right"
+                                                aria-labelledby="dropdownBrowserState">
+                                                <a (click)="AddEditPage()"
+                                                    [routerLink]="['/projectProfile',(currentUser.user_role == 2 || currentUser.user_role== 5) && clickedBtn == 'MyShift' ? row.shift_id : row.id,(this.currentUser?.user_role == 2 || this.currentUser?.user_role ==4 || this.currentUser?.user_role ==5) && clickedBtn == 'AllAvailShift' ? '1' : '0']"
+                                                    ngbDropdownItem class="d-flex align-items-center"
+                                                    *ngIf="permision.vwPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3">
+                                                    <i class="fa fa-eye mr-50"></i> View
+                                                </a>
+                                                <!-- <a (click)="AddEditPage()" [routerLink]="['/shift/edit-shift', row]" ngbDropdownItem
+                                            class="d-flex align-items-center"
+                                            *ngIf="((permision.edtPrms == '1'  && clickedBtn == 'AllShift'&& (row.approvalStatus =='Posted')) || (currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3) &&clickedBtn == 'AllShift' && (row.approvalStatus =='Posted')) ||  (row.approvalStatus =='Posted' && (this.currentUser?.user_role == 1 || this.currentUser?.user_role == 6 || currentUser.user_role == 3))">
+                                            <i class="fa fa-edit mr-50"></i> Edit
+                                        </a> -->
+
+                                                <a (click)="AddEditPage()" [routerLink]="['/shift/edit-shift', row]"
+                                                    ngbDropdownItem class="d-flex align-items-center"
+                                                    *ngIf="((permision.edtPrms == '1'  && clickedBtn == 'AllShift'&& (row.cancellation_period_reached == 0)) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed' || (currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3) &&clickedBtn == 'AllShift' && (row.cancellation_period_reached == 0)) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed' ||  (row.cancellation_period_reached == 0 && (this.currentUser?.user_role == 1 || this.currentUser?.user_role == 6 || currentUser.user_role == 3)) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed'">
+                                                    <i class="fa fa-edit mr-50"></i> Edit
+                                                </a>
+
+                                            <a (click)="applyShiftToAgency(row)" ngbDropdownItem
+                                                class="d-flex align-items-center"
+                                                *ngIf="(permision.aplyPrms == '1' && ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending' || (row.approvalStatus == 'Filled By Agency' && row.is_manual == '0'))&& currentUser.user_role == 5) && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending' || (row.approvalStatus == 'Filled By Agency' && row.is_manual == '0')) && permision.aplyPrms == '1' && currentUser.user_role == 4 && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending')&& clickedBtn == 'AllAvailShift' || (row.approvalStatus == 'Filled By Agency' && row.is_manual == '0') && clickedBtn == 'AllAvailShift' && currentUser.user_role == 2) && currentUser.user_role != 1  && currentUser.user_role != 3 && currentUser.user_role !=8 || ((currentUser.user_role == 5 && applyrequest.agency_shift_request_status == '2') && clickedBtn == 'AllAvailShift')">
+                                                <i class="fa fa-check mr-50"></i> Apply
+                                            </a>
+
+                                                <a (click)="applyShiftToCmUser(row)" ngbDropdownItem
+                                                    class="d-flex align-items-center"
+                                                    *ngIf="(currentUser.user_role == 1 || permision.addPrms == '1') && clickedBtn == 'AllShift' && (row.cancellation_period_reached == 0) && row.approvalStatus != 'Archived'  && row.approvalStatus != 'Closed'">
+                                                    <i class="fa fa-check mr-50"></i> Assign
+                                                </a>
+
+                                            <a (click)="request(row)" ngbDropdownItem class="d-flex align-items-center"
+                                                *ngIf="currentUser.user_role == 5 && clickedBtn == 'AllAvailShift' && applyrequest?.agency_shift_request_status == '1'">
+                                                <i class="fa fa-check mr-50"></i> Request
+                                            </a>
+
+                                                <a (click)="requestlist(row)" ngbDropdownItem
+                                                    class="d-flex align-items-center"
+                                                    *ngIf="(currentUser.user_role == 2) && clickedBtn == 'AllAvailShift'">
+                                                    <i class="fa fa-user-plus mr-50" aria-hidden="true"></i> Request
+                                                    List
+                                                </a>
+
+                                                <!-- <a  (click)="upgradeShift(row)" ngbDropdownItem
+                                    class="d-flex align-items-center" *ngIf="(permision.edtPrms == '1' || currentUser.user_role == 1 || currentUser.user_role == 6) && clickedBtn == 'AllShift' && row.cancellation_period_reached == 0 && row.approvalStatus != 'Archived' && row.for_cp !='0' && row.approvalStatus != 'Posted'"
+                                    >
+                                    <i class="fa fa-user-plus mr-50" aria-hidden="true"></i> Include Team
+                                    </a> -->
+
+                                                <!-- <a (click)="assignShift(snglUsr)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' && (row.approvalStatus =='Posted' || row.approvalStatus =='Pending')">
                                     <i class="fa fa-check mr-50"></i> Assign
                                 </a> -->
 
-                                    <a [routerLink]="['/shift/applied-list', row]" ngbDropdownItem
-                                    class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || permision.addPrms == '1'" >
-                                    <i class="fa fa-list mr-50"></i> Applied List
-                                </a>
+                                            <a (click)="AddEditPage()" [routerLink]="['/shift/applied-list', row]"
+                                                ngbDropdownItem class="d-flex align-items-center"
+                                                *ngIf="(currentUser.role == 'Community' || currentUser.user_role == 3 || permision.dltPrms == '1') && row.approvalStatus != 'Archived' && row.approvalStatus !='Closed' && clickedBtn == 'AllShift' && this.currentUser.user_role != 5 && this.currentUser.user != 2 || (currentUser.role == 'SuperAdmin' && row.approvalStatus != 'Archived' && row.approvalStatus !='Closed') && this.currentUser.user_role != 5 && this.currentUser.user != 2">
+                                                <i class="fa fa-list mr-50"></i> Applied List
+                                            </a>
+                                            <a (click)="openReasonMdl(row)" ngbDropdownItem
+                                                class="d-flex align-items-center"
+                                                *ngIf="(currentUser.user_role == 2 && clickedBtn == 'MyShift' && row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User') || (currentUser.user_role == 5 && clickedBtn == 'MyShift' && row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User') || (currentUser.user_role == 4 && permision.aplyPrms == '1') && clickedBtn == 'MyShift' && row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User'">
+                                                <i class="fa fa-ban mr-50"></i> Cancel 
+                                            </a>
 
-                                    <a  ngbDropdownItem class="d-flex align-items-center" *ngIf="(permision.dltPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin') && this.currentUser.role != 'Agency'" (click)="openDeleteShift(row)"
-                                    >
-                                        <i class="fa fa-trash mr-50"></i> Archive
-                                    </a>
-                                    <a (click)="completeShift(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="row.approvalStatus !='Closed' && !row.approvalStatus.includes('Completed') && currentUser.role == 'Community'">
+                                                <a ngbDropdownItem class="d-flex align-items-center"
+                                                    *ngIf="(permision.dltPrms == '1' || currentUser.role == 'Community' || currentUser.user_role == '6' || currentUser.user_role == 3) && this.currentUser.role != 'Agency' && (row.approvalStatus == 'Posted')"
+                                                    (click)="openDeleteShift(row)">
+                                                    <i class="fa fa-trash mr-50"></i> Archive
+                                                </a>
+
+                                                <!-- <a ngbDropdownItem class="d-flex align-items-center"
+                                        *ngIf="((permision.addPrms == '1' || this.currentUser.role == 'Community') && (row.approvalStatus == 'Archived') && clickedBtn == 'AllShift')"
+                                        (click)="archive(row)">
+                                            <i class="fa fa-trash mr-50"></i> Archive Reason
+                                        </a> -->
+                                                <!-- <a (click)="completeShift(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="row.approvalStatus !='Closed' && !row.approvalStatus.includes('Completed') && currentUser.role == 'Community' && row?.expired == false">
                                         <i class="fa fa-check-square mr-50"></i> Complete
+                                    </a> -->
+                                            <a (click)="getUserCanceledShiftById(row)" ngbDropdownItem
+                                                class="d-flex align-items-center"
+                                                *ngIf="((currentUser.role == 'Community' || permision.addPrms == '1') && row.approvalStatus !='Closed' && this.currentUser.user_role != 5 && this.currentUser.user != 2) || ((currentUser.user_role == 2 || permision.aplyPrms == '1') && (row.approvalStatus == 'Canceled' || row.approvalStatus == 'Canceled By User'))">
+                                                <i class="fa fa-check-square mr-50"></i> Cancel Reason
+                                            </a>
+                                            <a (click)="replcUsr(row,1)" ngbDropdownItem
+                                                class="d-flex align-items-center"
+                                                *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift'&& row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User' || (permision.aplyPrms == '1' && currentUser.user_role == 5 && clickedBtn == 'MyShift' && row?.expired == true) && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User'">
+                                                <i class="fa fa-exchange   mr-50"></i> Replace 
+                                            </a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </ngx-datatable-column>
+                        </ngx-datatable>
+                    </div>
+                    <div class="col-12 ovr-flow">
+                        <ngx-datatable class="bootstrap core-bootstrap" #table [virtualization]="false"
+                            *ngIf="(clickedBtn != 'AllShift' || currentUser.user_role == 2) && this.currentUser?.user_role != 6 && this.currentUser?.user_role != 3"
+                            [rows]="shiftData" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+                            rowHeight="auto" [externalPaging]="true" [count]="page.totalElements"
+                            [offset]="page.pageNumber" [limit]="page.size" (page)='changePage($event)'
+                            (sort)="sort($event)" [scrollbarH]="true" [draggable]="false">
+                            <ngx-datatable-column name="community Name" prop="community_name" [width]="200">
+                                <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{title}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Position" prop="positions" [width]="150">
+                                <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{title}}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <!-- <ngx-datatable-column name="Description" prop="description" [width]="200"
+                            *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User'">
+                            <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                {{ description.slice(0,20) }}
+                            </ng-template>
+                        </ngx-datatable-column> -->
+                            <ngx-datatable-column name="Member Type" prop="for_cp" [width]="150"
+                                *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User' && clickedBtn != 'MyShift'">
+                                <ng-template let-for_cp="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ for_cp == '0' ? 'Both' : for_cp == '1' ? 'Team' :for_cp =='2'?'External':'' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="delay" prop="delay" [width]="120" [sortable]="false"
+                                *ngIf="currentUser.role == 'Community'">
+                                <ng-template let-delay="value" let-row="row" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ delay }} {{row.h_m}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Start date" prop="start_time" [width]="120">
+                                <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ start_time | customDateTime}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Start Time" prop="start_time" [width]="120">
+                                <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ start_time | customTime}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="End date" prop="end_time" [width]="130">
+                                <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    {{ end_time | customDateTime}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                    <ngx-datatable-column name="End Time" prop="end_time" [width]="100">
+                        <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                            {{ end_time | customTime }}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Shift Id" prop="id" [width]="100" [sortable]="false" *ngIf="(currentUser.user_role == 2 || (currentUser.user_role == 5 && permision.aplyPrms == '1'))&& clickedBtn == 'MyShift'">
+                                <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                    ****{{start_time.slice(start_time.length-5)}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Status" prop="approvalStatus" [width]="200" [sortable]="false">
+                        <ng-template let-approvalStatus="value" let-expanded="expanded" ngx-datatable-cell-template>
+                            {{ approvalStatus }}
+                        </ng-template>
+                    </ngx-datatable-column>
+
+                            <!-- <ngx-datatable-column name="Request Status" prop="request_status" [width]="200" [sortable]="false"
+                        *ngIf="currentUser.user_role == 2 && clickedBtn == 'AllAvailShift'">
+                            <ng-template let-request_status="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                {{ request_status || '---'}}
+                            </ng-template>
+                        </ngx-datatable-column> -->
+
+                            <!--  <ngx-datatable-column name="Requested" prop="aprrovedStat" [width]="200" [sortable]="false"
+                        *ngIf="currentUser.user_role == 2 && clickedBtn == 'AllAvailShift'">
+                            <ng-template let-aprrovedStat="value" let-expanded="expanded" ngx-datatable-cell-template>
+                                {{ aprrovedStat }}
+                            </ng-template>
+                        </ngx-datatable-column> -->
+
+
+                            <ngx-datatable-column name="Var. Form" prop="is_varience_form_uploaded" [width]="100"
+                                [sortable]="false">
+                                <ng-template let-delay="value" let-row="row" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ delay == 0 ? '----' :'Yes' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Var. Comp." prop="varFrmCmpl" [width]="100" [sortable]="false">
+                                <ng-template let-delay="value" let-row="row" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ delay == 0 ? '----' :'Yes' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Filled by" prop="agency_name" [width]="200" [sortable]="false"
+                                *ngIf="(this.currentUser?.user_role == 1 || this.currentUser?.user_role == 4 && this.permision.addPrms == '1') && clickedBtn == 'AllShift'">
+                                <ng-template let-row="row" let-value="value" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{row.approvalStatus == 'Closed' || row.approvalStatus == 'Posted' ? '---' :
+                                    row?.first_name
+                                    == null && row?.last_name == null ? '----' : row?.agency_name + '(' +
+                                    row?.first_name + ' '
+                                    + row?.user_lastname + ')'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Filled by" prop="first_name" [width]="200"
+                                *ngIf="(currentUser.role == 'Agency' || currentUser.user_role == 5) && clickedBtn == 'MyShift'">
+                                <ng-template let-row="row" let-value="value" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ row.approvalStatus == 'Posted' ? '----' : row?.first_name + ' ' +
+                                    row?.user_lastname ||
+                                    '---' }}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                            <ngx-datatable-column name="Applied for By" prop="applied_for_by" [width]="200"
+                                [sortable]="false" *ngIf="currentUser.user_role == 2 && this.clickedBtn == 'MyShift'">
+                                <ng-template let-applied_for_by="value" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ applied_for_by || '---'}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+
+                            <ngx-datatable-column name="Agency Cell phone" prop="phone_number" [width]="200"
+                                *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift'" [sortable]="false">
+                                <ng-template let-phone_number="value" let-expanded="expanded"
+                                    ngx-datatable-cell-template>
+                                    {{ phone_number | numberFormat}}
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                    <ngx-datatable-column name="Actions" [sortable]="false" prop="id" [width]="100">
+                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                            <div class="d-flex align-items-center">
+                                <div ngbDropdown container="body">
+                                    <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow"
+                                        id="dropdownBrowserState" data-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
                                     </a>
-                                      <a (click)="getUserCanceledShiftById(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' && row.approvalStatus !='Closed'">
-                                        <i class="fa fa-check-square mr-50"></i> Cancel Reason
-                                    </a>
-                                    <a (click)="replcUsr(row,1)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift'&& row.expired == true">
-                                        <i class="fa fa-exchange   mr-50"></i> Replace
-                                    </a>
+                                    <div ngbDropdownMenu class="dropdown-menu-right"
+                                        aria-labelledby="dropdownBrowserState">
+                                        <a (click)="AddEditPage()"
+                                            [routerLink]="['/projectProfile',(currentUser.user_role == 2 || currentUser.user_role== 5) && (clickedBtn == 'MyShift' || clickedBtn == 'AllAvailShift') ? (row.shift_id ? row.shift_id : row.id) : currentUser?.com_id == row.id ? row.shift_id : row.id,(this.currentUser.user_role == 2 || this.currentUser.user_role == 4 || this.currentUser.user_role == 5) && clickedBtn == 'AllAvailShift' ? '1' : '0']"
+                                            ngbDropdownItem class="d-flex align-items-center"
+                                            *ngIf="permision.vwPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3 || currentUser.role == 'Agency'">
+                                            <i class="fa fa-eye mr-50"></i> View
+                                        </a>
+                                        <a (click)="AddEditPage()" [routerLink]="['/shift/edit-shift', row]"
+                                            ngbDropdownItem class="d-flex align-items-center"
+                                            *ngIf="((permision.edtPrms == '1'  && clickedBtn == 'AllShift'&& (row.cancellation_period_reached == 0)) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed' || (currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3) &&clickedBtn == 'AllShift' && (row.cancellation_period_reached == 0)) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed' ||  (row.cancellation_period_reached == 0 && (this.currentUser.user_role == 1 || this.currentUser.user_role == 6 || currentUser.user_role == 3)) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed'">
+                                            <i class="fa fa-edit mr-50"></i> Edit
+                                        </a>
+                                        <a (click)="applyShiftToAgency(row)" ngbDropdownItem
+                                            class="d-flex align-items-center"
+                                            *ngIf="(permision.aplyPrms == '1' && ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending' || (row.approvalStatus == 'Filled By Agency' && row.is_manual == '0'))&& currentUser.user_role == 5) && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending' || (row.approvalStatus == 'Filled By Agency' && row.is_manual == '0')) && permision.aplyPrms == '1' && currentUser.user_role == 4 && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending' || (row.approvalStatus == 'Filled By Agency' && row.is_manual == '0')) && clickedBtn == 'AllAvailShift' && currentUser.user_role == 2) && currentUser.user_role != 1 || ((currentUser.user_role == 5 && applyrequest.agency_shift_request_status == '2') && clickedBtn == 'AllAvailShift')">
+                                            <i class="fa fa-check mr-50"></i> Apply
+                                        </a>
 
-                                </div>
-                            </div>
-                        </div>
-                    </ng-template>
-                </ngx-datatable-column>
-            </ngx-datatable>
-            <ngx-datatable  class="bootstrap core-bootstrap sz-1000" *ngIf="clickedBtn != 'AllShift' || currentUser.user_role == 2" [rows]="shiftData" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [count]="shiftData.length" [limit]="10"
-                >
-                <ngx-datatable-column name="community Name" prop="community_name" [width]="80" >
-                    <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{title}}
-                    </ng-template>
-                </ngx-datatable-column>
+                                                <a (click)="applyShiftToCmUser(row)" ngbDropdownItem
+                                                    class="d-flex align-items-center"
+                                                    *ngIf="(currentUser.user_role == 1 || permision.addPrms == '1') && clickedBtn == 'AllShift' && (row.cancellation_period_reached == 0) && row.approvalStatus != 'Archived' && row.approvalStatus != 'Closed'">
+                                                    <i class="fa fa-check mr-50"></i> Assign
+                                                </a>
 
-                <ngx-datatable-column name="Position" prop="positions" [width]="50">
-                    <ng-template let-title="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{title}}
-                    </ng-template>
-                </ngx-datatable-column>
-                <ngx-datatable-column name="Description" prop="description" [width]="50"
-                    *ngIf="currentUser.role != 'Agency' && currentUser.role != 'User'">
-                    <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ description.slice(0,25) }}
-                    </ng-template>
-                </ngx-datatable-column>
+                                        <a (click)="request(row)" ngbDropdownItem class="d-flex align-items-center"
+                                            *ngIf="currentUser.user_role == 5 && clickedBtn == 'AllAvailShift' && applyrequest?.agency_shift_request_status == '1'">
+                                            <i class="fa fa-check mr-50"></i> Request
+                                        </a>
 
-                <ngx-datatable-column name="delay" prop="delay" [width]="50"
-                    *ngIf="currentUser.role == 'Community'">
-                    <ng-template let-delay="value" let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ delay }} {{row.h_m}}
-                    </ng-template>
-                </ngx-datatable-column>
+                                                <a (click)="requestlist(row)" ngbDropdownItem
+                                                    class="d-flex align-items-center"
+                                                    *ngIf="(currentUser.user_role == 2) && clickedBtn == 'AllAvailShift'">
+                                                    <i class="fa fa-user-plus mr-50" aria-hidden="true"></i> Request
+                                                    List
+                                                </a>
 
-                <ngx-datatable-column name="Start date" prop="start_time" [width]="50">
-                    <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ start_time | customDateTime}}
-                    </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Start Time" prop="start_time" [width]="50">
-                    <ng-template let-start_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ start_time | customTime}}
-                    </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="End date" prop="end_time" [width]="50">
-                    <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ end_time | customDateTime}}
-                    </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="End Time" prop="end_time" [width]="50">
-                    <ng-template let-end_time="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ end_time | customTime }}
-                    </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Status" prop="approvalStatus" [width]="50" *ngIf="clickedBtn != 'MyShift' || (clickedBtn == 'MyShift' && currentUser.role == 'Agency')">
-                    <ng-template let-approvalStatus="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ approvalStatus }}
-                    </ng-template>
-                </ngx-datatable-column>
-                <ngx-datatable-column name="Variance Upload" prop="is_varience_form_uploaded" [width]="50"
-                    >
-                    <ng-template let-delay="value" let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ delay == 0 ? '----' :'Yes' }}
-                    </ng-template>
-                </ngx-datatable-column>
-
-               <ngx-datatable-column name="Filled by" prop="id" [width]="50" *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift'">
-                    <ng-template  let-row="row" let-value="value" let-expanded="expanded" ngx-datatable-cell-template>
-                        {{ row?.first_name + ' ' + row?.user_lastname || '---' }}
-                    </ng-template>
-                </ngx-datatable-column>
-
-                <ngx-datatable-column name="Agency Cell phone" prop="phone_number" [width]="50" *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift'">
-            <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
-                {{ phone_number | numberFormat}}
-            </ng-template>
-        </ngx-datatable-column>
-        
-                <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50">
-                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                        <div class="d-flex align-items-center">
-                            <div ngbDropdown container="body">
-                                <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow"
-                                    id="dropdownBrowserState" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
-                                </a>
-                                <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                    <a [routerLink]="['/projectProfile',(currentUser.user_role == 2 || currentUser.user_role== 5) && (clickedBtn == 'MyShift' || clickedBtn == 'AllAvailShift') ? (row.shift_id ? row.shift_id : row.id) : currentUser?.com_id == row.id ? row.shift_id : row.id,(this.currentUser.user_role == 2 || this.currentUser.user_role == 4 || this.currentUser.user_role == 5) && clickedBtn == 'AllAvailShift' ? '1' : '0']"
-                                        ngbDropdownItem class="d-flex align-items-center" *ngIf="permision.vwPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.role == 'Agency'">
-                                        <i class="fa fa-eye mr-50"></i> View
-                                    </a>
-                                    <a [routerLink]="['/shift/edit-shift', row]" ngbDropdownItem
-                                    class="d-flex align-items-center" *ngIf="(permision.edtPrms == '1'  && clickedBtn == 'AllShift' || (currentUser.role == 'Community' || currentUser.role == 'SuperAdmin') &&clickedBtn == 'AllShift' && (row.approvalStatus =='Posted')) ||  (row.approvalStatus =='Posted' && (this.currentUser.user_role == 1 || this.currentUser.user_role == 6))"
-                                    >
-                                        <i class="fa fa-edit mr-50"></i> Edit
-                                    </a>
-
-                                    <a (click)="applyShiftToAgency(row)" ngbDropdownItem class="d-flex align-items-center"  *ngIf="(permision.aplyPrms == '1' && ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending')&& currentUser.user_role == 5) && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending') && permision.aplyPrms == '1' && currentUser.user_role == 4 && clickedBtn == 'AllAvailShift') || ((row.approvalStatus =='Posted' || row.approvalStatus =='Pending') && clickedBtn == 'AllAvailShift' && currentUser.user_role == 2)"                                    >
-                                        <i class="fa fa-check mr-50"></i> Apply
-                                    </a>
-
-                                    <a (click)="openReasonMdl(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="(currentUser.user_role == 2 && clickedBtn == 'MyShift' && row.expired == true) || (currentUser.user_role == 5 && clickedBtn == 'MyShift' && row.expired == true) || (currentUser.user_role == 4 && permision.aplyPrms == '1') && clickedBtn == 'MyShift' && row.expired == true">
-                                        <i class="fa fa-ban mr-50"></i> Cancel
-                                    </a>
-                                    
-                                    <!-- <a (click)="assignShift(snglUsr,modal)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' && (row.approvalStatus =='Posted' || row.approvalStatus =='Pending')">
-                                    <i class="fa fa-check mr-50"></i> Assign
-                                </a> -->
-
-                                    <a [routerLink]="['/shift/applied-list', row]" ngbDropdownItem
-                                    class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' || currentUser.role == 'SuperAdmin'" >
-                                    <i class="fa fa-list mr-50"></i> Applied List
-                                </a>
-
-                                    <a  ngbDropdownItem class="d-flex align-items-center" *ngIf="(permision.dltPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin') && this.currentUser.role != 'Agency'" (click)="openDeleteShift(row)"
+                                                <!-- <a  (click)="upgradeShift(row)" ngbDropdownItem
+                                        class="d-flex align-items-center" *ngIf="((permision.edtPrms == '1'  && clickedBtn == 'AllShift'&& (row.approvalStatus == 'Pending' || row.approvalStatus == 'Filled By Agency' || row.approvalStatus == 'Filled By Community') && row.for_cp !='0') || (currentUser.role == 'Community' || currentUser.role == 'SuperAdmin' || currentUser.user_role == 3) &&clickedBtn == 'AllShift' && (row.approvalStatus == 'Pending' || row.approvalStatus == 'Filled By Agency' || row.approvalStatus == 'Filled By Community'))&& row.for_cp !='0' ||  (row.approvalStatus == 'Pending' || row.approvalStatus == 'Filled By Agency' || row.approvalStatus == 'Filled By Community' && (this.currentUser?.user_role == 1 || this.currentUser?.user_role == 6 || currentUser.user_role == 3))&& row.for_cp !='0'"
                                         >
-                                        <i class="fa fa-trash mr-50"></i> Archive
-                                    </a>
-                                    <a (click)="completeShift(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="row.approvalStatus !='Closed' && !row.approvalStatus?.includes('Completed') && currentUser.role == 'Community' && row?.expired == false">
+                                        <i class="fa fa-user-plus mr-50" aria-hidden="true"></i> Include Team
+                                        </a> -->
+
+                                                <!-- <a  (click)="upgradeShift(row)" ngbDropdownItem
+                                        class="d-flex align-items-center" *ngIf="(permision.edtPrms == '1' || currentUser.user_role == 1 || currentUser.user_role == 6) && clickedBtn == 'AllShift' && row.cancellation_period_reached == 0 && row.approvalStatus != 'Archived' && row.for_cp !='0' && row.approvalStatus != 'Posted' && row.approvalStatus != 'closed'"
+                                        >
+                                        <i class="fa fa-user-plus mr-50" aria-hidden="true"></i> Include Team
+                                        </a> -->
+
+
+                                        <a (click)="openReasonMdl(row)" ngbDropdownItem
+                                            class="d-flex align-items-center"
+                                            *ngIf="(currentUser.user_role == 2 && clickedBtn == 'MyShift' && row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User') || (currentUser.user_role == 5 && clickedBtn == 'MyShift' && row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User') || (currentUser.user_role == 4 && permision.aplyPrms == '1') && clickedBtn == 'MyShift' && row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User'">
+                                            <i class="fa fa-ban mr-50"></i> Cancel
+                                        </a>
+
+                                                <!-- <a (click)="assignShift(snglUsr,modal)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' && (row.approvalStatus =='Posted' || row.approvalStatus =='Pending')">
+                                        <i class="fa fa-check mr-50"></i> Assign
+                                    </a> -->
+
+                                                <a (click)="AddEditPage()" [routerLink]="['/shift/applied-list', row]"
+                                                    ngbDropdownItem class="d-flex align-items-center"
+                                                    *ngIf="(currentUser.role == 'Community' || currentUser.user_role == 3 || permision.dltPrms == '1') && row.approvalStatus != 'Archived' && row.approvalStatus !='Closed' && clickedBtn == 'AllShift' && this.currentUser?.user_role != 5 && this.currentUser.user != 2 || (currentUser.role == 'SuperAdmin' && row.approvalStatus != 'Archived' && row.approvalStatus !='Closed') && this.currentUser?.user_role != 5 && this.currentUser.user != 2">
+                                                    <i class="fa fa-list mr-50"></i> Applied List
+                                                </a>
+
+                                                <!-- <a  ngbDropdownItem class="d-flex align-items-center" *ngIf="(permision.dltPrms == '1' || currentUser.role == 'Community' || currentUser.role == 'SuperAdmin') && this.currentUser.role != 'Agency' && (row.approvalStatus != 'Started By Agency' && row.approvalStatus != 'Filled By Agency' && row.approvalStatus != 'Completed By Agency')" (click)="openDeleteShift(row)"
+                                            >
+                                            <i class="fa fa-trash mr-50"></i> Archive
+                                        </a> -->
+
+                                                <a ngbDropdownItem class="d-flex align-items-center"
+                                                    *ngIf="(permision.dltPrms == '1' || currentUser.role == 'Community' || currentUser.user_role == '6') && this.currentUser.role != 'Agency' && (row.approvalStatus == 'Posted') && clickedBtn == 'AllShift'"
+                                                    (click)="openDeleteShift(row)">
+                                                    <i class="fa fa-trash mr-50"></i> Archive
+                                                </a>
+
+                                                <!-- <a ngbDropdownItem class="d-flex align-items-center"
+                                                *ngIf="((permision.addPrms == '1' || this.currentUser.role == 'Community') && (row.approvalStatus == 'Archived') && clickedBtn == 'AllShift')"
+                                                (click)="archive(row)">
+                                                <i class="fa fa-trash mr-50"></i> Archive Reason
+                                            </a> -->
+
+                                        <!-- <a (click)="completeShift(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="row.approvalStatus !='Closed' && !row.approvalStatus?.includes('Completed') && currentUser.role == 'Community' && row?.expired == false">
                                         <i class="fa fa-check-square mr-50"></i> Complete
-                                    </a>
-                                      <a (click)="getUserCanceledShiftById(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' && row.approvalStatus !='Closed'">
-                                        <i class="fa fa-check-square mr-50"></i> Cancel Reason
-                                    </a>
-                                    <a (click)="replcUsr(row,1)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift' && row?.expired == true">
-                                        <i class="fa fa-exchange   mr-50"></i> Replace
-                                    </a>
+                                    </a> -->
+                                        <a (click)="getUserCanceledShiftById(row)" ngbDropdownItem
+                                            class="d-flex align-items-center"
+                                            *ngIf="((currentUser.role == 'Community' || permision.addPrms == '1') && row.approvalStatus !='Closed' && this.currentUser.user_role != 5 && this.currentUser.user != 2) || ((currentUser.user_role == 2 || permision.aplyPrms == '1') && (row.approvalStatus == 'Canceled' || row.approvalStatus == 'Canceled By User'))">
+                                            <i class="fa fa-check-square mr-50"></i> Cancel Reason
+                                        </a>
+                                        <a (click)="replcUsr(row,1)" ngbDropdownItem class="d-flex align-items-center"
+                                        *ngIf="currentUser.role == 'Agency' && clickedBtn == 'MyShift'&& row.expired == true && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User' || (permision.aplyPrms == '1' && currentUser.user_role == 5 && clickedBtn == 'MyShift' && row?.expired == true) && row.approvalStatus != 'Canceled' && row.approvalStatus != 'Canceled By User'">
+                                        <i class="fa fa-exchange   mr-50"></i> Replace 
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </ng-template>
-                </ngx-datatable-column>
-            </ngx-datatable>
+                        </ng-template>
+                    </ngx-datatable-column>
+                </ngx-datatable>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Reason modal -->
-<ng-template #reasonMdl let-modal>
-    <div class="modal-header bg-danger">
-        <h4 class="modal-title text-white" id="myModalLabel1">Add Reason</h4>
-        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-        <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
-        <div class="invalid-feedback"
-            *ngIf="resonIsNull"
-            class="text text-danger">
-            This field required
-        </div>
-        <div class="row mt-1">
-            <button type="button" (click)="cancleShft()" class="btn btn-primary btn-sm">
+        <!-- Reason modal -->
+        <ng-template #reasonMdl let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Add Reason</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngb100focus>
+                <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
+                <div class="invalid-feedback" *ngIf="resonIsNull" class="text text-danger">
+                    This field is Required
+                </div>
+                <div class="row mt-1">
+                    <button type="button" (click)="cancleShft()" class="btn btn-primary btn-sm">
+                        Add
+                        <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm"
+                            role="status" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" (click)="closeded(modal)" class="btn btn-primary btn-sm ml-1"
+                        [disabled]="btnShow">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+
+        </ng-template>
+        <!-- /Reason modal -->
+
+
+        <!--cancel Reason list modal -->
+        <ng-template #reasonLstMdl let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Cancel Reason List</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <div class="table-responsive table-fixed-width table_set_scroll">
+                    <table class="table ">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <th scope="col" class="col btn-primary">User Name</th>
+                                <th scope="col" class="col btn-primary">Shift Cancel By</th>
+                                <th scope="col" class="col btn-primary">Agency Name</th>
+                                <th scope="col" class="col btn-primary">Community Name</th>
+                                <th scope="col" class="col btn-primary">Cancel Reason</th>
+                                <th scope="col" class="col btn-primary">Shift Cancel Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of UserCanceledShiftById" style="font-size: 12px !important;">
+                                <td class="col">{{snglUsr?.first_name +' '+ snglUsr?.last_name}}</td>
+                                <td class="col">{{snglUsr.shift_canceled_by ? snglUsr.shift_canceled_by : '---'}}</td>
+                                <td class="col">{{snglUsr.agency_name ? snglUsr.agency_name : '---'}}</td>
+                                <td class="col">{{snglUsr.community_name ? snglUsr.community_name : '---' }}</td>
+                                <td class="col">{{snglUsr.shift_cancel_reason}}</td>
+                                <td class="col">{{snglUsr?.shift_cancel_time}}</td>
+                            </tr>
+                            <tr *ngIf="!UserCanceledShiftById?.length">
+                                <td>
+                                    No data to display
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="table " *ngIf="ShiftDeletedTime?.length">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <th scope="col" class="col btn-primary resp_mob">Shift Archive By</th>
+                                <th scope="col" class="col btn-primary" style="padding-right: 150px;">Shift Archive
+                                    Reason</th>
+                                <th scope="col" class="col btn-primary">Shift Archive time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of ShiftDeletedTime" style="font-size: 12px !important;">
+                                <td class="col">{{snglUsr?.archived_by ? snglUsr?.archived_by : '---' }}</td>
+                                <td class="col">{{snglUsr.shift_delete_reason}}</td>
+                                <td class="col">{{stime1}}</td>
+                            </tr>
+                            <tr *ngIf="!ShiftDeletedTime?.length">
+                                <td>
+                                    No data to display
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row mt-1">
+                    <!-- <button type="button" (click)="cancleShft()" class="btn btn-primary btn-sm">
                 Add
                 <span *ngIf="btnShow" [disabled]="btnShow"
                     class="spinner-border spinner-border-sm" role="status"
                     aria-hidden="true"></span>
-            </button>
-            <button type="button" (click)="closeded(modal)"
-                class="btn btn-primary btn-sm ml-1" [disabled]="btnShow">
-                Cancel
-            </button>
-        </div>
-    </div>
-
-   
-</ng-template>
-<!-- /Reason modal -->
+            </button> -->
+                    <button type="button" (click)="closeded(modal)" class="btn btn-primary btn-sm ml-1"
+                        [disabled]="btnShow">
+                        Cancel
+                    </button>
+                </div>
+            </div>
 
 
-<!--cancel Reason list modal -->
-<ng-template #reasonLstMdl let-modal>
-    <div class="modal-header bg-danger">
-        <h4 class="modal-title text-white" id="myModalLabel1">Cancel Reason List</h4>
-        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-        <div class="table-responsive table-fixed-width">
-            <table class="table ">
-                <thead>
-                    <tr>
-                        <th scope="col" class="col btn-primary">User Name</th>
-                        <th scope="col" class="col btn-primary">Agency Name</th>
-                        <th scope="col" class="col btn-primary">Community Name</th>
-                        <th scope="col" class="col btn-primary">Cancel Reason</th>
-                        <th scope="col" class="col btn-primary">Shift Cancel Time</th>
+        </ng-template>
+
+        <!-- delete reason -->
+        <ng-template #reasondeleteLstMdl let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Archive Reason List</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <div class="table-responsive table_set_scroll">
+                    <table class="table ">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <!-- <th scope="col" class="col btn-primary">User Name</th> -->
+                                <!-- <th scope="col" class="col btn-primary">Agency Name</th> -->
+                                <th scope="col" class="col btn-primary">Community Name</th>
+                                <th scope="col" class="col btn-primary">Archive Reason</th>
+                                <th scope="col" class="col btn-primary">Shift Archive Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of UserArchiveShiftById" style="font-size: 12px !important;">
+                                <!-- <td class="col">{{snglUsr.user_full_name ? snglUsr.user_full_name : snglUsr.user_name +' '+
+                            snglUsr.user_lastname }}</td>
+                        <td class="col">{{snglUsr.agency_name ? snglUsr.agency_name : '---'}}</td> -->
+                                <td class="col">{{snglUsr.community_name ? snglUsr.community_name : '---' }}</td>
+                                <td class="col">{{snglUsr.shift_delete_reason}}</td>
+                                <td class="col">{{stime}}</td>
+                            </tr>
+                            <tr *ngIf="!UserArchiveShiftById?.length">
+                                <td>
+                                    No data to display
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row mt-1">
+                    <button type="button" (click)="closeded(modal)" class="btn btn-primary btn-sm ml-1"
+                        [disabled]="btnShow">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+
+
+        </ng-template>
+        <!--/cancel Reason list modal -->
+        <ng-template #deleteShift let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Archive Shift</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <h5>Are you sure you want to Archive this shift?</h5>
+                <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+                    (click)="deleteshift(modal)" rippleEffect>
+                    Yes
+                </button>
+                <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+                    (click)="closededApply(modal)" rippleEffect>
+                   No
+                </button>
+
+            </div>
+        </ng-template> 
+
+        <!-- request model -->
+
+        <ng-template #requestmodel let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Request Shift</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <h5>Are you sure you want to request for this shift?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+                    (click)="requested(modal)" rippleEffect>
+                    Yes
+                </button>
+                <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+                    (click)="closeded(modal)" rippleEffect>
+                    No
+                </button>
+
+            </div>
+        </ng-template>
+
+        <ng-template #requestacceptmodel let-modal>
+            <div class="modal-header bg-danger py-75">
+                <h4 class="modal-title text-white" id="myModalLabel1">Shift Request List</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="body mx-2">
+
+                <div class="row col-12">
+                    <div class="col-2 d-flex justify-content-center">
+                        <b>
+                            Community Name
+                        </b>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <b>
+                            Position
+                        </b>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <b>
+                            Start Date
+                        </b>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <b>
+                            Start Time
+                        </b>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <b>
+                            End Date
+                        </b>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <b>
+                            End Time
+                        </b>
+                    </div>
+                </div>
+
+                <div class="row mt-2 col-12">
+                    <div class="col-2 d-flex justify-content-center">
+                        <p>
+                            {{prmsUsrId.community_name}}
+                        </p>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <p>
+                            {{prmsUsrId.positions}}
+                        </p>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <p>
+                            {{prmsUsrId.start_time | customDateTime }}
+                        </p>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <p>
+                            {{prmsUsrId.start_time | customTime }}
+                        </p>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <p>
+                            {{prmsUsrId.end_time | customDateTime}}
+                        </p>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center">
+                        <p>
+                            {{prmsUsrId.end_time | customTime}}
+                        </p>
+                    </div>
+                </div>
+                <div class="table-responsive table-fixed-width table_set_scroll">
+                    <table class="table ">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <th scope="col" class="col btn-primary">Approve</th>
+                                <th scope="col" class="col btn-primary">Deny</th>
+                                <th scope="col" class="col btn-primary">Firstname</th>
+                                <th scope="col" class="col btn-primary">Lastname</th>
+                                <th scope="col" class="col btn-primary">Applied User</th>
+                                <!-- <th scope="col" class="col btn-primary"> Phone No.</th> -->
+                                <th scope="col" class="col btn-primary"> Email</th>
+                                <!-- <th scope="col" class="col btn-primary">Hourly Rate</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of appliedUserdtail" style="font-size: 12px !important;">
+                                <td class="col">
+                                    <button class="btn btn-primary" (click)="assignShift(snglUsr)"
+                                        *ngIf="snglUsr?.approved == 0">Approve
+                                    </button>
+                                </td>
+                                <td class="col">
+                                    <button class="btn btn-primary" (click)="cancelRequest1(snglUsr)"
+                                        *ngIf="snglUsr?.approved == 0">Deny
+                                    </button>
+                                </td>
+                                <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name : snglUsr?.agency_name}}
+                                    ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                <td class="col">{{snglUsr?.user_lastname ? snglUsr?.user_lastname :snglUsr?.last_name }}
+                                    ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td>
+                                <td class="col">
+                                    <span>
+                                        {{snglUsr?.chngVal}}
+                                    </span>
+                                </td>
+                                <!-- <td class="col">
+                        {{(snglUsr?.user_id != null ? snglUsr?.phone_number  : snglUsr?.agency_contact_cell_number) | numberFormat  }}
+                    </td> -->
+                                <td class="col">{{snglUsr?.email ? snglUsr?.email :
+                                    snglUsr?.agency_contact_email_address}}
+                                </td>
+                                <!-- <td class="col">{{snglUsr?.hourly_rate ||  snglUsr?.hourly_rates  | number : '1.2-2' }}</td> -->
+
+                            </tr>
+                            <tr *ngIf="!appliedUserdtail?.length">
+                                <td>
+                                    No data to display
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </ng-template>
+
+
+        <ng-template #UserLiST let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Users List</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0 my-1"
+                *ngIf="this.currentUser?.user_role == 2 || this.currentUser?.user_role == 5">
+                <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                    <input type="text" (keyup)="searchUser($event)" placeholder="Search" class="form-control ml-25"
+                        [(ngModel)]="searchUserName1" />
+                </label>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0 my-1"
+                *ngIf="this.currentUser?.user_role == 1 || this.currentUser?.user_role == 4">
+                <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                    <input type="text" (keyup)="searchUser($event)" placeholder="Search" class="form-control ml-25"
+                        [(ngModel)]="searchUserName" />
+                </label>
+            </div>
+
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+
+                <div class="table-responsive table_set_scroll">
+                    <table class="table ">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <th scope="col" class="col btn-primary">No.</th>
+                                <th scope="col" class="col btn-primary">Apply</th>
+                                <th scope="col" class="col btn-primary"
+                                    *ngIf="(currentUser.prmsnId == '2' || currentUser.user_role == 5) && this.clickedBtn == 'MyShift'">
+                                    Reason</th>
+                                <th scope="col" class="col btn-primary">Firstname</th>
+                                <th scope="col" class="col btn-primary">Lastname</th>
+                                <th scope="col" class="col btn-primary"> Phone No.</th>
+                                <!-- <th scope="col" class="col btn-primary"> Pin Code</th> -->
+                                <th scope="col" class="col btn-primary"> Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of agncyUsr; let i = index" style="font-size: 12px !important;">
+                                <td class="col">{{i + 1}}</td>
+                                <td class="col" *ngIf="!snglUsr.asgnBtnDsbl && clickedBtn == 'AllAvailShift'">
+                                    <button class="btn btn-primary" (click)="assignShift(snglUsr)">Apply
+                                    </button>
+                                    <!-- <b *ngIf="snglUsr.asgnBtn">Assigned</b> -->
+                                </td>
+
+                        <td class="col"
+                            *ngIf="currentUser.user_role == 2 && clickedBtn == 'MyShift' || currentUser.user_role == 5 && clickedBtn == 'MyShift'">
+                            <button class="btn btn-primary" [disabled]="disabledApply"
+                                (click)="replaceShiftUser(snglUsr,modal)" *ngIf="!snglUsr.asgnBtnDsbl && !snglUsr.asgnDsbl">Apply</button>
+                        </td>
+                        <td *ngIf="snglUsr.asgnBtnDsbl">
+                            <h5>Blocked</h5>
+                        </td>
+                        <td *ngIf="snglUsr.asgnDsbl && clickedBtn == 'MyShift'">
+                            <h5>Assigned</h5>
+                        </td>
+                        <td
+                            *ngIf="(currentUser.user_role == 2 || currentUser.user_role == 5) && clickedBtn == 'MyShift' && !snglUsr.asgnBtnDsbl && !snglUsr.asgnDsbl ">
+                            <textarea #reason (keyup)="reson(reason.value)"></textarea>
+                        </td>
+
+                                <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name :
+                                    snglUsr?.agency_name}} </td>
+                                <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name :
+                                    '---' }} </td>
+                                <!-- <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : 'Not Assign'}} ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td> -->
+                                <td class="col">{{(snglUsr?.phone_number ? snglUsr.phone_number
+                                    : snglUsr.agency_contact_cell_number) | numberFormat }}</td>
+                                <!-- <td class="col">{{snglUsr?.PIN_code ? snglUsr.PIN_code
+                                        : '---' }}</td> -->
+                                <td class="col">{{snglUsr?.email ? snglUsr?.email :
+                                    snglUsr?.agency_contact_email_address}}</td>
+                                <!-- <td class="col">{{snglUsr?.hourly_rate}}</td> -->
+
+                            </tr>
+                            <tr *ngIf="!agncyUsr?.length">
+                                <td>
+                                    No data to display
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-primary mt-1" (click)="openAddNew()">Add New User</button>
+                <!-- </div>
+            </div> -->
+
+
+
+            </div>
+
+
+        </ng-template>
+
+
+        <!-- popup for community user -->
+
+        <ng-template #CmUserList let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Users List</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0 my-1">
+                <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                    <input type="text" (keyup)="searchUser($event)" placeholder="Search" class="form-control ml-25"
+                        [(ngModel)]="searchUserName" />
+                </label>
+            </div>
+
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+
+                <div class="table-responsive table_set_scroll">
+                    <table class="table ">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <th scope="col" class="btn-primary">No.</th>
+                                <th scope="col" class="btn-primary">Assign</th>
+                                <th scope="col" class="btn-primary"
+                                    *ngIf="(currentUser.prmsnId == '2' || currentUser.user_role == 5 ) && this.clickedBtn == 'MyShift'">
+                                    Reason</th>
+                                <th scope="col" class="btn-primary">Firstname</th>
+                                <th scope="col" class="btn-primary">Lastname</th>
+                                <th scope="col" class="btn-primary"> Phone No.</th>
+                                <!-- <th scope="col" class="btn-primary"> Pin Code</th> -->
+                                <th scope="col" class="btn-primary"> Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of agncyUsr; let i = index" style="font-size: 12px !important;">
+                                <td class="col">{{i + 1}}</td>
+                                <td class="col" *ngIf="currentUser.user_role == 1 || permision.addPrms == '1'">
+                                    <button class="btn btn-primary" (click)="popUpForComm(snglUsr)">Assign
+                                    </button>
+                                    <!-- <b *ngIf="snglUsr.asgnBtn">Assigned</b> -->
+                                </td>
+
+                                <td class="col"
+                                    *ngIf="currentUser.user_role == 2 && clickedBtn == 'MyShift' || currentUser.user_role == 5 && clickedBtn == 'MyShift'">
+                                    <button class="btn btn-primary"
+                                        (click)="replaceShiftUser(snglUsr,modal)">Apply</button>
+                                </td>
+                                <td
+                                    *ngIf="(currentUser.user_role == 2 || currentUser.user_role == 5) && clickedBtn == 'MyShift' && !snglUsr.asgnBtnDsbl && !snglUsr.asgnDsbl">
+                                    <textarea #reason (keyup)="reson(reason.value)"></textarea>
+                                </td>
+
+                                <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name :
+                                    snglUsr?.agency_name}} </td>
+                                <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name :
+                                    '---' }} </td>
+                                <!-- <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : 'Not Assign'}} ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td> -->
+                                <td class="col">{{(snglUsr?.phone_number ? snglUsr.phone_number
+                                    : snglUsr.agency_contact_cell_number) | numberFormat }}</td>
+                                <!-- <td class="col">{{snglUsr?.PIN_code ? snglUsr.PIN_code
+                                        : '---' }}</td> -->
+                                <td class="col">{{snglUsr?.email ? snglUsr?.email :
+                                    snglUsr?.agency_contact_email_address}}</td>
+                                <!-- <td class="col">{{snglUsr?.hourly_rate}}</td> -->
+
                     </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let snglUsr of UserCanceledShiftById" style="font-size: 12px !important;">
-                        <td class="col">{{snglUsr.user_full_name ? snglUsr.user_full_name : snglUsr.user_name +' '+ snglUsr.user_lastname  }}</td>
-                        <td class="col">{{snglUsr.agency_name ? snglUsr.agency_name : '---'}}</td>
-                        <td class="col">{{snglUsr.agency_name ? '---' : snglUsr.community_name }}</td>
-                        <td class="col">{{snglUsr.shift_cancel_reason}}</td>
-                        <td class="col">{{snglUsr.shift_cancel_time}}</td>
-                    </tr>
-                    <tr *ngIf="!UserCanceledShiftById?.length">
+                    <tr *ngIf="!agncyUsr?.length">
                         <td>
                             No data to display
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <!-- <button class="btn btn-primary mb-1 ml-2" (click)="createAddNew()">Assign From List</button> -->
         </div>
-        <div class="row mt-1">
-            <!-- <button type="button" (click)="cancleShft()" class="btn btn-primary btn-sm">
-                Add
-                <span *ngIf="btnShow" [disabled]="btnShow"
-                    class="spinner-border spinner-border-sm" role="status"
-                    aria-hidden="true"></span>
-            </button> -->
-            <button type="button" (click)="closeded(modal)"
-                class="btn btn-primary btn-sm ml-1" [disabled]="btnShow">
-                Cancel
-            </button>
-        </div>
-    </div>
+        <button class="btn btn-primary mb-1" (click)="openAddNew()">Add New User</button>
+        <!-- </div>
+            </div> -->
 
-   
-</ng-template>
-<!--/cancel Reason list modal -->
 
-<ng-template #deleteShift let-modal>
-    <div class="modal-header bg-danger">
-        <h4 class="modal-title text-white" id="myModalLabel1">Archive Shift</h4>
-        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-        <h5>Are you sure you want to Archive this shift ?</h5>
-    </div>
-    <div class="modal-footer">
+
+            </div>
+        </ng-template>
+
+        <!-- New User Manually -->
+
+        <ng-template #addnewuser let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Manual Users List</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0 my-1">
+                <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                    <input type="text" (keyup)="searchUser1($event)" placeholder="Search" class="form-control ml-25"
+                        [(ngModel)]="searchmanualUserName" />
+                </label>
+            </div>
+
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+
+                <div class="table-responsive table_set_scroll">
+                    <table class="table ">
+                        <thead style="position: sticky; top: 0;z-index: 1000;">
+                            <tr>
+                                <th scope="col" class=" btn-primary">No.</th>
+                                <th scope="col" class=" btn-primary">Assign</th>
+                                <th scope="col" class=" btn-primary">Firstname</th>
+                                <th scope="col" class=" btn-primary">Lastname</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let snglUsr of malualUsr; let i = index">
+                                <td>{{i + 1}}</td>
+                                <td *ngIf="currentUser.user_role == 1 || permision.addPrms == '1'">
+                                    <button class="btn btn-primary" (click)="popUpForComm(snglUsr)">Assign
+                                    </button>
+                                </td>
+                                <td>{{snglUsr?.first_name ? snglUsr?.first_name : snglUsr?.agency_name}} </td>
+                                <td>{{snglUsr?.last_name ? snglUsr?.last_name : '---' }} </td>
+
+                            </tr>
+                            <tr *ngIf="!malualUsr?.length">
+                                <td>
+                                    No data to display
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-primary mb-1" (click)="manulyAddUser()">Add New User</button>
+            </div>
+        </ng-template>
+
+        <ng-template #cancelRequestshift let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Cancel Request</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <h5>Are you sure you want to Cancel this request?</h5>
+                <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
+                <div class="invalid-feedback" *ngIf="resonIsNull" class="text text-danger">
+                    This field is Required
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="cancelRequest(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm "></span>Yes
+                </button>
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="closededApply(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="mr-2"></span>No
+                </button>
+
+            </div>
+        </ng-template>
+
+        <ng-template #deleteShift let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Archive Shift</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <h5>Are you sure you want to Archive this shift?</h5>
+                <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
+                <div class="invalid-feedback" *ngIf="resonIsNull" class="text text-danger">
+                    This field is Required
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="deleteshift(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm "></span>Yes
+                </button>
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="closededApply(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="mr-2"></span>No
+                </button>
+
+            </div>
+            <!-- <div class="modal-footer">
         <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
             style="margin-top: 10px!important;" (click)="deleteshift(modal)" rippleEffect>
             <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Archive
         </button>
-    </div>
-</ng-template>
-<ng-template #UserLiST let-modal>
-    <div class="modal-header bg-danger">
-        <h4 class="modal-title text-white" id="myModalLabel1">Users List</h4>
-        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-                    <div class="table-responsive">
-                        <table class="table ">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="col btn-primary">No.</th>
-                                    <th scope="col" class="col btn-primary">Assign</th>
-                                    <th scope="col" class="col btn-primary" *ngIf="currentUser.prmsnId == '2'">Reason</th>
-                                    <th scope="col" class="col btn-primary">Firstname</th>
-                                    <th scope="col" class="col btn-primary">Lastname</th>
-                                    <th scope="col" class="col btn-primary"> Phone No.</th>
-                                    <!-- <th scope="col" class="col btn-primary"> Pin Code</th> -->
-                                    <th scope="col" class="col btn-primary"> Email</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let snglUsr of agncyUsr; let i = index"
-                                    style="font-size: 12px !important;">
-                                    <td class="col">{{i + 1}}</td>
-                                    <td class="col" *ngIf="!snglUsr.asgnBtnDsbl && clickedBtn == 'AllAvailShift'">
-                                        <button class="btn btn-primary" 
-                                            (click)="assignShift(snglUsr)">Assign
-                                    </button>
-                                        <!-- <b *ngIf="snglUsr.asgnBtn">Assigned</b> -->
-                                    </td>
+    </div> -->
+        </ng-template>
 
-                                    <td class="col" *ngIf="currentUser.user_role == 2 && clickedBtn == 'MyShift'">
-                                        <button class="btn btn-primary" 
-                                            (click)="replaceShiftUser(snglUsr,modal)">Assign</button>
-                                    </td>
-                                    <td *ngIf="snglUsr.asgnBtnDsbl">
-                                        <h5>Blocked</h5>
-                                    </td>
-                                    <td *ngIf="currentUser.user_role == 2 && clickedBtn == 'MyShift' && !snglUsr.asgnBtnDsbl">
-                                        <textarea #reason (keyup)="reson(reason.value)"></textarea>
-                                    </td>
-                                   
-                                    <td class="col">{{snglUsr?.first_name ? snglUsr?.first_name :
-                                        snglUsr?.agency_name}} </td>
-                                    <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name :
-                                        '---' }} </td>
-                                    <!-- <td class="col">{{snglUsr?.last_name ? snglUsr?.last_name : 'Not Assign'}} ({{snglUsr?.user_id != null ? 'Community' : 'Agency'}})</td> -->
-                                    <td class="col">{{(snglUsr?.phone_number ? snglUsr.phone_number
-                                        : snglUsr.agency_contact_cell_number) | numberFormat }}</td>
-                                    <!-- <td class="col">{{snglUsr?.PIN_code ? snglUsr.PIN_code
-                                        : '---' }}</td> -->
-                                    <td class="col">{{snglUsr?.email ? snglUsr?.email :
-                                        snglUsr?.agency_contact_email_address}}</td>
-                                    <!-- <td class="col">{{snglUsr?.hourly_rate}}</td> -->
-                                   
-                                </tr>
-                                <tr *ngIf="!agncyUsr?.length">
-                                    <td>
-                                        No data to display
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <button class="btn btn-primary mb-1" (click)="openAddNew()">Add New User</button>
-                    </div>
-                <!-- </div>
-            </div> -->
-
-        
-
-    </div>
-
-   
-</ng-template>
-
-<ng-template #Addnew let-modal>
-    <div class="modal-header bg-danger">
-        <h4 class="modal-title text-white" id="myModalLabel1">Add New User</h4>
-        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-
-        <form class="user" [formGroup]="formData" (ngSubmit)="submitted(modal)">
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="common-form-left">
-                        <label for="inputPassword6" class="col-form-label">User First Name <span class="text-danger">*</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-lg-8">
-                    <div class="common-form-left form-group">
-                        <input type="text"
-                            [class.is-invalid]="controls['first_name'].dirty && controls['first_name'].invalid"
-                            formControlName="first_name" class="form-control form-control-user"
-                            id="first_name" class="form-control"
-                            placeholder="First Name" aria-describedby="passwordHelpInline">
-                        <span *ngIf="controls['first_name'].dirty && controls['first_name'].invalid">
-                            <div class="invalid-feedback"
-                                *ngIf="controls['first_name'].hasError('required')"
-                                class="text text-danger">
-                                This field required
-                            </div>
-                        </span>
-                    </div>
-                </div>
+        <ng-template #Addnew let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Add New User</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
 
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="common-form-left">
-                        <label for="inputPassword6" class="col-form-label">User Last Name <span class="text-danger">*</span>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-lg-8">
-                    <div class="common-form-left form-group">
-                        <input type="text"
-                            [class.is-invalid]="controls['last_name'].dirty && controls['last_name'].invalid"
-                            formControlName="last_name" class="form-control form-control-user"
-                            id="last_name" class="form-control"
-                            placeholder="Last Name" aria-describedby="passwordHelpInline">
-                        <span *ngIf="controls['last_name'].dirty && controls['last_name'].invalid">
-                            <div class="invalid-feedback"
-                                *ngIf="controls['last_name'].hasError('required')"
-                                class="text text-danger">
-                                This field required
+                <form class="user" [formGroup]="formData" (ngSubmit)="submitted(modal)">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6" class="col-form-label">User First Name <span
+                                        class="text-danger">*</span>
+                                </label>
                             </div>
-                        </span>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="text"
+                                    [class.is-invalid]="controls['first_name'].dirty && controls['first_name'].invalid"
+                                    formControlName="first_name" class="form-control form-control-user" id="first_name"
+                                    class="form-control" placeholder="First Name" aria-describedby="passwordHelpInline">
+                                <span *ngIf="controls['first_name'].dirty && controls['first_name'].invalid">
+                                    <div class="invalid-feedback" *ngIf="controls['first_name'].hasError('required')"
+                                        class="text text-danger">
+                                        This field is Required
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6" class="col-form-label">User Last Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="text"
+                                    [class.is-invalid]="controls['last_name'].dirty && controls['last_name'].invalid"
+                                    formControlName="last_name" class="form-control form-control-user" id="last_name"
+                                    class="form-control" placeholder="Last Name" aria-describedby="passwordHelpInline">
+                                <span *ngIf="controls['last_name'].dirty && controls['last_name'].invalid">
+                                    <div class="invalid-feedback" *ngIf="controls['last_name'].hasError('required')"
+                                        class="text text-danger">
+                                        This field is Required
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
             <div class="row">
                 <div class="col-lg-4">
@@ -641,13 +1521,13 @@
                     <div class="common-form-left form-group">
                         <div class="input-group">
                             <div class="input-group-prepend">
-                              <span class="input-group-text">{{slctSrtNm || '---'}}</span>
+                                <span class="input-group-text">{{slctSrtNm || '---'}}</span>
                             </div>
-                            <input type="text" class="form-control" formControlName="username" placeholder="Username" aria-label="Username">
+                            <input type="text" class="form-control" noLeadingSpace formControlName="username" placeholder="Username"
+                                aria-label="Username">
                         </div>
                         <span *ngIf="controls['username'].dirty && controls['username'].invalid">
-                            <div class="invalid-feedback"
-                                *ngIf="controls['username'].hasError('required')"
+                            <div class="invalid-feedback" *ngIf="controls['username'].hasError('required')"
                                 class="text text-danger">
                                 This field required
                             </div>
@@ -664,175 +1544,446 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="common-form-left form-group">
-                      Preview : <b>{{(slctSrtNm || '---') + '-' + formData.controls['username'].value}}</b>
+                        Preview : <b>{{(slctSrtNm || '---') + '-' + formData.controls['username'].value | replaceSpaces}}</b>
                     </div>
                 </div>
             </div>
-            
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="common-form-left">
-                        <label for="inputPassword6" class="col-form-label">User Cell Phone Number <span class="text-danger">*</span></label>
-                    </div>
-                </div>
-                <div class="col-lg-8">
-                    <div class="common-form-left form-group">
-                        <div class="row">
-                            <div class="col-2 test_data">
-                                <div ngbDropdown class="d-inline-block">
-                                    <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>{{selectedDataValue ?selectedDataValue:'Select Code'}}</button>
-                                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" style="overflow: auto; max-height: 200px;">
-                                        <ng-container *ngFor="let item of phoneUsd" style="overflow-y:scroll;">
-                                            <button type="button" ngbDropdownItem (click)="mapCountry_selected(item)"><img class="dpwImg" src="https://flagsapi.com/{{item.code}}/flat/64.png">{{item.dial_code}}</button>                                                                    
-                                        </ng-container>
+
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6" class="col-form-label">User Cell Phone Number <span
+                                        class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <div class="row">
+                                    <div class="col-2 test_data">
+                                        <div ngbDropdown class="d-inline-block">
+                                            <button type="button" class="btn btn-outline-primary" id="dropdownBasic1"
+                                                ngbDropdownToggle>{{selectedDataValue ? selectedDataValue : 'Select
+                                                Code'}}</button>
+                                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1"
+                                                style="overflow: auto; max-height: 200px;">
+                                                <ng-container *ngFor="let item of phoneUsd" style="overflow-y:scroll;">
+                                                    <button type="button" ngbDropdownItem
+                                                        (click)="mapCountry_selected(item)"><img class="dpwImg"
+                                                            src="https://flagsapi.com/{{item.code}}/flat/64.png">{{item.dial_code}}</button>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-10">
+                                        <input type="text" phoneMask [preValue]="formData.value.phone_number"
+                                            maxlength="14" style="height: 45px;"
+                                            [class.is-invalid]="controls['phone_number'].dirty && controls['phone_number'].invalid"
+                                            placeholder="User Cell Phone Number" formControlName="phone_number"
+                                            class="form-control form-control-user" id="phone_number">
+                                        <span
+                                            *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['phone_number'].hasError('required')"
+                                                class="text text-danger">
+                                                This field is Required
+                                            </div>
+                                            <div class="invalid-feedback"
+                                                *ngIf="controls['phone_number'].hasError('pattern')"
+                                                class="text text-danger">
+                                                Enter valid Phone number
+                                            </div>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-10">
-                                <input type="text" phoneMask [preValue]="formData.value.phone_number" maxlength="14" style="height: 45px;"
-                                    [class.is-invalid]="controls['phone_number'].dirty && controls['phone_number'].invalid" placeholder="User Cell Phone Number"
-                                    formControlName="phone_number" class="form-control form-control-user" id="phone_number">
-                                <span *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
-                                    <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('required')"
-                                        class="text text-danger">
-                                        This field required
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="common-form-field">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="common-form-left">
+                                            <label for="inputPassword6" class="col-form-label">User Email Address <span
+                                                    class="text-danger">*</span>
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('pattern')"
+                                    <div class="col-lg-8">
+                                        <div class="common-form-left form-group">
+                                            <input type="text"
+                                                [class.is-invalid]="controls['email'].dirty && controls['email'].invalid"
+                                                formControlName="email" class="form-control form-control-user"
+                                                id="email" class="form-control" placeholder="User Email Address"
+                                                aria-describedby="passwordHelpInline">
+                                            <span *ngIf="controls['email'].dirty && controls['email'].invalid">
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['email'].hasError('required')"
+                                                    class="text text-danger">
+                                                    This field is Required
+                                                </div>
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['email'].hasError('email')"
+                                                    class="text text-danger">
+                                                    Please enter valid email
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row"
+                                    *ngIf="controls['community_id'].value?.length || currentUser.role == 'Community'  || currentUser.role == 'Community User'">
+                                    <div class="col-lg-4">
+                                        <div class="common-form-left">
+                                            <label for="inputPassword6" class="col-form-label">Hourly Rate
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="common-form-left form-group">
+                                            <span class="dollar"
+                                                style="position: absolute; margin: 11px 1px 5px;">$</span>
+                                            <input type="text"
+                                                [class.is-invalid]="controls['hourly_rate'].dirty && controls['hourly_rate'].invalid"
+                                                formControlName="hourly_rate" class="form-control form-control-user"
+                                                id="hourly_rate" class="form-control" appPercentageDirective
+                                                placeholder="Hourly Rate" aria-describedby="passwordHelpInline">
+                                            <span
+                                                *ngIf="controls['hourly_rate'].dirty && controls['hourly_rate'].invalid">
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['hourly_rate'].hasError('required')"
+                                                    class="text text-danger">
+                                                    This field is Required
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="currentUser?.user_role != '2' && currentUser.user_role != '5'">
+                                    <div class="col-lg-4">
+                                        <div class="common-form-left">
+                                            <label for="inputPassword6" class="col-form-label">User Date Of Birth
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="common-form-left form-group">
+                                            <input type="date" placeholder="mm/dd/yyyy" pattern="\d{2}-\d{2}-\d{4}" onchange="this.className=(this.value!=''?'form-control has-value':'form-control')" max={{minDate}}
+                                                [class.is-invalid]="controls['DOB'].dirty && controls['DOB'].invalid"
+                                                formControlName="DOB" class="form-control form-control-user date-input" id="DOB">
+                                            <span *ngIf="controls['DOB'].dirty && controls['DOB'].invalid">
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['DOB'].hasError('required')"
+                                                    class="text text-danger">
+                                                    This field is Required
+                                                </div>
+
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="common-form-left">
+                                            <label for="inputPassword6" class="col-form-label">Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="common-form-left form-group">
+                                            <input [type]="passwordTextType ? 'text' : 'password'"
+                                                [class.is-invalid]="controls['password'].dirty && controls['password'].invalid"
+                                                formControlName="password" class="form-control form-control-user">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text cursor-pointer eyeBtn"><i
+                                                        class="feather font-small-4" [ngClass]="{
+                                                  'icon-eye-off': passwordTextType,
+                                                  'icon-eye': !passwordTextType
+                                                }" (click)="togglePasswordTextType()"></i></span>
+                                            </div>
+                                            <span *ngIf="controls['password'].dirty && controls['password'].invalid">
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['password'].hasError('required')"
+                                                    class="text text-danger">
+                                                    This field is Required
+                                                </div>
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['password'].hasError('pattern')"
+                                                    class="text text-danger">
+                                                    Password must be at least 8 characters and contain a combination of
+                                                    uppercase and lowercase letters and at least one special character
+                                                    or number.
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="common-form-left">
+                                            <label for="inputPassword6" class="col-form-label">Confirm Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="common-form-left form-group">
+                                            <input [type]="passwordTextType2 ? 'text' : 'password'"
+                                                [class.is-invalid]="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid"
+                                                formControlName="cnfrmpassword" class="form-control form-control-user"
+                                                id="cnfrmpassword">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text cursor-pointer eyeBtn"><i
+                                                        class="feather font-small-4" [ngClass]="{
+                                                  'icon-eye-off': passwordTextType2,
+                                                  'icon-eye': !passwordTextType2
+                                                }" (click)="togglePasswordTextType2()"></i></span>
+                                            </div>
+                                            <span
+                                                *ngIf="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid">
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['cnfrmpassword'].hasError('required')"
+                                                    class="text text-danger">
+                                                    This field is Required
+                                                </div>
+
+                                                <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator"
+                                                    style="color: #ea5455; font-size: 1rem;">
+                                                    Password and Confirm Password must be match.
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="common-form-left">
+                                            <label for="inputPassword6" class="col-form-label">Add User Role <span
+                                                    class="text-danger">*</span></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <div class="common-form-left form-group">
+                                            <ng-multiselect-dropdown placeholder="--Select Role--"
+                                                [settings]="CmntdropdownSettings" formControlName="addUsrRl"
+                                                [data]="data1"></ng-multiselect-dropdown>
+                                            <span *ngIf="controls['addUsrRl'].dirty && controls['addUsrRl'].invalid">
+                                                <div class="invalid-feedback"
+                                                    *ngIf="controls['addUsrRl'].hasError('required')"
+                                                    class="text text-danger">
+                                                    This field is Required
+                                                </div>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row addUserbtn">
+                                    <div class="m-1">
+                                        <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                            <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                                aria-hidden="true"></span>
+                                            Add
+                                        </button>
+                                        <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1"
+                                            [disabled]="btnShow">
+                                            Cancel
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </ng-template>
+        <ng-template #comUsrApply let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Apply Shift </h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closededApply(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <h5>Are you sure you want to APPLY for this shift?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="closededApply(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="mr-2"></span>No
+                </button>
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="applyShift()" rippleEffect>
+                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span>Yes
+                </button>
+
+            </div>
+        </ng-template>
+
+        <ng-template #UpgradeShift let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Upgrade Shift Member Type</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+                <h5>Are you sure you want to upgrade team member of this shift?</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="UpdateForCP(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Upgrade
+                </button>
+            </div>
+        </ng-template>
+
+        <!-- <ng-template #AssignShift let-modal>
+    <div class="modal-body  bg-danger" tabindex="0" ngbAutofocus>
+        <h5 class="modal-title text-white">Confirmation Message?</h5>
+    </div>
+    <div class="modal-footer">
+        <textarea class="form-control"></textarea>
+         <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea> -->
+        <!-- <div class="invalid-feedback"
+            *ngIf="resonIsNull"
+            class="text text-danger">
+            This field is Required
+        </div>
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="applyShiftToCmU(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> yes
+        </button>
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+        style="margin-top: 10px!important;" (click)="closededApply(modal)" rippleEffect>
+        <span *ngIf="btnShow" class="mr-2"></span>No
+    </button>
+    </div>
+</ng-template> -->
+
+        <!-- popup for note -->
+
+        <ng-template #AssignShift let-modal>
+            <div class="modal-body  bg-danger" tabindex="0" ngbAutofocus>
+                <h5 class="modal-title text-white">Confirmation Message</h5>
+            </div>
+            <div class="modal-footer">
+                <textarea [(ngModel)]="cancel_reason" (keyup)="keyupper(cancel_reason)" class="form-control"></textarea>
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="applyShiftToCmU(snglUsr,modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Yes
+                </button>
+                <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+                    style="margin-top: 10px!important;" (click)="closededApply(modal)" rippleEffect>
+                    <span *ngIf="btnShow" class="mr-2"></span>No
+                </button>
+            </div>
+        </ng-template>
+
+        <!-- Create new user -->
+
+        <ng-template #createnew let-modal>
+            <div class="modal-header bg-danger">
+                <h4 class="modal-title text-white" id="myModalLabel1">Add New User</h4>
+                <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+                    aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" tabindex="0" ngbAutofocus>
+
+                <form class="user" [formGroup]="formData1" (ngSubmit)="submitted1(modal)">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6" class="col-form-label">User First Name <span
+                                        class="text-danger">*</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="text"
+                                    [class.is-invalid]="controls1['first_name'].dirty && controls1['first_name'].invalid"
+                                    formControlName="first_name" class="form-control form-control-user" id="first_name"
+                                    class="form-control" placeholder="First Name" aria-describedby="passwordHelpInline">
+                                <span *ngIf="controls1['first_name'].dirty && controls1['first_name'].invalid">
+                                    <div class="invalid-feedback" *ngIf="controls1['first_name'].hasError('required')"
                                         class="text text-danger">
-                                        Enter valid Phone number
+                                        This field is Required
                                     </div>
                                 </span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="common-form-field">
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="common-form-left">
-                                    <label for="inputPassword6" class="col-form-label">User Email Address <span class="text-danger">*</span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-lg-8">
-                                <div class="common-form-left form-group">
-                                    <input type="text"
-                                        [class.is-invalid]="controls['email'].dirty && controls['email'].invalid"
-                                        formControlName="email" class="form-control form-control-user" id="email"
-                                        class="form-control" placeholder="User Email Address"
-                                        aria-describedby="passwordHelpInline">
-                                    <span *ngIf="controls['email'].dirty && controls['email'].invalid">
-                                        <div class="invalid-feedback" *ngIf="controls['email'].hasError('required')"
-                                            class="text text-danger">
-                                            This field required
-                                        </div>
-                                        <div class="invalid-feedback" *ngIf="controls['email'].hasError('email')"
-                                            class="text text-danger">
-                                            Please enter valid email
-                                        </div>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                  
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="common-form-left">
-                                    <label for="inputPassword6" class="col-form-label">Password <span class="text-danger">*</span></label>
-                                </div>
-                            </div>
-                            <div class="col-lg-8">
-                                <div class="common-form-left form-group">
-                                    <input type="password"
-                                        [class.is-invalid]="controls['password'].dirty && controls['password'].invalid"
-                                        formControlName="password" class="form-control form-control-user" placeholder="Password"
-                                        id="password">
-                                    <span *ngIf="controls['password'].dirty && controls['password'].invalid">
-                                        <div class="invalid-feedback"
-                                            *ngIf="controls['password'].hasError('required')"
-                                            class="text text-danger">
-                                            This field required
-                                        </div>
-                                        <div class="invalid-feedback"
-                                            *ngIf="controls['password'].hasError('pattern')"
-                                            class="text text-danger">
-                                            A minimum 8 characters password contains a combination of
-                                            uppercase and lowercase letter and special character are
-                                            required.
-                                        </div>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="common-form-left">
-                                    <label for="inputPassword6" class="col-form-label">Confirm Password <span class="text-danger">*</span></label>
-                                </div>
-                            </div>
-                            <div class="col-lg-8">
-                                <div class="common-form-left form-group">
-                                    <input type="password"
-                                        [class.is-invalid]="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid"
-                                        formControlName="cnfrmpassword" class="form-control form-control-user"
-                                        id="cnfrmpassword" placeholder="Confirm Password ">
-                                    <span
-                                        *ngIf="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid">
-                                        <div class="invalid-feedback"
-                                            *ngIf="controls['cnfrmpassword'].hasError('required')"
-                                            class="text text-danger">
-                                            This field required
-                                        </div>
-                                        
-                                        <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>
-                                    </span>
-                                </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="common-form-left">
+                                <label for="inputPassword6" class="col-form-label">User Last Name <span
+                                        class="text-danger">*</span>
+                                </label>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-4">
-                                <div class="common-form-left">
-                                    <label for="inputPassword6" class="col-form-label">Add User Role <span class="text-danger">*</span></label>
-                                </div>
+                        <div class="col-lg-8">
+                            <div class="common-form-left form-group">
+                                <input type="text"
+                                    [class.is-invalid]="controls1['last_name'].dirty && controls1['last_name'].invalid"
+                                    formControlName="last_name" class="form-control form-control-user" id="last_name"
+                                    class="form-control" placeholder="Last Name" aria-describedby="passwordHelpInline">
+                                <span *ngIf="controls1['last_name'].dirty && controls1['last_name'].invalid">
+                                    <div class="invalid-feedback" *ngIf="controls1['last_name'].hasError('required')"
+                                        class="text text-danger">
+                                        This field is Required
+                                    </div>
+                                </span>
                             </div>
-                            <div class="col-lg-8">
-                                <div class="common-form-left form-group">
-                                    <ng-multiselect-dropdown placeholder="--Select Role--"
-                                        [settings]="CmntdropdownSettings" formControlName="addUsrRl"
-                                       [data]="data1"></ng-multiselect-dropdown>
-                                    <span *ngIf="controls['addUsrRl'].dirty && controls['addUsrRl'].invalid">
-                                        <div class="invalid-feedback"
-                                            *ngIf="controls['addUsrRl'].hasError('required')"
-                                            class="text text-danger">
-                                            This field required
-                                        </div>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row addUserbtn">
-                            <div class="m-1">
-                                <button type="submit" class="btn btn-primary" [disabled]="btnShow">
-                                    <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
-                                        aria-hidden="true"></span>
-                                    Add
-                                </button>
-                                <button type="button" (click)="closeded(modal)"
-                            class="btn btn-primary ml-1" [disabled]="btnShow">
-                            Cancel
-                        </button>
-                            </div>
-
                         </div>
                     </div>
-                </div>
-            </div>
-        </form>
-    </div>
 
-   
+                    <div class="row addUserbtn">
+                        <div class="m-1">
+                            <button type="submit" class="btn btn-primary" [disabled]="btnShow">
+                                <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                Add
+                            </button>
+                            <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1"
+                                [disabled]="btnShow">
+                                Cancel
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+</ng-template>
+
+<ng-template #directApply let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1">Apply Shift</h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)"
+            aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure you want to Apply this shift?</h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+           (click)="assignShift(snglUsr)" rippleEffect>
+            Yes
+        </button>
+        <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+            (click)="closededApply(modal)" rippleEffect>
+            <span class="mr-2"></span>No
+        </button>
+
+    </div>
 </ng-template>

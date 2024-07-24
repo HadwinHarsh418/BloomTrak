@@ -8,6 +8,9 @@ import { CoreMenuItem } from '@core/types';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 
 import { User } from 'app/auth/models';
+import { AuthenticationService } from 'app/auth/service';
+import { DataService } from 'app/auth/service/data.service';
+import { DashboardService } from 'app/main/dashboard/dashboard.service';
 
 @Component({
   selector: '[core-menu-vertical-collapsible]',
@@ -33,9 +36,12 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
    * @param {ChangeDetectorRef} _changeDetectorRef
    */
   constructor(
+    private dataService :DataService,
     private _router: Router,
     private _coreMenuService: CoreMenuService,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _changeDetectorRef: ChangeDetectorRef,
+    private authService:AuthenticationService,
+    // private dashboardservice : DashboardService
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -48,7 +54,31 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+
+    // this.dashboardservice.getSaveSubject().subscribe((value: boolean) => {
+    //   if (value == true) {
+    //     // Do something when save event occurs
+    //     console.log('Save event occurred in another component');
+    //   }
+    // });
+  
+
     // Listen for router events and expand
+    this.authService.currentUser.subscribe
+    (x => {
+      this.currentUser = x
+    })
+    if((this.currentUser.user_role == 2) ){
+      if(this.item.title == "shiftrak")
+      this.item.children.push({
+        "id": "shift_Request",
+        "title": "Requested Shifts",
+        "type": "item",
+        "icon": "layers",
+        "url": "re_shift/requested-shifts"})
+}
+    this.currentUser.user_role == 5 ? this.getShiftRequestStatus() : ''
+    
     this._router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -95,6 +125,20 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
     } else {
       this.collapse();
     }
+  }
+
+  getShiftRequestStatus() {
+    this.dataService.getShiftRequestStatus(this.currentUser.com_id).subscribe((res: any) => {
+      if((this.currentUser?.user_role == 5 && res?.body.agency_shift_request_status == '1') ){
+        if(this.item.title == "shiftrak")
+        this.item.children.push({
+          "id": "shift_Request",
+          "title": "Request Shifts",
+          "type": "item",
+          "icon": "layers",
+          "url": "req_shift/request-shift"})
+      }
+})
   }
 
   /**

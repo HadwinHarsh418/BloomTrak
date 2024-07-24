@@ -18,9 +18,9 @@
             </div>
         </div> 
         
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows"  [columnMode]="'force'"
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows"  [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-            [count]="" [offset]="" [limit]="10" [scrollbarH]="true">
+            [count]="" [offset]="" [limit]="10" [scrollbarH]="true" [virtualization]="false">
            <ngx-datatable-column name="Community" prop="community_name" [width]="150" >
                 <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ community_name }}

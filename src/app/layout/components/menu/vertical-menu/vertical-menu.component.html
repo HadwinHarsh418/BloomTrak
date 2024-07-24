@@ -14,7 +14,7 @@
     </li>
     <!-- Menu Toggler -->
     <li class="nav-item nav-toggle">
-      <a class="nav-link modern-nav-toggle d-none d-xl-block pr-0" (click)="toggleSidebarCollapsible()">
+      <a class="nav-link modern-nav-toggle d-none d-xl-block pr-0" (click)="toggleSidebarCollapsible('d')">
         <i
           [ngClass]="isCollapsed === true ? 'icon-circle' : 'icon-disc'"
           class="toggle-icon feather font-medium-4 collapse-toggle-icon text-primary"
@@ -39,4 +39,4 @@
 </div>
 <!--/ Main menu -->
 
-<button   class="btn-sm btn-info btn-block" (click)="goToMail()">Support</button>
+<button   class="btn-sm btn-info btn-block" (click)="goToMail()">Email Support</button>

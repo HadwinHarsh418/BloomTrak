@@ -13,10 +13,10 @@
             </div>
         </div>
        </div> 
-       
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+       <div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-            [count]="" [offset]="" [limit]="10" >
+            [count]="" [offset]="" [limit]="10" [scrollbarH]="true" [virtualization]="false">
            
             <ngx-datatable-column name="Name" prop="name" [width]="100" >
                 <ng-template let-name="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -46,3 +46,4 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>

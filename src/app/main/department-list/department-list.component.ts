@@ -74,7 +74,6 @@ export class DepartmentListComponent implements OnInit {
   getRole(){
     this.dataSrv.getAllRole( ).subscribe((res:any)=>{
       if(!res.err){
-        // console.log("Roles------",res.body);
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})
          this.getPrmsnData()
         

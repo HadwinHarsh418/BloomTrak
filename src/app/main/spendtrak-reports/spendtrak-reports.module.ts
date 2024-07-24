@@ -16,7 +16,6 @@ const routes = [
   {
     path: '',
     component: SpendtrakReportsComponent,
-    canActivate: [AuthGuard],
   }
 ];
 

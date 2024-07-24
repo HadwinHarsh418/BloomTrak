@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShiftComponent } from './shift.component';
-import { AuthGuard } from 'app/auth/helpers';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -25,6 +24,10 @@ import { AppliedListComponent } from './applied-list/applied-list.component';
 import { ToastrModule } from 'ng6-toastr-notifications';
 import { MyAccountService } from './shift-confirmation/my-account.service';
 import { NewShiftsComponent } from './new-shifts/new-shifts.component';
+import { RequestShiftComponent } from 'app/request-shift/request-shift.component';
+import { RequestedShiftsComponent } from 'app/requested-shifts/requested-shifts.component';
+import { CustomDirectives } from 'app/auth/helpers/percentage-directive.directive';
+import { NgDateModule } from 'app/layout/components/ng-date/ng-date.module';
 
 const routes = [
   // {
@@ -35,41 +38,41 @@ const routes = [
   {
     path: '',
     component: NewShiftsComponent,
-    canActivate: [AuthGuard],
+  },
+  {
+    path: 'request-shift',
+    component: RequestShiftComponent,
+  },
+  {
+    path: 'requested-shifts',
+    component: RequestedShiftsComponent,
   },
   {
     path: 'shift-posting',
     component: ShiftPostingComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'shift-confirmation',
     component: ShiftConfirmationComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'shared-calender',
     component: SharedCalenderComponent,
-    canActivate: [AuthGuard],
   },{
     path: 'view-card',
     component: ViewCardComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'edit-shift',
     component: EditShiftComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'assign-list',
     component: AssignListForAgencyUserComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'applied-list',
     component: AppliedListComponent,
-    canActivate: [AuthGuard],
   },
 ];
 
@@ -82,7 +85,10 @@ const routes = [
         EditShiftComponent,
         AssignListForAgencyUserComponent,
         AppliedListComponent,
-        NewShiftsComponent
+        NewShiftsComponent,
+        RequestShiftComponent,
+        RequestedShiftsComponent,
+        
     ],
   imports: [
     CommonModule,
@@ -99,7 +105,9 @@ const routes = [
     PhoneMaskDirectiveModule,
     SharedCalenderModule,
     CustomDateTimePipeModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    CustomDirectives,
+    NgDateModule
   ],
   providers:[MyAccountService]
 })

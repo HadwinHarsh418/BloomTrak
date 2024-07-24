@@ -50,6 +50,12 @@ export class AddspendforotherdprtmtComponent implements OnInit {
   type: any[];
   userName: any;
   myId:any[] = []
+  frstDp: any;
+  community_id: any;
+  frsCom: any;
+  allCommunityForMgm: any[];
+  comName1: void;
+  community_name: void;
   
   constructor(
     private formBuilder : FormBuilder,
@@ -73,10 +79,10 @@ export class AddspendforotherdprtmtComponent implements OnInit {
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
     })
-      this.getCommunityId()
     // if(this.prmsUsrId?.id){
     // this.loadSpinner = true;
     // }
+    this.currentUser?.user_role == 3||this.currentUser?.user_role == 8 ?this.getMngComunity():this.getCommunityId()
   }
 
   dropdownSettings: IDropdownSettings = {
@@ -111,7 +117,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
       }
     };
     this.formRoleData = this.formBuilder.group({
-      community_name: this.currentUser.prmsnId == '6' ? ['',Validators.required] : [''],
+      community_name: this.currentUser?.prmsnId == '6' ? ['',Validators.required] : [''],
       department: ['', Validators.required],
       vendor: ['', Validators.required],
       description: ['', Validators.required],
@@ -137,12 +143,12 @@ export class AddspendforotherdprtmtComponent implements OnInit {
         this.getVendorList()
      }
 
-      if(['1'].includes(this.currentUser.prmsnId))
+      if(['1'].includes(this.currentUser?.prmsnId))
       {
        this.formRoleData.controls['community_name'].clearValidators();
        this.formRoleData.updateValueAndValidity();
       }
-      if(['6'].includes(this.currentUser.prmsnId))
+      if(['6'].includes(this.currentUser?.prmsnId))
       {
        this.formRoleData.controls['community_name'].setValidators(Validators.required);
        this.formRoleData.updateValueAndValidity();
@@ -151,13 +157,13 @@ export class AddspendforotherdprtmtComponent implements OnInit {
       let today = new Date();
       this.todaysDate = this.getDate(today)
       this.crtRec()
-      // if(this.roleData2.includes(this.currentUser.prmsnId)){
+      // if(this.roleData2.includes(this.currentUser?.prmsnId)){
       //   if(!this.prmsUsrId?.id){
-      //     this.slctCom(this.currentUser.id,2)
+      //     this.slctCom(this.currentUser?.id,2)
       //   }
       // }
       // else{
-      //   this.getDepartment(this.currentUser.id)
+      //   this.getDepartment(this.currentUser?.id)
       // }
   }
 
@@ -177,7 +183,60 @@ export class AddspendforotherdprtmtComponent implements OnInit {
       }
     }
   }
+ 
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = d.community_id
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+
+        
+        this.community_id = response?.body[0]?.cp_id
+        this.community_name= response?.body[0]?.community_name
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
   
+      })
+    }
+  }
   getVendorList(){
     // let data = {
     //   id : this.prmsUsrId.id,
@@ -243,7 +302,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
     if(!this.prmsUsrId.id){
       this.loading=  true;
       let data =[{
-        community_name:this.currentUser.prmsnId == '1' || this.roleData2.includes(this.currentUser.prmsnId) ? this.comName.community_name: this.submitId2[0].community_name,
+        community_name:this.currentUser?.prmsnId == '1' || this.roleData2.includes(this.currentUser?.prmsnId) ? this.comName.community_name:this.currentUser?.user_role == 3?this.community_name:this.submitId2[0].community_name,
         vendor: this.formRoleData.value.vendor[0].vendor_name,
         department: this.formRoleData.value.department,
         invoice_number: this.formRoleData.value.invoice_number,
@@ -254,7 +313,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
         description: this.formRoleData.value.description,
         gl_account: this.formRoleData.value.gl_account,
         pmt_type: this.formRoleData.value.pmt_type,
-        entered_by: this.currentUser.id,
+        entered_by: this.currentUser?.user_role == 3?this.community_id:this.currentUser?.id,
         entered_date:this.minDate,
       }]
         this.dataSrv.addSpendDownOthersTable(data).subscribe((res:any)=>{
@@ -274,7 +333,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
       else{
         this.loading=  true;
         let data ={
-          community_name:this.currentUser.prmsnId == '1' || this.roleData2.includes(this.currentUser.prmsnId) ? this.comName.community_name: this.submitId2[0].community_name,
+          community_name:this.currentUser?.prmsnId == '1' || this.roleData2.includes(this.currentUser?.prmsnId) ? this.comName.community_name: this.submitId2[0].community_name,
           vendor: this.formRoleData.value.vendor[0].vendor_name,
           department: this.formRoleData.value.department,
           invoice_number: this.formRoleData.value.invoice_number,
@@ -285,7 +344,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
           description: this.formRoleData.value.description,
           gl_account: this.formRoleData.value.gl_account,
           pmt_type: this.formRoleData.value.pmt_type,
-          entered_by: this.currentUser.id,
+          entered_by: this.currentUser?.id,
           entered_date:this.minDate,
           id : this.prmsUsrId.id
         }
@@ -304,6 +363,39 @@ export class AddspendforotherdprtmtComponent implements OnInit {
           })
       }
   
+  }
+
+  getPrmsnData1(){
+    let post=[];
+    this.dataSrv.getPermissionByAdminRole().subscribe(
+      (res:any) => {
+        if (!res.error) {
+          res.body.map(i=>{
+            //comunity
+            if(this.roleData.includes(i.role_id)){
+              if(this.roleData2.includes(this.currentUser?.prmsnId)){
+              if(i.permission_name == 'Department'){
+                if(i.trak_type == '0' || i.trak_type ==null){
+                  this.dprtmnt=JSON.parse(i.row_data);
+                  this.dprtmnt =  this.dprtmnt.sort(function(a, b){
+                    if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
+                    if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+                    return 0;
+                });
+                }
+                if (this.dprtmnt) {
+                  this.frstDp = this.dprtmnt[0]?.name
+               }
+               }
+              }
+            }
+            
+          })
+        } 
+    }, (error:any) => {
+      this.dataSrv.genericErrorToaster()
+    }
+    )
   }
 
   getCommunityId() {
@@ -328,11 +420,12 @@ export class AddspendforotherdprtmtComponent implements OnInit {
     this.ledgerData =[]
     this.submitId2 = []
     this.comId1 = (e?.target?.value ? e?.target?.value : e)
+this.community_id=(e?.target?.value ? e?.target?.value : e)
     this.getvendors(this.comId1)
     this.allCommunity?.forEach(element => {
       if(element.id == this.comId1  ) this.submitId2.push( element)
     });
-    // if(this.currentUser.prmsnId == '6'){
+    // if(this.currentUser?.prmsnId == '6'){
     //   this.getPrmsnData()
     // }else{
       this.getDepartment(e)
@@ -342,7 +435,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
     }
     else{
       let data = {
-        id : no == 2 ? this.currentUser.id :no==3 ? e : e.target.value,
+        id : no == 2 ? this.currentUser?.id :no==3 ? e : e.target.value,
         community_id : 'community_id'
       }
       this.dataSrv.getLedgerById( data).subscribe((res:any)=>{
@@ -377,10 +470,10 @@ export class AddspendforotherdprtmtComponent implements OnInit {
 
 
   getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser?.prmsnId)?this.currentUser?.com_id: this.currentUser?.id).subscribe(response => {      
       if (!response.error) {
           this.comName = response.body[0]
-          if(this.roleData2.includes(this.currentUser.prmsnId)){
+          if(this.roleData2.includes(this.currentUser?.prmsnId)){
             this.getUserDtl()
           }
       } else {
@@ -416,7 +509,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
         this.nullDep = false
         // this.nullDep1 =  d
         let data = {
-          id : this.currentUser.prmsnId == '1' ? this.currentUser.id :  this.currentUser.prmsnId == '6' ? this.comId1 : this.currentUser.com_id,
+          id : this.currentUser?.prmsnId == '1' ? this.currentUser?.id :  this.currentUser?.prmsnId == '6' ? this.comId1 :this.currentUser?.user_role == 3?this.community_id:this.currentUser?.user_role== 1?this.community_id:this.currentUser?.com_id,
           community_id : 'community_id'
         }
         this.dataSrv.getLedgerById( data).subscribe((res:any)=>{
@@ -439,9 +532,9 @@ export class AddspendforotherdprtmtComponent implements OnInit {
 
   getDepartment(e){
     this.dprtmnt =[]
-    let isfor = 6 
+    let isfor = this.currentUser?.user_role == 6 ? 6 : '' 
     let for_other = 'other'
-    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser.prmsnId) ? this.currentUser.id : e?.target?.value || e,isfor,for_other).subscribe((res:any)=>{
+    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser?.prmsnId) ? this.currentUser?.id : e?.target?.value || e,isfor,for_other).subscribe((res:any)=>{
       this.dprtmnt = res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
         if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
@@ -486,7 +579,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
     this.formRoleData.get('vendor').setValue(this.formData1.value.newVendor)
     let data ={
       vendor_name: this.formData1.value.newVendor,
-      community_id: this.currentUser.prmsnId == '6' ? this.formData1.value.community_name : this.currentUser.prmsnId == '1' ? this.currentUser.id  :this.currentUser.com_id ,
+      community_id: this.currentUser?.prmsnId == '6' ? this.formData1.value.community_name : this.currentUser?.prmsnId == '1' ? this.currentUser?.id  :this.currentUser?.com_id ,
       description: this.formData1.value.description,
 }
     this.dataSrv.addVendor(data).subscribe((res:any)=>{
@@ -510,7 +603,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
     if(comId2){
       this.data = {usrRole : !comId2 ? '6' : 'xyz', comId : !comId2 ? '' : comId2 }
     }else{
-      this.data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  :this.currentUser.id }
+      this.data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  :this.currentUser?.id }
     }this.dataSrv.getVendor(this.data).subscribe((res:any)=>{
       if(!res.err){
         this.vendorData=    res.body.sort(function(a, b){
@@ -561,11 +654,11 @@ export class AddspendforotherdprtmtComponent implements OnInit {
 
   getPrmsnData(){
         this.getCommunityDetails()
-        this.getvendors(this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  :this.currentUser.id)
-        this.getDepartment( this.currentUser.prmsnId == '6' ? this.formData1.value.community_name : this.currentUser.prmsnId == '1' ? this.currentUser.id  :this.currentUser.com_id )
+        this.getvendors(this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  :this.currentUser?.id)
+        this.getDepartment( this.currentUser?.prmsnId == '6' ? this.formData1.value.community_name : this.currentUser?.prmsnId == '1' ? this.currentUser?.id  :this.currentUser?.com_id )
         this.getType()
-        if(this.roleData1.includes(this.currentUser.prmsnId)){
-          if(this.currentUser.user_role != 8){
+        if(this.roleData1.includes(this.currentUser?.prmsnId)){
+          if(this.currentUser?.user_role != 8){
            this.getCommunityDetails()
           }else{
            this.getUserDtl()
@@ -615,7 +708,7 @@ export class AddspendforotherdprtmtComponent implements OnInit {
   getUserDtl(){
     let is_for = 'user'
     let searchStr = ''
-    this.dataSrv.getUserById(searchStr = '',this.currentUser.id,is_for).subscribe(response => {
+    this.dataSrv.getUserById(searchStr = '',this.currentUser?.id,is_for).subscribe(response => {
       if (!response.error) {
           this.userName = response.body[0]
       } else {

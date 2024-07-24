@@ -12,6 +12,7 @@ import { CoreMenuVerticalItemComponent } from '@core/components/core-menu/vertic
 import { CoreMenuVerticalCollapsibleComponent } from '@core/components/core-menu/vertical/collapsible/collapsible.component';
 import { CoreMenuHorizontalItemComponent } from '@core/components/core-menu/horizontal/item/item.component';
 import { CoreMenuHorizontalCollapsibleComponent } from '@core/components/core-menu/horizontal/collapsible/collapsible.component';
+import { DashboardService } from 'app/main/dashboard/dashboard.service';
 
 CoreMenuVerticalSectionComponent;
 CoreMenuVerticalItemComponent;
@@ -27,6 +28,8 @@ CoreMenuVerticalCollapsibleComponent;
     CoreMenuVerticalCollapsibleComponent,
     CoreMenuHorizontalItemComponent,
     CoreMenuHorizontalCollapsibleComponent
-  ]
+  ],
+  providers: [DashboardService]
+
 })
 export class CoreMenuModule {}

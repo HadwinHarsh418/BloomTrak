@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'app/auth/service';
 import { DataService } from 'app/auth/service/data.service';
 import { ToastrManager } from 'ng6-toastr-notifications';
@@ -12,6 +13,8 @@ import { ToastrManager } from 'ng6-toastr-notifications';
 export class PermissionsComponent implements OnInit {
   isChecked:any='Check All';
   isChecked1:any='Check All';
+  formRoleData: any;
+  firstLoad:boolean=true;
 
   permissionBox: any[] = [
     { name: 'View', value: 'view', checked: false, subTitle:'View Records Permission', className:'fa fa-eye' },
@@ -35,7 +38,7 @@ export class PermissionsComponent implements OnInit {
   IsDelete: any="0";
   IsAdd: any="0";
   permData: any;
-  currentUser: import("../../auth/models/user").User;
+  currentUser:any;
   deptList: any;
   IsDepartment:boolean=false;
   alldeptList: any;
@@ -50,29 +53,45 @@ export class PermissionsComponent implements OnInit {
   comId: any;
   colDefine: string;
   usrRlNo: any;
+  isDisabled: any;
+  isDisable: any;
+  allAgency: any[];
+  allCommunity1: any[];
+  isDisableMan: any;
+  allManagmentUser: any[];
   constructor(
     private dataSrv : DataService,
     private toaster : ToastrManager,
     private _authenticationService: AuthenticationService,
-
+    private formBuilder : FormBuilder,
   ) { 
     this._authenticationService.currentUser.subscribe
       (x => {
         this.currentUser = x
-        if(this.currentUser.prmsnId == '6'){
+        if(this.currentUser?.prmsnId == '6'){
           this.getCommunityId()
-          this.handleChange(this.currentUser.prmsnId == '6' ? '1' : this.currentUser.prmsnId)
+          this.handleChange(this.currentUser?.prmsnId == '6' ? '1' : this.currentUser?.prmsnId)
           this.colDefine = 'col-md-3'
         }else{
           this.colDefine = 'col-md-4'
         }
       }
       );
+      if(this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8){
+        this.getAllAgency();
+        this.getCommunityByMangmentId()
+        this.getManagementById()
+      }
       this.getRole()
-      this.getPrmsnData()
+      this.getPrmsnData();
   }
 
   ngOnInit(): void {
+    this.formRoleData = this.formBuilder.group({
+      community_id: this.currentUser?.prmsnId == 1 || 2 ? ['undefined']: [{value: 'undefined', disabled: this.isDisabled}],
+      agency_id :this.currentUser?.prmsnId == 1 || 2 ? ['undefined']: [{value: 'undefined', disabled: this.isDisable}],
+      managment_id :this.currentUser?.prmsnId == 1 || 2 ? ['undefined']: [{value: 'undefined', disabled: this.isDisableMan}],
+    })
     this.getDepartment(35)
   }
   
@@ -99,6 +118,7 @@ export class PermissionsComponent implements OnInit {
   onChange1(val:any){
    this.roleId=val;
    this.chngMenu()
+   this.getPermissionById(); 
   }
 
   chngMenu(){
@@ -242,7 +262,7 @@ export class PermissionsComponent implements OnInit {
   updatePermissions(){
   //  console.log(this.pageId,this.roleId)
    if(this.pageId ==undefined){
-    this.toaster.errorToastr("Please select Menu Page")
+    this.toaster.errorToastr("Please select Menu")
    }
    if(this.roleId ==undefined){
     this.toaster.errorToastr("Please select Role")
@@ -318,6 +338,7 @@ export class PermissionsComponent implements OnInit {
         }
     });
     //  console.log(input_data)
+    if(this.pageId.length)
      this.dataSrv.addPermissionToRole(input_data).subscribe((res:any)=>{
       if(!res.err){
         // console.log("addPermissionToRole------",res.body);
@@ -334,6 +355,100 @@ export class PermissionsComponent implements OnInit {
 
   }
 
+  SelectAgency(e:any){
+    if(e == 'undefined'){
+      this.isDisabled = false;
+      this.isDisableMan = false;
+      this.formRoleData.get('community_id').enable();
+      this.formRoleData.controls['community_id'].setValue('undefined');
+      this.formRoleData.controls['community_id'].setValidators(Validators.required);
+      this.formRoleData.get('community_id').updateValueAndValidity();
+      this.formRoleData.get('managment_id').enable();
+      this.formRoleData.controls['managment_id'].setValue('undefined');
+      this.formRoleData.controls['managment_id'].setValidators(Validators.required);
+      this.formRoleData.get('managment_id').updateValueAndValidity();
+      this.formRoleData.updateValueAndValidity();
+    }else{
+      this.isDisabled = true;
+      this.isDisableMan = true;
+      this.formRoleData.get('community_id').disable();
+      this.formRoleData.controls['community_id'].setValue('undefined');
+      this.formRoleData.controls['community_id'].clearValidators();
+      this.formRoleData.updateValueAndValidity();
+      this.formRoleData.get('community_id').updateValueAndValidity();
+      this.formRoleData.get('managment_id').disable();
+      this.formRoleData.controls['managment_id'].setValue('undefined');
+      this.formRoleData.controls['managment_id'].clearValidators();
+      this.formRoleData.updateValueAndValidity();
+      this.formRoleData.get('managment_id').updateValueAndValidity();
+    }
+    this.getRole(e,'agen_id')
+  }
+  selectCommunity(e:any){
+    if(e == 'undefined'){
+      this.isDisable = false;
+      this.isDisableMan = false;
+      this.formRoleData.get('agency_id').enable();
+      this.formRoleData.controls['agency_id'].setValue('undefined');
+     this.formRoleData.controls['agency_id'].setValidators(Validators.required);
+      this.formRoleData.get('agency_id').updateValueAndValidity();
+      this.formRoleData.get('managment_id').enable();
+      this.formRoleData.controls['managment_id'].setValue('undefined');
+     this.formRoleData.controls['managment_id'].setValidators(Validators.required);
+      this.formRoleData.get('managment_id').updateValueAndValidity();
+      
+    }else{
+      this.isDisable = true;
+      this.isDisableMan = true;
+      this.formRoleData.get('agency_id').disable();
+      this.formRoleData.controls['agency_id'].setValue('undefined');
+      this.formRoleData.controls['agency_id'].clearValidators();
+      this.formRoleData.get('agency_id').updateValueAndValidity();
+      this.formRoleData.get('managment_id').disable();
+      this.formRoleData.controls['managment_id'].setValue('undefined');
+      this.formRoleData.controls['managment_id'].clearValidators();
+      this.formRoleData.get('managment_id').updateValueAndValidity();
+    }
+    this.getRole(e,'com_id')
+
+  }
+
+  selectMan(e:any,id?){
+    this.formRoleData.get('managment_id').setValue(e)
+    if(e == 'undefined'){
+      this.isDisable = false;
+      this.formRoleData.get('agency_id').enable();
+      this.formRoleData.controls['agency_id'].setValue('undefined');
+     this.formRoleData.controls['agency_id'].setValidators(Validators.required);
+      this.formRoleData.get('agency_id').updateValueAndValidity();
+      this.isDisabled = false;
+      this.formRoleData.get('community_id').enable();
+      this.formRoleData.controls['community_id'].setValue('undefined');
+      this.formRoleData.controls['community_id'].setValidators(Validators.required);
+      this.formRoleData.get('community_id').updateValueAndValidity();
+    }else{
+      this.isDisable = true;
+      this.formRoleData.get('agency_id').disable();
+      this.formRoleData.controls['agency_id'].setValue('undefined');
+      this.formRoleData.controls['agency_id'].clearValidators();
+      this.formRoleData.get('agency_id').updateValueAndValidity();
+      this.isDisabled = true;
+      this.formRoleData.get('community_id').disable();
+      this.formRoleData.controls['community_id'].setValue('undefined');
+      this.formRoleData.controls['community_id'].clearValidators();
+      this.formRoleData.updateValueAndValidity();
+      this.formRoleData.get('community_id').updateValueAndValidity();
+    }
+    if(!id){
+      this.getRole(e,'mng');
+      this.firstLoad = false
+    }
+  }
+  getManagementById(){
+    this.dataSrv.getManagementById(this.currentUser?.id).subscribe(res=>{
+      this.allManagmentUser = res.body
+    })
+  }
 
   checkValue(val : any){
     // console.log("valueSelected", val);
@@ -344,6 +459,11 @@ export class PermissionsComponent implements OnInit {
       this.isChecked='Check All';
     }
   }
+  getAllAgency(){
+    this.dataSrv.getAgencyForManagement().subscribe(res=>{
+      this.allAgency = res.body;
+    })
+    }
   departmentCheckValue(val){
     // console.log("valueSelected", val);
     if (this.deptList.every(val => val.checked == true)){
@@ -358,11 +478,11 @@ export class PermissionsComponent implements OnInit {
   getDepartment(val?){
     this.deptList=[];
     this.alldeptList=[];
-     // let isfor = this.currentUser.prmsnId == '1' ? '6' : ''; this.currentUser.id,isfor
+     // let isfor = this.currentUser?.prmsnId == '1' ? '6' : ''; this.currentUser?.id,isfor
     //  this.dataSrv.getNewDepartment().subscribe((res:any)=>{
       let isfor =  6
       let for_other = null
-     this.dataSrv.getDepartmentListing(this.currentUser.id,isfor,for_other).subscribe((res:any)=>{ 
+     this.dataSrv.getDepartmentListing(this.currentUser?.id,isfor,for_other).subscribe((res:any)=>{ 
       
       this.alldeptList=res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
@@ -387,16 +507,22 @@ export class PermissionsComponent implements OnInit {
     this.getDepartment()
   }
 
-  getRole(){
-    let id = this.currentUser.prmsnId
+  getRole(uId?,st?){
+    let id = this.currentUser?.prmsnId
     let data = {
-      prms : (this.usrRlNo == '1' || id == '1') ? 'community_id' : (this.usrRlNo == '2' || id == '2') ? 'agency_id' : 'agency_id',
-       id : this.comId || this.currentUser.id
+      prms : (this.usrRlNo == '1' || id == '1' || st == 'com_id') ? 'community_id' :(this.usrRlNo == '3' || id == '3' || st=='mng') ? 'management_id' : (this.usrRlNo == '2' || id == '2') ? 'agency_id' : 'agency_id',
+       id : uId ? uId : this.comId || this.currentUser?.id
     }
     this.dataSrv.getRole(data).subscribe((res:any)=>{
       if(!res.err){
           this.roleData = res.body
-          this.getAllRole()
+          if([3].includes(this.currentUser?.user_role)&& this.firstLoad){
+            this.formRoleData.value.management_id = this.currentUser?.id
+            st == 'mng' ? '': this.selectMan(this.currentUser?.id,'value')
+          }else{
+          this.getAllRole();
+
+          }
               // this.roleData.map(i=>{
               //  if(i != 2  && i != 3 && i != 4  && i != 5 && i != 6 ){
               //    this.roleData1.push(i)
@@ -455,13 +581,17 @@ export class PermissionsComponent implements OnInit {
 
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        } 
 
   uploadNow() {
     // console.log('this.userDetails', this.fileToUpload)
@@ -563,4 +693,18 @@ export class PermissionsComponent implements OnInit {
     }   
 
   }
+
+  getCommunityByMangmentId(){
+    this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity1 = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      })  ;
+    }
+  })
+  }
+
+
 }

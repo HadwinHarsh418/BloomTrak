@@ -101,7 +101,7 @@ export class AssignListForAgencyUserComponent implements OnInit {
     let data = {
       shift_id: this.prmsUsrId.shift_id,
       user_id: snglUsr.id,
-      agency_id: this.currentUser.id,
+      agency_id: this.currentUser?.id,
       first_name:snglUsr.first_name,
       phone_number:snglUsr.phone_number,
       hourly_rate : snglUsr.hourly_rate
@@ -155,7 +155,7 @@ export class AssignListForAgencyUserComponent implements OnInit {
           let data = {
             shift_id: this.prmsUsrId.shift_id,
             user_id: res.body.id,
-            agency_id: this.currentUser.id
+            agency_id: this.currentUser?.id
           }
           this.dataService.assignAGShift(data).subscribe((res: any) => {
             if (!res.error) {
@@ -182,7 +182,7 @@ export class AssignListForAgencyUserComponent implements OnInit {
   getAgncyUsrLst() {
     let is_for = 'agency'
     let searchStr = ''
-    this.dataService.getUserById(searchStr = '',this.currentUser.id, is_for).subscribe((res: any) => {
+    this.dataService.getUserById(searchStr = '',this.currentUser?.id, is_for).subscribe((res: any) => {
       if (!res.error) {
         this.agncyUsr = res.body
         this.agncyUsr.map(i => {

@@ -16,23 +16,23 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mt-3">
+                                    <div class="mt-3000">
                                         <form class="user" [formGroup]="formPositionData" (ngSubmit)="submitted()">
                                             <div class="row">
-                                                <div class="col-lg-4" *ngIf="currentUser.role == 'SuperAdmin'">
+                                                <div class="col-lg-4" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.user_role == 3 || currentUser.user_role == 8">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Community
                                                             Name <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8" *ngIf="currentUser.role == 'SuperAdmin'">
+                                                <div class="col-lg-8" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.user_role == 3 || currentUser.user_role == 8">
                                                     <div class="common-form-left form-group">
                                                         <select name="community_name" id="community_name"
                                                             formControlName="community_name"
                                                             class="form-control form-control-user">
                                                             <option value="" selected disabled>--Select--</option>
-                                                            <option value="{{comm.id}}"
+                                                            <option value="{{comm.cp_id || comm.id}}"
                                                                 *ngFor="let comm of allCommunity">
                                                                 {{comm.community_name}}</option>
                                                         </select>
@@ -41,7 +41,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['community_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -66,7 +66,91 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['position_name'].hasError('required')"
                                                                 class="text text-danger">
+                                                                This field is Required
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-lg-4" *ngIf="isGaleAgency == 1">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Gale Position Name
+                                                            <span class="text-danger">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8" *ngIf="isGaleAgency == 1">
+                                                    <div class="common-form-left form-group">
+                                                        <input type="text"
+                                                            [class.is-invalid]="FormData_Control['gale_position_name'].dirty && FormData_Control['gale_position_name'].invalid"
+                                                            formControlName="gale_position_name"
+                                                            class="form-control form-control-user" id="gale_position_name"
+                                                            class="form-control" placeholder="Position Name"
+                                                            aria-describedby="passwordHelpInline">
+                                                        <span
+                                                            *ngIf="FormData_Control['gale_position_name'].dirty && FormData_Control['gale_position_name'].invalid">
+                                                            <div class="invalid-feedback"
+                                                                *ngIf="FormData_Control['gale_position_name'].hasError('required')"
+                                                                class="text text-danger">
                                                                 This field required
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-lg-4" *ngIf="isGaleAgency == 1">
+                                                    <div class="common-form-left">
+                                                        <label for="inputPassword6" class="col-form-label">Gale Rate
+                                                         <span class="text-danger">*</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-8" *ngIf="isGaleAgency == 1">
+                                                <div class="common-form-left form-group">
+                                                    <input type="number"
+                                                        [class.is-invalid]="FormData_Control['gale_position_rate'].dirty && FormData_Control['gale_position_rate'].invalid"
+                                                        formControlName="gale_position_rate"
+                                                        class="form-control form-control-user" id="gale_position_rate"
+                                                        class="form-control" placeholder="$"
+                                                        aria-describedby="passwordHelpInline">
+                                                    <span
+                                                        *ngIf="FormData_Control['gale_position_rate'].dirty && FormData_Control['gale_position_rate'].invalid">
+                                                        <div class="invalid-feedback"
+                                                            *ngIf="FormData_Control['gale_position_rate'].hasError('required')"
+                                                            class="text text-danger">
+                                                            This field required
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                               
+
+                                            
+                                                    
+                                                    <div class="col-lg-4">
+                                                        <div class="common-form-left">
+                                                            <label for="inputPassword6" class="col-form-label">Avg Internal Rate
+                                                             <span class="text-danger">*</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-8">
+                                                    <div class="common-form-left form-group">
+                                                        <input type="number"
+                                                            [class.is-invalid]="FormData_Control['avg_rate'].dirty && FormData_Control['avg_rate'].invalid"
+                                                            formControlName="avg_rate"
+                                                            class="form-control form-control-user" id="avg_rate"
+                                                            class="form-control" placeholder="$"
+                                                            aria-describedby="passwordHelpInline">
+                                                        <span
+                                                            *ngIf="FormData_Control['avg_rate'].dirty && FormData_Control['avg_rate'].invalid">
+                                                            <div class="invalid-feedback"
+                                                                *ngIf="FormData_Control['avg_rate'].hasError('required')"
+                                                                class="text text-danger">
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>

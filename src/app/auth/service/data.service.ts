@@ -6,6 +6,8 @@ import { InterceptorSkipHeader } from 'app/auth/helpers/jwt.interceptor';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { ToastrManager } from 'ng6-toastr-notifications';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { AuthenticationService } from './authentication.service';
 
 // export interface Person {
 //   id: string;
@@ -67,8 +69,8 @@ export class DataService {
 
   constructor(private http: HttpClient,
     private deviceService: DeviceDetectorService,
-    private toaster: ToastrManager
-
+    private toaster: ToastrManager,
+    private _router:Router,
   ) {
   }
 
@@ -166,8 +168,9 @@ export class DataService {
   }
 
   getAllRole() {
-    if (sessionStorage.getItem('Token'))
-      return this.http.get(`${environment.baseApiUrl}getAllRole`,);
+    if(localStorage.getItem('Bloom-admin-auth-token'))
+      return this.http.get(`${environment.baseApiUrl}getAllRole`);
+    
   }
 
   clockInPortalLogin(id) {
@@ -199,6 +202,10 @@ export class DataService {
 
   getUserCanceledShiftById(id) {
     return this.http.get(`${environment.baseApiUrl}getUserCanceledShiftById?id=${id}`,);
+  }
+
+  getShiftArchivedReason(id) {
+    return this.http.get(`${environment.baseApiUrl}getShiftArchivedReason?id=${id}`,);
   }
 
   getSpendDownOthersTableById(id) {
@@ -241,6 +248,10 @@ export class DataService {
     return this.http.post(`${environment.baseApiUrl}deleteVendor`, data);
   }
 
+  deleteEmployee(data) {
+    return this.http.post(`${environment.baseApiUrl}deleteEmployee`, data);
+  }
+
   editVendor(data) {
     return this.http.post(`${environment.baseApiUrl}editVendor`, data);
   }
@@ -265,8 +276,8 @@ export class DataService {
     return this.http.get(`${environment.baseApiUrl}getAgencyCommunity?agency_id=${id}`);
   }
 
-  getAgencyContractById(id) {
-    return this.http.get(`${environment.baseApiUrl}getAgencyContractById?agency_id=${id}`);
+  getAgencyContractById(id,comId) {
+    return this.http.get(`${environment.baseApiUrl}getAgencyContractById?agency_id=${id}&community_id=${comId}`);
   }
 
   getLastEntrySummery(comId, isfor, day) {
@@ -346,6 +357,10 @@ export class DataService {
     return this.http.post(`${environment.baseApiUrl}addDepartmentExplanation`, data);
   }
 
+  getMissingReconciliationGL(data) {
+    return this.http.get(`${environment.baseApiUrl}getMissingReconciliationGL?community_id=${data.community_id}&department=${data.department}&year=${data.year}&month=${data.month}`);
+  }
+
   updateDepartmentExplanation(data) {
     return this.http.post(`${environment.baseApiUrl}updateDepartmentExplanation`, data);
   }
@@ -403,7 +418,7 @@ export class DataService {
   }
 
   getPermissionByAdminRole() {
-    if (sessionStorage.getItem('Token'))
+    if(localStorage.getItem('Bloom-admin-auth-token'))
       return this.http.get(`${environment.baseApiUrl}getPermissionByAdminRole`).pipe(
         map((res: any) => {
           if (!res.error) {
@@ -412,6 +427,10 @@ export class DataService {
           return res;
         })
       );
+    else{
+      return;
+    }
+    
   }
 
   addPermission(data) {
@@ -596,6 +615,14 @@ export class DataService {
     return this.http.post(`${environment.baseApiUrl}importUsers`, payload);
   }
 
+  importEmployees(payload):Promise<any> {
+    return this.http.post(`${environment.baseApiUrl}importEmployees`, payload).toPromise();
+  }
+
+  importEmployee(payload) {
+    return this.http.post(`${environment.baseApiUrl}importEmployees`, payload);
+  }
+
   importCommunities(payload) {
     return this.http.post(`${environment.baseApiUrl}importCommunities `, payload);
   }
@@ -622,6 +649,10 @@ export class DataService {
 
   uploadAgencyContract(payload) {
     return this.http.post(`${environment.baseApiUrl}uploadAgencyContract `, payload);
+  }
+
+  deleteAgencyContract(payload) {
+    return this.http.post(`${environment.baseApiUrl}deleteAgencyContract `, payload);
   }
 
   importAgencyRates(payload) {
@@ -700,8 +731,8 @@ export class DataService {
     return this.http.get(`${environment.baseApiUrl}getArchive?community_id=${data}`,);
   }
 
-  getAgencyMonthlyBudget(data: any) {
-    return this.http.get(`${environment.baseApiUrl}getAgencyMonthlyBudget?community_id=${data}`,);
+  getAgencyMonthlyBudget(body: any) {
+    return this.http.get(`${environment.baseApiUrl}getAgencyMonthlyBudget?community_id=${body.id}&start_time=${body.start_time}&end_time=${body.end_time}`,);
   }
 
 
@@ -713,8 +744,8 @@ export class DataService {
     return this.http.get(`${environment.baseApiUrl}getAgencyRatesById?id=${data.id}`,);
   }
 
-  getAgencyUnblockUser(data, agency_id) {
-    return this.http.get(`${environment.baseApiUrl}getAgencyUnblockUser?community_id=${data}&agency_id=${agency_id}`,);
+  getAgencyUnblockUser(data:any, agency_id,searchStr?:any) {
+    return this.http.get(`${environment.baseApiUrl}getAgencyUnblockUser?community_id=${data}&agency_id=${agency_id}&searchStr=${searchStr}`);
   }
 
   shiftClockIn(data) {
@@ -802,6 +833,30 @@ export class DataService {
     return this.http.post(`${environment.baseApiUrl}applyShift`, data);
   }
 
+  requestForShift(data) {
+    return this.http.post(`${environment.baseApiUrl}requestForShift`, data);
+  }
+
+  ApproveRequest(data) {
+    return this.http.post(`${environment.baseApiUrl}ApproveRequest`, data);
+  }
+
+  cancelRequest(data) {
+    return this.http.post(`${environment.baseApiUrl}cancelRequest`, data);
+  }
+
+  getShiftRequestById(shift_id,aggency_id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getShiftRequestById?shift_id=${shift_id}&aggency_id=${aggency_id}`);
+  }
+
+  getShiftRequest(body,agency_user): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getShiftRequest?aggency_id=${body.aggency_id}&agency_user=${body.agency_user}`);
+  }
+
+  getRequestShiftForAgency(body): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getRequestShiftForAgency?aggency_id=${body.aggency_id}`);
+  }
+
   updateAprroval(data) {
     return this.http.post(`${environment.baseApiUrl}updateAprroval`, data);
   }
@@ -814,10 +869,10 @@ export class DataService {
     }
   }
   getNewCommunityShiftByID(body: any, user?: any) {
-    if (body.tpUsr == 'typeUser') {
-      return this.http.get(`${environment.baseApiUrl}getCommunityShiftByID/${body.currentUser}?searchStr1=${body.searchStr}&for_cp=${body.for_cp1}&typeUser=${body.cpType}`);
+    if (body.tpUsr == 'typeUser1') {
+      return this.http.get(`${environment.baseApiUrl}getCommunityShiftByID/${body.currentUser}?searchStr1=${body.searchStr}&for_cp=${body.for_cp1}&typeUser=${body.cpType}&start_time=${body.start_time}&end_time=${body.end_time}&community_id=${body.id}&sortCol=${body.sort?.prop}&sortProp=${body.sort?.dir}`);
     } else {
-      return this.http.get(`${environment.baseApiUrl}getCommunityShiftByID/${body.currentUser}?searchStr2=${body.searchStr}&for_cp=${body.for_cp1}&typeUser=${body.cpType}&typeUser1=${body.cpType}`);
+      return this.http.get(`${environment.baseApiUrl}getCommunityShiftByID/${body.currentUser}?searchStr2=${body.searchStr}&for_cp=${body.for_cp1}&typeUser=${body.cpType}&typeUser1=${body.cpType}&start_time=${body.start_time}&end_time=${body.end_time}&community_id=${body.id}&sortCol=${body.sort?.prop}&sortProp=${body.sort?.dir}`);
     }
   }
 
@@ -828,7 +883,7 @@ export class DataService {
   getAgencyRates(searchStr = '', cpType, role, id): Observable<any> {
     if (role == 'Agency') {
       return this.http.get(`${environment.baseApiUrl}getAgencyRates?searchStr1=${searchStr}&typeUser=${cpType.cpType2}&agency_id=${id}`);
-    } if (role == 'Community') {
+    } if (role == 'Community' || role == "Community User" || role == "Management User") {
       return this.http.get(`${environment.baseApiUrl}getAgencyRates?searchStr2=${searchStr}&typeUser=${null}&typeUser1=${cpType.cpType2}&agency_id=${id}`);
     } else {
       return this.http.get(`${environment.baseApiUrl}getAgencyRates?searchStr3=${searchStr}&typeUser=${null}&typeUser2=${cpType.cpType2}&agency_id=${id}`);
@@ -836,9 +891,13 @@ export class DataService {
     // return this.http.get(`${environment.baseApiUrl}getAgencyRates?searchStr=${searchStr}&agency_id=${id}`,);
   }
 
+  deleteAgencyRatesById(id) {
+    return this.http.post(`${environment.baseApiUrl}deleteAgencyRatesById?id=${id}`,'');
+  }
 
-  getUserAgencyshiftById(id): Observable<any> {
-    return this.http.get(`${environment.baseApiUrl}getUserAgencyshiftById?id=${id}`,);
+// &start_time=${id.start_time}&end_time=${id.end_time}
+  getUserAgencyshiftById(id, searchVal?): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getUserAgencyshiftById?id=${id.id}&typeUser1=${id.tyUsr1}&searchStr=${id.searchVal}&sortCol=${id.sort?.prop}&start_time=${id.start_time}&community_id=${id.community_id}&end_time=${id.end_time}&sortProp=${id.sort?.dir}`);
   }
 
   getCommunityUserWorking(id, searchVal?): Observable<any> {
@@ -861,8 +920,20 @@ export class DataService {
     return this.http.get(`${environment.baseApiUrl}getHoliday?id=${id.id}`);
   }
 
-  getBLockedUser(searchStr?): Observable<any> {
-    return this.http.get(`${environment.baseApiUrl}getBLockedUser?searchStr1=${searchStr}`);
+  getBLockedUser(searchStr,comid:any,agid:any): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getBLockedUser?searchStr1=${searchStr}&comid=${comid}&agid=${agid}`);
+  }
+
+  getBLockedUserAccRole(searchStr?,com_id?:any): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getBLockedUser?searchStr1=${searchStr}&id=${com_id}`);
+  }
+
+  getDeletedagencyUser(searchStr?,com_id?:any): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getDeletedAgencyUser?searchStr=${searchStr}&id=${com_id}`);
+  }
+
+  getDeletedUser(searchStr?,com_id?:any): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getDeletedCommunityUser?searchStr=${searchStr}&id=${com_id}`);
   }
 
   getMNGTUser(searchStr = '', page, limit): Observable<any> {
@@ -874,7 +945,7 @@ export class DataService {
   }
 
   getNewCommunityShifts(body: any): Observable<any> {
-    return this.http.get(`${environment.baseApiUrl}getCommunityShifts/${body.currentUser}?searchStr=${body.searchStr}&pageNo=${body.page}&typeUser=${body.shiftType}&limitNum=${body.limit}&start_time=${body.start_time}&end_time=${body.end_time}`,);
+    return this.http.get(`${environment.baseApiUrl}getCommunityShifts/${body.currentUser}?searchStr=${body.searchStr}&pageNo=${body.page}&typeUser=${body.shiftType}&limitNum=${body.limit}&start_time=${body.start_time}&end_time=${body.end_time}&sortCol=${body.sort?.prop}&sortProp=${body.sort?.dir}`);
   }
 
   getShiftClockIn(data): Observable<any> {
@@ -911,10 +982,11 @@ export class DataService {
     return this.http.get(`${environment.baseApiUrl}getshift?searchStr=${searchStr}&pageNo=${page}&limitNum=${limit}&typeUser=${userShift}`)
   }
   getNewshift(body: any): Observable<any> {
-    return this.http.get(`${environment.baseApiUrl}getshift?searchStr=${body.searchStr}&pageNo=${body.page}&limitNum=${body.limit}&typeUser=${body.userShift}`)
+    return this.http.get(`${environment.baseApiUrl}getshift?searchStr=${body.searchStr}&pageNo=${body.page}&limitNum=${body.limit}&start_time=${body.start_time}&end_time=${body.end_time}&typeUser=${body.userShift}&sortCol=${body.sort?.prop}&sortProp=${body.sort?.dir}`)
   }
 
   getCommunityId(): Observable<any> {
+    if(localStorage.getItem('Bloom-admin-auth-token'))
     return this.http.get(`${environment.baseApiUrl}communityID`);
   }
 
@@ -946,12 +1018,20 @@ export class DataService {
     return this.http.post(`${environment.baseApiUrl}addProject`, data);
   }
 
+  updateGaleFacilityId(data: any): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}updateGaleFacilityId`, data);
+  }
+
   clockInPortal(data: any): Observable<any> {
     return this.http.post(`${environment.baseApiUrl}clockInPortal`, data);
   }
 
   agenciesID(): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}agenciesID`);
+  }
+
+  getAgencyForManagement(): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getAgencyForManagement`);
   }
 
   register(data: any): Observable<any> {
@@ -998,6 +1078,10 @@ export class DataService {
     return this.http.post(`${environment.baseApiUrl}deleteUser`, data);
   }
 
+  reinstateDeletedUser(data): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}reinstateDeletedUser`, data);
+  }
+
   deleteActivity(data): Observable<any> {
     return this.http.post(`${environment.baseApiUrl}deleteAgencies`, data);
   }
@@ -1018,12 +1102,33 @@ export class DataService {
   getManagementById(id): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getManagementById?id=${id}`);
   }
+  getCommunityByAgencyID(id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getCommunityByAgencyID?agency_id=${id}`);
+  }
+
+  getShiftRequestStatus(id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getShiftRequestStatus?id=${id}`);
+  }
 
   getcommunityById(id): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getcommunityById?id=${id}`);
   }
+
+  getFacilityID(data): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getFacilityIdGale?community_id=${data.community_id}&agency_id=${data.agency_id}`);
+  }
+
+  getAllAgenciesType(community_id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getAllAgenciesType?community_id=${community_id}`);
+  }
   getUserAssigned(shift_id): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getUserAssigned?shift_id=${shift_id}`);
+  }
+  getShiftHistory(id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getShiftHistory?id=${id}`);
+  }
+  getUserAssignedForAgencyUser(shift_id,agency_id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getUserAssigned?shift_id=${shift_id}&agency_id=${agency_id}`);
   }
   getCMUserAssigned(shift_id): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getCMUserAssigned?shift_id=${shift_id}`);
@@ -1032,22 +1137,44 @@ export class DataService {
   getAgenciesByID(id?): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getAgenciesByID?id=${id ?? ''}`);
   }
+  getShiftAssignTo(id?): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getShiftAssignTo?id=${id ?? ''}`);
+  }
+
+  shiftAssignTo(data: any): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}shiftAssignTo`, data);
+  }
+  
   getAgenciesNewByID(id?): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getAgenciesByID?id=${id ?? ''}&is_for=community`);
   }
 
-  getUserById(searchStr = '', id, is_for): Observable<any> {
+  getUserById(searchStr:any, id, is_for): Observable<any> {
+    if(localStorage.getItem('Bloom-admin-auth-token'))
     return this.http.get(`${environment.baseApiUrl}getUserById?searchStr=${searchStr}&id=${id}&is_for=${is_for}`);
+  }
+
+  getManualUserById(searchStr:any, id): Observable<any> {
+    return this.http.get(`${environment.baseApiUrl}getManualUsers?searchStr=${searchStr}&id=${id}`);
   }
 
   getshiftById(id): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getshiftById?id=${id}`);
   }
-
+  addSchedularNotification(body:any): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}addSchedularNotification`, body);
+  }
+  removeSchedularNotification(data): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}removeSchedularNotification`, data);
+  }
   deleteshift(id): Observable<any> {
     return this.http.post(`${environment.baseApiUrl}deleteshift`, id);
   }
 
+  UpdateForCP(shift_id): Observable<any> {
+      return this.http.post(`${environment.baseApiUrl}UpdateForCP?shift_id=${shift_id}`,{});
+    }
+  
   getUser(searchStr = '', page, limit, is_for): Observable<any> {
     return this.http.get(`${environment.baseApiUrl}getUser?searchStr=${searchStr}&pageNo=${page}&limitNum=${limit}&is_for=${is_for}`);
   }
@@ -1064,6 +1191,13 @@ export class DataService {
 
   addUser(data: any): Observable<any> {
     return this.http.post(`${environment.baseApiUrl}addUser`, data);
+  }
+  addUserManually(data: any): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}addUserManually`, data);
+  }
+
+  editManualUser(data: any): Observable<any> {
+    return this.http.post(`${environment.baseApiUrl}editManualUser`, data);
   }
 
   addAgencyUser(data: any): Observable<any> {
@@ -1142,7 +1276,7 @@ export class DataService {
 
   getDeviceData() {
     this.devicedata = this.deviceService.getDeviceInfo();
-    sessionStorage.setItem("device_type", this.devicedata['os']);
+    localStorage.setItem("device_type", this.devicedata['os']);
   }
 
   getgeoDevObject() {

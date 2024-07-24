@@ -47,7 +47,7 @@
             <span [data-feather]="'mail'" class="ficon font-medium-5 feather"></span>
           </a>
         </li> -->
-        <li class="nav-item d-none d-lg-block" *ngIf="!dummyUrl">
+        <li class="nav-item d-none d-lg-block" *ngIf="dummyUrl == false">
           <a type="button" class="nav-link nav-link-style btn" tooltipClass="fadeInAnimation" placement="bottom"
           ngbTooltip="Logout" (click)="logout()">
             <span [data-feather]="'power'" class="ficon font-medium-5 feather"></span>
@@ -87,9 +87,11 @@
     </div> -->
     <!--/ Timer -->
     <!--/ Language selection -->
-
+<!-- Notification -->
+    <app-navbar-notification></app-navbar-notification>
+    <!--/ Notification -->
     <!-- Toggle skin -->
-    <li class="nav-item d-none d-lg-block">
+    <li class="nav-item d-lg-block">
       <a type="button" class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
         <i class="ficon" data-feather="sun" ></i>
       </a>
@@ -109,9 +111,7 @@
     <!--/ News -->
    
 
-    <!-- Notification -->
-    <!-- <app-navbar-notification></app-navbar-notification> -->
-    <!--/ Notification -->
+    
 
     <!-- User Dropdown -->
     <li ngbDropdown class="nav-item dropdown-user">
@@ -139,15 +139,19 @@
           ></span> -->
         </ng-container>
       </a>
-      <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right" *ngIf="currentUser?.user_role != '7'">
+      <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right" *ngIf="currentUser?.user_role != '7' && dummyUrl ==false">
         <!-- 
           <a ngbDropdownItem [routerLink]="['/my-account/profile']"
           ><span [data-feather]="'user'" [class]="'mr-50'"></span> Profile</a>
          -->
-        <a ngbDropdownItem [routerLink]="['user-profile']" *ngIf="currentUser?.prmsnId != '6'"
-          ><span [data-feather]="'user'" [class]="'mr-50'" ></span> Profile</a
-        >
-        <div class="dropdown-divider" *ngIf="currentUser?.role == 'Agency' || currentUser?.role == 'Community' || currentUser?.role == 'Admin' || currentUser?.role == 'User' || currentUser?.user_role != '7'"></div>
+           <a ngbDropdownItem [routerLink]="['user-profile']" *ngIf="currentUser?.prmsnId != '6'"
+           ><span [data-feather]="'user'" [class]="'mr-50'" ></span> Profile</a
+         >
+       
+         <ng-template  class="dropdown-divider">
+           <div  *ngIf="currentUser?.role == 'Agency' || currentUser?.role == 'Community' || currentUser?.role == 'Admin' || currentUser?.role == 'User' || currentUser?.user_role != '7'"></div>
+
+         </ng-template>
         <a ngbDropdownItem (click)="logout()">
           <span [data-feather]="'power'" [class]="'mr-50'"></span> Logout
         </a>

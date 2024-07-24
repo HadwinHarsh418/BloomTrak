@@ -1,7 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit, ElementRef, Renderer2, Output } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Title } from '@angular/platform-browser';
-
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
@@ -20,6 +19,8 @@ import { DataService } from './auth/service/data.service';
 import StatesJson from '../assets/states.json';
 import { AuthenticationService } from './auth/service';
 import { Router } from '@angular/router';
+import * as localforage from 'localforage';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -38,23 +39,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
   currentUser: any;
   dummyUrl: string;
+  deviceToken: string;
 
-  /**
-   * Constructor
-   *
-   * @param {DOCUMENT} document
-   * @param {Title} _title
-   * @param {Renderer2} _renderer
-   * @param {ElementRef} _elementRef
-   * @param {CoreConfigService} _coreConfigService
-   * @param {CoreSidebarService} _coreSidebarService
-   * @param {CoreLoadingScreenService} _coreLoadingScreenService
-   * @param {CoreMenuService} _coreMenuService
-   * @param {CoreTranslationService} _coreTranslationService
-   * @param {TranslateService} _translateService
-   * @param {EncryptionService} _encryptionService
-   * @param {CountriesService} _countriesService
-   */
   constructor(
     @Inject(DOCUMENT) private document: any,
     private _title: Title,
@@ -75,17 +61,20 @@ export class AppComponent implements OnInit, OnDestroy {
     // Get the application main menu;
     this.authService.currentUser.subscribe((x: any) => {
       this.currentUser = x;
+      if(this.currentUser){
+        if(this.currentUser?.user_role == '7'){
+          this.router.navigate(['/clockin']);
+          this.dummyUrl = window.location.pathname
+        }
+        if(window.location.pathname == '/clockin'){
+          
+          (this.currentUser) ? this.currentUser.user_role = '7' : '';
+        }
+      }else{
+        this.dataservice.UserPermissions = null;
+      }
     });
-    if(this.currentUser){
-      if(this.currentUser?.user_role == '7'){
-        this.router.navigate(['/clockin']);
-        this.dummyUrl = window.location.pathname
-      }
-      if(this.dummyUrl == '/clockin'){
-        
-        (this.currentUser) ? this.currentUser.user_role = '7' : '';
-      }
-    }
+    
     this.menu = menu;
 
     // Register the menu to the menu service
@@ -103,66 +92,18 @@ export class AppComponent implements OnInit, OnDestroy {
     // Set the translations for the menu
     this._coreTranslationService.translate(menuEnglish);
 
-    // Set application default language.
-    // Change application language? Read the ngxTranslate Fix
     this._translateService.use('en');
-    // ? OR
-    // ? User the current browser lang if available, if undefined use 'en'
-    // const browserLang = this._translateService.getBrowserLang();
-    // this._translateService.use(browserLang.match(/en|fr|de|pt/) ? browserLang : 'en');
 
-    /**
-     * ! Fix : ngxTranslate
-     * ----------------------------------------------------------------------------------------------------
-     */
-
-    /**
-     *
-     * Using different language than the default ('en') one i.e French?
-     * In this case, you may find the issue where application is not properly translated when your app is initialized.
-     *
-     * It's due to ngxTranslate module and below is a fix for that.
-     * Eventually we will move to the multi language implementation over to the Angular's core language service.
-     *
-     **/
-
-    // Set the default language to 'en' and then back to 'fr'.
-
-    // setTimeout(() => {
-    //   this._translateService.setDefaultLang('en');
-    //   this._translateService.setDefaultLang('fr');
-    // });
-
-    /**
-     * !Fix: ngxTranslate
-     * ----------------------------------------------------------------------------------------------------
-     */
-
-    // Set the private defaults
-    // this._translateService.onLangChange.subscribe((event: LangChangeEvent) => {
-    //   const body = document.getElementsByTagName('body')[0];
-    //   body.classList.remove('es', 'en');
-    //   body.classList.add(event.lang);
-    // })
     this._unsubscribeAll = new Subject();
-
-    this.authService.currentUser.subscribe(res => {
-      if(res && !res.hasOwnProperty('access_to')) {
-        this.setAccess();
-      }
-    })
   }
 
-  // Lifecycle hooks
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * On init
-   */
   ngOnInit(): void {
     // Init wave effect (Ripple effect)
     Waves.init();
-
+    localforage.getItem('logout-token');
+    this.authService.logoutObservable$.subscribe(() => {
+      localforage.removeItem(this.authService.logoutTokenKey);
+    });
     // Subscribe to config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
@@ -278,36 +219,16 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * On destroy
-   */
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }
-
-  // Public methods
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * Toggle sidebar open
-   *
-   * @param key
-   */
   toggleSidebar(key): void {
     this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
   }
-
-  setAccess() {
-    if(this.authService.currentUserValue.id){
-      this.dataservice.getCMAccessToByDate(this.authService.currentUserValue.com_id ? this.authService.currentUserValue.com_id : this.authService.currentUserValue.id).subscribe((res:any) => {
-        if(!res.err){
-          let o = JSON.parse(JSON.stringify(this.authService.currentUserValue));
-          Object.assign(o, { access_to: res.body?.access_to})
-          this.authService.updateTokenValue(o);
-        }
-      })
-    }
-  }
+  
+  
+  // public throwTestError(): void {
+  //   throw new Error("Sentry Test Error");
+  // }
 }

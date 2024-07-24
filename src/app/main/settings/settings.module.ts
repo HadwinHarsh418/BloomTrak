@@ -16,6 +16,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { NgxMaskModule } from 'ngx-mask';
 import { SwithButtonModule } from '../switch-button/swith-button/swith-button.module';
 import { FormsModule } from '@angular/forms';
+import { DashboardService } from '../dashboard/dashboard.service';
 const routes: Routes = [
   // {
   //   path: '',
@@ -46,7 +47,7 @@ const routes: Routes = [
     SwithButtonModule,
     FormsModule,
   ],
-  providers: [SettingsService],
+  providers: [SettingsService,DashboardService],
   exports: [SettingsComponent]
   
 })

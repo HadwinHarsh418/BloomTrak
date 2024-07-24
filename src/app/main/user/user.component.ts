@@ -34,6 +34,8 @@ export class UserComponent implements OnInit {
   vwPrms: any;
   @ViewChild('deleteUser') deleteUser: ElementRef<any>;
   @ViewChild('searchStrInput', { static: true }) searchStrInput: ElementRef;
+  @ViewChild('reinstate') reinstate: ElementRef<any>;
+  @ViewChild('permanentdeleteUser') permanentdeleteUser: ElementRef<any>;
   
   rows1: any = []
   datacommunity: any;
@@ -47,6 +49,8 @@ export class UserComponent implements OnInit {
   data4: any;
   userEdit: any;
   data5: any;
+  currenttab: any = 'community';
+  workingUserHide: boolean =false;
   data6: any;
   cols: string;
   mngmCommunity: any= [];
@@ -56,6 +60,8 @@ export class UserComponent implements OnInit {
   addedImagePath: any;
   fileToUpload: any;
   roleData: any=[]
+  rows2: any;
+  rowdelete: any;
 
   constructor(
     private dataService: DataService,
@@ -73,10 +79,10 @@ export class UserComponent implements OnInit {
     this.mngmCommunity = []
   }
   ngOnInit(): void {
-   this.cols = this.currentUser.role == 'Admin' ? 'col-12' : 'col-6';
+   this.cols = this.currentUser?.role == 'Admin' ? 'col-12' : 'col-6';
     this.getDate()
     this.currenUserId = ''
-    this.setPage({ offset: 0 });
+    this.currenttab == 'block' ? this.getDeletedUser() : this.setPage({ offset: 0 });
 
     fromEvent(this.searchStrInput.nativeElement, 'keyup').pipe(
       map((event: any) => {
@@ -85,7 +91,7 @@ export class UserComponent implements OnInit {
       , debounceTime(1000)
       , distinctUntilChanged()
     ).subscribe((text: string) => {
-      this.setPage({ offset: 0 })
+      this.currenttab == 'block' ? this.getDeletedUser() : this.setPage({ offset: 0 });
     });
   }
 
@@ -104,26 +110,21 @@ export class UserComponent implements OnInit {
   }
 
   setPage(pageInfo) {
+    this.currenttab = 'community'
+    this.workingUserHide = false
     if (this.searchSub) {
       this.searchSub.unsubscribe();
       this.searchSub = null;
     }
     this.page.pageNumber = pageInfo.offset;
     this.loadingList = true;
-    if (this.currentUser.role == 'Agency' || this.currentUser.role == 'Community' || this.currentUser.role == 'Community User') {
-      let is_for = this.currentUser.role == 'Agency' ? 'agency' : this.currentUser.role == 'Community User' ? 'community' :'community'
-      this.getUserById(this.currentUser.id, is_for)
-    } else if(this.currentUser.role == 'Admin'){
+    if (this.currentUser?.role == 'Agency' || this.currentUser?.role == 'Community' || this.currentUser?.role == 'Community User') {
+      let is_for = this.currentUser?.role == 'Agency' ? 'agency' : this.currentUser?.role == 'Community User' ? 'community' :'community'
+      this.getUserById(this.currentUser?.id, is_for)
+    } else if(this.currentUser?.role == 'Admin'){
       this.dataService.getMNGTUser(this.searchStr, this.page.pageNumber, this.page.size,).subscribe(res => {
         if (!res.error) {
           this.rows1 = res.body;
-          // this.rows = this.rows1
-          // this.rows.forEach(element => {
-          //   element.community.forEach(element => {
-          //     this.mngmCommunity.push(element)
-          //   });
-          // });
-          // console.log('Management Communities',this.mngmCommunity)
         } else {
           this.dataService.genericErrorToaster()
         }
@@ -133,30 +134,18 @@ export class UserComponent implements OnInit {
         this.dataService.genericErrorToaster(error)
       }
       )
-      //  this.dataService.getManagementNames().subscribe(res => {
-      //   if (!res.error) {
-      //     this.rows = res.body;
-      //     this.rows.forEach(element => {
-      //         this.mngmNames.push(element.mg_name)
-      //     });
-      //     console.log('Management Names',this.mngmNames)
-      //   } else {
-      //     this.dataService.genericErrorToaster()
-      //   }
-      //   this.loadingList = false;
-      // }, error => {
-      //   this.loadingList = false;
-      //   this.dataService.genericErrorToaster(error)
-      // }
-      // )
     }
     else {
-      let is_for = ''
+      let is_for = this.currentUser?.user_role == 6 ? '6' : ''
       this.searchSub = this.dataService.getUser(this.searchStr, this.page.pageNumber, this.page.size,is_for).subscribe(res => {
         if (!res.error) {
-          this.rows = res.body;
+          this.rows = res.body.sort(function (a, b) {
+            if (a.last_name.toUpperCase() < b.last_name.toUpperCase()) { return -1; }
+            if (a.last_name.toUpperCase() > b.last_name.toUpperCase()) { return 1; }
+            return 0;
+          });
           this.rows.map(rw => {
-            if (this.currentUser.role == 'Agency') {
+            if (this.currentUser?.role == 'Agency') {
               rw.phone = rw.agency_phone
               rw.emails = rw.agency_email
             }
@@ -224,18 +213,12 @@ export class UserComponent implements OnInit {
   }
 
   getUserById(id, is_for) {
-    this.dataService.getUserById(this.searchStr,this.currentUser.role =='Community User' ? this.currentUser.com_id : id, is_for).subscribe((res: any) => {
-      this.rows = res.body;
-      // this.rows.map(rw => {
-      //   if (this.currentUser.role == 'Agency') {
-      //     rw.phone = rw.agency_phone
-      //     rw.emails = rw.agency_email
-      //   }
-      //   else {
-      //     rw.phone = rw.phone_number
-      //     rw.emails = rw.email
-      //   }
-      // })
+    this.dataService.getUserById(this.searchStr,this.currentUser?.role =='Community User' ? this.currentUser?.com_id : id, is_for).subscribe((res: any) => {
+      this.rows = res.body.sort(function (a, b) {
+        if (a.first_name.toUpperCase() < b.first_name.toUpperCase()) { return -1; }
+        if (a.first_name.toUpperCase() > b.first_name.toUpperCase()) { return 1; }
+        return 0;
+      });;
       if (!res.pagination) {
         this.page.size = res.body.length;
         this.page.totalElements = res.body.length;
@@ -252,20 +235,26 @@ export class UserComponent implements OnInit {
     )
   }
 
-  terminateUsr(row){
+  permanentdelete(row){
+    this.rowdelete =row
+    this.modalOpenOSE(this.permanentdeleteUser, 'lg');
+  }
+
+  terminateUsr(modal: NgbModalRef){
     let cmntyData = {
-      user_id : row?.id,
+      user_id : this.rowdelete?.id,
       community_id : this.currentUser?.id,
       is_for : 'community'
     }
     let agncyData = {
-      user_id : row?.id,
+      user_id : this.rowdelete?.id,
       agency_id : this.currentUser?.id,
       is_for : ''
     }
-    this.dataService.terminateUser(this.currentUser.role == 'Agency' ? agncyData : cmntyData).subscribe((res:any) => {
+    this.dataService.terminateUser(this.currentUser?.role == 'Agency' ? agncyData : cmntyData).subscribe((res:any) => {
       if (!res.err) {
-        this.tost.successToastr(res.msg)
+        this.tost.successToastr("User Deleted Successfully")
+        this.closeded(modal)
         this.setPage({ offset: 0 })
 
       } else {
@@ -278,13 +267,17 @@ export class UserComponent implements OnInit {
   }
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.tost.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     let formdata = new FormData();
@@ -303,6 +296,21 @@ export class UserComponent implements OnInit {
     }
     )
   }
+ 
+ getDeletedUser(){
+    this.currenttab = 'block'
+     this.workingUserHide = true
+    this.dataService.getDeletedUser(this.searchStr ?? '', this.currentUser?.id).subscribe(res => {
+      if (!res.error) {
+        this.rows2 = res.body; 
+      }
+    });
+ }
+  
+reinstatefn(row){
+  this.id = { id: row.id }
+  this.modalOpenOSE(this.reinstate, 'lg');
+}
 
   getPrmsnData(){
     this.dataService.getPermissionByAdminRole().subscribe(
@@ -311,7 +319,7 @@ export class UserComponent implements OnInit {
         res.body.map(i=>{
           // comunity , agency
             if(this.roleData.includes(i.role_id)){
-              if(i.permission_name == 'User'){
+              if(i.permission_name == 'Users'){
                 this.addPrms  = i.add_permission
               this.dltPrms  = i.delete_permission
               this.edtPrms  = i.edit_permission
@@ -329,7 +337,7 @@ export class UserComponent implements OnInit {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
         // console.log("Roles------",res.body);
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})
@@ -340,33 +348,25 @@ export class UserComponent implements OnInit {
       this.dataService.genericErrorToaster()
     })
   }
+  reinstateUser(modal: NgbModalRef) {
+    this.btnShow = true;
+    this.dataService.reinstateDeletedUser(this.id).subscribe((res: any) => {
+      if (!res.error) {
+        this.getDeletedUser()
+        this.tost.successToastr(res.msg)
+        this.closeded(modal)
+        this.btnShow = false;
+      } else {
+        this.btnShow = false;
+        this.tost.errorToastr(res.msg)
+      }
+    },
+      (err) => {
+        this.btnShow = false;
+        this.api.genericErrorToaster()
+      })
   }
 
+  }
 
-  // onFileInput(e){
-  //   this.selectedFile =  e.target.files[0]
-  //   console.log( e.target.files[0])
-  //   const frmData = new FormData();
-    
-    
-  //   let reader = new FileReader();
-  //   reader.readAsDataURL(this.selectedFile);
-  //   reader.onload = () => {
-  //     this.addedImagePath = reader.result.toString();
-  //   };
-  //   frmData.append('report', this.addedImagePath);
-
-  //   this.dataService.importUsers(frmData).subscribe((res:any) => {
-  //     if (!res.err) {
-  //       this.tost.successToastr(res.msg)
-  //       this.setPage({ offset: 0 })
-
-  //     } else {
-  //       this.dataService.genericErrorToaster()
-  //     }
-  //   }, error => {
-  //     this.dataService.genericErrorToaster(error)
-  //   }
-  //   )
-  // }
-
+  

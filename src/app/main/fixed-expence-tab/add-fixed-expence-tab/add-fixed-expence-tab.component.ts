@@ -84,7 +84,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
       invoice_number:['', Validators.required]
     })
  
-    if(['6'].includes(this.currentUser.prmsnId)){
+    if(['6'].includes(this.currentUser?.prmsnId)){
       this.getCommunityId()
     }
 
@@ -93,12 +93,12 @@ export class AddFixedExpenceTabComponent implements OnInit {
       this.getFixeExpensesTableById()
     }
 
-    if(['1'].includes(this.currentUser.prmsnId))
+    if(['1'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['com_name'].clearValidators();
      this.formRoleData.updateValueAndValidity();
     }
-    if(['6'].includes(this.currentUser.prmsnId))
+    if(['6'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['com_name'].setValidators(Validators.required);
      this.formRoleData.updateValueAndValidity();
@@ -107,9 +107,9 @@ export class AddFixedExpenceTabComponent implements OnInit {
 
   ngAfterContentInit(){
     if(this.prmsUsrId.id == null){
-      if(['1'].includes(this.currentUser.prmsnId)){
+      if(['1'].includes(this.currentUser?.prmsnId)){
         this.getCommunityDetails()
-        this.slctCom(this.currentUser.id,2)
+        this.slctCom(this.currentUser?.id,2)
       }
     }
   }
@@ -170,7 +170,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
       return;
     }
     let data ={
-      community_name: this.currentUser.prmsnId == '1' ? this.comName.community_name:this.submitId2[0].community_name,
+      community_name: this.currentUser?.prmsnId == '1' ? this.comName.community_name:this.submitId2[0].community_name,
       purchage_date:this.formRoleData.value.pur_date,
       vendor: this.formRoleData.value.vendor,
       description:this.formRoleData.value.desc,
@@ -178,7 +178,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
       amount:this.formRoleData.value.amount,
       department:this.formRoleData.value.department,
       pmt_type: this.formRoleData.value.pay_type,
-      entered_by:this.currentUser.id,
+      entered_by:this.currentUser?.id,
       start_date:this.formRoleData.value.start_date,
       expenses_date:this.formRoleData.value.exp_date,
       end_date:this.formRoleData.value.end_date,
@@ -190,7 +190,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
       this.loading=  true;
       let data ={
         id:this.prmsUsrId.id,
-        community_name:this.currentUser.prmsnId == '1' ? this.comName.community_name:this.submitId2[0].community_name,
+        community_name:this.currentUser?.prmsnId == '1' ? this.comName.community_name:this.submitId2[0].community_name,
         purchage_date:this.formRoleData.value.pur_date,
         vendor: this.formRoleData.value.vendor,
         description:this.formRoleData.value.desc,
@@ -198,7 +198,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
         amount:this.formRoleData.value.amount,
         department:this.formRoleData.value.department,
         pmt_type: this.formRoleData.value.pay_type,
-        entered_by:this.currentUser.id,
+        entered_by:this.currentUser?.id,
         start_date:this.formRoleData.value.start_date,
         expenses_date:this.formRoleData.value.exp_date,
         end_date:this.formRoleData.value.end_date,
@@ -273,9 +273,9 @@ export class AddFixedExpenceTabComponent implements OnInit {
     
     this.getvendors()
     this.getType()
-    this.getDepartment(no == 2 ? this.currentUser.id : no==3 ? e : e.target.value)
+    this.getDepartment(no == 2 ? this.currentUser?.id : no==3 ? e : e.target.value)
     let data = {
-      id : no == 2 ? this.currentUser.id : no==3? e : e.target.value,
+      id : no == 2 ? this.currentUser?.id : no==3? e : e.target.value,
       community_id : 'community_id'
     }
     this.dataSrv.getLedgerById(data).subscribe((res:any)=>{
@@ -305,7 +305,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
 
   getvendors(){
     this.vendorData = []
-    let data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' :  this.currentUser.id }
+    let data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' ? '' :  this.currentUser?.id }
     this.dataSrv.getVendor(data).subscribe((res:any)=>{
       if(!res.err){
          res.body.filter(i=>{
@@ -351,7 +351,7 @@ export class AddFixedExpenceTabComponent implements OnInit {
   }
 
   getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.currentUser?.id).subscribe(response => {
       if (!response.error) {
           this.comName = response.body[0]
       } else {

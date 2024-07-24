@@ -121,7 +121,6 @@ export class EditAgencyComponent implements OnInit {
 
       this.currentUser = this._authenticationService.currentUserValue;
       this.getCommunityId()
-      this.getAgncyCom()
       this.fromDate = calendar.getToday();
       this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
   
@@ -136,7 +135,10 @@ export class EditAgencyComponent implements OnInit {
       itemsShowLimit: 3,
       allowSearchFilter: true
     };
-
+   public passwordTextType: boolean ;
+   public passwordTextType2: boolean;
+   public passwordTextType3: boolean;
+   
     mapCountry_selected(data){
       return this.selectedDataValue = data.dial_code;
     }
@@ -145,6 +147,8 @@ export class EditAgencyComponent implements OnInit {
     }
 
     ngOnInit(): void {
+      this.getCommunityId()
+      this.getAgncyCom()
       this.comId = this.currentUser.id
       this.state = this.States
      
@@ -195,6 +199,7 @@ export class EditAgencyComponent implements OnInit {
         state: ['',[ Validators.required]],
         show_shift_user: ['',[ Validators.required]],
         address1: ['', [Validators.required]],
+        agency_type: ['', Validators.required],
         username: [''],
         sort_name: [''],
         address2: [''],
@@ -222,7 +227,7 @@ export class EditAgencyComponent implements OnInit {
           Validators: MustMatch('confPassword', 'newPassword' )
         })
 
-        if(this.currentUser.role == 'SuperAdmin')
+        if(this.currentUser?.role == 'SuperAdmin')
          {
           this.confirmForm.controls['password'].clearValidators();
           this.confirmForm.updateValueAndValidity();
@@ -232,18 +237,16 @@ export class EditAgencyComponent implements OnInit {
           this.confirmForm.controls['password'].setValidators(Validators.required);
            this.confirmForm.updateValueAndValidity();
         }
-        if(this.currentUser.prmsnId == '1'){
+        if(this.currentUser?.prmsnId == '1'){
           this.updateCom.controls['com_id'].clearValidators()
         }
-        else if(this.currentUser.prmsnId != '1')
+        else if(this.currentUser?.prmsnId != '1')
         {
           this.updateCom.controls['com_id'].setValidators(Validators.required);
            this.updateCom.updateValueAndValidity();
         }
         this.getCmAccess();
-    }
-
-   
+    }   
 
     @ViewChild('fileInput') elfile: ElementRef;
     onFileInput(files: any) {
@@ -359,6 +362,7 @@ export class EditAgencyComponent implements OnInit {
         agency_contact_lastname: this.curComDetails.agency_contact_lastname,
         agency_contact_person_title: this.curComDetails.agency_contact_person_title,
         username: this.curComDetails.username,
+        agency_type: this.curComDetails.agency_type,
         sort_name: this.curComDetails.sort_name,
         agency_contact_cell_number: this.curComDetails.agency_contact_cell_number,
         agency_contact_email_address: this.curComDetails.agency_contact_email_address,
@@ -606,7 +610,8 @@ export class EditAgencyComponent implements OnInit {
           community_id: this.submitId2,
           state: this.formData.value.state,
           zipcode: this.formData.value.zipcode,
-          username: this.formData.value.username,
+          username: this.formData.value.username?.replace(' ','').trim(),
+          agency_type: this.formData.value.agency_type,
           sort_name: this.formData.value.sort_name,
           agency_contact_firstname: this.formData.value.agency_contact_firstname,
           agency_contact_lastname: this.formData.value.agency_contact_lastname,
@@ -718,16 +723,16 @@ export class EditAgencyComponent implements OnInit {
 
 
     getAgncyCom(){
+      let commId =[]
       this.dataService.getAgencyCommunity(this.comunityId).subscribe((response: any) => {
         if (response['error'] == false) {
-          let comId =[ ]
-          response.body.forEach(i=> comId.push(i.community_id))
+          response.body.forEach(i=> commId.push(i.community_id))
            
            if(this.allCommunity){
-            this.AgncyCommunity =  this.allCommunity.filter(i=> comId.includes(i.id) )
-            
+            this.AgncyCommunity =  this.allCommunity.filter(i=> commId.includes(i.id) )
+                  
             this.updateCom.patchValue({
-              com_id :  this.AgncyCommunity 
+              com_id :  this.AgncyCommunity
             })
            }
           

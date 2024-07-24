@@ -41,10 +41,10 @@ export class ViewCardComponent implements OnInit {
   }
 
   getCommunityShift() {
-    let currentUser1 = this.currentUser.id;
+    let currentUser1 = this.currentUser?.id;
     let userShift = ''
     let usetype = ''
-    if (this.currentUser.role == 'SuperAdmin') {
+    if (this.currentUser?.role == 'SuperAdmin') {
       this.page.size = 10
       let userShifts = ''
     
@@ -58,10 +58,10 @@ export class ViewCardComponent implements OnInit {
           this.dataService.genericErrorToaster()
         })
     }
-    else if (this.currentUser.role == 'Agency' || this.currentUser.role == 'User') {
+    else if (this.currentUser?.role == 'Agency' || this.currentUser?.role == 'User') {
 
-      if(this.currentUser.user_role == '5'){
-        this.dataService.getUserAgencyshiftById(this.currentUser.id).subscribe((res: any) => {
+      if(this.currentUser?.user_role == '5'){
+        this.dataService.getUserAgencyshiftById(this.currentUser?.id).subscribe((res: any) => {
           this.allShifts = res.body.userShifts
           this.allShifts.map(rt => {
           })
@@ -70,8 +70,8 @@ export class ViewCardComponent implements OnInit {
             this.dataService.genericErrorToaster()
           })
       }else{
-      let for_cp1 = this.currentUser.role == 'User' ? 'true' : 'false';
-      let currentUser1 = this.currentUser.id
+      let for_cp1 = this.currentUser?.role == 'User' ? 'true' : 'false';
+      let currentUser1 = this.currentUser?.id
       let cpType = ''
       let tpUsr = 'typeUser1'
       this.dataService.getCommunityShiftByID(this.searchStr,for_cp1, currentUser1, cpType,tpUsr).subscribe((res: any) => {

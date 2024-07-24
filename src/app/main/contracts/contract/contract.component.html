@@ -21,12 +21,13 @@
             </div>
         </div>
 
-        <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"> -->
-            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+      [scrollbarH]="true" [virtualization]="false"
+      [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" >
             <!-- [columns]="[{ name: 'Date' }, { name: 'From' }, { name: 'To' }, { name: 'Description' }, { name: 'Amount' }]" -->
 
             <ngx-datatable-column name="Project" prop="project_name" [width]="50">
@@ -118,7 +119,7 @@
                                 <div class="invalid-feedback"
                                     *ngIf="controls['project_id'].hasError('required')"
                                     class="text text-danger">
-                                    This field required
+                                    This field is Required
                                 </div>
                             </span>
                         </div>
@@ -154,7 +155,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['community_id'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -176,7 +177,7 @@
                                         <span *ngIf="controls['budget'].dirty && controls['budget'].invalid">
                                             <div class="invalid-feedback" *ngIf="controls['budget'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -198,7 +199,7 @@
                                         <span *ngIf="controls['estimate'].dirty && controls['estimate'].invalid">
                                             <div class="invalid-feedback" *ngIf="controls['estimate'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
 
                                         </span>
@@ -235,7 +236,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['status'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>

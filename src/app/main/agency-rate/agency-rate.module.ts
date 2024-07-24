@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgencyRateComponent } from './agency-rate.component';
-import { AuthGuard } from 'app/auth/helpers';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
@@ -20,19 +19,16 @@ const routes = [
   {
     path: '',
     component: AgencyRateComponent,
-    canActivate: [AuthGuard],
   },
 
   {
     path: 'add-agencyrate',
     component: AddAgencyRateComponent,
-    canActivate: [AuthGuard],
   },
 
   {
     path: 'edit-agencyrate/:id',
     component: EditAgencyRatesComponent,
-    canActivate: [AuthGuard],
   },
  
  

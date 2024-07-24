@@ -25,9 +25,10 @@
             </div>
         </div>
 
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+      [scrollbarH]="true" [virtualization]="false"
+      [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" >
             <!-- [columns]="[{ name: 'Date' }, { name: 'From' }, { name: 'To' }, { name: 'Description' }, { name: 'Amount' }]" -->
             <ngx-datatable-column [name]="'user.drvName' | translate" prop="driver_name">
             </ngx-datatable-column>

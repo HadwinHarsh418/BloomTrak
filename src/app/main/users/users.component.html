@@ -5,14 +5,14 @@
     <div class="card-body mt-1">
         <div class="row">
             <div class="col-md-6 col-12" >
-                <div class="d-flex ">
-                    <button type="button" class="btn-sm btn-info" *ngIf="(currentUserDtls == 'SuperAdmin'|| currentUserDtls == 'Admin') && addPrms==1|| currentUser.prmsnId == '6' || currentUser.user_role== '3'" [routerLink]="['/community/add-community']"  >
+                <div class="d-flex custom-button ">
+                    <button type="button" class="btn-sm btn-info" *ngIf="(currentUserDtls == 'SuperAdmin'|| currentUserDtls == 'Admin' || currentUserDtls == 'Management User' ) && addPrms=='1'|| currentUser.prmsnId == '6' || currentUser.user_role== '3'" [routerLink]="['/community/add-community']"  >
                         <i class="fa fa-plus mr-50"></i> Add Community
                     </button>
                     
                     <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
                         <i class="fa fa-file "></i>   Import File
-                        <input #fileInput type="file"  (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                        <input #fileInput type="file"  (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;"accept=".csv, .xls"  />
                       </button>
                 </div>
             </div>
@@ -27,9 +27,10 @@
         </div>
 
         <!-- For SuperAdmin -->
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" *ngIf="currentUser.role != 'User' && currentUser.role != 'Admin'">
+        <div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" [scrollbarH]="true" [virtualization]="false"
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" *ngIf="currentUser.role != 'User' && currentUser.role != 'Admin' && currentUser.user_role != 8">
             <ngx-datatable-column name="Community name" prop="community_name" [width]="130">
                 <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ community_name }}
@@ -88,15 +89,15 @@
                                 <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
                             </a>
                             <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                <a [routerLink]="['profile', row]" ngbDropdownItem *ngIf="vwPrms==1 || currentUser.prmsnId == '6'"
+                                <a [routerLink]="['profile', row]" ngbDropdownItem *ngIf="vwPrms=='1' || currentUser.prmsnId == '6' || currentUser.user_role == 3"
                                     class="d-flex align-items-center">
                                     <i class="fa fa-eye mr-50"></i> View
                                 </a>
-                                <a [routerLink]="['/edit-community', row.id]" ngbDropdownItem *ngIf="edtPrms==1 || currentUser.prmsnId == '6'"
+                                <a [routerLink]="['/edit-community', row.id]" ngbDropdownItem *ngIf="edtPrms=='1' || currentUser.prmsnId == '6' || currentUser.user_role == 3"
                                     class="d-flex align-items-center">
                                     <i class="fa fa-edit mr-50"></i> Edit
                                 </a>
-                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms==1 || currentUser.prmsnId == '6'">
+                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms=='1' || currentUser.prmsnId == '6' || currentUser.user_role == 3">
                                     <i class="fa fa-trash mr-50"></i> Archive
                                 </a>
                             </div>
@@ -105,12 +106,14 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>
         <!-- /End For SuperAdmin -->
 
              <!-- For Magnagement -->
-             <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+             <div class="overflow" style="overflow: auto;">
+             <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
              [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" (page)="setPage($event)" *ngIf="currentUser.role == 'Admin'">
+             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" (page)="setPage($event)" *ngIf="currentUser.role == 'Admin' || currentUser.user_role == 8">
              <ngx-datatable-column name="Community name" prop="community_name" [width]="130">
                  <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                      {{ community_name }}
@@ -153,7 +156,7 @@
                  </ng-template>
              </ngx-datatable-column>
  
-             <ngx-datatable-column name="Single/Management" prop="mg_name" [width]="150">
+             <ngx-datatable-column name="Single/Management" prop="mg_name" [width]="150" *ngIf="currentUser.user_role != 8">
                  <ng-template let-mg_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                      {{ mg_name }}
                  </ng-template>
@@ -168,15 +171,15 @@
                                  <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
                              </a>
                              <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                 <a [routerLink]="['profile', row]" ngbDropdownItem *ngIf="vwPrms==1 || currentUser.prmsnId == '6'"
+                                 <a [routerLink]="['profile', row]" ngbDropdownItem *ngIf="vwPrms=='1' || currentUser.prmsnId == '6' || currentUser.user_role == 3"
                                      class="d-flex align-items-center">
                                      <i class="fa fa-eye mr-50"></i> View
                                  </a>
-                                 <a [routerLink]="['/edit-community', row.cp_id]" ngbDropdownItem *ngIf="edtPrms==1 || currentUser.prmsnId == '6'"
+                                 <a [routerLink]="['/edit-community', row.cp_id]" ngbDropdownItem *ngIf="edtPrms=='1' || currentUser.prmsnId == '6' || currentUser.user_role == 3"
                                      class="d-flex align-items-center">
                                      <i class="fa fa-edit mr-50"></i> Edit
                                  </a>
-                                 <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms==1 || currentUser.prmsnId == '6'">
+                                 <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms=='1' || currentUser.prmsnId == '6' || currentUser.user_role == 3">
                                      <i class="fa fa-trash mr-50"></i> Archive
                                  </a>
                              </div>
@@ -185,10 +188,12 @@
                  </ng-template>
              </ngx-datatable-column>
          </ngx-datatable>
+        </div>
          <!--End For Magnagement -->
 
 <!-- For Community-User -->
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows2" [columnMode]="'force'"
+<div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows2" [columnMode]="'force'"
         [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
         [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"  *ngIf="currentUser.prmsnId == '4'">
         <ngx-datatable-column name="Community name" prop="community_name" [width]="130">
@@ -265,10 +270,12 @@
             </ng-template>
         </ngx-datatable-column> -->
     </ngx-datatable>
+</div>
 <!--End For Community-User -->
 
 <!-- For Agency-User -->
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows2" [columnMode]="'force'"
+<div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows2" [columnMode]="'force'"
         [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
         [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"  *ngIf="currentUser.prmsnId == '5'">
         <ngx-datatable-column name="Agency name" prop="agency_name" [width]="130">
@@ -346,6 +353,7 @@
             </ng-template>
         </ngx-datatable-column> -->
     </ngx-datatable>
+</div>
 <!--End For Agency-User -->
 
     </div>

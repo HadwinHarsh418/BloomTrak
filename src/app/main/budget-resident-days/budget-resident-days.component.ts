@@ -24,6 +24,8 @@ export class BudgetResidentDaysComponent implements OnInit {
   @ViewChild('dltImprt') dltImprt : ElementRef<any>;
   dltForm: any;
   allCommunity: any=[];
+  allCommunity1:any;
+  community_id: any;
 
   constructor(
     private dataSrv : DataService,
@@ -37,6 +39,7 @@ export class BudgetResidentDaysComponent implements OnInit {
     })
     this.getRole()
     this.getCommunityId()
+  this.getMngComunity()
   }
 
   ngOnInit(): void {
@@ -48,7 +51,7 @@ export class BudgetResidentDaysComponent implements OnInit {
   }
 
   getBudgetList(){
-    let data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.currentUser.id }
+    let data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId :this.community_id?this.community_id: this.currentUser?.prmsnId == '6' ? '' : this.currentUser?.user_role == 3  || this.currentUser?.user_role == 5 ? this.community_id: this.currentUser?.id }
     this.dataSrv.getBudgetResidentDays(data).subscribe((res:any)=>{
       if(!res.err){
         this.rows = res.body;
@@ -82,13 +85,17 @@ export class BudgetResidentDaysComponent implements OnInit {
 
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     
@@ -142,7 +149,7 @@ export class BudgetResidentDaysComponent implements OnInit {
     this.dataSrv.getAllRole( ).subscribe((res:any)=>{
       if(!res.err){
         // 
-         res.body.filter(i=>{ this.roleData.push(i.id.toString())})
+         res.body.filter(i=>{ this.roleData.push(i.id?.toasterring())})
          this.getPrmsnData();
 
       }
@@ -209,10 +216,10 @@ export class BudgetResidentDaysComponent implements OnInit {
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
       });
-      if(this.currentUser.prmsnId == '1'){
-        // this.slctCom(this.currentUser.id)
+      if(this.currentUser?.prmsnId == '1'){
+        // this.slctCom(this.currentUser?.id)
         this.allCommunity =   this.allCommunity.filter(i=>{
-          if(this.currentUser.id == i.id){
+          if(this.currentUser?.id == i.id){
             return i
           }
         })
@@ -225,5 +232,61 @@ export class BudgetResidentDaysComponent implements OnInit {
       this.dataSrv.genericErrorToaster();
 
     })
+  }
+  selectCommunity1(id:any){
+    this.community_id=id;
+    this.getBudgetList();
+  }
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let d:any[] = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          const uniqueArray = d.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.community_id === obj.community_id &&
+                    t.community_name === obj.community_name &&
+                    t.community_short_name === obj.community_short_name
+                ))
+            );
+          this.allCommunity1 = uniqueArray.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = this.allCommunity1[0]?.community_id
+      this.getBudgetList();
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity1 = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = response?.body[0]?.cp_id
+      this.getBudgetList();
+          //this.toastr.successToastr(response.msg);
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
   }
 }

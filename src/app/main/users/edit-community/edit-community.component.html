@@ -21,7 +21,7 @@
                     </div>
                     <div class="card-body" *ngIf="allCommunity">
   
-                        <div class=" col-lg-12 mt-2" *ngFor="let comm of allCommunity">
+                        <div class=" col-lg-12 " *ngFor="let comm of allCommunity">
                                 <div class="card">
                                     <!-- <div class="card-header  pb-0">
                                         <div class="row">
@@ -29,84 +29,84 @@
                                         </div>
                                     </div> -->
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Name : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.community_name}}</span></div>
+                                        <div class="col-6"><h6>Community Name : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.community_name}}</span></div>
                                     </div>
 
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Username : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.username || '---'}}</span></div>
+                                        <div class="col-6"><h6>Username : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.username || '---'}}</span></div>
                                     </div>
                                   
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Email Address : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.community_email}}</span></div>
+                                        <div class="col-6"><h6>Community Email Address : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.community_email}}</span></div>
                                     </div>
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Phone Number : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.community_phone_no |numberFormat}}</span></div>
+                                        <div class="col-6"><h6>Community Phone Number : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.community_phone_no |numberFormat}}</span></div>
                                     </div>
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Website : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.community_website}}</span></div>
+                                        <div class="col-6"><h6>Community Website : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.community_website}}</span></div>
                                     </div>
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Cancellation Period : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.cancellation_period}}</span></div>
+                                        <div class="col-6"><h6>Community Cancellation Period : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.cancellation_period}}</span></div>
                                     </div>
 
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Address 1 : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.community_address1}}</span></div>
+                                        <div class="col-6"><h6>Community Address 1 : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.community_address1}}</span></div>
                                     </div>
                                     <div class="row space mb-1">
-                                        <div class="col-md-6"><h6>Community Address 2 : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{ comm.community_address2}}</span></div>
+                                        <div class="col-6"><h6>Community Address 2 : </h6></div>
+                                        <div class="col-6"><span class="description"> {{ comm.community_address2}}</span></div>
                                     </div>
                                     
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>City : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.city}}</span></div>
+                                        <div class="col-6"><h6>City : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.city}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>State : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.state}}</span></div>
+                                        <div class="col-6"><h6>State : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.state}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Zipcode : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.zipcode}}</span></div>
+                                        <div class="col-6"><h6>Zipcode : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.zipcode}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Management Company : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.mg_name}}</span></div>
+                                        <div class="col-6"><h6>Management Company : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.mg_name}}</span></div>
                                     </div>
                                     <!--<div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Last Name : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.last_name}}</span></div>
+                                        <div class="col-6"><h6>Last Name : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.last_name}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Phone : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.phone |numberFormat}}</span></div>
+                                        <div class="col-6"><h6>Phone : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.phone |numberFormat}}</span></div>
                                     </div> -->
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Primary Contact Firstname : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.primary_contact_firstname}}</span></div>
+                                        <div class="col-6"><h6>Primary Contact Firstname : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.primary_contact_firstname}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Primary Contact Lastname : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.primary_contact_lastname}}</span></div>
+                                        <div class="col-6"><h6>Primary Contact Lastname : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.primary_contact_lastname}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Primary Contact Phone : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.primary_contact_phone |numberFormat}}</span></div>
+                                        <div class="col-6"><h6>Primary Contact Phone : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.primary_contact_phone |numberFormat}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Primary Contact Email : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.primary_contact_email}}</span></div>
+                                        <div class="col-6"><h6>Primary Contact Email : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.primary_contact_email}}</span></div>
                                     </div>
                                     <div class="row space  mb-1">
-                                        <div class="col-md-6"><h6>Primary Contact Title : </h6></div>
-                                        <div class="col-md-6"><span class="description"> {{comm.primary_contact_title}}</span></div>
+                                        <div class="col-6"><h6>Primary Contact Title : </h6></div>
+                                        <div class="col-6"><span class="description"> {{comm.primary_contact_title}}</span></div>
                                     </div>
                                 </div>
                                 <button type="button" (click)="goBack()"

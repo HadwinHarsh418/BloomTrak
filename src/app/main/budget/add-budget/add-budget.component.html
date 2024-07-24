@@ -15,16 +15,16 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mt-3">
+                                    <div class="new-300">
                                         <form class="user" [formGroup]="formRoleData" (ngSubmit)="submitted()">
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Community Name <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <!-- <input type="text"
                                                             [class.is-invalid]="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid"
@@ -32,17 +32,17 @@
                                                             id="community_name" class="form-control"
                                                             placeholder="Community Name" aria-describedby="passwordHelpInline"> -->
 
-                                                            <select  class="form-control" formControlName="community_name" (change)="slctCom($event,1)" *ngIf="['6'].includes(currentUser.prmsnId)">
+                                                            <select  class="form-control" formControlName="community_name" (change)="slctCom($event,1)" *ngIf="['6','3'].includes(currentUser.prmsnId)">
                                                                 <option value="" selected="selected" disabled>---Select Community---</option>
-                                                                <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                                                                <option value="{{item.cp_id||item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
                                                             </select>
-                                                            <span *ngIf="['1'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
+                                                            <span *ngIf="['1','4'].includes(currentUser.prmsnId)">{{comName?.community_name}}</span>
 
                                                             <span *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['community_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -50,13 +50,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Description<span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="text"
                                                             [class.is-invalid]="FormData_Control['description'].dirty && FormData_Control['description'].invalid"
@@ -67,7 +67,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['description'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -75,13 +75,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Department 
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <!-- <input type="text"
                                                             [class.is-invalid]="FormData_Control['department'].dirty && FormData_Control['department'].invalid"
@@ -91,7 +91,7 @@
 
                                                             <select  class="form-control" formControlName="department" (click)="chngD($event)" [attr.disabled]="deptDsbl ? 'disabled' : null">
                                                                 <option value="" selected="selected" disabled>---Select Department---</option>
-                                                                <option value="no">No Department</option>
+                                                                <option value="no" *ngIf="!dprtmnt.length">No Department</option>
                                                                 <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}</option>
                                                             </select>
 
@@ -99,7 +99,7 @@
                                                             <span class="invalid-feedback"
                                                                 *ngIf="FormData_Control['department'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </span>
                                                         </span> -->
                                                     </div>
@@ -108,13 +108,13 @@
                                             </div>
                                             
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">GL Account <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <!-- <input type="text"
                                                             [class.is-invalid]="FormData_Control['GLA_id'].dirty && FormData_Control['GLA_id'].invalid"
@@ -124,7 +124,7 @@
 
                                                             <select  class="form-control" formControlName="GLA_id">
                                                                 <option value="" disabled>---Select GL Account---</option>
-                                                                <option value="no">No GL Account</option>
+                                                                <option value="no" *ngIf="!ledgerData1?.length">No GL Account</option>
                                                                 <option value="{{item.gl_acc}}" *ngFor="let item of ledgerData1">{{item.gl_and_description}}</option>
                                                             </select>
 
@@ -132,7 +132,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['GLA_id'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -141,13 +141,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Classification <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
 
                                                         <select placeholder="HH:MM" name="startTime" class="form-control" formControlName="labor_type" >
@@ -160,7 +160,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['labor_type'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -171,13 +171,13 @@
                                            
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Type <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <!-- <input type="text"
                                                             [class.is-invalid]="FormData_Control['type'].dirty && FormData_Control['type'].invalid"
@@ -192,7 +192,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['type'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -201,13 +201,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Currency
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="text"
                                                             [class.is-invalid]="FormData_Control['currency'].dirty && FormData_Control['currency'].invalid"
@@ -218,7 +218,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['currency'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -227,13 +227,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">PRD Value 
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['PRD_value'].dirty && FormData_Control['PRD_value'].invalid"
@@ -244,7 +244,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['PRD_value'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -253,13 +253,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">January <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['january'].dirty && FormData_Control['january'].invalid"
@@ -270,7 +270,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['january'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -279,13 +279,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">February <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['february'].dirty && FormData_Control['february'].invalid"
@@ -296,7 +296,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['february'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -305,13 +305,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">March <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['march'].dirty && FormData_Control['march'].invalid"
@@ -322,7 +322,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['march'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -331,13 +331,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">April <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['april'].dirty && FormData_Control['april'].invalid"
@@ -348,7 +348,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['april'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -356,13 +356,13 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">May <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['may'].dirty && FormData_Control['may'].invalid"
@@ -373,7 +373,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['may'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -382,13 +382,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">June <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['june'].dirty && FormData_Control['june'].invalid"
@@ -399,7 +399,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['june'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -408,13 +408,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">July <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['july'].dirty && FormData_Control['july'].invalid"
@@ -425,7 +425,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['july'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -434,13 +434,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">August <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['august'].dirty && FormData_Control['august'].invalid"
@@ -451,7 +451,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['august'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -460,13 +460,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">September <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['september'].dirty && FormData_Control['september'].invalid"
@@ -477,7 +477,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['september'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -486,13 +486,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">October<span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['october'].dirty && FormData_Control['october'].invalid"
@@ -503,7 +503,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['october'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -512,13 +512,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">November<span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['november'].dirty && FormData_Control['november'].invalid"
@@ -529,7 +529,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['november'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -538,13 +538,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">December<span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['december'].dirty && FormData_Control['december'].invalid"
@@ -555,7 +555,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['december'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -564,13 +564,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">YE Total <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="number"
                                                             [class.is-invalid]="FormData_Control['YE_total'].dirty && FormData_Control['YE_total'].invalid"
@@ -581,7 +581,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['YE_total'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -590,13 +590,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Budget Version
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="text"
                                                             [class.is-invalid]="FormData_Control['budget_version'].dirty && FormData_Control['budget_version'].invalid"
@@ -607,7 +607,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['budget_version'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -616,13 +616,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">Start date <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="date"
                                                             [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
@@ -633,7 +633,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['start_date'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -641,13 +641,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <div class="col-lg-4">
+                                                <div class="col-lg-3">
                                                     <div class="common-form-left">
                                                         <label for="inputPassword6" class="col-form-label">End date <span class="text-danger">*</span>
                                                         </label>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-8">
+                                                <div class="col-lg-9">
                                                     <div class="common-form-left form-group">
                                                         <input type="date"
                                                             [class.is-invalid]="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid"
@@ -658,7 +658,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="FormData_Control['end_date'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>

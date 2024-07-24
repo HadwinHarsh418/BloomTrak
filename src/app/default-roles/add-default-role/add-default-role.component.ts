@@ -70,6 +70,7 @@ export class AddDefaultRoleComponent implements OnInit {
     };
     this.showTrakAccToRole()
     this.formRoleData = this.formBuilder.group({
+      is_for: ['',  Validators.required],
       role_name: ['', Validators.required],
       trak_type: ['',Validators.required],
     })
@@ -89,8 +90,9 @@ export class AddDefaultRoleComponent implements OnInit {
     if (this.formRoleData.invalid) {
       return;
     }
-    if(this.currentUser.prmsnId ==2){
+    if(this.currentUser?.prmsnId ==2){
       this.data ={
+        is_for:this.formRoleData.value.is_for,
         name:this.formRoleData.value.role_name,
         id:this.prmsUsrId.id ? this.prmsUsrId.id : '',
         trak_type:'1',
@@ -98,6 +100,7 @@ export class AddDefaultRoleComponent implements OnInit {
       }
     }else{
       this.data ={
+        is_for:this.formRoleData.value.is_for,
         name:this.formRoleData.value.role_name,
         id:this.prmsUsrId.id ? this.prmsUsrId.id : '',
         trak_type:this.formRoleData.value.trak_type,
@@ -138,10 +141,10 @@ export class AddDefaultRoleComponent implements OnInit {
     }
   }
   getRoles(){
-    // let comunity_id=this.currentUser.id
+    // let comunity_id=this.currentUser?.id
     let data = {
-      prms : this.currentUser.prmsnId == '1' ? 'community_id' : this.currentUser.prmsnId == '2' ? 'agency_id' : 'agency_id',
-       id : this.currentUser.prmsnId == '6' ? null : this.currentUser.id
+      prms : this.currentUser?.prmsnId == '1' ? 'community_id' : this.currentUser?.prmsnId == '2' ? 'agency_id' : 'agency_id',
+       id : this.currentUser?.prmsnId == '6' ? null : this.currentUser?.id
     }
     this.dataSrv.getRole(data).subscribe((res:any)=>{
       if(!res.err){
@@ -161,10 +164,10 @@ export class AddDefaultRoleComponent implements OnInit {
   
     this.dataSrv.getAllRole( ).subscribe((res:any)=>{
       if(!res.err){
-      // if(this.currentUser.prmsnId == '6'){
+      // if(this.currentUser?.prmsnId == '6'){
       //    this.default_Role=  res.body
       // }
-      if(this.currentUser.prmsnId == 6){
+      if(this.currentUser?.prmsnId == 6){
         this.rows=[]
       this.rows=  res.body
       }
@@ -177,6 +180,7 @@ export class AddDefaultRoleComponent implements OnInit {
 
   patchVal(){
     this.formRoleData.patchValue({
+      is_for:this.prmsUsrId.is_for,
       role_name : this.prmsUsrId.name,
       trak_type:this.prmsUsrId.trak_type,
     })
@@ -187,7 +191,7 @@ export class AddDefaultRoleComponent implements OnInit {
   }
 
   getComId(){
-    if(this.currentUser.user_role =='6'){
+    if(this.currentUser?.user_role =='6'){
     this.dataSrv.getCommunityId().subscribe((response: any) => {
       if (response['error'] == false) {
         this.allCommunity = response.body.sort(function(a, b){
@@ -206,7 +210,7 @@ export class AddDefaultRoleComponent implements OnInit {
     })
   }
   else{
-    this.dataSrv.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+    this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
       if (response['error'] == false) {
         this.allCommunity = response.body.sort(function(a, b){
           if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }

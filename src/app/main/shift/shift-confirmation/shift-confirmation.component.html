@@ -5,6 +5,11 @@
 
         <!-- account setting page -->
         <section id="page-account-settings">
+            <div class="row">
+                <div class="col-lg-12">
+                  <button class="back-button" (click)="goBackShift()"><i data-feather="arrow-left" class="font-medium-3 mr-1"></i>Back</button>
+                </div>
+              </div>
             <div class="row nav-vertical d-flex">
                 <div class="col-md-12 mb-2 mb-md-0">
                     <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
@@ -21,7 +26,7 @@
                                     <div class="card-header ml-1">
                                         <h4 class="card-title">Add Shift {{i + 1}}</h4>
                                     </div>
-                                    <div class="close card-header mr-1 " *ngIf="i!=0" style="color: #ff6633;">
+                                    <div class="close card-header mr-1 " *ngIf="i!=0" style="color:  #ff6633; opacity:inherit;">
                                         <p (click)="removeCard(i)" style="font-size: xxx-large;font-weight: bolder;cursor: pointer;">&times;</p>
                                     </div>
                                 </div>
@@ -36,7 +41,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-8">
-                                                    <div class="common-form-left form-group ">
+                                                    <div class="common-form-left">
                                                         <input type="text" value="confirmation"
                                                             placeholder="Communication for Confirmation" disabled
                                                             name="shift" [(ngModel)]="obj.shift">
@@ -52,7 +57,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-8">
-                                                    <div class="common-form-left form-group d-flex"> -->
+                                                    <div class="common-form-leftd-flex"> -->
                                                         <!-- <div class="form-check">
                                                             <input class="form-check-input" name='is_urgent'
                                                                 value='urgent' [(ngModel)]="obj.is_urgent" type="radio"
@@ -80,7 +85,7 @@
                                             <div class="row">
                                                 <div class="col-lg-12">
                                                     <div class="common-form-field">
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -89,7 +94,7 @@
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-8">
-                                                                <div class="common-form-left form-group d-flex">
+                                                                <div class="common-form-left mob_res">
                                                                     <div class="form-check">
                                                                         <input class="form-check-input" name='for_cp'
                                                                             value='1' [(ngModel)]="obj.for_cp"
@@ -100,7 +105,7 @@
                                                                             Team Members
                                                                         </label>
                                                                     </div>
-                                                                    <div class="form-check ml-3">
+                                                                    <div class="form-check">
                                                                         <input class="form-check-input" name='for_cp'
                                                                             value='2' [(ngModel)]="obj.for_cp"
                                                                             type="radio" name="flexRadioDefault"
@@ -111,13 +116,13 @@
                                                                         </label>
                                                                     </div>
 
-                                                                    <div class="form-check ml-3">
+                                                                    <div class="form-check">
                                                                         <input class="form-check-input" name='for_cp'
                                                                             value='0' [(ngModel)]="obj.for_cp"
                                                                             type="radio" name="flexRadioDefault"
-                                                                            id="flexRadioDefault2" checked>
+                                                                            id="flexRadioDefault3" checked>
                                                                         <label class="form-check-label"
-                                                                            for="flexRadioDefault2">
+                                                                            for="flexRadioDefault3">
                                                                             Both Team Members And Contract Agencies
                                                                         </label>
                                                                     </div>
@@ -139,7 +144,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="row" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Admin' ">
+                                                        <div class="row mb-1" *ngIf="currentUser.role == 'SuperAdmin' || currentUser.role == 'Admin' || currentUser.user_role == 8 ">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -158,7 +163,7 @@
                                                                             [(ngModel)]="obj.community" name="community"
                                                                             class="form-control" (change)="cmntyCng($event.target.value)">
                                                                             <option value="undefined" selected="selected" disabled>----Community List----</option>
-                                                                            <option   [ngValue]="tm.cp_id" *ngFor="let tm of mngmCommunity">
+                                                                            <option   [ngValue]="tm.cp_id" *ngFor="let tm of allCommunity">
                                                                                 {{tm.community_name}}</option>
                                                                         </select>
 
@@ -169,6 +174,14 @@
                                                                         <option   [ngValue]="tm.id" *ngFor="let tm of allCommunity">
                                                                             {{tm.community_name}}</option>
                                                                     </select>
+
+                                                                    <select *ngIf="currentUser.user_role== 8"
+                                                                    [(ngModel)]="obj.community" name="community"
+                                                                    class="form-control" (change)="cmntyCng($event.target.value)">
+                                                                    <option value="undefined" selected="selected" disabled>----Community List----</option>
+                                                                    <option   [ngValue]="tm.community_id" *ngFor="let tm of allCommunity">
+                                                                        {{tm.community_name}}</option>
+                                                                </select>                                                                
 
                                                                 </div>
                                                                 <div *ngIf="submit && !obj.community">
@@ -181,7 +194,7 @@
                                                        
 
 
-                                                        <div class="row" >
+                                                        <div class="row mb-1" >
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -198,15 +211,15 @@
                                                                     <option value="Normal" >Normal</option>
                                                                     <option value="Hazard" >Hazard</option>
                                                                 </select>
-                                                                </div>
                                                                 <div *ngIf="submit && !obj.rate_type">
                                                                     <div [ngClass]="{'is-invalid': true}"
                                                                         style="color: red;">This field is Required</div>
                                                                 </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="row" >
+                                                        <div class="row mb-1" >
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -227,15 +240,15 @@
                                                                 <option value="undefined" selected="selected" disabled>---Departments List---</option>
                                                                 <option value="{{item.name}}" *ngFor="let item of departmentDpw">{{item.name}}</option>
                                                             </select>
-                                                                </div>
-                                                                <div *ngIf="submit && !obj.department">
-                                                                    <div [ngClass]="{'is-invalid': true}"
-                                                                        style="color: red;">This field is Required</div>
+                                                            <div *ngIf="submit && !obj.department">
+                                                                <div [ngClass]="{'is-invalid': true}"
+                                                                    style="color: red;">This field is Required</div>
+                                                            </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -255,15 +268,16 @@
                                                                         class="form-control">
                                                                         <option value="undefined" selected="selected" disabled>---Positions List---</option>
                                                                         <option value="{{item.name}}" *ngFor="let item of positionDpw">{{item.name}}</option>
+                                                                       
                                                                     </select>
                                                                 </div>
-                                                                <div *ngIf="submit && !obj.position">
+                                                                <div *ngIf="submit && !obj.position" style="margin-top:-15px">
                                                                     <div [ngClass]="{'is-invalid': true}"
                                                                         style="color: red;">This field is Required</div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -285,15 +299,16 @@
                                                                         <option value="{{item.name}}" *ngFor="let item of certificationDpw">{{item.name}}</option>
                                                                         
                                                                     </select>
+                                                                    
                                                                 </div>
-                                                                <div *ngIf="submit && !obj.certification">
-                                                                    <div [ngClass]="{'is-invalid': true}"
-                                                                        style="color: red;">This field is Required</div>
-                                                                </div>
+                                                                    <div *ngIf="submit && !obj.certification" style="margin-top:-15px">
+                                                                        <div [ngClass]="{'is-invalid': true}"
+                                                                            style="color: red;">This field is Required</div>
+                                                                    </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -310,8 +325,29 @@
                                                                         <option value="1">Yes</option>
                                                                         <option value="0">No</option>
                                                                     </select>
+                                                                    <div *ngIf="submit && !obj.overtime">
+                                                                        <div [ngClass]="{'is-invalid': true}"
+                                                                            style="color: red;">This field is Required</div>
+                                                                    </div>
                                                                 </div>
-                                                                <div *ngIf="submit && !obj.overtime">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row" *ngIf="spread_rate == true">
+                                                            <div class="col-lg-4">
+                                                                <div class="common-form-left">
+                                                                    <label for="inputPassword6"
+                                                                        class="col-form-label">Hourly Rate (Agencies Using Spread)<span class="text-danger">*</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-8">
+                                                                <div class="common-form-left form-group">
+                                                                        <input type="number" onwheel="this.blur()" placeholder="$"
+                                                                        [(ngModel)]="obj.spread_hourly_rate" name="spread_hourly_rate"
+                                                                        class="form-control">
+                                                                </div>
+                                                                <div *ngIf="submit && !obj.spread_hourly_rate">
                                                                     <div [ngClass]="{'is-invalid': true}"
                                                                         style="color: red;">This field is Required</div>
                                                                 </div>
@@ -345,7 +381,7 @@
 
                                                        
 
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -385,14 +421,14 @@
                                                                         
                                                                     </div>
                                                                 </div>
-                                                                <div *ngIf="submit && !obj.delay">
+                                                                <div *ngIf="submit && !obj.delay" style="margin-top:-15px">
                                                                     <div [ngClass]="{'is-invalid': true}"
                                                                         style="color: red;">This field is Required</div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -406,15 +442,15 @@
                                                                         name="des{{i}}" placeholder="Description"
                                                                         class="form-control form-control-user"
                                                                         id="description"></textarea>
-                                                                </div>
-                                                                <div *ngIf="submit && !obj.description">
-                                                                    <div [ngClass]="{'is-invalid': true}"
-                                                                        style="color: red;">This field is Required</div>
+                                                                        <div *ngIf="submit && !obj.description">
+                                                                            <div [ngClass]="{'is-invalid': true}"
+                                                                                style="color: red;">This field is Required</div>
+                                                                        </div>
                                                                 </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="row">
+                                                        <div class="row mb-1">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -435,7 +471,7 @@
                                                                 </div> -->
                                                             </div>
                                                         </div>
-
+                                                        
                                                         <div class="row">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
@@ -444,19 +480,14 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            <div class="input-group col-lg-8 mb-1">
+                                                          
+                                                            <div class="col-lg-8 mb-1">
+                                                                <div class="common-form-left d-flex">
+                                                                    <!-- <app-ng-date class="calbox"  (updateDate)="updateDate($event, i, 'start-shift')" [currentVal]="obj.startTime"  [min]="todaysDate"></app-ng-date> -->
                                                                 <input type="date" min="{{todaysDate}}"
                                                                     class="form-control" max="9999-01-01"
                                                                     [(ngModel)]="obj.start_date" name="start_date{{i}}"
                                                                     aria-label="Text input with dropdown button" (ngModelChange)="getTm1($event,i)">
-                                                                <!-- <div ngbDropdown >
-                                                                <button type="button" class=" form-control " id="dropdownBasic1" ngbDropdownToggle>Time</button>
-                                                                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                                                                  <button ngbDropdownItem>10:00 Am</button>
-                                                                  <button ngbDropdownItem>10:30 Am</button>
-                                                                  <button ngbDropdownItem>11:00 Am</button>
-                                                                </div>
-                                                          </div> -->
 
                                                                 <select placeholder="HH:MM" [(ngModel)]="obj.startTime"
                                                                     name="startTime" class="form-control"   (ngModelChange)="getTm2($event,i)">
@@ -465,10 +496,12 @@
                                                                         {{tm.label}}</option>
                                                                 </select>
                                                             </div>
-                                                            <!-- <div *ngIf="submit && !obj.startTime">
-                                                                <div [ngClass]="{'is-invalid': true}"
-                                                                    style="color: red;">This field is Required</div>
-                                                            </div> -->
+                                                            
+                                                            <div *ngIf="submit && !obj.startTime">
+                                                                <span [ngClass]="{'is-invalid': true}"
+                                                                    style="color: red;">This field is Required</span>
+                                                            </div>
+                                                            </div>
                                                         </div>
 
                                                         <div class="row">
@@ -479,22 +512,15 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            <div class="input-group col-lg-8 mb-1">
+                                                            <div class="col-lg-8 mb-1">
+                                                                <div class="common-form-left d-flex">
+                                                                    <!-- <app-ng-date class="calbox"  [disabled]="disableInput" (updateDate)="updateDate($event, i, 'end-shift')" [currentVal]="obj.end_date"  [min]="obj.start_date"></app-ng-date> -->
                                                                 <input type="date" min="{{obj.start_date}}" max="9999-01-01"
                                                                     [disabled]="!obj.start_date || !obj.startTime "
                                                                     (ngModelChange)="getTm3($event,i)"
                                                                     [(ngModel)]="obj.end_date" name="end_date{{i}}"
                                                                     class="form-control"
                                                                     aria-label="Text input with dropdown button">
-
-                                                                <!-- <div ngbDropdown >
-                                                            <button type="button" class=" form-control " id="dropdownBasic1" ngbDropdownToggle>Time</button>
-                                                            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" >
-                                                              <button  class=" form-control btn-sm " ngbDropdownItem>10:00 Am</button>
-                                                              <button class="form-control btn-sm "  ngbDropdownItem>10:30 Am</button>
-                                                              <button class="form-control btn-sm "  ngbDropdownItem>11:00 Am</button>
-                                                            </div>
-                                                      </div> -->
 
                                                                 <select placeholder="HH:MM" [(ngModel)]="obj.endTime"
                                                                     [disabled]="!obj.start_date || !obj.startTime "
@@ -504,13 +530,14 @@
                                                                         {{tm.label}}</option>
                                                                 </select>
                                                             </div>
-                                                            <!-- <div *ngIf="submit && !obj.startTime">
-                                                                <div [ngClass]="{'is-invalid': true}"
-                                                                    style="color: red;">This field is Required</div>
-                                                            </div> -->
+                                                                <div *ngIf="submit && !obj.endTime">
+                                                                    <div [ngClass]="{'is-invalid': true}"
+                                                                        style="color: red;">This field is Required</div>
+                                                                </div>
+                                                            </div>
                                                         </div>
 
-                                                        <div class="row" *ngIf="obj.for_cp != '1'">
+                                                        <div class="row mb-1" *ngIf="obj.for_cp != '1'">
                                                             <div class="col-lg-4">
                                                                 <div class="common-form-left">
                                                                     <label for="inputPassword6"
@@ -531,7 +558,8 @@
                                                                     <option value="7p_7a" >7p to 7a</option>
                                                                 </select>
                                                                 </div>
-                                                                <div *ngIf="submit && obj.agcy_app_rate == 'undefined'">
+                                                                
+                                                                <div *ngIf="submit && (obj.agcy_app_rate == 'undefined' || !obj.agcy_app_rate)" style="margin-top:-15px">
                                                                     <div [ngClass]="{'is-invalid': true}"
                                                                         style="color: red;">This field is Required</div>
                                                                 </div>
@@ -546,7 +574,7 @@
                                                                     </label>
                                                                 </div>
                                                             </div>
-                                                            <div class="input-group col-lg-4 mb-1">
+                                                            <div class="input-group col-lg-4 mb-1" style="padding: 0 15px 0 0 !important;">
                                                                 <input type="text"
                                                                     [(ngModel)]="obj.duration" name="duration"
                                                                     class="form-control" placeholder="HH:MM"
@@ -570,31 +598,33 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" (click)="addForm()" class="btn btn-primary" [disabled]="btnShow">
+                            <!-- <div class="row"> -->
+                            <button type="button" (click)="addForm()" class="btn btn-primary name1 " [disabled]="btnShow">
                                 Add Another Shift
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
                             </button>
 
-                            <button type="button" (click)="duplctSft()" class="btn btn-primary ml-1" [disabled]="btnShow">
+                            <button type="button" (click)="duplctSft()" class="btn btn-primary name1 ml-1" [disabled]="btnShow">
                                 Duplicate Shift
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
                             </button>
 
-                            <button type="button" (click)="submitted()" class="btn btn-primary ml-1"
+                            <button type="button" (click)="submitted()" class="btn btn-primary name1 ml-1"
                                 [disabled]="btnShow">
                                 Submit
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
                             </button>
 
-                            <button type="button" (click)="goBack()" class="btn btn-primary ml-1"
+                            <button type="button" (click)="goBackShift()" class="btn btn-primary name1 ml-1"
                                 [disabled]="btnShow">
                                 Cancel
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
                             </button>
+                        <!-- </div> -->
                         </li>
                     </ul>
                 </div>
@@ -606,3 +636,67 @@
 </div>
 <!-- <ng-image-fullscreen-view *ngIf="imageObject && imageObject.length" [images]="imageObject"
     [imageIndex]="selectedImageIndex" [show]="showFlag" (close)="closeEventHandler()"></ng-image-fullscreen-view> -->
+
+    <!-- modal for time -->
+
+    <ng-template #createnew let-modal>
+        <div class="modal-header bg-danger">
+            <h4 class="modal-title text-white" id="myModalLabel1">Shift Duration</h4>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <h5> You are posting a shift that is {{shiftduration}} hours. This is more than your standard shift. Are you sure you want to continue?</h5>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+           (click)="submitted(true);modal.dismiss()" rippleEffect>
+            Yes
+        </button>
+        <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+            (click)="closededApply(modal)" rippleEffect>
+           No
+        </button>
+        </div>
+    </ng-template>
+
+    <!-- Dublication -->
+
+    <ng-template #createnewdublication let-modal>
+        <div class="modal-header bg-danger">
+            <h4 class="modal-title text-white" id="myModalLabel1">Shift Duration</h4>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <h5> You are posting a shift that is {{shiftduration}} hours. This is more than your standard shift. Are you sure you want to continue?</h5>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+           (click)="duplctSft(true);modal.dismiss()" rippleEffect>
+            Yes
+        </button>
+        <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+            (click)="closededApply(modal)" rippleEffect>
+           No
+        </button>
+        </div>
+    </ng-template>
+
+
+    <!-- Add another shift  -->
+
+    <ng-template #createnewadd let-modal>
+        <div class="modal-header bg-danger">
+            <h4 class="modal-title text-white" id="myModalLabel1">Shift Duration</h4>
+        </div>
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <h5> You are posting a shift that is {{shiftduration}} hours. This is more than your standard shift. Are you sure you want to continue?</h5>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+           (click)="addForm(true);modal.dismiss()" rippleEffect>
+            Yes
+        </button>
+        <button type="button" class="btn btn-danger d-flex float-right" style="margin-top: 10px!important;"
+            (click)="closededApply(modal)" rippleEffect>
+           No
+        </button>
+        </div>
+    </ng-template>

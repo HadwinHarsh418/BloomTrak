@@ -20,22 +20,18 @@ const routes = [
   {
     path: '',
     component: AddManagementComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'add-management',
     component: Add2ManagementComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'edit-management',
     component: EditManagementComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'view-management',
     component: ViewManagementComponent,
-    canActivate: [AuthGuard],
   },
 ];
 

@@ -234,7 +234,7 @@ export const menu: CoreMenu[] = [
           Role.Management,
           Role.SuperAdmin,
           Role.User,
-          Role.communityUser,
+          // Role.communityUser,
           
         ]
     
@@ -271,6 +271,15 @@ export const menu: CoreMenu[] = [
         url: 'agencyRate',
         // role : [Role.Community]
        },
+
+        {
+        id: 'Employee List',
+        title: 'Employee List',
+        type: 'item',
+        icon: 'user',
+        url: 'emp_user/employee-list',
+       role : [Role.Community, Role.SuperAdmin]
+      },
      
       // {
       //   id: 'community',
@@ -297,14 +306,14 @@ export const menu: CoreMenu[] = [
       //   url: 'management',
       //  // role:[ Role.SuperAdmin]
       // },
-      {
-        id: 'span-trak',
-        title: 'Menu',
-        type: 'item',
-        icon: 'anchor',
-        url: 'menu',
+      // {
+      //   id: 'span-trak',
+      //   title: 'Menu',
+      //   type: 'item',
+      //   icon: 'anchor',
+      //   url: 'menu',
        // role : [Role.SuperAdmin]
-      },
+      // },
     //   {
     //     id: 'permission',
     //     title: 'Permissions',
@@ -347,6 +356,16 @@ export const menu: CoreMenu[] = [
         url: 'shift',
        // role:[Role.Community,Role.SuperAdmin]
       },
+    
+      {
+        id: 'RequestedShifts',
+        title: 'Requested Shifts',
+        type: 'item',
+        icon: 'layers',
+        url: 're_shift/requested-shifts',
+       role:[Role.User,Role.Agency]
+      },
+
       // {
       //   id: 'user',
       //   title: 'User',
@@ -576,7 +595,7 @@ export const menu: CoreMenu[] = [
     type: 'collapsible',
     icon: 'folder-plus',
     // url: 'community',
-    role : [ Role.SuperAdmin, Role.Agency, Role.Community,Role.Admin,Role.communityUser],
+    role : [ Role.SuperAdmin, Role.Agency, Role.Community,Role.Admin,Role.communityUser,Role.ManagementUser],
     // access_to: ['shift_trak', 'both'],
     children : [
       {
@@ -601,7 +620,7 @@ export const menu: CoreMenu[] = [
         type: 'item',
         icon: 'home',
         url: 'department',
-       role : [Role.SuperAdmin, Role.Community,Role.Admin,Role.communityUser]
+       role : [Role.SuperAdmin, Role.Community,Role.Admin,Role.communityUser,Role.ManagementUser]
     
       },
       // {
@@ -627,7 +646,15 @@ export const menu: CoreMenu[] = [
         type: 'item',
         icon: 'grid',
         url: 'management-user',
-       role:[ Role.Admin]
+       role:[Role.SuperAdmin,Role.Admin]
+      },
+      {
+        id: 'span-trak',
+        title: 'Menu',
+        type: 'item',
+        icon: 'anchor',
+        url: 'menu',
+       role : [Role.SuperAdmin]
       },
       {
         id: 'permission',
@@ -664,7 +691,7 @@ export const menu: CoreMenu[] = [
       },
       {
         id: 'user',
-        title: 'User',
+        title: 'Users',
         type: 'item',
         icon: 'user',
         url: 'user',

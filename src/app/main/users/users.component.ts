@@ -69,7 +69,7 @@ export class UsersComponent implements OnInit {
     setTimeout(() => {
       this.setPage({ offset: 0 });
     }, 500);
-    if(this.currentUser.role == 'User'){
+    if(this.currentUser?.role == 'User'){
       this.getusercommunityById(this.id)
     }
 
@@ -99,18 +99,13 @@ export class UsersComponent implements OnInit {
     };
     let itemenc = this.encryptionService.encode(JSON.stringify(data))
     this.loadingList = true;
-    if (this.currentUser.role == 'Admin') {
+    if (this.currentUser?.role == 'Admin' || this.currentUser?.user_role == 8) {
       this.getMNMGcommunity()
-    } else if(this.currentUser.role == 'SuperAdmin') {
+    } else if(this.currentUser?.role == 'SuperAdmin') {
       this.searchSub = this.dataService.getcommunity(this.searchStr, this.page.pageNumber, this.page.size).subscribe(
         res => {
           if (!res.error) {
             this.rows = res.body;
-            //  this.rows.map(rw => {
-            //          if (rw.single_community == '0') {
-            //            rw.phone = 'Single'
-            //          }
-            //        })
             if (!res.pagination) {
               this.page.size = res.body.length;
               this.page.totalElements = res.body.length;
@@ -134,7 +129,7 @@ export class UsersComponent implements OnInit {
   }
 
   deletesUser(modal) {
-      let data = { id: this.currentUser.prmsnId == '6' ? this.currentUser1.id : this.currentUser1.cp_id };
+      let data = { id: this.currentUser?.prmsnId == '6' ? this.currentUser1.id : this.currentUser1.cp_id };
       this.deletingUser = true;
       this.dataService.deleteUser(data).subscribe(res => {
         if (!res.error) {
@@ -188,28 +183,58 @@ export class UsersComponent implements OnInit {
     this.radiodata = value;
   }
 
-  getMNMGcommunity() {
-    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((res: any) => {
-      if (!res.error) {
-        this.rows = res.body
-        // if (!res.pagination) {
-        //   this.page.size = res.pagination.size;
-        //   this.page.totalElements = res.pagination.totalElements;
-        //   this.page.pageNumber = res.pagination.pageNumber;
-        //   this.page.totalPages = res.pagination.totalPages;
-        // } else {
-        //   this.page = res.pagination
-        //   this.page.pageNumber = res.pagination.pageNumber
-        // }
+  getMNMGcommunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
       }
-    },
-      (err) => {
+      this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let d:any[] = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          const uniqueArray = d.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.community_id === obj.community_id &&
+                    t.community_name === obj.community_name &&
+                    t.community_short_name === obj.community_short_name
+                ))
+            );
+          this.rows = uniqueArray.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        
+        } else {
+          this.toastr.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataService.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.rows = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+          //this.toastr.successToastr(response.msg);
+        } else if (response['error'] == true) {
+          this.toastr.errorToastr(response.msg);
+        }
+      }, (err) => {
         this.dataService.genericErrorToaster();
+  
       })
+    }
   }
 
   getusercommunityById(id) {
-    this.dataService.getusercommunityById(this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getusercommunityById(this.currentUser?.id).subscribe((res: any) => {
       this.rows2 = res.body;
       if (!res.pagination) {
         this.page.size = res.body.length;
@@ -285,7 +310,7 @@ export class UsersComponent implements OnInit {
         if (!res.error) {
           res.body.map(i=>{
             //comunity
-            if(this.roleData.includes(i.role_id)){
+            // if(this.roleData.includes(i.role_id)){
               // if(i.permission_name == 'Department'){
               //     this.dprtmnt=JSON.parse(i.row_data);
               //     this.frstDp = this.dprtmnt[0]?.name
@@ -297,7 +322,7 @@ export class UsersComponent implements OnInit {
                 this.vwPrms  = i.view_permission
                 this.assPrms  = i.assignResidentCount_permission
              }
-            }
+            // }
           })
         } 
     }, (error:any) => {
@@ -307,9 +332,9 @@ export class UsersComponent implements OnInit {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
-         res.body.filter(i=>{ this.roleData.push(i.id.toString())})
+         res.body.filter(i=>{ this.roleData.push(i.id.toastrring())})
               // this.roleData.map(i=>{
               //  if(i != 2  && i != 3 && i != 4  && i != 5 && i != 6 ){
               //    this.roleData1.push(i)

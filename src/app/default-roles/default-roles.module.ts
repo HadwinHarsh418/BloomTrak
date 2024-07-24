@@ -19,7 +19,7 @@ const routes = [
     component: AddDefaultRoleComponent,
   },
   {
-    path: 'edit-role/:id/:name/:trak_type',
+    path: 'edit-role/:id/:name/:trak_type/:is_for',
     component: AddDefaultRoleComponent,
   },
 ];

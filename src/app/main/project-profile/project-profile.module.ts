@@ -17,12 +17,12 @@ import { CustomDateTimePipeModule } from 'app/auth/helpers/custom-date-time.pipe
 import { SharedpipeModule } from 'app/auth/helpers/sharedpipe/sharedpipe.module';
 import { PhoneMaskDirectiveModule } from 'app/auth/helpers/phone-mask.directive';
 import { NgxMaskModule } from 'ngx-mask';
+import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 
 const routes = [
   {
     path: '',
     component: ProjectProfileComponent,
-    canActivate: [AuthGuard],
   },
 
 ];
@@ -46,7 +46,9 @@ const routes = [
     CustomDateTimePipeModule,
     SharedpipeModule,
     PhoneMaskDirectiveModule,
-    NgxMaskModule.forRoot()
+    NgxMaskModule.forRoot(),
+    NgMultiSelectDropDownModule.forRoot(),
+
   ],
   providers: [MyAccountService,DatePipe]
 })

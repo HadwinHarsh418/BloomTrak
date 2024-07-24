@@ -30,6 +30,12 @@
 .dpwImg{
     width: 25px;
 }
+.eyeBtn{
+    position: absolute;
+    top: 4px;
+    right: 19px;
+    border: 0;
+}
 
 
 
@@ -57,3 +63,11 @@ main {
         max-height: 250px;
         padding-bottom: 60px !important;
     }
+
+
+
+    @media(max-width: 767px){
+    label.col-form-label {
+        padding: 5px 0 5px 0 !important;
+    }
+}

@@ -10,7 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LangselectorComponent } from 'app/layout/components/langselector/langselector.component';
 import { RegisterComponent } from './register/register.component';
 import { SetupComponent } from './setup/setup.component';
-import { AuthGuard } from 'app/auth/helpers';
 import { ManagementComponent } from '../management/management.component';
 import { SharedpipeModule } from 'app/auth/helpers/sharedpipe/sharedpipe.module';
 import { PhoneMaskDirectiveModule } from 'app/auth/helpers/phone-mask.directive';
@@ -39,7 +38,7 @@ const routes: Routes = [
   {
     path: 'setup',
     component: SetupComponent,
-    canActivate: [AuthGuard]
+    // canActivate: [AuthGuard]
   },
   {
     path: 'forgotPassword',

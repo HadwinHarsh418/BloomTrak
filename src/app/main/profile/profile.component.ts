@@ -325,7 +325,7 @@ export class UserProfileComponent implements OnInit {
       confPassword: ['', [Validators.required]],
 },{ Validators: MustMatch('newPassword', 'confPassword')})
 
-if(this.currentUser.role == 'SuperAdmin')
+if(this.currentUser?.role == 'SuperAdmin')
 {
  this.confirmForm.controls['oldpassword'].clearValidators();
  this.confirmForm.updateValueAndValidity();
@@ -350,7 +350,7 @@ else
           this.mapFormValues();
         }
       } else {
-        this.error = response.msg;
+        this.error = response.msg; 
         this._authenticationService.errorToaster(response);
       }
       this.loading = false;
@@ -589,7 +589,7 @@ else
 
   // getLoginLogs() {
   //   this.logLoading = true
-  //   this.dataService.getLoginLogs(this.currentUser._id).subscribe((res) => {
+  //   this.dataService.getLoginLogs(this.currentUser?._id).subscribe((res) => {
   //     if (!res['error']) {
   //       this.logs = res['body']
   //       this.logLoading = false
@@ -822,7 +822,7 @@ else
       return;
     }
     else {
-      if(this.currentUser.role == 'SuperAdmin'){
+      if(this.currentUser?.role == 'SuperAdmin'){
         this.data = {
           confPassword : this.confirmForm.value.confPassword,
           newPassword : this.confirmForm.value.newPassword,

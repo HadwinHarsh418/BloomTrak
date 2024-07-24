@@ -70,12 +70,12 @@ export class AddLedgerComponent implements OnInit {
       gl_and_description:['',Validators.required]
     })
 
-    if(['1'].includes(this.currentUser.prmsnId))
+    if(['1'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['com_name'].clearValidators();
      this.formRoleData.updateValueAndValidity();
     }
-    if(['6'].includes(this.currentUser.prmsnId))
+    if(['6'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['com_name'].setValidators(Validators.required);
      this.formRoleData.updateValueAndValidity();
@@ -85,15 +85,15 @@ export class AddLedgerComponent implements OnInit {
       this.getLedger();
       this.deptDsbl = true
     }
-    if(this.currentUser.prmsnId == '6' || this.currentUser.user_role =='3'){
+    if(this.currentUser?.prmsnId == '6' || this.currentUser?.user_role =='3'){
       this.getCommunityId()
     }
   }
 
   ngAfterContentInit(){
-    if(['1'].includes(this.currentUser.prmsnId)){
+    if(['1'].includes(this.currentUser?.prmsnId)){
       this.getCommunityDetails()
-      this.getDepartment(this.currentUser.id)
+      this.prmsUsrId?.id ? '' : this.getDepartment(this.currentUser?.id)
     }
   }
 
@@ -113,9 +113,11 @@ export class AddLedgerComponent implements OnInit {
     }
     this.dataSrv.getLedgerById(data).subscribe((res:any)=>{
       if(!res.err){
-        if(['6'].includes(this.currentUser.prmsnId)){
+        if(['6'].includes(this.currentUser?.prmsnId)){
           this.getDepartment(res.body[0].community_id)
         }
+        this.getDepartment(res.body[0].community_id)
+        
           this.formRoleData.patchValue({
             com_name : res.body[0].community_id,
             department : res.body[0].department,
@@ -145,7 +147,7 @@ export class AddLedgerComponent implements OnInit {
       return;
     }
     let data ={
-      community_id:this.currentUser.prmsnId == '1' ? this.currentUser.id :this.formRoleData.value.com_name,
+      community_id:this.currentUser?.prmsnId == '1' ? this.currentUser?.id :this.formRoleData.value.com_name,
       gl_acc:this.formRoleData.value.gl_acc,
       description:this.formRoleData.value.desc,
       department:this.formRoleData.value.department,
@@ -197,16 +199,25 @@ export class AddLedgerComponent implements OnInit {
   }
 
   getCommunityId() {
-    if(this.currentUser.user_role =='3'){
-if(this.currentUser.id && this.currentUser.com_id){
+    if(this.currentUser?.user_role =='3'){
+if(this.currentUser?.id && this.currentUser?.com_id){
   let data = {
-    userId : this.currentUser.id,
-    mangId : this.currentUser.com_id
+    userId : this.currentUser?.id,
+    mangId : this.currentUser?.management
   }
   this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
     if (!res.error) {
+      let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
       // this.mangComs = res.body[1].userAvailableCommunities
-      this.allCommunity = res.body[0].user_added_communities.sort(function(a, b){
+      let e=[]
+      let c =[]
+      d.forEach(element => {
+        if(!e.includes(element.community_id)){
+          e.push(element.community_id)
+          c.push(element)
+        }
+      });
+      this.allCommunity = c.sort(function(a, b){
         if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
         if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
         return 0;
@@ -220,7 +231,7 @@ if(this.currentUser.id && this.currentUser.com_id){
     })
 }
 else{
-  this.dataSrv.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+  this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
     if (response['error'] == false) {
       this.allCommunity = response.body.sort(function(a, b){
         if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -257,7 +268,7 @@ else{
   }
 
   getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.currentUser?.id).subscribe(response => {
       if (!response.error) {
           this.comName = response.body[0]
       } else {
@@ -276,9 +287,9 @@ else{
 
   getDepartment(e){
     this.dprtmnt =[]
-    let isfor = 6 
+    let isfor = this.currentUser?.user_role == 1 ? '1' : '6'
     let for_other = null
-    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser.prmsnId) ? this.currentUser.id : e,isfor,for_other).subscribe((res:any)=>{
+    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser?.prmsnId) ? this.currentUser?.id : e,isfor,for_other).subscribe((res:any)=>{
       this.dprtmnt = res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
         if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }

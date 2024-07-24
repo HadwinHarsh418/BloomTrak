@@ -153,11 +153,10 @@ $datatables-dark-active-bg-color: $theme-dark-card-bg;
 // media query for Small & Medium devices
 @media (max-width: 768px) {
   .page-count {
-    display: none;
+    font-weight: 700 !important;
   }
 
   .datatable-pager {
-    text-align: center !important;
     margin: 0 !important;
   }
 }

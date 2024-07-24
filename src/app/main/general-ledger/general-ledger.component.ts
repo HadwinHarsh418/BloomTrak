@@ -25,6 +25,8 @@ export class GeneralLedgerComponent implements OnInit {
   roleData2: any=[];
   @ViewChild('searchStrInput', { static: true }) searchStrInput: ElementRef<any>;
   searchStr: string = '';
+  selectCommunity: any;
+  allCommunity: any;
 
   constructor(
     private dataSrv : DataService,
@@ -47,12 +49,12 @@ export class GeneralLedgerComponent implements OnInit {
       , debounceTime(1000)
       , distinctUntilChanged()
     ).subscribe((text: string) => {
-      this.getLedger()
+      this.getLedger(this.selectCommunity ? this.selectCommunity : '')
     });
   }
 
-  getLedger(){
-    let data = {searchStr:this.searchStr,usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  : this.currentUser.id }
+  getLedger(id?){
+    let data = {searchStr:this.searchStr,usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : id ? id :this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  : this.currentUser?.id }
     this.dataSrv.getLedger(data).subscribe((res:any)=>{
       if(!res.err){
         this.rows = res.body.sort(function(a, b){
@@ -75,10 +77,10 @@ export class GeneralLedgerComponent implements OnInit {
       id: id,
     }
     this.dataSrv.deleteLedger(data).subscribe((res:any)=>{
-      
       if(!res.error){
         this.toaster.successToastr(res.msg)
-        this.getLedger();
+        let id = this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.selectCommunity:''
+        this.getLedger(id);
       }else{
         this.toaster.errorToastr(res.msg)
       }
@@ -88,13 +90,17 @@ export class GeneralLedgerComponent implements OnInit {
   }
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     
@@ -113,6 +119,62 @@ export class GeneralLedgerComponent implements OnInit {
       this.dataSrv.genericErrorToaster()
     }
     )
+  }
+
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let d:any[] = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          const uniqueArray = d.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.community_id === obj.community_id &&
+                    t.community_name === obj.community_name &&
+                    t.community_short_name === obj.community_short_name
+                ))
+            );
+          this.allCommunity = uniqueArray.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.selectCommunity = this.allCommunity[0].community_id;
+    this.getLedger(this.selectCommunity)
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.selectCommunity = response.body[0].cp_id;
+    this.getLedger(this.selectCommunity)
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
+  }
+  chngCom(comId){
+    this.selectCommunity = comId;
+    this.getLedger(comId)
   }
 
   getPrmsnData(){
@@ -134,9 +196,9 @@ export class GeneralLedgerComponent implements OnInit {
               }
             }
           })
-          this.getLedger();
           
         } 
+        [3,8].includes(this.currentUser?.user_role) ? this.getMngComunity():this.getLedger();
     }, (error:any) => {
       this.dataSrv.genericErrorToaster()
     }

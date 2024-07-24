@@ -20,6 +20,9 @@ export class AddBudgetResidentComponent implements OnInit {
   allCommunity: any;
   currentUser: any;
   comName: any;
+  community_id: any;
+  allCommunity1: any[];
+  community_name: any;
   constructor(
     private formBuilder : FormBuilder,
     private location : Location,
@@ -85,19 +88,33 @@ export class AddBudgetResidentComponent implements OnInit {
     if(this.prmsUsrId?.id){
       this.getLedger();
     }
-    if(['6'].includes(this.currentUser.prmsnId)){
+    if(['6'].includes(this.currentUser?.prmsnId)){
       this.getCommunityId()
     }
-    if(['1'].includes(this.currentUser.prmsnId)){
+    if(['3'].includes(this.currentUser?.prmsnId)){
+      this.ManagemnetCom()
+    }
+    if(['1'].includes(this.currentUser?.prmsnId)){
       this.getCommunityDetails()
     }
-
-    if(['1'].includes(this.currentUser.prmsnId))
+    if(['1'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['com_name'].clearValidators();
      this.formRoleData.updateValueAndValidity();
     }
-    if(['6'].includes(this.currentUser.prmsnId))
+    //   if(['1'].includes(this.currentUser?.prmsnId)){
+    //   this.getCommunityDetails()
+    // }
+
+    if(['8'].includes(this.currentUser?.prmsnId)){
+     this.getMngComunity()
+    }
+    if(['6'].includes(this.currentUser?.prmsnId))
+    {
+     this.formRoleData.controls['com_name'].setValidators(Validators.required);
+     this.formRoleData.updateValueAndValidity();
+    }
+    if(['3'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['com_name'].setValidators(Validators.required);
      this.formRoleData.updateValueAndValidity();
@@ -150,11 +167,15 @@ export class AddBudgetResidentComponent implements OnInit {
     for (let item of Object.keys(this.FormData_Control)) {
       this.FormData_Control[item].markAsDirty()
     }
+    if(this.formRoleData.value.end_date <= this.formRoleData.value.start_date)
+      {
+        this.toaster.errorToastr("Start date after End date")
+      }else{
     if (this.formRoleData.invalid) {
       return;
     }
     let data ={
-      community_name : this.currentUser.prmsnId== '1' ? this.comName.community_name : this.formRoleData.value.com_name,
+      community_name : this.currentUser?.prmsnId== '1' ? this.comName.community_name : this.formRoleData.value.com_name,
           january: this.formRoleData.value.january,
           february: this.formRoleData.value.february,
           march: this.formRoleData.value.march,
@@ -176,7 +197,7 @@ export class AddBudgetResidentComponent implements OnInit {
       this.loading=  true;
       let data ={
           id:this.prmsUsrId.id,
-          community_name : this.currentUser.prmsnId== '1' ? this.comName.community_name : this.formRoleData.value.com_name,
+          community_name : this.currentUser?.prmsnId== '1'?this.comName.community_name :this.currentUser?.prmsnId== '3' ?this.community_name : this.formRoleData.value.com_name,
           january: this.formRoleData.value.january,
           february: this.formRoleData.value.february,
           march: this.formRoleData.value.march,
@@ -194,7 +215,6 @@ export class AddBudgetResidentComponent implements OnInit {
           end_date:this.formRoleData.value.end_date,
           description:this.formRoleData.value.desc
         }
-      
         this.dataSrv.editBudgetResidentDays(data).subscribe((res:any)=>{
           
           if(!res.error){
@@ -227,7 +247,7 @@ export class AddBudgetResidentComponent implements OnInit {
           this.dataSrv.genericErrorToaster()
         })
     }
-  }
+  }}
 
   getCommunityId() {
     this.dataSrv.getCommunityId().subscribe((response: any) => {
@@ -248,7 +268,7 @@ export class AddBudgetResidentComponent implements OnInit {
   }
 
   getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.currentUser?.id).subscribe(response => {
       if (!response.error) {
           this.comName = response.body[0]
       } else {
@@ -259,5 +279,56 @@ export class AddBudgetResidentComponent implements OnInit {
     }
     );
   }
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let d:any[] = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          const uniqueArray = d.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.community_id === obj.community_id &&
+                    t.community_name === obj.community_name &&
+                    t.community_short_name === obj.community_short_name
+                ))
+            );
+          this.allCommunity1 = uniqueArray.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = this.allCommunity1[0]?.community_id
+ 
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+  }
+  ManagemnetCom(){
+    this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      })  ;
+      this.community_id = response?.body[0]?.cp_id
+      this.community_name=response?.body[0]?.community_name
+  
+      } else if (response['error'] == true) {
+        this.toaster.errorToastr(response.msg);
+      }
+    }, (err) => {
+      this.dataSrv.genericErrorToaster();
 
-}
+    })
+  }
+  }

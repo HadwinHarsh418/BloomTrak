@@ -47,6 +47,8 @@ export class AddVendorContractsComponent implements OnInit {
   ptchDprt: any;
   data: any;
   type: any[];
+  community_id: any;
+  community_name: any;
   
   constructor(
     private formBuilder : FormBuilder,
@@ -70,7 +72,7 @@ export class AddVendorContractsComponent implements OnInit {
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
     })
-      this.getCommunityId()
+    this.currentUser?.user_role == 3||this.currentUser?.user_role == 8 ?this.getMngComunity():this.getCommunityId()
     if(this.prmsUsrId?.id){
     this.loadSpinner = true;
     }
@@ -108,7 +110,7 @@ export class AddVendorContractsComponent implements OnInit {
       }
     };
     this.formRoleData = this.formBuilder.group({
-      community_name: this.currentUser.prmsnId == '6' ? ['',Validators.required] : [''],
+      community_name: this.currentUser?.prmsnId == '6' ? ['',Validators.required] : [''],
       department: ['', Validators.required],
       contract_amount: ['', Validators.required],
       vendor: ['', Validators.required],
@@ -142,12 +144,12 @@ export class AddVendorContractsComponent implements OnInit {
         this.getVendorList()
      }
 
-      if(['1'].includes(this.currentUser.prmsnId))
+      if(['1'].includes(this.currentUser?.prmsnId))
       {
        this.formRoleData.controls['community_name'].clearValidators();
        this.formRoleData.updateValueAndValidity();
       }
-      if(['6'].includes(this.currentUser.prmsnId))
+      if(['6'].includes(this.currentUser?.prmsnId))
       {
        this.formRoleData.controls['community_name'].setValidators(Validators.required);
        this.formRoleData.updateValueAndValidity();
@@ -155,13 +157,13 @@ export class AddVendorContractsComponent implements OnInit {
 
       let today = new Date();
       this.todaysDate = this.getDate(today)
-      if(this.roleData2.includes(this.currentUser.prmsnId)){
+      if(this.roleData2.includes(this.currentUser?.prmsnId)){
         if(!this.prmsUsrId?.id){
-          this.slctCom(this.currentUser.id,2)
+          this.slctCom(this.currentUser?.id,2)
         }
       }
       else{
-        this.getDepartment(this.currentUser.id)
+        this.getDepartment(this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id)
       }
   }
 
@@ -262,9 +264,10 @@ export class AddVendorContractsComponent implements OnInit {
       this.allCommunity?.forEach(element => {
         if(element.id == this.comId  ) this.submitId2.push( element)
       });
+    
       this.loading=  true;
       let data ={
-        community_name:this.currentUser.prmsnId == '1' ? this.comName.community_name: this.submitId2[0].community_name,
+        community_name:this.currentUser?.prmsnId == '1' ? this.submitId2[0].community_name: this.submitId2[0].community_name,
         contract_amount: !this.formRoleData.value.contract_amount?this.formRoleData.value.contract_amount: this.formRoleData.value.contract_amount.toFixed(2),
         vendor: this.formRoleData.value.vendor[0].vendor_name,
         department: this.formRoleData.value.department,
@@ -282,7 +285,7 @@ export class AddVendorContractsComponent implements OnInit {
         contract_required: this.formRoleData.value.contract_required,
         contract_uploaded: this.formRoleData.value.contract_required == '0' ? 'Y' : 'N',
         // docUpload:this.formRoleData.value.contract_file,
-        entered_by: this.currentUser.id,
+        entered_by: this.currentUser?.id,
         entered_date:this.minDate,
           id:this.prmsUsrId.id
       }
@@ -301,7 +304,7 @@ export class AddVendorContractsComponent implements OnInit {
         })
     }else{
     let d:any = null
-    let comId =  this.currentUser.prmsnId == '6' ? this.formRoleData.value.community_name : this.currentUser.com_id
+    let comId =  this.currentUser?.prmsnId == '6' ? this.formRoleData.value.community_name : this.currentUser?.com_id
     d = Number(this.formRoleData.value.periods);
     this.allCommunity?.forEach(element => {
       if(element.id == comId ) this.submitId2.push( element)
@@ -309,7 +312,7 @@ export class AddVendorContractsComponent implements OnInit {
     this.formData = new FormData();
     if(this.formRoleData.value.contract_required == '0'){
       this.formData.append('docUpload',this.fileToUpload)
-      this.formData.append("community_name", this.currentUser.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name)
+      this.formData.append("community_name", this.currentUser?.prmsnId == '1' ? this.comName.community_name :this.currentUser?.user_role == 3?this.community_name: this.submitId2[0].community_name)
           this.formData.append("contract_amount", this.formRoleData.value.contract_amount.toFixed(2))
           this.formData.append("vendor", this.formRoleData.value.vendor[0].vendor_name)
           this.formData.append("department", this.formRoleData.value.department)
@@ -326,11 +329,11 @@ export class AddVendorContractsComponent implements OnInit {
           this.formData.append("renewal_amount", this.formRoleData.value?.renewal_amount == '' ? this.formRoleData.value?.renewal_amount: this.formRoleData.value?.renewal_amount.toFixed(2))
           this.formData.append("contract_required", this.formRoleData.value.contract_required)
           this.formData.append("contract_uploaded", this.formRoleData.value.contract_uploaded)
-          this.formData.append("entered_by", this.currentUser.id)
+          this.formData.append("entered_by", this.currentUser?.id)
           this.formData.append("entered_date", this.minDate)
     }
     else{
-      this.formData.append("community_name", this.currentUser.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name)
+      this.formData.append("community_name", this.currentUser?.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name)
           this.formData.append("contract_amount", this.formRoleData.value.contract_amount.toFixed(2))
           this.formData.append("vendor", this.formRoleData.value.vendor[0].vendor_name)
           this.formData.append("department", this.formRoleData.value.department)
@@ -347,12 +350,12 @@ export class AddVendorContractsComponent implements OnInit {
           this.formData.append("renewal_amount", this.formRoleData.value?.renewal_amount =='' ? this.formRoleData.value?.renewal_amount : this.formRoleData.value?.renewal_amount.toFixed(2))
           this.formData.append("contract_required", this.formRoleData.value.contract_required)
           this.formData.append("contract_uploaded", this.formRoleData.value.contract_uploaded)
-          this.formData.append("entered_by", this.currentUser.id)
+          this.formData.append("entered_by", this.currentUser?.id)
           this.formData.append("entered_date", this.minDate)
     }
       
   //     let data ={
-  //       community_name: this.currentUser.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name,
+  //       community_name: this.currentUser?.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name,
   //       contract_amount: this.formRoleData.value.contract_amount.toFixed(2),
   //       vendor: this.formRoleData.value.vendor,
   //       description: this.formRoleData.value.description,
@@ -369,11 +372,19 @@ export class AddVendorContractsComponent implements OnInit {
   //       contract_required: this.formRoleData.value.contract_required,
   //       contract_uploaded: this.formRoleData.value.contract_uploaded,
   //       // docUpload:this.formRoleData.value.contract_file,
-  //       // entered_by: this.currentUser.id,
+  //       // entered_by: this.currentUser?.id,
   //       // entered_date:this.minDate,
   // }
       this.loading=  true;
       // console.log("else",data);
+      if(this.formRoleData.value.start_date >= this.formRoleData.value.end_date){
+        this.toaster.errorToastr("Vendor contracts End Date must be after Vendor contracts Start Date")
+        this.loading=  false;
+      }else if(this.formRoleData.value.start_date >= this.formRoleData.value.cencellation_date){
+        this.toaster.errorToastr("Vendor contracts Cencellation Date must be after Vendor contracts Start Date")
+        this.loading=  false;
+      }
+      else{
         this.dataSrv.addVendorContract(this.formData).subscribe((res:any)=>{
           if(!res.error){
               this.loading=  false;
@@ -387,6 +398,8 @@ export class AddVendorContractsComponent implements OnInit {
           this.loading=  false;
           this.dataSrv.genericErrorToaster()
         })
+      }
+       
     }
   }
 
@@ -407,16 +420,71 @@ export class AddVendorContractsComponent implements OnInit {
 
     })
   }
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = d.community_id
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+
+        
+        this.community_id = response?.body[0]?.cp_id
+        this.community_name= response?.body[0]?.community_name
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
+  }
 
   slctCom(e,no){
     this.ledgerData =[]
     this.submitId2 = []
     this.comId1 = (e?.target?.value ? e?.target?.value : e)
+    this.community_id=(e?.target?.value ? e?.target?.value : e)
+
     this.getvendors(this.comId1)
     this.allCommunity?.forEach(element => {
       if(element.id == this.comId1  ) this.submitId2.push( element)
     });
-    // if(this.currentUser.prmsnId == '6'){
+    // if(this.currentUser?.prmsnId == '6'){
     //   this.getPrmsnData()
     // }else{
       this.getDepartment(e)
@@ -426,7 +494,7 @@ export class AddVendorContractsComponent implements OnInit {
     }
     else{
       let data = {
-        id : no == 2 ? this.currentUser.id :no==3 ? e : e.target.value,
+        id : no == 2 ? this.currentUser?.id :no==3 ? e : e.target.value,
         community_id : 'community_id'
       }
       this.dataSrv.getLedgerById( data).subscribe((res:any)=>{
@@ -482,7 +550,7 @@ export class AddVendorContractsComponent implements OnInit {
   }
 
   getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id).subscribe(response => {
       if (!response.error) {
           this.comName = response.body[0]
       } else {
@@ -517,6 +585,8 @@ export class AddVendorContractsComponent implements OnInit {
   }
 
   chngdprt(e){
+    this.ledgerData1 = []
+   this.formRoleData.controls['gl_account'].setValue("")
       let d = e?.target?.value || e
       if(d == '0'){
         this.nullDep = true
@@ -533,7 +603,7 @@ export class AddVendorContractsComponent implements OnInit {
         this.nullDep = false
         // this.nullDep1 =  d
         let data = {
-          id : this.currentUser.prmsnId == '1' ? this.currentUser.id :  this.currentUser.prmsnId == '6' ? this.comId1 : this.currentUser.com_id,
+          id : this.currentUser?.prmsnId == '1' ? this.currentUser?.id :  this.currentUser?.prmsnId == '6' ? this.comId1 :this.currentUser?.user_role == 3?this.community_id:this.currentUser?.user_role== 1?this.community_id:this.currentUser?.com_id,
           community_id : 'community_id'
         }
         this.dataSrv.getLedgerById( data).subscribe((res:any)=>{
@@ -557,16 +627,52 @@ export class AddVendorContractsComponent implements OnInit {
   getDepartment(e){
     this.dprtmnt =[]
     let isfor = 6 
-    let for_other = null
-    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser.prmsnId) ? this.currentUser.id : e?.target?.value || e,isfor,for_other).subscribe((res:any)=>{
-      this.dprtmnt = res.body.sort(function(a, b){
-        if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
-        if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
-        return 0;
-    })  ;;
-    },err=>{
-      this.toaster.errorToastr('Something went wrong please try again leter')
-    })
+    let for_other = null;
+    let d = e?.target?.value || e
+   this.getDepartmentForRolle(d,isfor,for_other)
+  }
+  getDepartmentForRolle(e,isfor,for_other){
+    this.dataSrv.getPermissionByAdminRole().subscribe(
+      (res: any) => {
+        if (!res.error) {
+          res.body.map(i => {
+            // if (this.roleData.includes(i.role_id)) {
+              if (i.permission_name == 'Department') {
+                if(i.view_permission == '1'){
+                  this.dataSrv.getDepartmentListing(e, isfor, for_other).subscribe((res: any) => {
+                    this.dprtmnt = res.body.sort(function (a, b) {
+                      if (a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
+                      if (a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+                      return 0;
+                    });;
+                  }, err => {
+                    this.toaster.errorToastr('Something went wrong please try again leter')
+                  })
+                }
+                if(i.trak_type == '0'){
+                this.dprtmnt = JSON.parse(i.row_data);
+                }
+                this.dprtmnt = this.dprtmnt.sort(function (a, b) {
+                  if (a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
+                  if (a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+                  return 0;
+                });
+              }
+            // }
+          })
+          if(this.currentUser?.user_role == 6){
+            this.dataSrv.getDepartmentListing(e, isfor, for_other).subscribe((res: any) => {
+              this.dprtmnt = res.body.sort(function (a, b) {
+                if (a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
+                if (a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+                return 0;
+              });;
+            }, err => {
+              this.toaster.errorToastr('Something went wrong please try again leter')
+            })
+          }
+        }
+      })
   }
 
   get controls() {
@@ -603,7 +709,7 @@ export class AddVendorContractsComponent implements OnInit {
     this.formRoleData.get('vendor').setValue(this.formData1.value.newVendor)
     let data ={
       vendor_name: this.formData1.value.newVendor,
-      community_id: this.currentUser.prmsnId == '6' ? this.formData1.value.community_name : this.currentUser.prmsnId == '1' ? this.currentUser.id  :this.currentUser.com_id ,
+      community_id: this.currentUser?.prmsnId == '6' ? this.formData1.value.community_name : this.currentUser?.prmsnId == '1' ? this.currentUser?.id  :this.currentUser?.com_id ,
       description: this.formData1.value.description,
 }
     this.dataSrv.addVendor(data).subscribe((res:any)=>{
@@ -627,7 +733,7 @@ export class AddVendorContractsComponent implements OnInit {
     if(comId2){
       this.data = {usrRole : !comId2 ? '6' : 'xyz', comId : !comId2 ? '' : comId2 }
     }else{
-      this.data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  :this.currentUser.id }
+      this.data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  :this.currentUser?.id }
     }this.dataSrv.getVendor(this.data).subscribe((res:any)=>{
       if(!res.err){
         this.vendorData=    res.body.sort(function(a, b){
@@ -682,7 +788,7 @@ export class AddVendorContractsComponent implements OnInit {
     let post=[];
     this.dataSrv.getPermissionByAdminRole().subscribe(
       (res:any) => {
-        if(this.roleData2.includes(this.currentUser.prmsnId )){
+        if(this.roleData2.includes(this.currentUser?.prmsnId )){
         if (!res.error) {
           res.body.map(i=>{
             //comunity
@@ -705,7 +811,7 @@ export class AddVendorContractsComponent implements OnInit {
         } 
       }
         this.getCommunityDetails()
-        this.getvendors(this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  :this.currentUser.id)
+        this.getvendors(this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  :this.currentUser?.id)
     }, (error:any) => {
       this.dataSrv.genericErrorToaster()
     }

@@ -62,7 +62,7 @@
   font-size: 14px;
 }
 .mar-login {
-  margin: 0 0 15px 0;
+  margin: 0 0 4px 0;
 }
 .bt-login-bloom {
   background: #369;
@@ -228,4 +228,11 @@ form.auth-login-form.mt-2 {
 .login-custom {
   padding: 100px 0 70px 0;
 }
+}
+.eyeBtn{
+  position: absolute;
+  top: 4px;
+  right: 19px;
+  border: 0;
+  background: #e4e9ef;
 }

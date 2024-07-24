@@ -42,8 +42,8 @@
                 </div>
             </div>
         </div>
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [scrollbarH]="true" [virtualization]="false">
             <ngx-datatable-column name="Amount" prop="amount">
                 <ng-template let-Amount="value" let-row="row" ngx-datatable-cell-template>
                     <div><span  [innerHTML]="Amount"></span> </div>

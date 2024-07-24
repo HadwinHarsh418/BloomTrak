@@ -14,12 +14,12 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
 import { AgencyPersonelComponent } from './agency-personel.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const routes = [
   {
     path: '',
     component: AgencyPersonelComponent,
-    canActivate: [AuthGuard],
   }
 ];
 
@@ -31,6 +31,8 @@ const routes = [
     TranslateModule,
     // IntlInputPhoneModule,
     NgbModule,
+    FormsModule,
+    ReactiveFormsModule,
     PerfectScrollbarModule,
     CoreCommonModule,
     NgApexchartsModule,

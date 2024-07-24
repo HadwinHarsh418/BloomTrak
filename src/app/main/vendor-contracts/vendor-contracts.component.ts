@@ -42,6 +42,9 @@ export class VendorContractsComponent implements OnInit {
   roleData2: any=[];
   allCommunity: any=[];
   dltForm: any;
+  allCommunity1:any;
+  community_id:any;
+  
 
   constructor(
     private dataSrv : DataService,
@@ -57,6 +60,8 @@ export class VendorContractsComponent implements OnInit {
     this.page.size = 10;
     this.getRole()
     this.getCommunityId()
+    this.getCommunityByMangmentId();
+ 
   }
 
   ngOnInit(): void {
@@ -112,8 +117,9 @@ export class VendorContractsComponent implements OnInit {
       this.searchSub.unsubscribe();
       this.searchSub = null;
     }
+    this.page.size = 10;
     this.page.pageNumber = pageInfo.offset;
-    this.dataSrv.getVendorContract(this.searchStr.trim(),this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser.com_id : this.currentUser.id,this.page.pageNumber,this.page.size,this.filterDep1).subscribe((res:any)=>{
+    this.dataSrv.getVendorContract(this.searchStr.trim(),this.community_id?this.community_id:this.currentUser?.user_role == 3 ? this.currentUser?.id:this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id :this.currentUser?.id,this.page.pageNumber,this.page.size,this.filterDep1,).subscribe((res:any)=>{
       if(!res.err){
         this.rows = res.body;
         this.rows.map(i=>{
@@ -163,19 +169,23 @@ export class VendorContractsComponent implements OnInit {
 
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     
     let formdata = new FormData();
     formdata.append('report',this.fileToUpload)
-    formdata.append('entered_by',this.currentUser.id)
+    formdata.append('entered_by',this.currentUser?.id)
 
     this.dataSrv.importVonderCont(formdata).subscribe(
       (res:any) => {
@@ -283,10 +293,21 @@ export class VendorContractsComponent implements OnInit {
     }
     let type = files[0].type;
     this.fileToUpload = files[0];
-    // this.uploadNow1(this.fileToUpload)
+      // this.uploadNow1(this.fileToUpload)    
   }
 
   uploadNow1(modal) {
+    if(!this.fileToUpload){
+      this.toaster.errorToastr(' Please Select file')
+      return;
+    }
+    if (this.fileToUpload && !['csv' ,'xls','text/csv'].includes(this.fileToUpload[0]?.type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
+      return;
+  
+    }
+ 
+      
     
     let formdata = new FormData();
     formdata.append('id',this.dataID)
@@ -326,17 +347,17 @@ export class VendorContractsComponent implements OnInit {
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
       });
-      if(this.currentUser.prmsnId == '1'){
-        // this.slctCom(this.currentUser.id)
+      if(this.currentUser?.prmsnId == '1'){
+        // this.slctCom(this.currentUser?.id)
         this.allCommunity =   this.allCommunity.filter(i=>{
-          if(this.currentUser.id == i.id){
+          if(this.currentUser?.id == i.id){
             return i
           }
         })
       }
       else if(!['1','6'].includes(this.currentUser?.prmsnId)){
         this.allCommunity =   this.allCommunity.filter(i=>{
-          if(this.currentUser.com_id == i.id){
+          if(this.currentUser?.com_id == i.id){
             return i
           }
         })
@@ -383,5 +404,61 @@ export class VendorContractsComponent implements OnInit {
       })
   }
 
+  selectCommunity1(id:any){
+    this.community_id=id;
+    this.setPage({ offset: 0 });
+  }
 
+  getCommunityByMangmentId(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let d:any[] = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          const uniqueArray = d.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.community_id === obj.community_id &&
+                    t.community_name === obj.community_name &&
+                    t.community_short_name === obj.community_short_name
+                ))
+            );
+          this.allCommunity1 = uniqueArray.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = this.allCommunity1[0]?.community_id
+       this.setPage({ offset: 0 })
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity1 = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = response?.body[0]?.cp_id
+       this.setPage({ offset: 0 })
+          //this.toastr.successToastr(response.msg);
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
+  }
 }

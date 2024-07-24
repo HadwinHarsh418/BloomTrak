@@ -4,3 +4,18 @@
     top: 40px;
     left: 16px;
 }
+.mob_res{
+    display: flex;
+}
+.common-form-left.mob_res .form-check {
+    padding: 0 38px 0 0 ;
+}
+.calbox {
+    width: 100%;
+}
+@media(max-width: 767px){
+    .mob_res{
+        display: block !important;
+    }
+    .common-form-left.mob_res .form-check {padding: 0 0 0 24px !important;}
+}

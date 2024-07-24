@@ -52,6 +52,10 @@ export class UserService {
     return this._http.get<any>(`${environment.baseApiUrl}getManagementById?id=${enc_user_id}`);
   }
 
+  getManagementUserById(enc_user_id: any) {
+    return this._http.get<any>(`${environment.baseApiUrl}getManagementUserById?id=${enc_user_id}`);
+  }
+
   getcommunityDetails(cId: any) {
     return this._http.get<any>(`${environment.baseApiUrl}getcommunityById?id=${cId}`);
   }

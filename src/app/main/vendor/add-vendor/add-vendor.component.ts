@@ -22,6 +22,7 @@ export class AddVendorComponent implements OnInit {
   allCommunity: any = [];
   comName: any;
   userName: any;
+  community_id: any;
 
   constructor(
     private aCtRoute : ActivatedRoute,
@@ -32,10 +33,10 @@ export class AddVendorComponent implements OnInit {
     private _router : Router,
     private _authenticationService : AuthenticationService,
   ) {
-    this.getCommunityId()
     this.getAllRole()
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
+      this.currentUser?.user_role == 3|| this.currentUser?.user_role == 8?this.getMngComunity() :this.getCommunityId()
     })
     this.aCtRoute.params.subscribe(
       res => {
@@ -118,7 +119,7 @@ export class AddVendorComponent implements OnInit {
        
         vendor_name: this.formRoleData.value.vendor,
         description: this.formRoleData.value.description,
-        community_id: this.currentUser.prmsnId == '1' ? this.currentUser.id : this.formRoleData.value.community_id,
+        community_id: this.currentUser?.prmsnId == '1' ? this.currentUser?.id : this.formRoleData.value.community_id,
           id:this.prmsUsrId.id
       }
         this.dataSrv.editVendor(data).subscribe((res:any)=>{
@@ -138,7 +139,7 @@ export class AddVendorComponent implements OnInit {
       let data ={
         vendor_name: this.formRoleData.value.vendor,
         description: this.formRoleData.value.description,
-        community_id: this.currentUser.prmsnId == '1' ? this.currentUser.id : this.formRoleData.value.community_id,
+        community_id: this.currentUser?.prmsnId == '1' ? this.currentUser?.id : this.formRoleData.value.community_id,
   }
       this.loading=  true;
         this.dataSrv.addVendor(data).subscribe((res:any)=>{
@@ -184,8 +185,8 @@ export class AddVendorComponent implements OnInit {
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
       })  ;
-      if(this.roleData2.includes(this.currentUser.prmsnId)){
-        this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser.com_id){ return i}})
+      if(this.roleData2.includes(this.currentUser?.prmsnId)){
+        this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser?.com_id){ return i}})
       }
      this.getCommunityDetails()
         //this.toastr.successToastr(response.msg);
@@ -197,12 +198,62 @@ export class AddVendorComponent implements OnInit {
 
     })
   }
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = d.community_id
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = response?.body[0]?.cp_id
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
+  }
 
    getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id).subscribe(response => {
       if (!response.error) {
           this.comName = response.body[0]
-          if(this.roleData2.includes(this.currentUser.prmsnId)){
+          if(this.roleData2.includes(this.currentUser?.prmsnId)){
             this.getUserDtl()
           }
       } else {
@@ -219,7 +270,7 @@ export class AddVendorComponent implements OnInit {
 getUserDtl(){
   let is_for = 'user'
   let searchStr = ''
-  this.dataSrv.getUserById(searchStr = '',this.currentUser.id,is_for).subscribe(response => {
+  this.dataSrv.getUserById(searchStr = '',this.currentUser?.id,is_for).subscribe(response => {
     if (!response.error) {
         this.userName = response.body[0]
     } else {

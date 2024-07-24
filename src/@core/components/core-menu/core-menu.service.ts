@@ -160,7 +160,7 @@ export class CoreMenuService {
     let filteredMenus = allMenus?.filter(item => {
       return !item.access_to || !item.access_to.length || item.access_to.includes(this.currentUser?.access_to)});
 
-    let filteredMenusForChild = !this.accMenu.length ? filteredMenus.splice(0,1) :(this.currentUser.prmsnId =='6' || this.currentUser.user_role =='3') ? filteredMenus : filteredMenus.map(
+    let filteredMenusForChild = !this.accMenu.length ? filteredMenus.splice(0,1) :(this.currentUser?.prmsnId =='6' || this.currentUser?.user_role =='3') ? filteredMenus : filteredMenus.map(
       item => {
         if(["shiftrak","spendtrak", "Admin"].includes(item.title)) {
           if(item.children) {

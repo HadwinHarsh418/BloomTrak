@@ -41,7 +41,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   startDateTime: number;
   roleData: any=[]
   roleData1: any=[]
-  dummyUrl: boolean;
+  dummyUrl: boolean=false;
 
 
   // Add .navbar-static-style-on-scroll on scroll using HostListener & HostBinding
@@ -91,9 +91,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.currentUser = this._authenticationService.currentUserValue;
       }
     })
+   
+    
     if(this.currentUser?.user_role == '7' || JSON.parse(localStorage.getItem('ClockIn'))== 'Yes'){
       this.router.navigate(['/clockin']);
-      this.dummyUrl = JSON.parse(localStorage.getItem('ClockIn'))== 'Yes'
+      this.dummyUrl = true
     }
     this.mainlogo = this._coreConfigService.mainLogo;
     this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
@@ -184,13 +186,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._authenticationService.logout();
   }
 
-  getCurrentUserDetail() {
-   console.log(this.currentUser,'dddfdfdf');
-   
-    if (['1',1].includes(this.currentUser.prmsnId)|| this.currentUser.user_role == "7" ) {
-      // if(this.currentUser.role == "Community"){
+  getCurrentUserDetail() {   
+    if (['1',1].includes(this.currentUser?.prmsnId)|| this.currentUser?.user_role == "7" ) {
+      // if(this.currentUser?.role == "Community"){
       //   let searchStr = ''
-      //   this.datasrv.getUserById(searchStr ,this.currentUser.id ,'user').subscribe((res: any) => {
+      //   this.datasrv.getUserById(searchStr ,this.currentUser?.id ,'user').subscribe((res: any) => {
       //     if (res.body[0]?.first_name) {
       //       this.portalName2 = res.body[0].first_name +' '+ res.body[0].last_name
       //       this.portal = 'Community Portal'
@@ -198,10 +198,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
       //   })
       // }
       // else{
-        this.datasrv.getcommunityById(this.currentUser.id).subscribe((res: any) => {
+        this.datasrv.getcommunityById(this.currentUser?.id).subscribe((res: any) => {
           if (res.body[0]?.single_community == '0' && res.body[0]?.community_name) {
-            this.portal = this.currentUser.user_role == "7" ? 'Clock In-Out' : 'Community Portal'
-            this.portalName = this.currentUser.user_role == "7" ? 'Community' :  'Community Portal'
+            this.portal = this.currentUser?.user_role == "7" ? 'Clock In-Out' : 'Community Portal'
+            this.portalName = this.currentUser?.user_role == "7" ? 'Community' :  'Community Portal'
             this.portalName2 = res.body[0]?.community_name
           } else {
             this.portal = 'Community Portal'
@@ -211,10 +211,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
         })
       // }
      
-    } else if (this.currentUser.user_role== '3' || this.currentUser.user_role == '8' ) {
-      this.datasrv.getManagementById(this.currentUser.id).subscribe((res: any) => {
+    } else if (this.currentUser?.user_role== '3' || this.currentUser?.user_role == '8' ) {
+      this.datasrv.getManagementById(this.currentUser?.id).subscribe((res: any) => {
         if (res.body[0]?.mg_name) {
-          if(this.currentUser.user_role == '8'){
+          if(this.currentUser?.user_role == '8'){
             this.portalName2 = res.body[0].first_name +' '+ res.body[0].last_name
             this.portal = 'Management Company'
             this.portalName = 'Management Company User'
@@ -226,9 +226,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         } 
         else{
           let searchStr = ''
-        this.datasrv.getUserById(searchStr ,this.currentUser.id ,'user').subscribe((res: any) => {
+        this.datasrv.getUserById(searchStr ,this.currentUser?.id ,'user').subscribe((res: any) => {
           if (res.body[0]?.first_name) {
-            if(this.currentUser.user_role == '8'){
+            if(this.currentUser?.user_role == '8'){
               this.portalName2 = res.body[0].first_name +' '+ res.body[0].last_name
               this.portal = 'Management Company'
               this.portalName = 'Management Company User'
@@ -243,25 +243,25 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
       })
     }
-    else if (this.roleData1.includes(this.currentUser.prmsnId)) {
+    else if (this.roleData1.includes(this.currentUser?.prmsnId)) {
     let searchStr = ''
-        this.datasrv.getUserById(searchStr ,this.currentUser.id ,'user').subscribe((res: any) => {
+        this.datasrv.getUserById(searchStr ,this.currentUser?.id ,'user').subscribe((res: any) => {
           if (res.body[0]?.first_name) {
             this.portalName2 = res.body[0].first_name +' '+ res.body[0].last_name
             this.portal = 'Community Portal'
           } 
         })
     }
-    else if (['2',2].includes(this.currentUser.prmsnId)) {
-      this.datasrv.getAgenciesByID(this.currentUser.id).subscribe((res: any) => {
+    else if (['2',2].includes(this.currentUser?.prmsnId)) {
+      this.datasrv.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
         if (res.body[0]?.agency_name) {
           this.portalName2 = res.body[0].agency_name
         } 
       })
     }
-    else if (['4','5'].includes(this.currentUser.prmsnId) || ['4','5',4,5].includes(this.currentUser.user_role)) {
+    else if (['4','5'].includes(this.currentUser?.prmsnId) || ['4','5',4,5].includes(this.currentUser?.user_role)) {
       let searchStr = ''
-      this.datasrv.getUserById(searchStr ,this.currentUser.id ,'user').subscribe((res: any) => {
+      this.datasrv.getUserById(searchStr ,this.currentUser?.id ,'user').subscribe((res: any) => {
         if (res.body[0]?.first_name) {
           this.portalName2 = res.body[0].first_name +' '+ res.body[0].last_name
         } 
@@ -334,20 +334,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
       id: this._translateService.currentLang
     });
 
-      if(this.currentUser && this.currentUser.role){
-        this.portal = this.currentUser.role == 'SuperAdmin' ? 'bloomtrak' :
-          this.currentUser.role == 'Agency' ? 'Agency Portal ' :  this.currentUser.role == "Admin" ? 'Management Company' : this.currentUser.role == 'Community' ? 'Community  Portal' : 'User Portal ';
+      if(this.currentUser && this.currentUser?.role){
+        this.portal = this.currentUser?.role == 'SuperAdmin' ? 'bloomtrak' :
+          this.currentUser?.role == 'Agency' ? 'Agency Portal ' :  this.currentUser?.role == "Admin" ? 'Management Company' : this.currentUser?.role == 'Community' ? 'Community  Portal' : 'User Portal ';
     
-        this.portalName = this.currentUser.role == 'SuperAdmin' ? 'bloomtrak' :
-          this.currentUser.role == 'Community' ? 'Community  ' :
-            this.currentUser.role == 'Agency' ? 'Agency Portal' :  this.currentUser.role == "Admin" ? 'Management Company' : this.currentUser.role == 'Community User' ? 'Community User' : 'User';
+        this.portalName = this.currentUser?.role == 'SuperAdmin' ? 'bloomtrak' :
+          this.currentUser?.role == 'Community' ? 'Community  ' :
+            this.currentUser?.role == 'Agency' ? 'Agency Portal' :  this.currentUser?.role == "Admin" ? 'Management Company' : this.currentUser?.role == 'Community User' ? 'Community User' : 'User';
             this.getRole()
            
       }else if(this.currentUser && this.currentUser?.user_role =='7'){
-        this.datasrv.getcommunityById(this.currentUser.id).subscribe((res: any) => {
+        this.datasrv.getcommunityById(this.currentUser?.id).subscribe((res: any) => {
           if (res.body[0]?.single_community == '0' && res.body[0]?.community_name) {
-            this.portal = this.currentUser.user_role == "7" ? 'Clock In-Out' : 'Community Portal'
-            this.portalName = this.currentUser.user_role == "7" ? 'Community' :  'Community Portal'
+            this.portal = this.currentUser?.user_role == "7" ? 'Clock In-Out' : 'Community Portal'
+            this.portalName = this.currentUser?.user_role == "7" ? 'Community' :  'Community Portal'
             this.portalName2 = res.body[0]?.community_name
           } else {
             this.portal = 'Community Portal'

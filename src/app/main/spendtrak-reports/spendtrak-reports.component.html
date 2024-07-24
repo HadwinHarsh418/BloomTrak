@@ -23,7 +23,7 @@
                     <div class="card-body">
                       <div class=" col-lg-12 mt-2">
                           <div class="row mb-1">
-                            <div class="col-6" *ngIf="currentUser.role != 'Agency'">
+                            <div class="col-12" *ngIf="currentUser.role != 'Agency'">
                               <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event)" [disabled]="runPrms == 0">
                                 <option  value="" selected disabled> ---Report---</option>
                                 <option value="0"> Current Contracts Report</option>
@@ -45,7 +45,7 @@
                               </select>
                             </div>
   
-                            <div class="col-6" *ngIf="currentUser.prmsnId == '6' || currentUser.user_role == '3'  || this.currentUser.user_role == '8'">
+                            <div class="col-6" *ngIf="currentUser.prmsnId == '6' || currentUser.user_role == '3'  || this.currentUser?.user_role == '8'">
                               <select id="inputState" class="form-control" [(ngModel)]="community_id" (change)="chngCom($event.target.value)" [disabled]="runPrms == 0">
                                 <option value="undefined" selected="selected" disabled>---Select Community---</option>
                                 <option value="{{currentUser.user_role == '3' ? item.cp_id : (item.id || item.community_id)}}" *ngFor="let item of allCommunity">
@@ -56,7 +56,7 @@
                             <div class={{mt}} *ngIf="data4 || data6 || data7 || data8 || data3">
                               <select  class="form-control" [(ngModel)]="slctDprt">
                                 <option value="undefined" selected="selected" disabled>---Select Department---</option>
-                                <option value="all_department" *ngIf="currentUser.user_role == '3' || currentUser.user_role == '6' || currentUser.user_role == '8' || currentUser.prmsnId== '16' || currentUser.prmsnId== '24' || currentUser.prmsnId== '1'" >All Departments</option>
+                                <option value="all_department" *ngIf="dprtmnt?.length && (currentUser.user_role == '3' || currentUser.user_role == '6' || currentUser.user_role == '8' || currentUser.prmsnId== '16' || currentUser.prmsnId== '24' || currentUser.prmsnId== '1')" >All Departments</option>
                                 <option value="" *ngIf="!dprtmnt?.length"  disabled>---No Data Found---</option>
                                 <option value="{{item.name}}" *ngFor="let item of dprtmnt">{{item.name}}</option>
                             </select>
@@ -82,55 +82,68 @@
                           </div>
                         </div>
 
-                        <div class="row" *ngIf="data4">
-                          <div class="col-6 text-center" >
-                            CURRENT
-                          </div>
-                          <div class="col-6 text-center">
-                            COMPARATIVE PERIOD
-                          </div>
-                        </div> 
-  
                         <div class="row">
-                          
-                          
-                          <div class="col-6">
-                            <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1" [markDisabled]="isDisabled"   (dateSelect)="currentDateSelection1($event,true)" *ngIf="data4" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
-                            </ngb-datepicker>
-                            
-                            <ng-template #t ngbDatepickerDay let-date let-focused="focused">
-                              <span
-                                class="custom-day12"
-                                [class.first-week]="date.weeday === 0"
-                                [class.focusedrrrr]="focused"
-                                [class.range]="currentisRange1(date)"
-                                [class.faded]="currentisHovered1(date) || currentisInside1(date)"
-                                (mouseenter)="hoveredDate1 = date"
-                                (mouseleave)="hoveredDate1 = null"
-                              >
-                                {{ date.day }}
-                              </span>
-                            </ng-template>
+                          <div class="col-lg-6" *ngIf="data4">
+                            <div class="col-6 text-center" >
+                              CURRENT
+                            </div>
+                            <div class="overflow-calender">
+                              <div class="col-6">
+                                <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1" [markDisabled]="isDisabled"   (dateSelect)="currentDateSelection1($event,true)" *ngIf="data4" [displayMonths]="2" [dayTemplate]="t" outsideDays="hidden">
+                                </ngb-datepicker>
+                                
+                                <ng-template #t ngbDatepickerDay let-date let-focused="focused">
+                                  <span
+                                    class="custom-day12"
+                                    [class.first-week]="date.weeday === 0"
+                                    [class.focusedrrrr]="focused"
+                                    [class.range]="currentisRange1(date)"
+                                    [class.faded]="currentisHovered1(date) || currentisInside1(date)"
+                                    (mouseenter)="hoveredDate1 = date"
+                                    (mouseleave)="hoveredDate1 = null"
+                                  >
+                                    {{ date.day }}
+                                  </span>
+                                </ng-template>
+                              </div>
+
+                            </div>
                           </div>
+                          <div class="col-lg-6" *ngIf="data4">
+                            <div class="col-6 text-center">
+                              COMPARATIVE PERIOD
+                            </div>
+                            <div class="overflow-calender">
+                              <div class="col-6">
+                                <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1"  (dateSelect)="onDateSelection($event,false)" *ngIf="data4" [displayMonths]="2" [dayTemplate]="t1" outsideDays="hidden">
+                                </ngb-datepicker>
+                                
+                                <ng-template #t1 let-date let-focused="focused">
+                                  <span
+                                    class="custom-day"
+                                    [class.focused]="focused"
+                                    [class.range]="isRange(date)"
+                                    [class.faded]="isHovered(date) || isInside(date)"
+                                    (mouseenter)="hoveredDate = date"
+                                    (mouseleave)="hoveredDate = null"
+                                  >
+                                    {{ date.day }}
+                                  </span>
+                                </ng-template>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- <div class="row" *ngIf="data4">
+                        </div>  -->
   
-                          <div class="col-6">
-                            <ngb-datepicker class="ml-1" #dp [maxDate]="minDate1"  (dateSelect)="onDateSelection($event,false)" *ngIf="data4" [displayMonths]="2" [dayTemplate]="t1" outsideDays="hidden">
-                            </ngb-datepicker>
-                            
-                            <ng-template #t1 let-date let-focused="focused">
-                              <span
-                                class="custom-day"
-                                [class.focused]="focused"
-                                [class.range]="isRange(date)"
-                                [class.faded]="isHovered(date) || isInside(date)"
-                                (mouseenter)="hoveredDate = date"
-                                (mouseleave)="hoveredDate = null"
-                              >
-                                {{ date.day }}
-                              </span>
-                            </ng-template>
-                          </div>
-                        </div> 
+                        <!-- <div class="row">
+                          
+                          
+  
+                        </div>  -->
   
                       
   
@@ -140,7 +153,7 @@
                       <div class=" col-lg-12">
                         <div class="card">
                           <div class="row" *ngIf="!trndRpt">
-                            <div class="col-6">
+                            <div class="col-12">
                                 <!-- <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange($event)" >
                                   <option  value="" selected disabled> ---Time Period---</option>
                                   <option value="30"> Last 30 Days</option>
@@ -148,21 +161,21 @@
                                   <option value="90"> Last 90 Days</option>
                                   <option value="year"> Custom</option>
                                 </select> -->
-                              <div class="row mt-1" *ngIf="!data4 && !data0">
+                              <div class="row" *ngIf="!data4 && !data0">
                                 <!-- <div class="col-6">
                                   <input type="date"  max={{minDate}} class="form-control" name="dt" id="dt1" (change)="stDt ? timeprd = false : timeprd = true" [(ngModel)]="stDt" >
                                 </div>
                                 <div class="col-6">
                                   <input type="date" min={{stDt}} max={{minDate}} [disabled]="!stDt" class="form-control" name="dt" id="dt" (change)="enDt ? timeprd = false : timeprd = true"  [(ngModel)]="enDt" >
                                 </div> -->
-                                <div class="col-6">
+                                <div class="col-lg-6">
                                   <select id="inputState" class="form-control" [(ngModel)]="mnth" (change)="chngMnt(mnth)">
                                     <option value="undefined" selected="selected" disabled>---Select Month---</option>
                                     <option value="{{item.id}}"  *ngFor="let item of mL">
                                       {{item.val}}</option>
                                   </select>
                                 </div>
-                                <div class="col-6">
+                                <div class="col-lg-6">
                                   <select id="inputState" class="form-control"  [(ngModel)]="yr" (change)="chngYr(yr)">
                                     <option value="undefined" selected="selected" disabled>---Select Year---</option>
                                     <option value="{{item}}" *ngFor="let item of listOfYears">{{item}}</option>
@@ -170,7 +183,7 @@
                                 </div>
                               </div>
                               <div *ngIf="timeprd" style="color: red;">
-                                This field required
+                                This field is Required
                               </div>
                             </div>
                             <div class="col-6" *ngIf="agncyDrp && currentUser.role != 'Agency' ">
@@ -196,7 +209,9 @@
                       </div>
                     </div>
                   </div>
-                  
+                  <i class="fa fa-spinner fa-spin loader" *ngIf="loadingSite"></i>
+
+                  <div class="card" *ngIf="!loadingSite">
                   <div id="demo" class="table-responsive">
                        <table class="table" border="0" *ngIf="data4">
                   
@@ -245,7 +260,7 @@
                     <table class="table" border="0" >
                       <tbody>
                       <tr *ngIf="DailyShowCounts">
-                        <th scope="row" *ngIf="!data0" style="width: 20%;">Start Date</th>
+                        <th scope="row" *ngIf="!data0">Start Date</th>
                         <div *ngIf="!data0" class="col-2 row justify-content-between" style="margin-top: 15px;">
                           {{ stDt | date:'M/d/yyyy'}}                              
                         </div>
@@ -261,7 +276,7 @@
                       </td>
                       </tr>
                       <tr *ngIf="DailyShowCounts">
-                        <th *ngIf="!data0" scope="row" style="width: 20%;">End Date</th>
+                        <th *ngIf="!data0" scope="row">End Date</th>
                         <div *ngIf="!data0" class="col-2 row justify-content-between"  style="margin-top: 15px;">
                           {{ enDt | date:'M/d/yyyy'}}                         
                         </div>
@@ -275,28 +290,28 @@
                         </div></td>  
                       </tr>
                         <tr *ngIf="!data4 && !DailyShowCounts">
-                          <th scope="row" *ngIf="!data0" style="width: 20%;">Start Date</th>
+                          <th scope="row" *ngIf="!data0">Start Date</th>
                           <td  style="width: 80%;"> 
                             <div class="row">
-                            <div *ngIf="!data0" class="col-3">
+                            <div *ngIf="!data0" class="col-lg-6">
                               {{ stDt | date:'M/d/yyyy'}}                              
                             </div>
                       
-                            <div class="col-3">
+                            <div class="col-lg-6">
                               <button class="btn-sm btn-primary" (click)="export()">Export to Excel</button>
                             </div>
                           </div>
                         </td>
                         </tr>
                         <tr *ngIf="!data4 && !DailyShowCounts">
-                          <th *ngIf="!data0" scope="row" style="width: 20%;">End Date</th>
+                          <th *ngIf="!data0" scope="row">End Date</th>
                           <td> <div class="row">
-                            <div *ngIf="!data0" class="col-3">
+                            <div *ngIf="!data0" class="col-lg-6">
                               {{ enDt | date:'M/d/yyyy'}}
                               
                             </div>
                   
-                            <div class="col-3">
+                            <div class="col-lg-6">
                               <button class="btn-sm btn-primary" [useExistingCss]="true" printSectionId="demo" ngxPrint >Export to PDF</button>
                             </div>
                           </div></td>  
@@ -398,6 +413,7 @@
                       </table>
                     
                   </div>
+                </div>
                
   
                

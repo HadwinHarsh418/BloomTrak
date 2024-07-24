@@ -17,6 +17,7 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
   // Private
   private _unsubscribeAll: Subject<any>;
   currentUser: any;
+  showCss: boolean=false;
 
   /**
    * Constructor
@@ -25,9 +26,10 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
    */
   constructor(private _coreConfigService: CoreConfigService,
      private _authenticationService: AuthenticationService,private router:Router) {
-    this.dummyUrl = window.location.pathname
-    console.log(this.dummyUrl);
-    
+      this.dummyUrl=''
+      if(this.currentUser?.id){
+        this.dummyUrl = window.location.pathname
+      }
     // Set the private defaults
     this._unsubscribeAll = new Subject();
     this._authenticationService.currentUser.subscribe((x: any) => {
@@ -51,23 +53,30 @@ export class VerticalLayoutComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
     // Subscribe to config changes
-    this.dummyUrl = window.location.pathname
-    console.log(this.dummyUrl);
+    this.dummyUrl=''
+    if(this.currentUser?.id){
+      this.dummyUrl = window.location.pathname
+    }
+    if(this.dummyUrl == '/clockin' || this.currentUser?.user_role == '7'){
+      this.showCss = true;
+    }
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       if(this.dummyUrl == '/clockin' || this.currentUser?.user_role == '7'){
         config.layout.menu.hidden = true;
         config.layout.menu.collapsed = true;
+        this.coreConfig = config;
       }else{
-        config.layout.menu.hidden = false;
-        config.layout.menu.collapsed = false;
+        // config.layout.menu.hidden = false;
+        // config.layout.menu.collapsed = false;
+        this.coreConfig = config;
       }
-      this.coreConfig = config;
     });
   }
   /**
    * On destroy
    */
   ngOnDestroy(): void {
+    this.dummyUrl = ''
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();

@@ -2,7 +2,7 @@
     <div class="card-header d-flex flex-column align-items-start pb-0">
         <h2 class="font-weight-bolder mt-1">Management Company List </h2>
     </div>
-    <div class="card-body mt-1">
+    <div class="card-body">
         <div class="row">
             <div class="col-md-6 col-12">
                 <div class="d-flex justify-content-between align-items-center m-1">
@@ -24,9 +24,10 @@
                 </div>
             </div>
         </div>
-
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+<div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+      [scrollbarH]="true" [virtualization]="false"
+      [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" 
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
 
             <ngx-datatable-column name="MGMT COMPANY" prop="mg_name" [width]="150">
@@ -72,6 +73,7 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>
     </div>
 </div>
 

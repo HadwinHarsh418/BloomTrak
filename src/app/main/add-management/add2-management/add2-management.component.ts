@@ -23,7 +23,8 @@ export class Add2ManagementComponent implements OnInit {
   phoneUsd: { name: string; flag: string; code: string; dial_code: string; }[];
   selectedDataValue: any;
   usrExst: boolean;
-
+  passwordTextType2: boolean = false;
+  passwordTextType1: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -103,7 +104,7 @@ export class Add2ManagementComponent implements OnInit {
       mg_name: this.formData.value.mg_name,
        mg_email: this.formData.value. mg_email,
       password: this.formData.value.password,
-      username: this.formData.value.username,
+      username: this.formData.value.username.replace(' ','').trim(),
       short_name: this.formData.value.sort_name,
       approval: '1',
       contact_person_firstname: this.formData.value.contact_person_firstname,

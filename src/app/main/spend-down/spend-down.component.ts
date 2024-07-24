@@ -60,10 +60,10 @@ export class SpendDownComponent implements OnInit {
     this.listOfYears = Array.from({length: 3}, (_, i) => this.getCurrentYear - i);
     // this.getSpendDownList(this.data);
     this.getCommunityId()
-    // if(['1'].includes(this.currentUser.prmsnId)){
-    //   this.getDepartment( this.currentUser.id);
+    // if(['1'].includes(this.currentUser?.prmsnId)){
+    //   this.getDepartment( this.currentUser?.id);
     // }
-    // else if(this.roleData1.includes(this.currentUser.prmsnId)){
+    // else if(this.roleData1.includes(this.currentUser?.prmsnId)){
     // }
     setTimeout(() => {
       this.getSpndOnInIt()
@@ -95,18 +95,22 @@ export class SpendDownComponent implements OnInit {
   
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     let formdata = new FormData();
     formdata.append('report',this.fileToUpload)
-    formdata.append('entered_by',this.currentUser.id)
+    formdata.append('entered_by',this.currentUser?.id)
 
     this.dataSrv.importSpendDownTable(formdata).subscribe(
       (res:any) => {
@@ -123,7 +127,7 @@ export class SpendDownComponent implements OnInit {
   }
 
   getCommunityId() {
-    if(this.currentUser.user_role != 3 && this.currentUser.user_role != 8){
+    if(this.currentUser?.user_role != 3 && this.currentUser?.user_role != 8){
       this.dataSrv.getCommunityId().subscribe((response: any) => {
         if (response['error'] == false) {
           this.allCommunity = response.body.sort(function(a, b){
@@ -131,15 +135,15 @@ export class SpendDownComponent implements OnInit {
             if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
             return 0;
         })  ;
-        if(!['2','3','4','5','6'].includes(this.currentUser.prmsnId)){
-          this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser.com_id){ return i}})
+        if(!['2','3','4','5','6'].includes(this.currentUser?.prmsnId)){
+          this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser?.com_id){ return i}})
         }
         this.frsCom = this.allCommunity[0]?.id
-        if(this.currentUser.prmsnId ==6){
+        if(this.currentUser?.prmsnId ==6){
           this.getDepartment(this.frsCom)
           }
-          if(this.currentUser.prmsnId ==1){
-            this.getDepartment(this.currentUser.id)
+          if(this.currentUser?.prmsnId ==1){
+            this.getDepartment(this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id)
             }
           //this.toastr.successToastr(response.msg);
         } else if (response['error'] == true) {
@@ -152,15 +156,24 @@ export class SpendDownComponent implements OnInit {
     }
     else{
 
-        if(this.currentUser.id && this.currentUser.com_id){
+        if(this.currentUser?.id && this.currentUser?.com_id){
           let data = {
-            userId : this.currentUser.id,
-            mangId : this.currentUser.com_id
+            userId : this.currentUser?.id,
+            mangId : this.currentUser?.management
           }
           this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
             if (!res.error) {
+              let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
               // this.mangComs = res.body[1].userAvailableCommunities
-              this.allCommunity = res.body[0].user_added_communities.sort(function(a, b){
+              let e=[]
+              let c =[]
+              d.forEach(element => {
+                if(!e.includes(element.community_id)){
+                  e.push(element.community_id)
+                  c.push(element)
+                }
+              });
+              this.allCommunity = c.sort(function(a, b){
                 if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
                 if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
                 return 0;
@@ -176,7 +189,7 @@ export class SpendDownComponent implements OnInit {
             })
         }
         else{
-          this.dataSrv.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+          this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
             if (response['error'] == false) {
               this.allCommunity = response.body.sort(function(a, b){
                 if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -201,7 +214,7 @@ export class SpendDownComponent implements OnInit {
 //   getUserDtl(){
 //     let is_for = 'user'
 //     let searchStr = ''
-//     this.dataSrv.getUserById(searchStr = '',this.currentUser.id,is_for).subscribe(response => {
+//     this.dataSrv.getUserById(searchStr = '',this.currentUser?.id,is_for).subscribe(response => {
 //       if (!response.error) {
 //           this.userName = response.body[0]
 //       } else {
@@ -215,7 +228,7 @@ export class SpendDownComponent implements OnInit {
 
   getDepartment(e){
     this.dprtmnt =[]
-    let isfor =  6
+    let isfor =  this.currentUser?.user_role == 6 ? 6 : ''
     let for_other = null
     this.dataSrv.getDepartmentListing(e,isfor,for_other).subscribe((res:any)=>{
       this.dprtmnt = res.body.sort(function(a, b){
@@ -233,7 +246,7 @@ export class SpendDownComponent implements OnInit {
   slct(e){
     this.slcDp = ''
     this.slcm = e.target.value
-    // if(this.currentUser.user_role == 3){
+    // if(this.currentUser?.user_role == 3){
     //   this.getPrmsnData()
     // }
     // else{
@@ -262,10 +275,10 @@ export class SpendDownComponent implements OnInit {
     this.resValCal = ''
     let mn = this.curMnt
     this.data ={
-      year : '2023',
+      year : this.getCurrentYear,
       month_name : mn,
       department:this.frstDp,
-      community_id: this.currentUser.prmsnId == 1 ? this.currentUser.id : this.frsCom
+      community_id: this.currentUser?.prmsnId == 1 ? this.currentUser?.id : this.frsCom
     }
     this.dataSrv.getSpendDown(this.data).subscribe((res:any)=>{
       if(!res.error){
@@ -273,7 +286,7 @@ export class SpendDownComponent implements OnInit {
         this.rows1 = res.body
         this.dataForBgt.difference = JSON.stringify(res.body?.difference)
         this.dataForBgt.differenceYTD = JSON.stringify(res.body?.differenceYTD)
-        this.row2 =  res.body?.res2
+        this.row2 =  res.body?.data
          this.rows.map(i=>{
           if(i.entered != null){
             i.entered1 = i.entered_by_cm || i.entered_by_user
@@ -363,7 +376,7 @@ export class SpendDownComponent implements OnInit {
           res.body.map(i=>{
             //comunity
             if(this.roleData.includes(i.role_id)){
-              if(this.roleData2.includes(this.currentUser.prmsnId)){
+              if(this.roleData2.includes(this.currentUser?.prmsnId)){
               if(i.permission_name == 'Department'){
                 if(i.trak_type == '0' || i.trak_type ==null){
                   this.dprtmnt=JSON.parse(i.row_data);
@@ -463,7 +476,7 @@ export class SpendDownComponent implements OnInit {
         december: this.slcMn == '12' ? this.updResVal : null,
         is_month : this.slcMn,
         residents_value : this.resValCal,
-        community_id:this.currentUser.prmsnId == 1 ? this.currentUser.id : !['1','2','3','4','5','6'].includes(this.currentUser.prmsnId)? this.currentUser.com_id : this.slcm , 
+        community_id:this.currentUser?.prmsnId == 1 ? this.currentUser?.id : !['1','2','3','4','5','6'].includes(this.currentUser?.prmsnId)? this.currentUser?.com_id : this.slcm , 
         department:this.slcDp || this.frstDp,
         year:this.slcYr || this.getCurrentYear,
         month: mnt
@@ -486,10 +499,10 @@ export class SpendDownComponent implements OnInit {
     this.updResVal = ''
     this.resValCal = ''
  this.data ={
-      year : this.slcYr || '2023',
+      year : this.slcYr || this.getCurrentYear,
       month_name : this.slcMn ,
       department:this.slcDp || this.frstDp,
-      community_id: this.currentUser.prmsnId == 1 ? this.currentUser.id : this.slcm ||this.frsCom
+      community_id: this.currentUser?.prmsnId == 1 ? this.currentUser?.id : this.slcm ||this.frsCom
     }
     this.dataSrv.getSpendDown(this.data).subscribe((res:any)=>{
       if(!res.error){
@@ -497,7 +510,7 @@ export class SpendDownComponent implements OnInit {
         this.rows1 = res.body
         this.dataForBgt.difference = JSON.stringify(res.body?.difference)
         this.dataForBgt.differenceYTD = JSON.stringify(res.body?.differenceYTD)
-        this.row2 = res.body?.res2
+        this.row2 = res.body?.data
          this.rows.map(i=>{
           if(i.entered != null){
             i.entered1 = i.entered_by_cm || i.entered_by_user

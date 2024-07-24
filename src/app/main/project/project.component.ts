@@ -252,7 +252,7 @@ submitted(modal) {
   }
 
   this.btnShow = true;
-  this.dataService.addProject({ ...this.formData.value, ...{community_id:this.currentUser.id} }).subscribe((res: any) => {
+  this.dataService.addProject({ ...this.formData.value, ...{community_id:this.currentUser?.id} }).subscribe((res: any) => {
     if (!res.error) {
       this.setPage({ offset: 0 });
       this.toastr.successToastr(res.msg)

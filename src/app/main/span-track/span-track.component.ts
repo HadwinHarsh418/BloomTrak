@@ -30,9 +30,9 @@ export class SpanTrackComponent implements OnInit {
   }
 
   getPermission(){
-    // let comunity_id=this.currentUser.id
+    // let comunity_id=this.currentUser?.id
     let data ={
-      is_for : this.currentUser.role == 'Agency' ? 'agency' : 'community'
+      is_for : this.currentUser?.role == 'Agency' ? 'agency' : 'community'
     }
     this.dataSrv.getPermission(data).subscribe((res:any)=>{
       if(!res.err){

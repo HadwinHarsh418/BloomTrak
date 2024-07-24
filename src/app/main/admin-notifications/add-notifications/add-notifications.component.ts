@@ -70,6 +70,7 @@ export class AddNotificationsComponent implements OnInit {
     { value: { hour: 24, minute: 0 }, label: '24:00' },
   ]
   flterDay: any[];
+  allCommunity: any[];
   constructor(
     private _authenticationService: AuthenticationService, 
     private formBuilder:FormBuilder,
@@ -87,6 +88,7 @@ export class AddNotificationsComponent implements OnInit {
     )
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
+      this.currentUser?.user_role == 3 || this.currentUser?.user_role == 5 ? this.getMngComunity():'';
       
     });
    
@@ -105,12 +107,12 @@ export class AddNotificationsComponent implements OnInit {
     'Wednesday',
     'Thursday',
     'Friday',
-    'Saturday'
+    'Saturday',
+
   ];
   
   ngOnInit(): void {
-   
-    this.getUserId()
+    this.currentUser?.user_role == 3|| this.currentUser?.user_role == 5 ? '' :this.getUserId()
     this.formNotification = this.formBuilder.group({
       user_name: ['', Validators.required],
       frequency: ['', Validators.required],
@@ -118,6 +120,7 @@ export class AddNotificationsComponent implements OnInit {
       // template_name: ['', Validators.required],
       group_name: ['', Validators.required],
       seltDepart: ['', Validators.required],
+      com_id: [''],
     })
     this.contentHeader = {
       headerTitle: this.prmsUsrId?.id ? 'Edit Notification' : 'Add Notification',
@@ -133,7 +136,7 @@ export class AddNotificationsComponent implements OnInit {
           {
             name: 'Notification',
             isLink: true,
-            link: '/management'
+            link: '/admin-notifications'
           }
         ]
       }
@@ -155,11 +158,12 @@ export class AddNotificationsComponent implements OnInit {
       textField: 'name',
       selectAllText: 'Select All',
       unSelectAllText: 'UnSelect All',
-      itemsShowLimit: 3,
-      allowSearchFilter: true
+      itemsShowLimit: 10,
+      allowSearchFilter: true,
+      maxHeight:150
     };
 
-    if(this.currentUser.prmsnId == 1){
+    if(this.currentUser?.prmsnId == 1){
       this.getDepartment()
     }
   }
@@ -228,7 +232,7 @@ export class AddNotificationsComponent implements OnInit {
       this.loading=  true;
       let data ={
         user_id :comId,
-        community_id : this.currentUser.id,
+        community_id : [3,8].includes(this.currentUser?.user_role) ? this.formNotification.value.com_id : this.currentUser?.id,
         // template_name : this.formNotification.value.template_name,
         group_name :  this.formNotification.value.group_name,
         frequency :  this.formNotification.value.frequency,
@@ -255,7 +259,7 @@ export class AddNotificationsComponent implements OnInit {
        this.formNotification.value.user_name.filter(i=> comId.push(i.id))
       let data ={
         user_id : comId,
-        community_id : this.currentUser.id,
+        community_id : this.currentUser?.id,
         // template_name : this.formNotification.value.template_name,
         group_name :  this.formNotification.value.group_name,
         frequency :  this.formNotification.value.frequency,
@@ -281,13 +285,32 @@ export class AddNotificationsComponent implements OnInit {
 
   }
 
+  getMngComunity(){
+    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      });
+      this.formNotification.value.com_id = response.body[0].cp_id;
+      this.getDepartment()
+      this.getUserId()
+  }})
+  }
+
+  selectCom(id){
+    this.formNotification.value.com_id = id;
+    this.getDepartment()
+  }
+
   getUserId() {
     let data = {
-      comId : this.currentUser.id,
+      comId : this.currentUser?.id,
       is_for : 'community',
       searchStr : ''
     }
-    this.dataService.getUserById(data.searchStr,data.comId, data.is_for).subscribe((res: any) => {
+    this.dataService.getUserById(data.searchStr,this.currentUser?.user_role == 3|| this.currentUser?.user_role == 5 ? this.formNotification.value.com_id :data.comId, data.is_for).subscribe((res: any) => {
       this.allUsers = res.body.sort(function(a, b){
         if(a.first_name.toUpperCase() < b.first_name.toUpperCase()) { return -1; }
         if(a.first_name.toUpperCase() > b.first_name.toUpperCase()) { return 1; }
@@ -308,7 +331,7 @@ export class AddNotificationsComponent implements OnInit {
     this.dprtmnt =[]
     let isfor =  6
     let for_other = null
-    this.dataService.getDepartmentListing(this.currentUser.id,isfor,for_other).subscribe((res:any)=>{
+    this.dataService.getDepartmentListing(this.currentUser?.user_role == 3|| this.currentUser?.user_role == 5 ? this.formNotification.value.com_id :this.currentUser?.id,isfor,for_other).subscribe((res:any)=>{
       this.dprtmnt = res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
         if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }

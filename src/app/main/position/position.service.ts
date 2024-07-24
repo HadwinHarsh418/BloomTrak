@@ -12,8 +12,8 @@ export class PositionService {
     this.apiUrl = environment.baseApiUrl
   }
 
-  getPosition(community_id): Observable<any> {
-    return this._http.get(`${this.apiUrl}getPosition?community_id=${community_id}`)
+  getPosition(community_id,searchStr?:any): Observable<any> {
+    return this._http.get(`${this.apiUrl}getPosition?community_id=${community_id}&searchStr=${searchStr}`)
   }
 
   deletedPosition(community_id): Observable<any> {

@@ -19,15 +19,12 @@ const routes = [
   {
       path: '',
       component: PositionComponent,
-      canActivate: [AuthGuard],
   },{
     path: 'addPosition',
     component: AddPositionComponent,
-    canActivate: [AuthGuard],
 },{
-  path: 'editPosition/:id/:n',
+  path: 'editPosition/:id/:n/:comid/:avg/:gale_name/:gale_rate',
   component: EditPositionComponent,
-  canActivate: [AuthGuard],
 },
 ];
 

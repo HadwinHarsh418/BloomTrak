@@ -7,7 +7,7 @@
 <!--/ MENU -->
 
 <!-- APP-CONTENT -->
-<div class="app-content content" [class.clockIn]="dummyUrl == '/clockin'">
+<div class="app-content content" [class.clockIn]="showCss">
   <div class="content-overlay"></div>
   <div class="header-navbar-shadow" *ngIf="!coreConfig.layout.navbar.hidden"></div>
   <!-- CONTENT -->
@@ -25,7 +25,7 @@
 <!-- NAVBAR -->
 <ng-template #navbar>
   <app-navbar
-    [class.clockIn]="dummyUrl == '/clockin'"
+    [class.clockIn]="showCss"
     *ngIf="!coreConfig.layout.navbar.hidden"
     [ngClass]="
       coreConfig.layout.navbar.customBackgroundColor === true
@@ -48,7 +48,7 @@
     name="menu"
     [collapsed]="coreConfig.layout.menu.collapsed"
     collapsibleSidebar="bs-gt-xl"
-    *ngIf="!coreConfig.layout.menu.hidden && currentUser?.user_role != 7 && currentUser"
+    *ngIf="!coreConfig.layout.menu.hidden && !showCss && currentUser"
     class="main-menu menu-fixed menu-accordio menu-shadow"
     overlayClass="sidenav-overlay"
     [ngClass]="[

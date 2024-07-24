@@ -30,7 +30,7 @@ export class ErrorInterceptor implements HttpInterceptor {
           // location.reload(true);
         }
         // throwError
-        const error = err.error.message || err.statusText;
+        const error = err?.error?.message || err?.statusText;
         return throwError(error);
       })
     );

@@ -27,6 +27,7 @@ export class SpendtrakReportsComponent implements OnInit {
   currentUser: any;
   Alldata: any=[]
   AlldataAgency: any;
+  loadingSite: boolean = false;
   trendAnalysis: any;
   filename = "export-data.xlsx";
   @ViewChild('addExp') addExp: ElementRef<any>;
@@ -139,10 +140,10 @@ export class SpendtrakReportsComponent implements OnInit {
       
     });
     this.getRole()
-    if(this.currentUser.prmsnId == '1'){
-      this.getDepartment(this.currentUser.id)
+    if(this.currentUser?.prmsnId == '1'){
+      this.getDepartment(this.currentUser?.id)
     }
-    if([3,6,8].includes(this.currentUser.user_role) ){
+    if([3,6,8].includes(this.currentUser?.user_role) ){
       this.getagenciesID()
       this.mt = "col-6 mt-1"
     }else{
@@ -168,6 +169,7 @@ export class SpendtrakReportsComponent implements OnInit {
     //     ]
     //   }
     // };
+    
     this.getCurrentYear = new Date().getFullYear(); // current year
     this.listOfYears = Array.from({length: 3}, (_, i) => this.getCurrentYear - i);
     this.getAgncyDtail()
@@ -176,7 +178,7 @@ export class SpendtrakReportsComponent implements OnInit {
   }
 
   getCommunityId() {
-    if(this.currentUser.prmsnId == '6'){
+    if(this.currentUser?.prmsnId == '6'){
 
       this.dataService.getCommunityId().subscribe((response: any) => {
         if (response['error'] == false) {
@@ -193,15 +195,24 @@ export class SpendtrakReportsComponent implements OnInit {
           this.dataService.genericErrorToaster();
         })
     }else{
-      if(this.currentUser.id && this.currentUser.com_id){
+      if(this.currentUser?.id && this.currentUser?.com_id){
         let data = {
-          userId : this.currentUser.id,
-          mangId : this.currentUser.com_id
+          userId : this.currentUser?.id,
+          mangId : this.currentUser?.management
         }
         this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
           if (!res.error) {
+            let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
             // this.mangComs = res.body[1].userAvailableCommunities
-            this.allCommunity = res.body[0].user_added_communities.sort(function(a, b){
+            let e=[]
+            let c =[]
+            d.forEach(element => {
+              if(!e.includes(element.community_id)){
+                e.push(element.community_id)
+                c.push(element)
+              }
+            });
+            this.allCommunity = c.sort(function(a, b){
               if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
               if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
               return 0;
@@ -216,7 +227,7 @@ export class SpendtrakReportsComponent implements OnInit {
           })
       }
       else{
-        this.dataService.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+        this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
           if (response['error'] == false) {
             this.allCommunity = response.body.sort(function(a, b){
               if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -316,10 +327,11 @@ export class SpendtrakReportsComponent implements OnInit {
 
 
     if(this.data0 == true){
-      this.stDt  = ''
-      this.enDt  = ''
-      this.mnth = 'undefined'
-      this.yr = 'undefined'
+      this.Alldata = []
+      // this.stDt  = ''
+      // this.enDt  = ''
+      // this.mnth = 'undefined'
+      // this.yr = 'undefined'
     }else if(this.data1 == true){
       this.Alldata = []
       this.timeprd = false
@@ -378,8 +390,7 @@ export class SpendtrakReportsComponent implements OnInit {
     this.Difference_In_Time = date1.getTime() - date.getTime();
     // To calculate the no. of days between two dates
     this.Difference_In_Days = this.Difference_In_Time / (1000 * 3600 * 24);
-    
-
+    this.loadingSite = false;
       if(this.start_day != 'year'){
 
         let today = new Date();
@@ -400,8 +411,9 @@ export class SpendtrakReportsComponent implements OnInit {
 
     if (this.data0 == true) {
 
-        this.Apicall.reportingGetVendor([3,6,8].includes(this.currentUser.user_role)  ? this.community_id : this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.id, this.stDt ,this.enDt ).subscribe(res => {
+        this.Apicall.reportingGetVendor([3,6,8].includes(this.currentUser?.user_role)  ? this.community_id : this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.id, this.stDt ,this.enDt ).subscribe(res => {
         this.diffInDys = false
+        this.loadingSite = false;
           if (!res.error) {
             
             this.Alldata = res.body
@@ -415,9 +427,10 @@ export class SpendtrakReportsComponent implements OnInit {
         })
     }
     else if (this.data1 == true) {
-        this.Apicall.reportingGetVendor([3,6,8].includes(this.currentUser.user_role)  ? this.community_id :this.currentUser.com_id ? this.currentUser.com_id :  this.currentUser.id,  this.stDt,this.enDt  ).subscribe(res => {
+        this.Apicall.reportingGetVendor([3,6,8].includes(this.currentUser?.user_role)  ? this.community_id :this.currentUser?.com_id ? this.currentUser?.com_id :  this.currentUser?.id,  this.stDt,this.enDt  ).subscribe(res => {
           // 
           this.diffInDys = false
+          this.loadingSite = false;
           if (!res.error) {
             // 
             this.Alldata = res.body.filter(i=>{if(i.contract_uploaded == 'N'){ return i}})
@@ -432,8 +445,8 @@ export class SpendtrakReportsComponent implements OnInit {
     }
     else if (this.data2 == true) {
      
-      this.Apicall.notFinalReport([3,6,8].includes(this.currentUser.user_role) ? this.community_id : this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.id, this.stDt,this.enDt ).subscribe(res => {
-      
+      this.Apicall.notFinalReport([3,6,8].includes(this.currentUser?.user_role) ? this.community_id : this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.id, this.stDt,this.enDt ).subscribe(res => {
+        this.loadingSite = false;
         if (!res.error) {
           this.Alldata = res.body
           }
@@ -445,9 +458,10 @@ export class SpendtrakReportsComponent implements OnInit {
       })
     }
     else if (this.data3 == true) {
-      let id =  this.currentUser.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser.user_role) ? this.community_id : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id
+      let id =  this.currentUser?.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser?.user_role) ? this.community_id : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id
         this.Apicall.spendTrendReport(id,  this.stDt, this.enDt,this.slctDprt ).subscribe(res => {
           // 
+          this.loadingSite = false;
           if (!res.error) {
             // 
             this.Alldata = res.body
@@ -467,8 +481,9 @@ export class SpendtrakReportsComponent implements OnInit {
       let comprtvEdDt =  this.dateFrmtChng(this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day)
 
       
-      this.Apicall.comparativePeriodDate(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id,this.slctDprt,  curStrDt , curEndDt, comprtvStrDt,comprtvEdDt ).subscribe(res => {
+      this.Apicall.comparativePeriodDate(this.currentUser?.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser?.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id,this.slctDprt,  curStrDt , curEndDt, comprtvStrDt,comprtvEdDt ).subscribe(res => {
         // 
+        this.loadingSite = false;
         if (!res.error) {
           // 
           this.Alldata = res.body
@@ -483,8 +498,9 @@ export class SpendtrakReportsComponent implements OnInit {
   }
   else if (this.data5 == true) {
       
-    this.Apicall.monthlySpendReport(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : this.currentUser.role == 'SuperAdmin' ? this.community_id : this.currentUser.id,  this.stDt, this.enDt, ).subscribe(res => {
+    this.Apicall.monthlySpendReport(this.currentUser?.role =='Agency' ?   this.agcydata.community_id  : this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.id,  this.stDt, this.enDt, ).subscribe(res => {
       // 
+      this.loadingSite = false;
       if (!res.error) {
         // 
         this.Alldata = res.body
@@ -499,8 +515,9 @@ export class SpendtrakReportsComponent implements OnInit {
 }
 else if (this.data6 == true) {
       
-  this.Apicall.monthlyDepReport(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id,this.slctDprt,this.stDt, this.enDt, ).subscribe(res => {
+  this.Apicall.monthlyDepReport(this.currentUser?.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser?.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id,this.slctDprt,this.stDt, this.enDt, ).subscribe(res => {
     // 
+    this.loadingSite = false;
     if (!res.error) {
       // 
       this.Alldata = res.body.result1
@@ -574,8 +591,9 @@ else if (this.data6 == true) {
 }
 else if (this.data7 == true) {
       
-  this.Apicall.VarianceReports(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id,this.slctDprt,this.stDt, this.enDt, ).subscribe(res => {
+  this.Apicall.VarianceReports(this.currentUser?.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser?.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id,this.slctDprt,this.stDt, this.enDt, ).subscribe(res => {
     // 
+    this.loadingSite = false;
     if (!res.error) {
       // 
       this.Alldata = res.body.fynl.result1.filter(i=>{
@@ -608,8 +626,9 @@ else if (this.data7 == true) {
 }
 else if (this.data8 == true) {
       
-  this.Apicall.reciptReports(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id,this.slctDprt,this.stDt, this.enDt, ).subscribe(res => {
+  this.Apicall.reciptReports(this.currentUser?.role =='Agency' ?   this.agcydata.community_id  : [3,6,8].includes(this.currentUser?.user_role)  ? this.community_id : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id,this.slctDprt,this.stDt, this.enDt, ).subscribe(res => {
     // 
+    this.loadingSite = false;
     if (!res.error) {
       this.Alldata = res.body
     }
@@ -635,7 +654,7 @@ else if (this.data8 == true) {
     // 
     // this.end_day = this.datepipe.transform(this.end_day, "yyyy-MM-dd")
     // 
-    // this.Apicall.getCurrentStatusReport(this.currentUser.id, this.start_day, this.end_day).subscribe(res => {
+    // this.Apicall.getCurrentStatusReport(this.currentUser?.id, this.start_day, this.end_day).subscribe(res => {
     //   // 
     //   if (res.msg == "Success") {
     //     // 
@@ -786,7 +805,7 @@ else if (this.data8 == true) {
   }
 
   getAgencyListing(){
-    let community_id = this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.id
+    let community_id = this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.id
     let is_for = 'community'
     let typeDrop = true
     this.dataService.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe((res:any)=>{
@@ -813,7 +832,7 @@ else if (this.data8 == true) {
   }
 
   getAgncyDtail() {
-    this.dataService.getAgenciesByID(this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
         this.agcydata = res.body[0]
   
@@ -857,7 +876,7 @@ else if (this.data8 == true) {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
         // 
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})
@@ -869,7 +888,7 @@ else if (this.data8 == true) {
             this.roleData2.push(i)
           }
          })
-         if(this.roleData2.includes(this.currentUser.prmsnId )){
+         if(this.roleData2.includes(this.currentUser?.prmsnId )){
           this.getPrmsnData()
         }
         
@@ -941,7 +960,7 @@ else if (this.data8 == true) {
   subExp(modal){
     if(this.expltnBool == true){
       let data = {
-        community_id: this.currentUser.prmsnId == 1 ? this.currentUser.id : this.slctCom,
+        community_id: this.currentUser?.prmsnId == 1 ? this.currentUser?.id : this.slctCom,
         gl_acc : this.rowdata.GLA_id,
         department : this.rowdata.department,
         explanation : this.expltn,
@@ -1066,8 +1085,8 @@ switch (this.mn2) {
   }
 
   getCommDetls(){
-    if(this.currentUser.prmsnId =='1'){
-      this.dataService.getcommunityById(this.currentUser.id).subscribe((res: any) => {
+    if(this.currentUser?.prmsnId =='1'){
+      this.dataService.getcommunityById(this.currentUser?.id).subscribe((res: any) => {
           this.comName = res.body[0].community_name
       })
     }

@@ -8,9 +8,9 @@ import { EncryptionService } from 'app/utils/encryption/encryption.service';
 import { UserBalanceService } from './user-balance.service';
 import { CoreTranslationService } from '@core/services/translation.service';
 import { Router } from '@angular/router';
-import { DataService } from './data.service';
+// import { DataService } from './data.service';
 import { map } from 'rxjs/operators';
-
+import * as localforage from 'localforage';
 
 const TOKEN_KEY = 'Bloom-admin-auth-token';
 
@@ -27,6 +27,10 @@ export class AuthenticationService {
 
   loggedOut: boolean;
   tempToken: string = '';
+  private channel = new BroadcastChannel('logout-channel');
+  public logoutTokenKey = 'logout-token';
+  private logoutSubject = new BehaviorSubject<void>(null);
+  logoutObservable$ = this.logoutSubject.asObservable();
 
   /**
    *
@@ -41,9 +45,27 @@ export class AuthenticationService {
     public toastr: ToastrManager,
     private _coreTranslationService: CoreTranslationService,
     private _router : Router,
-    private dataService: DataService
+    // private dataService: DataService
   ) {
     this.checkToken();
+    this.channel.onmessage = (event) => {
+      if (event.data) {
+        // Logout event received from another tab
+        this.logoutSubject.next();
+        window.location.reload()
+      }
+    };
+  }
+
+  triggerLogout() {
+    // Generate a unique token for logout
+    const logoutToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    
+    // Store the logout token
+    localforage.setItem(this.logoutTokenKey, logoutToken);
+
+    // Broadcast the logout event to other tabs
+    this.channel.postMessage(logoutToken);
   }
 
   checkToken() {
@@ -121,6 +143,14 @@ export class AuthenticationService {
       // );
   }
 
+  // addDevice(data): Observable<any> {
+  //   // let enc_data = this.encryptionService.encrypt(JSON.stringify(data));
+  //   return this._http.post(`${environment.baseApiUrl}addDevice`, data)
+  // }
+  addSafariToken(data): Observable<any> {
+    // let enc_data = this.encryptionService.encrypt(JSON.stringify(data));
+    return this._http.post(`${environment.baseApiUrl}addWebPush`, data)
+  }
   verifyTwoFA(data): Observable<any> {
     let enc_data = this.encryptionService.encrypt(JSON.stringify(data));
     return this._http.post(`${environment.baseApiUrl}twoFactAuthVerify`, { enc: enc_data })
@@ -137,17 +167,26 @@ export class AuthenticationService {
    */
   logout() {
     // remove user from local storage to log user out
+    if(localStorage.getItem('safariKeys')){
+      this.clearSafariKeys()
+    }
+    localStorage.removeItem('safariKeys');
     localStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem('Token');
+    this.triggerLogout()
     // notify
     this.currentUserSubject.next(null);
     // clearBalance stored balance
     this._userBalanceService.resetBalance();
     // set logout flag
     this.loggedOut = true;
-    this.dataService.UserPermissions = null;
+    // this.dataService.UserPermissions = null;
     this._router.navigate(['/']);
 
+  }
+
+  clearSafariKeys(){
+    this.removeSafariToken(localStorage.getItem('safariKeys')).subscribe()
   }
 
   setLogin(user) {
@@ -183,23 +222,16 @@ export class AuthenticationService {
   }
 
   getPermissionByAdminRole() {
-    if(this.UserPermissions?.body?.length) {
-      return of(this.UserPermissions);
-    }
-    if(sessionStorage.getItem('Token'))
-    return this._http.get(`${environment.baseApiUrl}getPermissionByAdminRole`).pipe(
-      map((res:any) => {
-        if (!res.error) {
-          this.UserPermissions = res;
-        } 
-        return res;
-      })
-    );
+    if(localStorage.getItem('Bloom-admin-auth-token'))
+    return this._http.get(`${environment.baseApiUrl}getPermissionByAdminRole`)
   }
 
   getCMAccessToByDate(id){
     return this._http.get(`${environment.baseApiUrl}getCMAccessToByDate?community_id=${id}`);
   }
-
+  removeSafariToken(id){
+    let d = JSON.parse(id)
+    return this._http.delete(`${environment.baseApiUrl}deleteWebPush/${d.keys.p256dh}`);
+  }
 
 }

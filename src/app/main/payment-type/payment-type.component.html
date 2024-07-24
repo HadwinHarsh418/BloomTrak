@@ -6,29 +6,29 @@
         <div class="row">
             <div class="col-md-6 col-12">
                 <div class="d-flex mb-1">
-                  <button type="button" class="btn-sm btn-info" *ngIf="currentUser.prmsnId == '6'"
+                  <button type="button" class="btn-sm btn-info" *ngIf="currentUser.prmsnId == '6' || currentUser.prmsnId == '3'"
                      [routerLink]="['add-paymentType']" >  <i class="fa fa-plus mr-50"></i>Add Payment Type
                     </button> 
 
-                    <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
+                    <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','3','16'].includes(currentUser.prmsnId)" >
                         <i class="fa fa-file "></i>   Import File
-                        <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                        <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" accept=".csv, .xls" />
                       </button>
                 </div>
             </div>
        </div> 
-       
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+       <div class="overflow" style="overflow: auto;">
+       <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
             [count]="" [offset]="" [limit]="10" >
            
-            <ngx-datatable-column name="Name" prop="name" [width]="100" >
+            <ngx-datatable-column name="Name" prop="name" [width]="60" >
                 <ng-template let-name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ name }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50" *ngIf="currentUser.prmsnId == '6'">
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50" *ngIf="currentUser.prmsnId == '6'|| currentUser.prmsnId == '3'">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <div class="d-flex align-items-center">
                         <div ngbDropdown container="body">
@@ -52,3 +52,4 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>

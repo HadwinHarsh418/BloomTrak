@@ -17,6 +17,7 @@ export class AgencyComponent implements OnInit {
   @ViewChild('tablesss') tablesss: ElementRef<any>;
   @ViewChild('searchStrInput', { static: true }) searchStrInput: ElementRef;
   @ViewChild('deleteActivity') deleteActivity: ElementRef<any>;
+  @ViewChild('facinal') facinal: ElementRef<any>;
   @ViewChild('addUsers') addUsers: ElementRef<any>;
 
 
@@ -56,6 +57,10 @@ export class AgencyComponent implements OnInit {
   vwPrms: any;
   showMenuIcon: boolean=false;
   roleData: any=[]
+  community_id: any;
+  agencyname: any;
+  resonIsNull: boolean;
+  facinalty_id: any;
 
 
 
@@ -73,8 +78,8 @@ export class AgencyComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getCommunityId();
-    this.setPage({ offset: 0 });
+    this.currentUser?.user_role == 8 ? this.getMngComunity() : this.getCommunityId();
+    this.currentUser?.user_role != 8 ? this.setPage({ offset: 0 }) : '';
 
     fromEvent(this.searchStrInput.nativeElement, 'keyup').pipe(
       map((event: any) => {
@@ -89,6 +94,42 @@ export class AgencyComponent implements OnInit {
   
   }
 
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = d.community_id;
+        this.setPage({ offset: 0 });
+        } else {
+          this.toastr.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataService.genericErrorToaster();
+        })
+    }
+  }
+
+
   setPage(pageInfo) {
     if (this.searchSub) {
       this.searchSub.unsubscribe();
@@ -101,8 +142,8 @@ export class AgencyComponent implements OnInit {
     };
     this.loadingList = true;
     let typeDrop = false
-    let community_id = this.currentUser.role == 'Community' ? this.currentUser.id : this.currentUser.role == 'Admin' ? this.currentUser.id : null;
-    let is_for= this.currentUser.role == 'Community' ? 'community' : this.currentUser.role == 'Admin' ? 'management' :'superadmin';
+    let community_id = this.currentUser?.role == 'Community' ? this.currentUser?.id : this.currentUser?.role == 'Admin' ? this.currentUser?.id : this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.user_role == 8 ? this.community_id : null;
+    let is_for= this.currentUser?.role == 'Community' || this.currentUser?.user_role == 8 || this.currentUser?.user_role == 4 ? 'community' : this.currentUser?.role == 'Admin' ? 'management' :'superadmin';
     this.searchSub = this.dataService.getAgency(this.searchStr, this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe(
       res => {
         if (!res.error) {
@@ -120,17 +161,10 @@ export class AgencyComponent implements OnInit {
             // }else{
             //   i.community_name = '---'
             // }
-          })
-          if (!res.pagination) {
-            this.page.size = res.body.length;
-            this.page.totalElements = res.body.length;
-            this.page.pageNumber = res.body.pageNumber;
-            this.page.totalPages = res.body.totalPages;
-          0}
-          else {
-            this.page = res.pagination
-            this.page.pageNumber = res.pagination.pageNumber
-          }
+          }) 
+            this.page = res?.pagination
+            this.page.pageNumber = Number(res?.pagination?.pageNumber)
+       
         } else {
           this._authenticationService.errorToaster(data)
         }
@@ -141,9 +175,18 @@ export class AgencyComponent implements OnInit {
     )
   }
 
+  selectCommunity(id:any){
+   this.community_id = id
+   this.setPage({ offset: 0 });
+   
+  }
+
   deletesUser(modal) {
     if (this.currentUser1) {
-      let data = { id: this.currentUser1.id };
+      let data = {
+         id: this.currentUser1.id,
+        comid : this.currentUser?.id
+      };
       this.deletingUser = true;
       this.dataService.deleteActivity(data).subscribe(res => {
         if (!res.error) {
@@ -161,15 +204,27 @@ export class AgencyComponent implements OnInit {
       });
     }
   }
-
+  sort(val?:any){
+  }
   openDeleteUser(item) {
     this.currentUser1 = item;
     this.modalOpenOSE(this.deleteActivity, 'lg');
   }
 
+  keyupper(facinalty_id: number) {
+    if (!facinalty_id) {
+        this.resonIsNull = true;
+    } else {
+        this.resonIsNull = false;
+    }
+}
+
   closeded(modal: NgbModalRef) {
+    this.facinalty_id = ''
+    this.resonIsNull = false;
     modal.dismiss();
   }
+
 
   modalOpenOSE(modalOSE, size = 'sm') {
     this.modalService.open(modalOSE,
@@ -287,7 +342,7 @@ export class AgencyComponent implements OnInit {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
         // 
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})

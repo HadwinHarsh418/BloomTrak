@@ -1,7 +1,7 @@
 // import { DatePipe } from '@angular/common';
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { shift } from 'app/auth/models';
 import { AuthenticationService } from 'app/auth/service';
 import { DataService } from 'app/auth/service/data.service';
@@ -15,7 +15,8 @@ import { ToastrManager } from 'ng6-toastr-notifications';
 @Component({
   selector: 'app-edit-shift',
   templateUrl: './edit-shift.component.html',
-  styleUrls: ['./edit-shift.component.scss']
+  styleUrls: ['./edit-shift.component.scss'],
+  providers:[DatePipe]
 })
 export class EditShiftComponent implements OnInit {
   searchSub: any = null;
@@ -31,6 +32,7 @@ export class EditShiftComponent implements OnInit {
   public currentUser: any;
   minDate: any;
   approvedHide: boolean = false;
+  today:any;
 
   Hours: any = [
     { hour: '00' },
@@ -128,6 +130,7 @@ export class EditShiftComponent implements OnInit {
   delay: any;
   additional_note: string;
   overtime: number;
+  spread_hourly_rate:number
   for_cp: any;
   shiftID: any;
   shiftCommunication: any;
@@ -162,6 +165,11 @@ export class EditShiftComponent implements OnInit {
   roleData1: any=[];
   roleData2: any=[];
   shortBreak: any[]=[];
+  allCommunity1: any;
+  for_cpCheck: any;
+  nonsubmit: boolean=false;
+  flaghorlyhate: any;
+  spread_rate: boolean;
 
   constructor(
     private tost: ToastrManager,
@@ -172,22 +180,26 @@ export class EditShiftComponent implements OnInit {
     private positionService : PositionService,
     private departmentService : DepartmentService,
     private certificationService : CertificationService,
-    // private date: DatePipe
+    private _router: Router,
+    private DatePipe: DatePipe
   ) {
+    let d = new Date();
+    this.today = this.DatePipe.transform(d,'yyyy-MM-dd')
+    
     this.getRole()
     this._authenticationService.currentUser.subscribe
       (x => {
         this.currentUser = x;
+        this.getCommunityBreakSetting();
       }
       );
 
-    this.aCtRoute.params.subscribe(
-      res => {
-        this.prmsUsrId = res
-        this.EditShift(this.prmsUsrId)
-      }
-    )
+    
     // this.getCertification()
+  }
+
+  goBackShift(){
+    this._router.navigate(['/shift','id'])
   }
 
   ngOnInit(): void {
@@ -216,6 +228,57 @@ export class EditShiftComponent implements OnInit {
         ]
       }
     };
+    this.getAgency()
+  }
+
+
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else {
+          this.tost.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataService.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else if (response['error'] == true) {
+          this.tost.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataService.genericErrorToaster();
+  
+      })
+    }
   }
 
   getCommunityId() {
@@ -242,13 +305,13 @@ export class EditShiftComponent implements OnInit {
 
   EditShift(row: any) {
     this.getData()
-    this.getCommunityId()
+   this.currenUserId.user_role == 8 || this.currentUser?.user_role == 3 ? this.getMngComunity() : this.getCommunityId()
     this.shiftId = row
     this.shiftID = row.id
     this.getDrton()
     this.dataService.getshiftById(row.id).subscribe((res: any) => {
       if (!res.error) {
-        this.edtShftVal = res.body[0]
+        this.edtShftVal = res.body[0]        
         this.cmntyCng(this.edtShftVal.community_id)
         let sd = moment.unix(this.edtShftVal?.start_time).format("YYYY-MM-DD HH:mm")
         let ed = moment.unix(this.edtShftVal?.end_time).format("YYYY-MM-DD HH:mm")
@@ -271,16 +334,19 @@ export class EditShiftComponent implements OnInit {
         this.position = this.edtShftVal.positions
         this.certification = this.edtShftVal.certification
         this.overtime = this.edtShftVal.overtime
+        this.spread_hourly_rate = this.edtShftVal.spread_hourly_rate
         this.additional_note = this.edtShftVal.additional_note
         // this.cancellation_period = this.edtShftVal.cancellation_period
         // this.is_urgent = this.edtShftVal.is_urgent
         // let delayArr = this.Hours.filter(d => d.hour == this.shiftId.delay);
         this.delay = this.edtShftVal.delay
         this.for_cp = this.edtShftVal.for_cp
+        this.for_cpCheck = this.edtShftVal.for_cp
+        this.for_cp = this.edtShftVal.for_cp
         setTimeout(() => {
-          let cmntyName = this.currentUser.role == 'Admin' ? this.mngmCommunity.filter(c => c.cp_id == this.edtShftVal.community_id) : this.allCommunity.filter(c => c.community_name == this.edtShftVal.community_name) ;
-          // let cmntyName2 = this.currentUser.role == 'SuperAdmin' ? this.allCommunity.filter(c => c.community_name === this.edtShftVal.community_name) : this.allCommunity.filter(c => c.community_name === this.edtShftVal.community_name);
-          this.community =   this.currentUser.role == 'Admin' ? cmntyName[0].cp_id : cmntyName[0].id
+          let cmntyName = this.currentUser?.role == 'Admin' ? this.mngmCommunity.filter(c => c.cp_id == this.edtShftVal.community_id) : this.allCommunity.filter(c => c.community_name == this.edtShftVal.community_name) ;
+          // let cmntyName2 = this.currentUser?.role == 'SuperAdmin' ? this.allCommunity.filter(c => c.community_name === this.edtShftVal.community_name) : this.allCommunity.filter(c => c.community_name === this.edtShftVal.community_name);
+          this.community =   this.currentUser?.role == 'Admin' ? cmntyName[0].cp_id : cmntyName[0].id
         }, 200);
 
       }
@@ -307,20 +373,22 @@ export class EditShiftComponent implements OnInit {
       return;
     }
     else if ((this.for_cp == '2' || this.for_cp == '0') ) {
-      if(!this.agcy_app_rate){
-        this.submit = true
+      if(!this.agcy_app_rate || this.agcy_app_rate == 'undefined'){
+        this.nonsubmit = true
         this.agcy_app_rate = 'undefined'
         return
       }
       else{
         this.submit = false
+        this.nonsubmit = false
+
       }
       // !this.agcy_app_rate
       // this.tost.errorToastr('Agency Applicable Rates ')
       // return;
     } else{
-      this.submit = true
-      this.agcy_app_rate = 'undefined'
+      this.submit = false
+      this.nonsubmit = true;
     }
     this.data = {
       department: this.department,
@@ -334,16 +402,18 @@ export class EditShiftComponent implements OnInit {
       // cancellation_period: this.cancellation_period,
       delay: this.delay,
       overtime: this.overtime,
+      spread_hourly_rate: this.spread_hourly_rate ?? '',
       additional_note: this.additional_note,
       for_cp: this.for_cp,
       h_m: this.h_m,
       start_time: this.cnvrtnewDt(this.start_time + ' ' + this.startTime),
       end_time: this.cnvrtnewDt(this.end_time + ' ' + this.endTime),
-      // community: this.currentUser.role == 'Community' ? this.currenUserId :  this.community,
-      community_id: this.currentUser.role == 'Admin' || this.currentUser.role == 'SuperAdmin' ? this.community : this.currentUser.id,
+      // community: this.currentUser?.role == 'Community' ? this.currenUserId :  this.community,
+      community_id: this.currentUser?.role == 'Admin' || this.currentUser?.role == 'SuperAdmin' || this.currentUser?.user_role == 8 ? this.community : this.currentUser?.user_role == 4 ? this.currentUser?.com_id: this.currentUser?.id,
       // community_id: this.community,
       id: this.shiftID,
-      // community: this.currentUser.role == 'Community' ? this.currenUserId : this.currentUser.role == 'SuperAdmin' ? this.currenUserId : this.community
+      breakTime: this.breakTime,
+      // community: this.currentUser?.role == 'Community' ? this.currenUserId : this.currentUser?.role == 'SuperAdmin' ? this.currenUserId : this.community
     }
     this.dataService.editshift(this.data).subscribe((res: any) => {
       if (!res.error) {
@@ -358,7 +428,7 @@ export class EditShiftComponent implements OnInit {
   }
 
   getData() {
-    this.dataService.getMNMGcommunity(this.currentUser.id).subscribe(res => {
+    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe(res => {
       if (!res.error) {
         this.rows1 = res.body.sort(function(a, b){
           if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -374,12 +444,31 @@ export class EditShiftComponent implements OnInit {
 
   }
 
+  compareDates(dates: any){
+    let currentDate =moment().utc().unix();
+    let hour = dates.h_m == "Hours" ? "hour" : "minute";
+    let shiftStartTime:any = moment(dates.created_at).add(
+        dates.delay,
+        hour
+    );
+    shiftStartTime = moment(shiftStartTime).utc().unix();
+
+
+    if (shiftStartTime > currentDate) {      
+        return true;
+    } else if (shiftStartTime < currentDate) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
   cnvrtnewDt(date_tm) {
     return new Date(date_tm)
   }
 
   getTm1(e) {
-    this.srtDt = e
+    this.srtDt = e    
     if(this.startTime){
       this.endTime = ''
       this.end_time = ''
@@ -456,21 +545,21 @@ export class EditShiftComponent implements OnInit {
 
   // getCertification(){
   //   let isf = ''
-  //   this.certificationService.getCertificationListing(this.currentUser.id).subscribe((res:any)=>{
+  //   this.certificationService.getCertificationListing(this.currentUser?.id).subscribe((res:any)=>{
   //     this.certificationDpw = res.body.sort(function(a, b){
   //       if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
   //       if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
   //       return 0;
   //   })  ;
   //   })
-  //   this.departmentService.getDepartmentListing(this.currentUser.id,isf).subscribe((res:any)=>{
+  //   this.departmentService.getDepartmentListing(this.currentUser?.id,isf).subscribe((res:any)=>{
   //     this.departmentDpw = res.body.sort(function(a, b){
   //       if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
   //       if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
   //       return 0;
   //   })  ;
   //   })
-  //   this.positionService.getPosition(this.currentUser.id).subscribe((res:any)=>{
+  //   this.positionService.getPosition(this.currentUser?.id).subscribe((res:any)=>{
   //     this.positionDpw = res.body.sort(function(a, b){
   //       if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
   //       if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
@@ -483,7 +572,7 @@ export class EditShiftComponent implements OnInit {
     let str = e?.target?.value || e
     let words = e?.target?.value ? str.split(' ') : str;
     let isf = 6
-    let data = {usrRole : '', comId : this.currentUser.prmsnId == '6' ? (words.length ==2 ?  words[1] : words) : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  : this.currentUser.id }
+    let data = {usrRole : '', comId : this.currentUser?.prmsnId == '6' || this.currentUser?.user_role == 8 ? (words.length ==2 ?  words[1] : words) : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  : this.currentUser?.id }
     this.departmentService.getDepartmentListing( e?.target?.value ? words[1] :str ,isf).subscribe((res:any)=>{
       this.departmentDpw = res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
@@ -512,12 +601,20 @@ export class EditShiftComponent implements OnInit {
   }
   getCommunityBreakSetting(){
  
-    this.dataService.getCommunityBreakSetting(this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getCommunityBreakSetting(this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
-        let d= JSON.parse(res.body[0].variance_val)
-            this.shortBreak = JSON.parse(d).map(i=>{i.editing=false; return i;});
-            
-      }
+        if(res?.body[0]?.variance_val){
+          let d= JSON.parse(res.body[0]?.variance_val)
+              this.shortBreak = JSON.parse(d).map(i=>{i.editing=false; return i;});
+        }
+        this.aCtRoute.params.subscribe(
+          res => {
+            this.prmsUsrId = res
+            this.EditShift(this.prmsUsrId)
+          }
+        ) 
+              
+    }
     },
       (err) => {
         this.dataService.genericErrorToaster();
@@ -526,7 +623,7 @@ export class EditShiftComponent implements OnInit {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})
               this.roleData.map(i=>{
@@ -544,6 +641,7 @@ export class EditShiftComponent implements OnInit {
     })
   }
   findBreakTime(hours,min){
+    if(this.shortBreak.length)
     if(hours < 1 && min < 59){
       return this.shortBreak[0].value
     }else if(hours < 2 && hours >= 1 && min < 59){
@@ -563,5 +661,18 @@ export class EditShiftComponent implements OnInit {
     }
 
   }
+  getAgency(){
+    this.dataService.getAllAgenciesType(this.currentUser.user_role == 4 ? this.currentUser.com_id : this.currentUser.id).subscribe(res=>{
+      if (!res.error){
+        this.flaghorlyhate = res.body.filter(agency => agency.agency_type === '1');
+        if (this.flaghorlyhate.length > 0) {
+          this.spread_rate = true;
+        } else {
+          this.spread_rate = false;
+        }
+      } 
+    }
+  );
+}
 
 }

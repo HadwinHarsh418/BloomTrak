@@ -6,19 +6,19 @@
         <div class="row mb-1">
             <div class="col-md-6 col-12">
                 <div class="d-flex">
-                  <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'"
+                  <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'|| currentUser.user_role == 3"
                      [routerLink]="['add-type']" >  <i class="fa fa-plus mr-50"></i>Add Expense Type
                     </button> 
                     
-                    <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
+                    <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','3','16'].includes(currentUser.prmsnId)" >
                         <i class="fa fa-file "></i>   Import File
-                        <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                        <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" accept=".csv, .xls"  />
                       </button>
                 </div>
             </div>
        </div> 
-       
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+       <div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
             [count]="" [offset]="" [limit]="10" >
            
@@ -38,10 +38,10 @@
                                 <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
                             </a>
                             <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-type',row.id,row.type]" *ngIf="edtPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-type',row.id,row.type]" *ngIf="edtPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'|| currentUser.user_role == 3">
                                     <i class="fa fa-edit mr-50"></i> Edit 
                                 </a>
-                                <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)" *ngIf="dltPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                                <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)" *ngIf="dltPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'|| currentUser.user_role == 3">
                                     <i class="fa fa-trash mr-50"></i> Delete 
                                 </a>
                                 <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="dltPrms ==0 && edtPrms == 0">
@@ -53,3 +53,4 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>

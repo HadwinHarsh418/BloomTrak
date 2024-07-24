@@ -21,6 +21,8 @@ export class AgencyRateComponent implements OnInit {
   edtPrms: any;
   vwPrms: any;
   roleData: any=[]
+  community_id: any;
+  allCommunity: any;
 
   constructor(
     private dtsrv : DataService,
@@ -45,14 +47,28 @@ export class AgencyRateComponent implements OnInit {
     ).subscribe((text: string) => {
       this.getAgencyRates()
     });
+this.currentUser?.user_role == 8 ? this.getMngComunity() : ''
+  
+  }
 
+  deleteAgencyRatesById(id){
+    this.dtsrv.deleteAgencyRatesById(id).subscribe((res:any)=>{
+      if(!res.error){
+        this.toaster.successToastr(res.msg)
+        this.getAgencyRates()
+      }else{
+        this.toaster.errorToastr(res.msg)
+      }
+    },err=>{
+      this.dtsrv.genericErrorToaster()
+    })
   }
 
   getAgencyRates(){
       let cpType = {cpType2 :  null}
       let slctCpType = {cpType2 : null }
-      let role =this.currentUser.role
-    this.dtsrv.getAgencyRates(this.searchStr, cpType ? cpType : slctCpType,role,this.currentUser.id).subscribe((res:any)=>{
+      let role =this.currentUser?.role == "Community User" ? 'Community' : this.currentUser?.role
+    this.dtsrv.getAgencyRates(this.searchStr, cpType ? cpType : slctCpType,role,this.currentUser?.user_role == 4 ? this.currentUser?.com_id :this.currentUser?.user_role == 8 ? this.community_id : this.currentUser?.user_role == 5 ? this.currentUser?.com_id : this.currentUser?.id).subscribe((res:any)=>{
       this.rows = res.body;
     },err=>{
       this.toaster.errorToastr('Something went wrong please try again leter')
@@ -61,13 +77,17 @@ export class AgencyRateComponent implements OnInit {
 
   @ViewChild('fileInput') elfile: ElementRef;
   onFileInput(files: any) {
-    if (files.length === 0) {
+    if (files && !['csv' ,'xls','text/csv'].includes(files[0].type)) {
+      this.toaster.errorToastr('Invalid file type. Please select a CSV file.');
       return;
+  
     }
-    let type = files[0].type;
-    this.fileToUpload = files[0];
-    this.uploadNow()
-  }
+    else {
+      this.fileToUpload = files[0];
+      this.uploadNow()
+    }
+      
+        }
 
   uploadNow() {
     let formdata = new FormData();
@@ -85,6 +105,46 @@ export class AgencyRateComponent implements OnInit {
       this.toaster.errorToastr('Something went wrong please try again')
     }
     )
+  }
+
+
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dtsrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = d.community_id
+        this.getAgencyRates()
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      })
+    }
+
+  }
+  
+  
+  selectCommunity(id:any){
+    this.community_id = id
+    this.getAgencyRates()    
   }
 
   getPrmsnData(){

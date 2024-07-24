@@ -30,7 +30,10 @@ label.input-group-text {
     pointer-events: none;
     color: #aaa;
 }
-
+.disabled{
+    pointer-events:none;
+    opacity:0.7;
+  }
 
 .stflter{
     margin-top: 10px;
@@ -39,3 +42,28 @@ label.input-group-text {
 button.btn-sm.btn-info{
     width: 50% !important;
 }
+.loader{
+    font-size: 50px;
+    display: flex;
+    justify-content: center;
+    color: #ff855c;
+  }
+  .refresh{
+    font-size: 50px;
+    display: flex;
+    justify-content: center;
+    color: #ff855c;
+    margin-left: 600px;
+  }
+  .eyeBtn{
+    position: absolute;
+    top: 4px;
+    right: 19px;
+    border: 0;
+}
+.no-data-message {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #555;
+  }

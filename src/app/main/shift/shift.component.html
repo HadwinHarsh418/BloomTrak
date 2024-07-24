@@ -168,8 +168,8 @@
             </div>
         </div>
  <!--- Error Check here for community user -->
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" [scrollbarH]="true" [virtualization]="false"
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"
             *ngIf="(currentUser.role != 'Agency' && currentUser.role != 'User' && currentUser.role != 'Community User' && currentUser.user_role == '4') || rl_id== 15 ">
 
@@ -294,8 +294,8 @@
         
  <!--- Error Check here for community -->
 
-        <ng-container *ngIf="this.currentUser.role == 'Community'">
-            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <ng-container *ngIf="this.currentUser?.role == 'Community'">
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"
             >
@@ -421,7 +421,7 @@
         </ng-container>
 
         <span *ngIf="hideTbl">
-            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="AgencyRowsData" [columnMode]="'force'"
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="AgencyRowsData" [columnMode]="'force'"
                 [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [count]="AgencyRowsData.length"
                 [offset]="page.pageNumber" [limit]="10"
                 *ngIf="currentUser.role == 'Agency' || currentUser.role == 'User'|| currentUser.role == 'Community User'">
@@ -558,7 +558,7 @@
         </span>
 
         <span *ngIf="hideTbl2">
-            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows1" [columnMode]="'force'"
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows1" [columnMode]="'force'"
                 [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [count]="rows1.length"
                 [offset]="page.pageNumber" [limit]="10" [scrollbarH]="true"
                 *ngIf="currentUser.role == 'Agency' || currentUser.role == 'User' || currentUser.role == 'Community User' ">
@@ -706,7 +706,7 @@
         </span>
 
             <!-- <span *ngIf="hideTbl3">
-            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="cmpltShft" [columnMode]="'force'"
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="cmpltShft" [columnMode]="'force'"
                 [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [count]="rows.length"
                 [offset]="page.pageNumber" [limit]="10"
                 *ngIf="currentUser.role == 'Agency'">
@@ -989,7 +989,7 @@
                             <div class="invalid-feedback"
                                 *ngIf="controls['first_name'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -1014,7 +1014,7 @@
                             <div class="invalid-feedback"
                                 *ngIf="controls['last_name'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -1040,7 +1040,7 @@
                             <div class="invalid-feedback"
                                 *ngIf="controls['username'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -1055,7 +1055,7 @@
                 </div>
                 <div class="col-lg-8">
                     <div class="common-form-left form-group">
-                      Preview : <b>{{(slctSrtNm || '---') + '-' + formData.controls['username'].value}}</b>
+                      Preview : <b>{{(slctSrtNm || '---') + '-' + formData.controls['username'].value | replaceSpaces}}</b>
                     </div>
                 </div>
             </div>
@@ -1086,7 +1086,7 @@
                                 <span *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
                                     <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('required')"
                                         class="text text-danger">
-                                        This field required
+                                        This field is Required
                                     </div>
                                     <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('pattern')"
                                         class="text text-danger">
@@ -1118,7 +1118,7 @@
                                     <span *ngIf="controls['email'].dirty && controls['email'].invalid">
                                         <div class="invalid-feedback" *ngIf="controls['email'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         <div class="invalid-feedback" *ngIf="controls['email'].hasError('email')"
                                             class="text text-danger">
@@ -1145,14 +1145,12 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['password'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         <div class="invalid-feedback"
                                             *ngIf="controls['password'].hasError('pattern')"
                                             class="text text-danger">
-                                            A minimum 8 characters password contains a combination of
-                                            uppercase and lowercase letter and special character are
-                                            required.
+                                            Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                         </div>
                                     </span>
                                 </div>
@@ -1176,7 +1174,7 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['cnfrmpassword'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         
                                         <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>
@@ -1200,7 +1198,7 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['addUsrRl'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -1233,7 +1231,7 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['community_id'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -1260,7 +1258,7 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['agency_id'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -1309,7 +1307,7 @@
         <div class="invalid-feedback"
             *ngIf="resonIsNull"
             class="text text-danger">
-            This field required
+            This field is Required
         </div>
         <div class="row mt-1">
             <button type="button" (click)="cancleShft()" class="btn btn-primary btn-sm">

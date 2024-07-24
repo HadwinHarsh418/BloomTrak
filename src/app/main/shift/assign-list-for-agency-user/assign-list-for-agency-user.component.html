@@ -102,7 +102,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="controls['first_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -130,7 +130,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="controls['last_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -156,7 +156,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="controls['phone_number'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                             <div class="invalid-feedback"
                                                                 *ngIf="controls['phone_number'].hasError('pattern')"
@@ -191,7 +191,7 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="controls['email'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="controls['email'].hasError('email')"
@@ -224,7 +224,7 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="controls['DOB'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
 
                                                                     </span>
@@ -251,16 +251,12 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="controls['password'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="controls['password'].hasError('pattern')"
                                                                             class="text text-danger">
-                                                                            A minimum 8 characters password contains a
-                                                                            combination of
-                                                                            uppercase and lowercase letter and special
-                                                                            character are
-                                                                            required.
+                                                                            Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                                                         </div>
                                                                     </span>
                                                                 </div>
@@ -287,7 +283,7 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="controls['cnfrmpassword'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
 
                                                                         <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator"

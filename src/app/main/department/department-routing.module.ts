@@ -8,7 +8,7 @@ import { EditDepartmentComponent } from './edit-department/edit-department.compo
 const routes: Routes = [
   {path:'', component:DepartmentComponent,canActivate: [AuthGuard],},
  { path:'add-department',component:AddDepartmentComponent,canActivate: [AuthGuard],},
- { path:'edit-department/:d/:r',component:EditDepartmentComponent,canActivate: [AuthGuard],}
+ { path:'edit-department/:d/:r/:id',component:EditDepartmentComponent,canActivate: [AuthGuard],}
 ];
 
 @NgModule({

@@ -73,13 +73,13 @@ export class AddManagementComponent implements OnInit {
     };
     let itemenc = this.encryptionService.encode(JSON.stringify(data))
     this.loadingList = true;
-    // let community_id = (this.currentUser.role == Role.Community) ? this.currentUser.id : null;
-    // let agency_id = (this.currentUser.role == Role.Agency) ? this.currentUser.id : null;
+    // let community_id = (this.currentUser?.role == Role.Community) ? this.currentUser?.id : null;
+    // let agency_id = (this.currentUser?.role == Role.Agency) ? this.currentUser?.id : null;
            this.searchSub = this.dataService.getManagement(this.searchStr, this.page.pageNumber).subscribe(res => {
              if (!res.error) {
                this.rows = res.body;
               //  this.rows.map(rw => {
-              //    if (this.currentUser.role == 'Agency') {
+              //    if (this.currentUser?.role == 'Agency') {
               //      rw.phone = rw.agency_phone
               //      rw.emails = rw.agency_email
               //    }

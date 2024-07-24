@@ -1,7 +1,7 @@
 import { DatePipe, Location } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Patterns } from 'app/auth/helpers/patterns';
 import { User } from 'app/auth/models';
@@ -26,7 +26,7 @@ export class ProfileUserComponent implements OnInit {
   curComDetails: any;
   error: any;
   public contentHeader: object;
-  public currentUser: User;
+  public currentUser: any;
   imageObject: any[] = [];
   activeTab: any = 0;
   rows2: any;
@@ -50,6 +50,8 @@ export class ProfileUserComponent implements OnInit {
   userNo: any;
   mangComs: any=[];
   exstMangComs: any=[];
+  edtPrms: any;
+ 
 
   tabChanged(ev:any) {
     this.activeTab = ev.nextId.replace('ngb-nav-','');
@@ -69,6 +71,7 @@ export class ProfileUserComponent implements OnInit {
     private toastr: ToastrManager,
     private modalService: NgbModal,
     private dataService: DataService,
+    private loc: Location,
     private datePipe:DatePipe,
     private loct :Location
 
@@ -87,6 +90,7 @@ export class ProfileUserComponent implements OnInit {
     }
    this.getusercommunityById(this.userId)
    this.getRoles()
+
   }
  
   dropdownSettings: IDropdownSettings = {
@@ -129,11 +133,12 @@ export class ProfileUserComponent implements OnInit {
     // }, 1100)
 
     this.getUserRoles()
+    this.getPrmsnData()
 
 
 
     this.contentHeader = {
-      headerTitle: this.currentUser.role == 'Agency' ? 'Agency Personnel' : this.userNo == '1' ? 'Management User' : 'User',
+      headerTitle: this.currentUser?.role == 'Agency' ? 'Agency Personnel' : this.userNo == '1' ? 'Management User' : 'User',
       actionButton: false,
       breadcrumb: {
         type: '',
@@ -144,9 +149,9 @@ export class ProfileUserComponent implements OnInit {
             link: '/'
           },
           {
-            name: this.currentUser.role == 'Agency' ? 'Agency Personnel' : this.userNo == '1' ? 'Management User' : 'User',
-            isLink: true,
-            link: this.userNo == '1' ? '/management-user' : '/user'
+            name: this.currentUser?.role == 'Agency' ? 'Agency Personnel' : this.userNo == '1' ? 'Management User' : this.currentUser?.user_role == 5 ? 'Agency Personnel':this.currentUser?.user_role == 2?'Agency Personnel':this.currentUser?.user_role == 6? '': 'User',
+            isLink: this.currentUser?.user_role == 6 ? false:true,
+            link: this.userNo == '1' ? '/management-user' :this.currentUser?.user_role == 5 ? '/agency-personnel':this.currentUser?.user_role == 2? '/agency-personnel':this.currentUser?.user_role == 6? '':'/user'
           }
         ]
       }
@@ -182,12 +187,12 @@ export class ProfileUserComponent implements OnInit {
     //   newPassword: ['', [Validators.required]],
     //   id: this.userId
     // })
-    if(this.currentUser.role == 'Community')
+    if(this.currentUser?.role == 'Community')
     {
      this.usrRate.controls['community_id'].clearValidators();
      this.usrRate.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'SuperAdmin')
+    if(this.currentUser?.role == 'SuperAdmin')
     {
      this.usrRate.controls['community_id'].setValidators(Validators.required);
      this.usrRate.updateValueAndValidity();
@@ -228,7 +233,7 @@ export class ProfileUserComponent implements OnInit {
     this.btnShow = true
     let data ={
       user_id : this.userId,
-      assigned_by : this.currentUser.role == 'SuperAdmin' ? this.usrRate.value.community_id : this.currentUser.id,
+      assigned_by : this.currentUser?.role == 'SuperAdmin' ? this.usrRate.value.community_id : this.currentUser?.id,
       rate : this.usrRate.value.rate
     }
     this.dataService.addUserRated(data).subscribe((res: any) => {
@@ -258,7 +263,7 @@ export class ProfileUserComponent implements OnInit {
     this.btnShow = true
     let data ={
       id :this.curComDetails.id,
-      community_id : cmid != null ? cmid[0] : this.currentUser.com_id,
+      community_id : cmid != null ? cmid[0] : this.currentUser?.com_id,
       price : this.editUsrRate.value.rate
     }
     this.dataService.updateUserRated(data).subscribe((res: any) => {
@@ -361,8 +366,8 @@ export class ProfileUserComponent implements OnInit {
 
   getRoles(body?){
     let data = {
-      prms : this.currentUser.role =='SuperAdmin' ? null :this.currentUser.prmsnId == '1' ? 'community_id' : this.currentUser.prmsnId == '2' ? 'agency_id' : 'agency_id',
-       id : this.currentUser.prmsnId == '6' ? null : this.currentUser.id
+      prms : this.currentUser?.role =='SuperAdmin' ? null :this.currentUser?.prmsnId == '1' ? 'community_id' : this.currentUser?.prmsnId == '2' ? 'agency_id' :this.currentUser?.user_role == 3 ? "management_id" :this.currentUser?.user_role == 4 ?'community_id': 'agency_id',
+       id : this.currentUser?.prmsnId == '6' ? null :this.currentUser?.user_role == 5 ? this.currentUser?.com_id:this.currentUser?.user_role == 4 ? this.currentUser?.com_id:this.currentUser?.id
     }
     this.dataService.getRole(data).subscribe((res:any)=>{
       if(!res.error){
@@ -372,6 +377,7 @@ export class ProfileUserComponent implements OnInit {
           return 0;
       });
       }else{
+        this.getUserRoles();
       this.toastr.errorToastr('Something went wrong please try again later')
       }
     },err=>{
@@ -394,10 +400,10 @@ getUserRoles(){
   })
 }
   getAllCAUserRates(){
-    this.dataService.getAllCAUserRates(this.currentUser.id,this.currentUser.role,this.userId).subscribe((res: any) => {
+    this.dataService.getAllCAUserRates(this.currentUser?.id,this.currentUser?.role,this.userId).subscribe((res: any) => {
       this.rows = res.body
       this.getuserDetails();
-      if(this.currentUser.role == 'Community'){
+      if(this.currentUser?.role == 'Community'){
         this.rows =this.rows.filter(i =>{
           if(i.user_id == this.userId)
             return i
@@ -457,6 +463,7 @@ getUserRoles(){
       if (!res.error) {
         this.toastr.successToastr(res.msg)
         this.modalService.dismissAll();
+        // this.getRoles()
         this.getUserRoles()
       }
     })
@@ -464,7 +471,7 @@ getUserRoles(){
 
   UpdateComSub(){
     let cm = []
-    // if(this.currentUser.user_role =='3'){
+    // if(this.currentUser?.user_role =='3'){
     //   this.ComId.map(i=>{
     //     cm.push(i.cp_id)
     //   })
@@ -474,7 +481,6 @@ getUserRoles(){
         cm.push(i.community_id)
       })
     // }
-    console.log(cm);
     let body={
       user_id: this.userId,
       community_id:cm
@@ -516,8 +522,8 @@ getUserRoles(){
       return;
     }
     let data ={
-      username: this.slctSrtNm +'-'+ this.addUsrnm.value.username,
-      id : this.currentUser.id
+      username: this.slctSrtNm +'-'+ this.addUsrnm.value.username.replace(' ','').trim(),
+      id : this.currentUser?.id
     }
     this.dataService.updateUsername(data).subscribe((res: any) => {
       if (!res.error) {
@@ -547,10 +553,10 @@ getUserRoles(){
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
       });
-      if(this.currentUser.prmsnId == '1'){
-        this.slctCom(this.currentUser.id)
+      if(this.currentUser?.prmsnId == '1'){
+        this.slctCom(this.currentUser?.id)
         this.allCommunity1 =   this.allCommunity1.filter(i=>{
-          if(this.currentUser.id == i.id){
+          if(this.currentUser?.id == i.id){
             return i
           }
         })
@@ -565,6 +571,10 @@ getUserRoles(){
     })
   }
 
+  goBackShift(){
+  this.loc.back()
+}
+
   slctCom(e){
     this.allCommunity1.filter(i=>{
          if(e == i.id){
@@ -575,8 +585,8 @@ getUserRoles(){
 
   getManagementUserCommunities(){
     let data = {
-      userId : this.userId,
-      mangId : this.currentUser.id
+      userId : this.currentUser?.id,
+      mangId : this.currentUser?.management
     }
     this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
       if (!res.error) {
@@ -598,10 +608,10 @@ getUserRoles(){
 
 
 
-      // if(this.currentUser.id && this.currentUser.com_id){
+      // if(this.currentUser?.id && this.currentUser?.com_id){
       //   let data = {
-      //     userId : this.currentUser.id,
-      //     mangId : this.currentUser.com_id
+      //     userId : this.currentUser?.id,
+      //     mangId : this.currentUser?.com_id
       //   }
       //   this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
       //     if (!res.error) {
@@ -619,7 +629,7 @@ getUserRoles(){
       //     })
       // }
       // else{
-      //   this.dataService.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+      //   this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
       //     if (response['error'] == false) {
       //       this.mangComs = response.body.sort(function(a, b){
       //         if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -635,5 +645,22 @@ getUserRoles(){
     
       //   })
       // }
+  }
+  getPrmsnData(){
+    
+    this.dataService.getPermissionByAdminRole().subscribe(
+      (res:any) => {
+        if (!res.error) {
+          res.body.map(i=>{
+              if(i.permission_name == 'Agency Personnel'){
+                this.edtPrms  = i.edit_permission
+              }
+          })
+          
+        } 
+    }, (error:any) => {
+      this.dataService.genericErrorToaster()
+    }
+    )
   }
 }

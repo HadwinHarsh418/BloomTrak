@@ -28,9 +28,9 @@
             </div>
         </div>
 
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" [scrollbarH]="true" [virtualization]="false">
             <ngx-datatable-column [name]="'Notification.dt' | translate" prop="created_at">
             </ngx-datatable-column>
             <ngx-datatable-column [name]="'Notification.frusr' | translate" prop="to_everyone">

@@ -17,6 +17,8 @@ export class ResetPassComponent implements OnInit {
   public resetPassForm: FormGroup;
   public loading = false;
   restTkn: any;
+  public passwordTextType: boolean;
+  public passwordTextType2: boolean;
 
   constructor(
     private _formBuilder : FormBuilder,
@@ -83,5 +85,12 @@ export class ResetPassComponent implements OnInit {
       this.loading = false;
     }
     );
+  }
+  togglePasswordTextType() {
+    this.passwordTextType = !this.passwordTextType;
+  }
+
+  togglePasswordTextType2() {
+    this.passwordTextType2 = !this.passwordTextType2;
   }
 }

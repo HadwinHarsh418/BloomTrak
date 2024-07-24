@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
-import { AuthGuard } from 'app/auth/helpers';
 import { CoreCommonModule } from '@core/common.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MyAccountService } from './my-account.service';
@@ -22,7 +21,6 @@ const routes = [
   {
     path: '',
     component: UserProfileComponent,
-    canActivate: [AuthGuard],
   },
 ];
 

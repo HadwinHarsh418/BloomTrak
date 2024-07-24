@@ -14,16 +14,23 @@ export class NotificationsService {
   }
 
 
-  getNotification(): Observable<any> {
-    return this._httpClient.get(`${environment.baseApiUrl}notification`);
+  getNotification(id?:any): Observable<any> {
+    return this._httpClient.get(`${environment.baseApiUrl}getNotificationDetailsById/${id}`);
   }
 
   addNotification(data): Observable<any> {
     return this._httpClient.post(`${environment.baseApiUrl}addNotification`, data);
   }
 
+  getNotificationReadCount(data): Observable<any> {
+    return this._httpClient.get(`${environment.baseApiUrl}getNotificationReadCount/${data}`);
+  }
+
   deleteNotification(data): Observable<any> {
     return this._httpClient.post(`${environment.baseApiUrl}delNotification`, data);
+  }
+  updateNotificationDetailsById(data): Observable<any> {
+    return this._httpClient.get(`${environment.baseApiUrl}updateNotificationDetailsById/${data}`);
   }
 
 }

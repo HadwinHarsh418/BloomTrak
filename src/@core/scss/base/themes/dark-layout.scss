@@ -27,7 +27,7 @@
   h4,
   h5,
   h6 {
-    color: $theme-dark-headings-color;
+    color: #fff;
   }
 
   // border color
@@ -783,7 +783,7 @@
         }
 
         &.disabled {
-          color: $theme-dark-text-muted-color;
+          color:#fff !important;
         }
       }
     }

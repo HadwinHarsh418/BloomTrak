@@ -83,8 +83,8 @@ export class SharedCalenderComponent implements OnInit {
   }
   getCalDetail() {
     this.EventS = []
-    if (this.currentUser.role == 'Community') {
-      let currentUser1 = this.currentUser.id;
+    if (this.currentUser?.role == 'Community') {
+      let currentUser1 = this.currentUser?.id;
       let usetype = ''
       let pageNO = '0'
       let limit = '10'
@@ -120,10 +120,10 @@ export class SharedCalenderComponent implements OnInit {
         })
     }
 
-    else if( this.currentUser.role == 'Agency'){
+    else if( this.currentUser?.role == 'Agency'){
      
       let for_cp1 = 'false';
-      let currentUser1 = this.currentUser.id
+      let currentUser1 = this.currentUser?.id
       let cpType = {cpType2 :  null}
       let slctCpType = {cpType2 : null }
       let tpUsr = 'typeUser'
@@ -160,8 +160,8 @@ export class SharedCalenderComponent implements OnInit {
           this.dataService.genericErrorToaster();
         })
     }
-    else if (this.currentUser.user_role == '5') {
-      this.dataService.getUserAgencyshiftById(this.currentUser.id).subscribe((res: any) => {
+    else if (this.currentUser?.user_role == '5') {
+      this.dataService.getUserAgencyshiftById(this.currentUser?.id).subscribe((res: any) => {
         for (let i = 0; i < res.body.userShifts.length; i++) {
           
           if (!res.error) {
@@ -190,9 +190,9 @@ export class SharedCalenderComponent implements OnInit {
           this.dataService.genericErrorToaster();
         })
     }
-    else if (this.currentUser.user_role == '4') {
-      let for_cp1 = this.currentUser.role == 'User' ? 'true' : 'false';
-      let currentUser1 = this.currentUser.id
+    else if (this.currentUser?.user_role == '4') {
+      let for_cp1 = this.currentUser?.role == 'User' ? 'true' : 'false';
+      let currentUser1 = this.currentUser?.id
       let cpType = ''
       let tpUsr = 'typeUser1'
       

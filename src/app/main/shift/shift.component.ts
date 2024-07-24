@@ -253,7 +253,7 @@ export class ShiftComponent implements OnInit {
       (x => {
         this.currentUser = x;
         
-        this.onItemSelect(this.currentUser.id)
+        this.onItemSelect(this.currentUser?.id)
       }
       );
      
@@ -300,7 +300,7 @@ export class ShiftComponent implements OnInit {
       validator: ConfirmedValidator('password', 'cnfrmpassword')
     },)
 
-    if (this.currentUser.role == "User"|| this.currentUser.role == 'Community User' || this.currentUser.role == "Agency" || (this.currentUser.role == 'Community' && this.currentUser.user_role == '4')) {
+    if (this.currentUser?.role == "User"|| this.currentUser?.role == 'Community User' || this.currentUser?.role == "Agency" || (this.currentUser?.role == 'Community' && this.currentUser?.user_role == '4')) {
       fromEvent(this.searchStrInput?.nativeElement, 'keyup').pipe(
         map((event: any) => {
           this.srchVal = event.target.value;
@@ -331,11 +331,11 @@ export class ShiftComponent implements OnInit {
 
   }
   getRoles(){
-    // let comunity_id=this.currentUser.id
-let id = this.currentUser.prmsnId
+    // let comunity_id=this.currentUser?.id
+let id = this.currentUser?.prmsnId
     let data = {
       prms : (id == '1') ? 'community_id' : (id == '2') ? 'agency_id' : 'null',
-       id : this.currentUser.id
+       id : this.currentUser?.id
     }
     this.dataService.getRole(data).subscribe((res:any)=>{
       if(!res.error){
@@ -385,7 +385,7 @@ let id = this.currentUser.prmsnId
   }
 
   getAgncyDtail() {
-    this.dataService.getAgenciesByID(this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
         this.agcydata = res.body[0]
       }
@@ -443,23 +443,23 @@ let id = this.currentUser.prmsnId
       // phone_number: this.controls.phone_number.value.replace(/\D/g, ''),
       // pin: this.controls.pin.value,
       // hourly_rate: this.agcydata.hourly_rate,
-      // agency_id: this.currentUser.id,
+      // agency_id: this.currentUser?.id,
       // shift_id: this.prmsUsrId?.shift_id ||  this.frstNewApply?.shift_id
       phone_number: this.formData.value.phone_number?.replace(/\D/g, ''),
       email: this.formData.value.email,
       first_name: this.formData.value.first_name,
       last_name: this.formData.value.last_name,
-      username: this.slctSrtNm +'-'+ this.formData.value.username,
+      username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
       password: this.formData.value.password,
-      agency_id: [this.currentUser.id],
+      agency_id: [this.currentUser?.id],
       isAdmin : '5',
       country_code:this.selectedDataValue? this.selectedDataValue : '',
       roles:this.formData.value.addUsrRl
     }
     // let body = {
     //   for_cp: this.prmsUsrId?.for_cp,
-    //   shift_id: this.currentUser.role == 'Agency' ? this.prmsUsrId?.shift_id : this.prmsUsrId?.id,
-    //   user_id: this.currentUser.id,
+    //   shift_id: this.currentUser?.role == 'Agency' ? this.prmsUsrId?.shift_id : this.prmsUsrId?.id,
+    //   user_id: this.currentUser?.id,
     //   is_agency: this.currentUser?.role == 'Agency' ? 1 : 0,
     //   agency_user :this.controls.phone_number.value.replace(/\D/g, ''),
     // }
@@ -512,16 +512,16 @@ let id = this.currentUser.prmsnId
     };
     let itemenc = this.encryptionService.encode(JSON.stringify(data))
     this.loadingList = true;
-    if ((this.currentUser.role == 'Community' && this.currentUser.user_role !=4) || this.currentUser.role == 'SuperAdmin' || this.rl_id == 15  || this.addPrms == '1') {
-      // if((this.currentUser.role == 'Community User'&& this.currentUser.user_role =='4')|| this.addPrms == '1'){
-      //   this.currentUser.role = Role.Community
+    if ((this.currentUser?.role == 'Community' && this.currentUser?.user_role !=4) || this.currentUser?.role == 'SuperAdmin' || this.rl_id == 15  || this.addPrms == '1') {
+      // if((this.currentUser?.role == 'Community User'&& this.currentUser?.user_role =='4')|| this.addPrms == '1'){
+      //   this.currentUser?.role = Role.Community
       // }
       this.getCommunityShifts()
-    } else if (this.currentUser.role == 'User' || this.currentUser.role == 'Community User' || this.currentUser.role == 'Agency' || (this.currentUser.role == 'Community' && this.currentUser.user_role ==4)) {
+    } else if (this.currentUser?.role == 'User' || this.currentUser?.role == 'Community User' || this.currentUser?.role == 'Agency' || (this.currentUser?.role == 'Community' && this.currentUser?.user_role ==4)) {
       this.filterShift(1)
     }
-    else if (this.currentUser.role == 'Admin') {
-      let id = this.currentUser?.community ?? this.currentUser.id
+    else if (this.currentUser?.role == 'Admin') {
+      let id = this.currentUser?.community ?? this.currentUser?.id
       let usetype = null
       let start_time = null
       let end_time = null
@@ -607,7 +607,7 @@ let id = this.currentUser.prmsnId
     
     this.frstNewApply = no
     this.prmsUsrId = row
-    if (this.currentUser.role != 'Agency') {
+    if (this.currentUser?.role != 'Agency') {
       this.applyShift(row)
     } else {
       this.getAgncyUsrLst()
@@ -623,15 +623,15 @@ let id = this.currentUser.prmsnId
       // last_name: this.prmsUsrId.last_name.value,
       // phone_number: this.prmsUsrId.phone_number.value.replace(/\D/g, ''),
       // pin: this.prmsUsrId.pin,
-      shift_id: this.currentUser.role == 'Agency' ? this.prmsUsrId.shift_id : this.prmsUsrId.id,
-      user_id: this.currentUser.id,
+      shift_id: this.currentUser?.role == 'Agency' ? this.prmsUsrId.shift_id : this.prmsUsrId.id,
+      user_id: this.currentUser?.id,
       is_agency: this.currentUser?.role == 'Agency' ? 1 : 0
     }
 
     this.dataService.applyShift(body).subscribe((res: any) => {
       if (!res.error) {
         this.tost.successToastr(res.msg)
-        if (this.currentUser.user_role == '4') {
+        if (this.currentUser?.user_role == '4') {
           this.setPage({ offset: 0 });
         }
       }
@@ -708,7 +708,7 @@ let id = this.currentUser.prmsnId
   }
 
   getCommunityShift() {
-    let currentUser1 = this.currentUser.id
+    let currentUser1 = this.currentUser?.id
     this.dataService.getCommunityShift(currentUser1).subscribe((res: any) => {
       if (!res.error) {
         this.rows = res.body
@@ -735,18 +735,18 @@ let id = this.currentUser.prmsnId
       this.hideTbl3 = false
     }
 
-    if (this.currentUser.role == 'User' || this.currentUser.role == 'Community User' || this.currentUser.role == 'Agency' || (this.currentUser.role == 'Community' && this.currentUser.user_role == '4')) {
-      let for_cp1 = this.currentUser.prmsnId == '4' || this.currentUser.prmsnId == '18' || this.currentUser.user_role == '4' ? 'true' : this.currentUser.prmsnId == '5'? 'agencyUser' : 'false';
-      let currentUser1 = this.currentUser.id
+    if (this.currentUser?.role == 'User' || this.currentUser?.role == 'Community User' || this.currentUser?.role == 'Agency' || (this.currentUser?.role == 'Community' && this.currentUser?.user_role == '4')) {
+      let for_cp1 = this.currentUser?.prmsnId == '4' || this.currentUser?.prmsnId == '18' || this.currentUser?.user_role == '4' ? 'true' : this.currentUser?.prmsnId == '5'? 'agencyUser' : 'false';
+      let currentUser1 = this.currentUser?.id
       this.shiftTypeDrpHide = false
       let cpType = { cpType2: this.shiftType ? this.shiftType : null }
       let slctCpType = { cpType2: this.slctCpType ? this.slctCpType : null }
       let tpUsr = 'typeUser';
-      if(this.currentUser.role == 'Community User'){
+      if(this.currentUser?.role == 'Community User'){
         this.hideTbl = true;
       }
-      if (this.currentUser.user_role == '5') {
-        this.dataService.getUserAgencyshiftById(this.currentUser.id).subscribe((res: any) => {
+      if (this.currentUser?.user_role == '5') {
+        this.dataService.getUserAgencyshiftById(this.currentUser?.id).subscribe((res: any) => {
           if (!res.error) {
             this.rows = res.body.availableShifts.sort(function (a, b) {
               if (a.start_time > b.start_time) { return -1; }
@@ -822,7 +822,7 @@ let id = this.currentUser.prmsnId
               return 0;
             });
             
-            if(this.currentUser.role == 'Agency' || this.currentUser.role == "User"|| this.currentUser.role == "Community User"){
+            if(this.currentUser?.role == 'Agency' || this.currentUser?.role == "User"|| this.currentUser?.role == "Community User"){
               this.AgencyRowsData = this.rows = this.rows.filter(i =>{if (i.assigned == 0) {
                   i.approval = 'Posted';
                   return i;
@@ -907,19 +907,19 @@ let id = this.currentUser.prmsnId
       this.hideTbl = false
       this.hideTbl3 = false
     }
-    if (this.currentUser.role == 'SuperAdmin' || this.rl_id == 15) {
+    if (this.currentUser?.role == 'SuperAdmin' || this.rl_id == 15) {
       this.getCommunityShifts()
     }
-    if (this.roleData.includes(this.currentUser.prmsnId) || this.currentUser.role == 'Agency' || this.currentUser.role == 'User') {
-      let for_cp1 = this.currentUser.prmsnId == '4' || this.currentUser.prmsnId == '18'|| this.currentUser.prmsnId == '76' || this.currentUser.user_role == '4' ? 'true' : this.currentUser.prmsnId == '5'? 'agencyUser' : 'false';
-      let currentUser1 = this.currentUser.id
+    if (this.roleData.includes(this.currentUser?.prmsnId) || this.currentUser?.role == 'Agency' || this.currentUser?.role == 'User') {
+      let for_cp1 = this.currentUser?.prmsnId == '4' || this.currentUser?.prmsnId == '18'|| this.currentUser?.prmsnId == '76' || this.currentUser?.user_role == '4' ? 'true' : this.currentUser?.prmsnId == '5'? 'agencyUser' : 'false';
+      let currentUser1 = this.currentUser?.id
       this.shiftTypeDrpHide = true
       let cpType = { cpType2: this.shiftType ? this.shiftType : null }
       let tpUsr = 'typeUser1'
       let slctCpType = { cpType2: this.slctCpType ? this.slctCpType : null }
       this.shiftTypeDrpHide = true
-      if (this.currentUser.user_role == '5') {
-        this.dataService.getUserAgencyshiftById(this.currentUser.id).subscribe((res: any) => {
+      if (this.currentUser?.user_role == '5') {
+        this.dataService.getUserAgencyshiftById(this.currentUser?.id).subscribe((res: any) => {
           if (!res.error) {
             this.rows1 = res.body.userShifts.sort(function (a, b) {
               if (a.start_time > b.start_time) { return -1; }
@@ -1003,7 +1003,6 @@ let id = this.currentUser.prmsnId
               return i
             })
           }
-          console.log(this.rows1,'rowsssssssssssssssss111111111111111111');
           
           
         },
@@ -1037,9 +1036,9 @@ let id = this.currentUser.prmsnId
   //     this.hideTbl = false
   //     this.hideTbl2 = false
   //   }
-  //   if (this.currentUser.role == 'User' || this.currentUser.role == 'Agency') {
-  //     let for_cp1 = this.currentUser.role == 'User' ? 'true' : 'false';
-  //     let currentUser1 = this.currentUser.id
+  //   if (this.currentUser?.role == 'User' || this.currentUser?.role == 'Agency') {
+  //     let for_cp1 = this.currentUser?.role == 'User' ? 'true' : 'false';
+  //     let currentUser1 = this.currentUser?.id
   //     this.shiftTypeDrpHide = true
   //     let cpType = { cpType2: this.shiftType ? this.shiftType : null }
   //     let tpUsr = 'typeUser1'
@@ -1071,8 +1070,8 @@ let id = this.currentUser.prmsnId
   // }
 
   getCommunityShifts() {
-    if (this.currentUser.role == 'Community' || this.rl_id == 15) {
-      let currentUser1 = this.rl_id == 15 ? (this.currentUser.com_id ?? this.currentUser.id) : (this.currentUser.com_id ?? this.currentUser.id) 
+    if (this.currentUser?.role == 'Community' || this.rl_id == 15) {
+      let currentUser1 = this.rl_id == 15 ? (this.currentUser?.com_id ?? this.currentUser?.id) : (this.currentUser?.com_id ?? this.currentUser?.id) 
       let userShift = this.shiftType ? this.shiftType : null
       if (this.start_date || this.startTime != 'undefined' || this.end_date || this.endTime != 'undefined') {
         this.start_time1 = this.start_date || this.startTime ? this.cnvrtnewDt(this.start_date + ' ' + this.startTime) : null;
@@ -1131,10 +1130,10 @@ let id = this.currentUser.prmsnId
         (err) => {
           this.dataService.genericErrorToaster();
         })
-    } else if (this.currentUser.role == 'User' || this.currentUser.role == 'Agency') {
+    } else if (this.currentUser?.role == 'User' || this.currentUser?.role == 'Agency') {
 
-      let for_cp1 = this.currentUser.prmsnId == '4' || this.currentUser.prmsnId == '18' ? 'true' : this.currentUser.prmsnId == '5'? 'agencyUser' : 'false';
-      let currentUser1 = this.currentUser.id
+      let for_cp1 = this.currentUser?.prmsnId == '4' || this.currentUser?.prmsnId == '18' ? 'true' : this.currentUser?.prmsnId == '5'? 'agencyUser' : 'false';
+      let currentUser1 = this.currentUser?.id
       let cpType = { cpType2: this.shiftType ? this.shiftType : null }
       let slctCpType = { cpType2: this.slctCpType ? this.slctCpType : null }
       let tpUsr = 'typeUser'
@@ -1223,8 +1222,8 @@ let id = this.currentUser.prmsnId
 
   getCommunityShiftByID() {
 
-    let currentUser1 = this.currentUser.id
-    let userShift = this.currentUser.prmsnId == '4' ? 'true' : this.currentUser.prmsnId == '5'? 'agencyUser' : 'false'
+    let currentUser1 = this.currentUser?.id
+    let userShift = this.currentUser?.prmsnId == '4' ? 'true' : this.currentUser?.prmsnId == '5'? 'agencyUser' : 'false'
     // let cpType = {cpType2 : this.shiftType ? this.shiftType : null , cpType1  : 'typeUser'}
     let slctCpType = { cpType2: this.slctCpType ? this.slctCpType : null }
     let tpUsr = 'typeUser1'
@@ -1258,7 +1257,7 @@ let id = this.currentUser.prmsnId
          }
          return i;
        })
-        // if (this.currentUser.role == 'Agency') {
+        // if (this.currentUser?.role == 'Agency') {
         //   this.rows.filter(i => {
         //     if (i.for_cp == '0') {
         //       this.rows1.push(i)
@@ -1401,7 +1400,7 @@ let id = this.currentUser.prmsnId
   getAgncyUsrLst() {
     let is_for = 'agency'
     let searchStr = ''
-    this.dataService.getAgencyUnblockUser(this.prmsUsrId.id,this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getAgencyUnblockUser(this.prmsUsrId.id,this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
         this.agncyUsr = res.body
         
@@ -1451,8 +1450,8 @@ let id = this.currentUser.prmsnId
       // last_name: this.prmsUsrId.last_name.value,
       // phone_number: this.prmsUsrId.phone_number.value.replace(/\D/g, ''),
       // pin: this.prmsUsrId.pin,
-      shift_id: this.currentUser.role == 'Agency' ? this.prmsUsrId.shift_id : this.prmsUsrId.id,
-      user_id: this.currentUser.id,
+      shift_id: this.currentUser?.role == 'Agency' ? this.prmsUsrId.shift_id : this.prmsUsrId.id,
+      user_id: this.currentUser?.id,
       agency_user: snglUsr.id,
       is_agency: this.currentUser?.role == 'Agency' ? 1 : 0,
     }
@@ -1464,7 +1463,7 @@ let id = this.currentUser.prmsnId
           is_for  : '',
           shift_id: this.prmsUsrId.shift_id,
           user_id: snglUsr.id,
-          agency_id: this.currentUser.id,
+          agency_id: this.currentUser?.id,
           first_name: snglUsr.first_name,
           last_name: snglUsr.last_name,
           phone_number: snglUsr.phone_number,
@@ -1478,7 +1477,7 @@ let id = this.currentUser.prmsnId
             this.setPage({ offset: 0 })
           }
         })
-        if (this.currentUser.user_role == '4') {
+        if (this.currentUser?.user_role == '4') {
           this.setPage({ offset: 0 });
         }
       }
@@ -1522,7 +1521,7 @@ let id = this.currentUser.prmsnId
     }else{
       this.resonIsNull = false
     }
-    if(this.currentUser.role == 'Agency'){
+    if(this.currentUser?.role == 'Agency'){
       this.data = {
         shift_id: this.row.shift_id,
         user_id: this.row.aggency_id,
@@ -1532,7 +1531,7 @@ let id = this.currentUser.prmsnId
     }else{
       this.data = {
         shift_id: this.row.shift_id || this.row.id,
-        user_id: this.currentUser.id,
+        user_id: this.currentUser?.id,
         cancel_reason : this.cancel_reason,
         is_agency : ''
       }
@@ -1551,7 +1550,7 @@ let id = this.currentUser.prmsnId
 
     //  let data = {
     //         shift_id: row.shift_id,
-    //         user_id: this.currentUser.id,
+    //         user_id: this.currentUser?.id,
     //         community_id:row.community_id
     //       }
     //       this.dataService.cancelAppliedShift(data).subscribe((res: any) => {
@@ -1568,7 +1567,7 @@ let id = this.currentUser.prmsnId
 
   cngShft(e){
     if(e.target.value == 6){
-      this.dataService.getArchive(this.currentUser.id).subscribe((res: any) => {
+      this.dataService.getArchive(this.currentUser?.id).subscribe((res: any) => {
         if (!res.error) {
           this.rows = res.body.sort(function (a, b) {
             if (a.start_time > b.start_time) { return -1; }
@@ -1587,7 +1586,7 @@ let id = this.currentUser.prmsnId
         }
       })
     }else{
-      if(this.currentUser.user_role == '4'){
+      if(this.currentUser?.user_role == '4'){
         this.filterShift(1)
       }else{
         this.getCommunityShifts()
@@ -1596,7 +1595,7 @@ let id = this.currentUser.prmsnId
   }
 
   getAgencyMonthlyBudget() {
-    this.dataService.getAgencyMonthlyBudget(this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getAgencyMonthlyBudget(this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
         this.getAgencyMonthlyBudgetData = res.body
       }
@@ -1653,7 +1652,7 @@ let id = this.currentUser.prmsnId
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
         // console.log("Roles------",res.body);
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})
@@ -1704,8 +1703,8 @@ let id = this.currentUser.prmsnId
   }
 
   getagencyUser(){
-    let is_for = this.currentUser.role == 'Agency' ? 'agency' : 'community'
-      this.dataService.getAgencyUnblockUser(this.prmsUsrId?.id || this.currentUser.com_id,this.currentUser.id).subscribe((res: any) => {
+    let is_for = this.currentUser?.role == 'Agency' ? 'agency' : 'community'
+      this.dataService.getAgencyUnblockUser(this.prmsUsrId?.id || this.currentUser?.com_id,this.currentUser?.id).subscribe((res: any) => {
         this.agncyUsr = res.body;
         this.agncyUsr = this.agncyUsr.filter(i=>{
           if(i.is_blocked == true){
@@ -1739,8 +1738,8 @@ let id = this.currentUser.prmsnId
   }
 
   onItemSelect(e){
-    if(this.currentUser.user_role == '2'){
-      this.dataService.getAgenciesByID(this.currentUser.id).subscribe((res: any) => {
+    if(this.currentUser?.user_role == '2'){
+      this.dataService.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
         this.slctSrtNm =  res.body[0].sort_name
     })
     }

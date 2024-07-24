@@ -1,5 +1,5 @@
 ﻿export enum Role {
-  Community= 'Community',
+  Community = 'Community',
   Agency = 'Agency',
   Admin = 'Admin',
   SuperAdmin = 'SuperAdmin',
@@ -7,4 +7,5 @@
   communityUser = 'Community User',
   ClockIn = 'ClockIn',
   Management = 'Management User',
+  ManagementUser = 'Management User'
 }

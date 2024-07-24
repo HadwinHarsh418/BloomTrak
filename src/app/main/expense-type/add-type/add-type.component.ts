@@ -45,7 +45,7 @@ export class AddTypeComponent implements OnInit {
           {
             name: 'Expense Type',
             isLink: true,
-            link: '/type'
+            link: '/expense_type'
           }
         ]
       }

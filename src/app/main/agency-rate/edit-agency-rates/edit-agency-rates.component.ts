@@ -26,6 +26,7 @@ export class EditAgencyRatesComponent implements OnInit {
   comdata:any;
   ags: any;
   postnListingData: any;
+  comid: any;
 
   constructor(
    private fb : FormBuilder ,
@@ -47,7 +48,7 @@ export class EditAgencyRatesComponent implements OnInit {
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
     });
-    this.getPosition()
+    // this.getPosition()
   }
 
   ngOnInit(): void {
@@ -64,8 +65,8 @@ export class EditAgencyRatesComponent implements OnInit {
           },
           {
             name: 'Agency Rates',
-            isLink: false,
-            link: ''
+            isLink: true,
+            link: '/agencyRate'
           }
         ]
       }
@@ -157,7 +158,7 @@ export class EditAgencyRatesComponent implements OnInit {
     let data ={
       id:this.data.id,
       position: this.formData.value.position,
-      community_id: this.currentUser.user_role == 6 ? this.formData.value.community : this.currentUser.id,
+      community_id:  this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 || this.currentUser?.user_role == 6 ? this.formData.value.community_id : this.currentUser?.id,
       // rate: this.formData.value.rate,
       agency_id: this.formData.value.agency_id ,
       // rate_type: this.data.rate_type,
@@ -200,14 +201,16 @@ export class EditAgencyRatesComponent implements OnInit {
     }
     this.dataService.getAgencyRatesById(data).subscribe((res:any)=>{
       this.data = res.body[0]
+      this.comid = res.body[0].community_id
       this.getAgencyListing()
       this.getcommunityForAgencyRates()
+      this.getPosition()
       this.ptchVal()
     })
   }
 
   getAgencyListing(){
-    let community_id = this.currentUser.role == 'SuperAdmin' ? this.data.community_id : this.currentUser.id
+    let community_id = this.currentUser?.role == 'SuperAdmin' || this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.data.community_id : this.currentUser?.id
     let is_for = 'community'
     let typeDrop = true
     this.dataService.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe((res:any)=>{
@@ -216,13 +219,27 @@ export class EditAgencyRatesComponent implements OnInit {
   }
   
   getcommunityForAgencyRates() {
+    if(this.currentUser?.user_role==6)
     this.dataService.getAllCgetcommunityForAgencyRatesom().subscribe((response: any) => { 
-          this.comdata = response.body
+          this.comdata = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
         })
-  }
+        else{
+          this.dataService.getMNMGcommunity(this.currentUser?.user_role == 8 ? this.currentUser?.com_id : this.currentUser?.id).subscribe((response: any) => {
+              this.comdata = response.body.sort(function(a, b){
+                if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+                if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+                return 0;
+            })  ;
+  }    
+
+      )}}
 
   getPosition(){
-    let community_id= this.currentUser.id
+    let community_id= this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.comid : this.currentUser?.id
     this.positionApi.getPosition(community_id).subscribe((res:any)=>{
       this.postnListingData = res.body;
     },err=>{

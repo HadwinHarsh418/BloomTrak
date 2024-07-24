@@ -1,6 +1,6 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Routes } from '@angular/router';
+import { Router, RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
@@ -30,6 +30,14 @@ import {FullCalendarModule} from '@fullcalendar/angular';
 import { SharedpipeModule } from '../app/auth/helpers/sharedpipe/sharedpipe.module';
 import { NgxMaskModule, IConfig } from 'ngx-mask';
 import {NgxPrintModule} from 'ngx-print';
+// import * as Sentry from '@sentry/angular';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from 'environments/environment';
+import { initializeApp } from "firebase/app";
+import { NotificationSocketService } from './notification-socket.service';
+initializeApp(environment.firebaseConfig);
+// import { RequestedShiftsComponent } from './requested-shifts/requested-shifts.component';
+// import { RequestShiftComponent } from './request-shift/request-shift.component';
 // import { IntlInputPhoneModule } from 'intl-input-phone'; 
 
 export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
@@ -85,6 +93,11 @@ const appRoutes: Routes = [
   },
   {
     path: 'user',
+    loadChildren: () => import('./main/user/user.module').then(m => m.UserModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'emp_user',
     loadChildren: () => import('./main/user/user.module').then(m => m.UserModule),
     canActivate: [AuthGuard]
   },
@@ -161,7 +174,22 @@ const appRoutes: Routes = [
     loadChildren: () => import('./main/shift/shift.module').then(mp => mp.ShiftModule),
     canActivate: [AuthGuard]
   },
-
+  {
+    path: 're_shift',
+    loadChildren: () => import('./main/shift/shift.module').then(mp => mp.ShiftModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'req_shift',
+    loadChildren: () => import('./main/shift/shift.module').then(mp => mp.ShiftModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'shift/:d',
+    loadChildren: () => import('./main/shift/shift.module').then(mp => mp.ShiftModule),
+    canActivate: [AuthGuard]
+  },
+  
   {
     path: 'management',
     loadChildren: () => import('./main/add-management/add-management.module').then(mp => mp.AddManagementModule),
@@ -280,18 +308,18 @@ const appRoutes: Routes = [
   {
     path: 'vendor',
     loadChildren: () => import('./main/vendor/vendor.module').then(mp => mp.VendorModule),
-    // canActivate: [AuthGuard]
+    canActivate: [AuthGuard]
   },
   {
     path: 'payment_type',
     loadChildren: () => import('./main/payment-type/payment-type.module').then(mp => mp.PaymentTypeModule),
-    // canActivate: [AuthGuard]
+    canActivate: [AuthGuard]
   },
 
   {
     path: 'spend-for-other-department',
     loadChildren: () => import('./main/spendforotherdprtmt/spendforotherdprtmt.module').then(mp => mp.SpendforotherdprtmtModule),
-    // canActivate: [AuthGuard]
+    canActivate: [AuthGuard]
   },
 
   {
@@ -318,6 +346,7 @@ const appRoutes: Routes = [
     BasicCustomContextMenuComponent,
     AnimatedCustomContextMenuComponent,
     SubMenuCustomContextMenuComponent,
+    // RequestedShiftsComponent,
   ],
   imports: [
     BrowserModule,
@@ -347,10 +376,32 @@ const appRoutes: Routes = [
     LayoutModule,
     ContentHeaderModule,
     NgxMaskModule.forRoot(),
-    
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: true,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
 
   providers: [
+    NotificationSocketService,
+    // {
+    //   provide: ErrorHandler,
+    //   useValue: Sentry.createErrorHandler({
+    //     showDialog: true,
+    //   }),
+    // },
+    // {
+    //   provide: Sentry.TraceService,
+    //   deps: [Router],
+    // },
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: () => () => {},
+    //   deps: [Sentry.TraceService],
+    //   multi: true,
+    // },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
 
@@ -360,4 +411,6 @@ const appRoutes: Routes = [
   entryComponents: [BasicCustomContextMenuComponent, AnimatedCustomContextMenuComponent],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  // constructor(trace: Sentry.TraceService) {} 
+}

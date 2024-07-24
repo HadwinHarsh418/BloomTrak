@@ -21,17 +21,14 @@ const routes = [
   {
       path: '',
       component: CertificationComponent,
-      canActivate: [AuthGuard],
   },
   {
     path: 'add-certification',
     component: AddCertificationComponent,
-    canActivate: [AuthGuard],
 },
 {
   path: 'update-certification/:id/:r',
   component: AddCertificationComponent,
-  canActivate: [AuthGuard],
 },
 
 ];

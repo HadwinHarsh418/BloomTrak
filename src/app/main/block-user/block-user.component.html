@@ -2,22 +2,27 @@
     <div class="card-header d-flex flex-column align-items-start pb-0">
         <p class="font-weight-bolder ml-1" >{{ workingUserHide == false ? 'Agency Workers' : 'Do Not Use List' }}</p>
     </div>
-    <div class="card-body mt-1">
-        <div class="row">
-            <div class="col-md-6 col-12">
+    <div class="card-body ">
+        <div class="row justify-content-between">
+            <div class="col-md-6 col-12 mb-1">
                 <div class="d-flex">
-
-                    <button type="button" (click)="getCommunityUserWorking()" *ngIf="this.currentUser.role != 'Agency'"
+                    <button type="button" [class.activeTab]="currenttab == 'community'"  (click)="getCommunityUserWorking()" *ngIf="this.currentUser?.role != 'Agency' && this.currentUser?.user_role != 5"
                         class="btn-sm btn-info " >
                         <i class="fa fa-user"></i> Agency Workers
                     </button>
-                    <button type="button"  class=" btn-info  btn-sm ml-1" (click)="getBLockedUser()">
+                    <button type="button"   [class.activeTab]="currenttab == 'block'" class=" btn-info  btn-sm ml-1" (click)="getBLockedUser()">
                         <i class="fa fa-lock"></i> Do Not Use List
                     </button>
                 </div>
             </div>
-
-            <div class="col-md-6 col-12 d-flex justify-content-md-end mb-1">
+            <div class="col-lg-4 col-12 mb-1" *ngIf="currentUser.role == 'Agency' || currentUser.user_role == 5 || currentUser.user_role == 3 || currentUser.user_role == 8">
+                <select class="form-control" (change)="selectCommunity1($event.target.value)" [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                  <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                  <option value="{{item.cp_id || item.community_id || item.id }}" *ngFor="let item of allCommunity1">
+                    {{item.community_name}}</option>
+                </select>
+              </div>
+            <!-- <div class="col-md-6 col-12 d-flex justify-content-md-end mb-1">
 
                 <div class="col-md-6 col-12 d-flex justify-content-md-end">
                     <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
@@ -27,18 +32,18 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
        
         <!-- Working User -->
-
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" *ngIf="!workingUserHide">
+        <div class="ovr-flow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [scrollbarH]="true" [virtualization]="false"
+      [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" *ngIf="!workingUserHide" >
            
             <ngx-datatable-column name="lastName" prop="last_name" [width]="100">
                 <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ last_name }}
+                    {{ last_name }} 
                 </ng-template>
             </ngx-datatable-column>
 
@@ -63,7 +68,7 @@
                 <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ phone_number |numberFormat}}
                 </ng-template>
-            </ngx-datatable-column>
+            </ngx-datatable-column> 
 
             <!-- <ngx-datatable-column name="positions" prop="positions" [width]="80">
                 <ng-template let-positions="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -106,10 +111,10 @@
                             </a>
                             <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
                               
-                                <a ngbDropdownItem class="d-flex align-items-center" (click)="addBLockedUser(row)" *ngIf="!blckBtnHide">
+                                <a ngbDropdownItem class="d-flex align-items-center" (click)="addBLockedUser(row)" *ngIf="row.is_deleted == 0">
                                     <i class="fa fa-ban mr-50"></i> Do Not Use
                                 </a>
-                                <a  ngbDropdownItem class="d-flex align-items-center"  (click)="deletedBLockedUser()" *ngIf="blckBtnHide">
+                                <a  ngbDropdownItem class="d-flex align-items-center"  (click)="deletedBLockedUser()" *ngIf="row.is_deleted == 1">
                                     <i class="fa fa-check mr-50"></i> Unblock
                                 </a>
                             </div>
@@ -118,13 +123,14 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+        </div>
 
         <!-- /Working User -->
 
             <!-- block User -->
-
-            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+            <div class="ovr-flow" style="overflow: auto;">
+            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" [scrollbarH]="true" [virtualization]="false"
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" *ngIf="workingUserHide" >
            
             <ngx-datatable-column name="lastName" prop="last_name" [width]="100">
@@ -139,13 +145,13 @@
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="agency name" prop="agency_name" [width]="100" *ngIf="this.currentUser.role != 'Agency'">
+            <ngx-datatable-column name="agency name" prop="agency_name" [width]="100" *ngIf="this.currentUser?.role != 'Agency'">
                 <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ agency_name }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="community name" prop="community_name" [width]="100" *ngIf="this.currentUser.role != 'Community'">
+            <ngx-datatable-column name="community name" prop="community_name" [width]="100" *ngIf="this.currentUser?.role != 'Community'">
                 <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ community_name }}
                 </ng-template>
@@ -172,7 +178,7 @@
                                 <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
                             </a>
                             <div ngbDropdownMenu  class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                <a  ngbDropdownItem class="d-flex align-items-center"  (click)="deletedBLockedUser(row)">
+                                <a  ngbDropdownItem class="d-flex align-items-center"  (click)="deletedBLocked(row)">
                                     <i class="fa fa-check mr-50"></i> Reinstate
                                 </a>
                             </div>
@@ -181,6 +187,7 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+        </div>
 
         <!-- /block User -->
 
@@ -207,6 +214,35 @@
     </div>
 </ng-template>
 <!-- / Modal -->
+
+<ng-template #ReinstateActivity let-modal>
+    <div class="modal-header bg-danger">
+        <!-- <h4 class="modal-title text-white" id="myModalLabel1">Reject Agency</h4> -->
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closed(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5>Are you sure you want to Reinstate this Agency Employee?</h5>
+    </div>
+    <!-- <div class="modal-footer">
+        <button type="button" [disabled]="deletingUser" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="deletedBLockedUser(modal)" rippleEffect>
+            <span *ngIf="deletingUser" class="spinner-border spinner-border-sm mr-1"></span> OK
+        </button>
+    </div> -->
+    <div class="modal-footer">
+        <button type="button" [disabled]="deletingUser" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="closed(modal)" rippleEffect>
+            <span *ngIf="deletingUser" class="mr-2"></span>No
+        </button>
+        <button type="button" [disabled]="deletingUser" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="deletedBLockedUser()" rippleEffect>
+            <span *ngIf="deletingUser" class="spinner-border spinner-border-sm mr-1"></span>Yes
+        </button>
+
+    </div>
+</ng-template>
 
 
 

@@ -112,7 +112,7 @@ export class RegisterComponent implements OnInit {
   //     limitNum: this.page.size,
   //   };
   //   this.loadingList = true;
-  //   // let community_id = (this.currentUser.role == Role.Community) ? this.currentUser.id : null;
+  //   // let community_id = (this.currentUser?.role == Role.Community) ? this.currentUser?.id : null;
   //   this.searchSub = this.dataService.getAgency(this.searchStr, this.page.pageNumber, this.page.size, community_id).subscribe(
   //     res => {
   //       if (!res.error) {
@@ -197,8 +197,17 @@ export class RegisterComponent implements OnInit {
   //   }
 
   // }
+  dateErrorFxn(){
+    let date = new Date();
+    let inputDate = new Date(this.formData.value.DOB)
+    return date < inputDate ? true : false;
+}
 
   submitted() {
+    if(this.dateErrorFxn()){
+      this.toastr.errorToastr('Please select valid date!')
+      return;
+    }
     for (let item of Object.keys(this.controls)) {
       this.controls[item].markAsDirty()
     }

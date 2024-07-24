@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmedValidator } from 'app/auth/helpers/mustMacth';
 import { Patterns } from 'app/auth/helpers/patterns';
@@ -20,6 +20,8 @@ import { StaticServiceService } from 'app/utils/static-service.service';
 export class AddCommunityComponent implements OnInit {
   States:any = StatesJson;
 
+  @ViewChild('fileInput') elfile: ElementRef;
+  fileToUpload:any;
   public passwordTextType: boolean;
   public passwordTextType2: boolean;
   
@@ -91,7 +93,7 @@ export class AddCommunityComponent implements OnInit {
       state: ['', Validators.required],
       cancellation_period: ['', Validators.required],
       sort_name: ['', [Validators.required, Validators.pattern(Patterns.sort_name)]],
-      username: ['', Validators.required],
+      username: ['', [Validators.required, Validators.pattern(/[a-zA-Z]+/)]],
       getMangemntId: [''],
       community_phone_no: ['', [Validators.required, Validators.pattern(Patterns.number)]],
       password: ['', [ Validators.pattern(Patterns.password)]],
@@ -184,6 +186,33 @@ shortNm(val){
   });
 }
 
+  onFileInput(files: any) {
+    if (files.length === 0) {
+      return;
+    }
+    let type = files[0].type;
+    this.fileToUpload = files[0];
+  }
+
+  async uploadEmpList():Promise<boolean>{
+    let formdata = new FormData();
+    formdata.append('report',this.fileToUpload);
+    formdata.append('community_id', String(this.tempCmntyId));
+    try{
+      const res:any = await this.dataService.importEmployees(formdata);
+      if (!res.error) {
+        this.toastr.successToastr(res.msg)
+        return true;
+      } else {
+        this.toastr.errorToastr(res.msg)
+        return false;
+      }
+    }
+    catch(e){
+      this.toastr.errorToastr('Someting went wrong. Please try later')
+      return false;
+    }
+  }
 
   submitted() {
     for (let item of Object.keys(this.controls)) {
@@ -204,7 +233,7 @@ shortNm(val){
         community_phone_no: this.formData.value.community_phone_no.replace(/\D/g, ''),
         password: this.formData.value.password,
         sort_name: this.formData.value.sort_name,
-        username: this.formData.value.username,
+        username: this.formData.value.username.replace(' ','').trim(),
         city: this.formData.value.city,
         cancellation_period: this.formData.value.cancellation_period,
         state: this.formData.value.state,
@@ -222,11 +251,14 @@ shortNm(val){
         // approval: this.formData.value.approval,
       }
 
-      this.dataService.register({ ...body1, ...{ approval: '1' } }).subscribe((res: any) => {
+      this.dataService.register({ ...body1, ...{ approval: '1' } }).subscribe(async(res: any) => {
         if (!res.error) {
+          this.tempCmntyId = res.body[0].id
+          if(this.fileToUpload){
+            let isFileUploaded = await this.uploadEmpList();
+          }
           this.btnShow = false;
           this.toastr.successToastr(res.msg);
-          this.tempCmntyId = res.body[0].id
           setTimeout(() => {
             this.callSglCmnt( this.tempCmntyId)
           }, 500);
@@ -248,7 +280,7 @@ shortNm(val){
   callSglCmnt(registerId){
     let data ={
       id: registerId,
-      single_community : this.currentUser.user_role == '3' ? '1' :  this.formData.value.single_community
+      single_community : this.currentUser?.user_role == '3' ? '1' :  this.formData.value.single_community
     }
 
     this.dataService.updateSinleCOm(data).subscribe((res:any)=>{
@@ -258,7 +290,7 @@ shortNm(val){
     
     let data2 ={
       id: registerId,
-      management_id :[this.currentUser.user_role == '3' ? this.currentUser.id :this.formData.value.getMangemntId[0].id]
+      management_id :[this.currentUser?.user_role == '3' ? this.currentUser?.id :this.formData.value.getMangemntId[0].id]
     }
   
     this.dataService.updateManagementId(data2).subscribe((res:any)=>{

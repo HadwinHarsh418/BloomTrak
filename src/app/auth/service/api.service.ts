@@ -116,6 +116,9 @@ export class ApiService {
   trendAnalysisReport(data:any,current_start_date,current_end_date,comparative_period_start_date,comparative_period_end_date): Observable<any> {
     return this._http.get(`${environment.baseApiUrl}trendAnalysisReport?id=${data}&current_start_date=${current_start_date}&current_end_date=${current_end_date}&comparative_period_start_date=${comparative_period_start_date}&comparative_period_end_date=${comparative_period_end_date}`);
   }
+  getSchedularNotification(id): Observable<any> {
+    return this._http.get(`${environment.baseApiUrl}getSchedularNotification?agency_id=${id}`);
+  }
 
   
 

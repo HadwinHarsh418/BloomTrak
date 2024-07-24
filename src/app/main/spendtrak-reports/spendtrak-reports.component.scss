@@ -23,6 +23,8 @@
     text-align: center;
   }
   
+
+
   
   
   .custom-day {
@@ -61,3 +63,23 @@
 //     table-layout:fixed;
 // }
 
+
+.loader{
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  color: #ff855c;
+}
+
+
+
+.custom-day12,.custom-day{
+  height: 22px !important;
+  width: 22px !important;
+  font-size: 12px !important;
+  padding: 0 !important;
+}
+.ngb-dp-day, .ngb-dp-week-number, .ngb-dp-weekday {
+  height: 22px !important;
+  width: 22px !important;
+}

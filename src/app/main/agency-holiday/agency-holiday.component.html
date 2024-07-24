@@ -2,22 +2,29 @@
     <div class="card-header d-flex flex-column align-items-start pb-0">
         <p class="font-weight-bolder ml-1" >Holiday List</p>
     </div>
-    <div class="card-body mt-1">
+    <div class="card-body">
         <div class="row">
-            <div class="col-md-6 col-12">
+            <div class="col-md-6 col-12 mb-1">
                 <div class="d-flex">
 
-                  <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6' ||  currentUser.prmsnId== '1'"
+                  <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6' ||  currentUser.prmsnId== '1' || currentUser.user_role == '3'"
                      [routerLink]="['add-holiday']" >  <i class="fa fa-plus mr-50"></i>Add Holiday
                    
                 </button>
+                <div class="col-lg-6 col-12" *ngIf="currentUser.role == 'Agency' || currentUser.user_role == 5 || currentUser.user_role == 3 || currentUser.user_role == 8">
+                    <select id="inputState" class="form-control" (change)="selectCommunity1($event.target.value)" [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                      <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                      <option value="{{item.cp_id || item.community_id || item.id }}" *ngFor="let item of allCommunity1">
+                        {{item.community_name}}</option>
+                    </select>
+                  </div>
                     <!-- <button type="button"  class=" btn-info  btn-sm ml-1" (click)="getBLockedUser()">
                         <i class="fa fa-lock"></i> Block Users
                     </button> -->
                 </div>
             </div>
 
-            <div class="col-md-6 col-12 d-flex justify-content-md-end mb-1">
+            <!-- <div class="col-md-6 col-12 d-flex justify-content-md-end mb-1">
 
                 <div class="col-md-6 col-12 d-flex justify-content-md-end">
                     <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
@@ -27,59 +34,65 @@
                         </label>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
        
         <!-- Working User -->
-
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <div class="ovr-flow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
             [count]="" [offset]="" [limit]="10" [scrollbarH]='true' >
            
-            <ngx-datatable-column name="agency" prop="agency_name" [width]="100">
+            <ngx-datatable-column name="agency" prop="agency_name" [width]="200">
                 <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ agency_name }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Holiday" prop="holiday_name" [width]="100">
+            <ngx-datatable-column name="community" prop="community_name" [width]="200">
+                <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ community_name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Holiday" prop="holiday_name" [width]="200">
                 <ng-template let-holiday_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ holiday_name  }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Holiday Start Date" prop="start_date" [width]="150">
+            <ngx-datatable-column name="Holiday Start Date" prop="start_date" [width]="200">
                 <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ start_date | customDateTime  }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Holiday Start Time" prop="start_date" [width]="150">
+            <ngx-datatable-column name="Holiday Start Time" prop="start_date" [width]="200">
                 <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ start_date | customTime  }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Holiday End Date" prop="end_date" [width]="150">
+            <ngx-datatable-column name="Holiday End Date" prop="end_date" [width]="200">
                 <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ end_date | customDateTime  }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Holiday End Time" prop="end_date" [width]="150">
+            <ngx-datatable-column name="Holiday End Time" prop="end_date" [width]="200">
                 <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ end_date | customTime }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Notes" prop="description" [width]="100">
+            <ngx-datatable-column name="Notes" prop="description" [width]="200">
                 <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ description  }}
                 </ng-template>
             </ngx-datatable-column>
 
           
-            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="100">
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="200">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <div class="d-flex align-items-center">
                         <div ngbDropdown container="body">
@@ -89,7 +102,7 @@
                             </a>
                             <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
                               
-                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-holiday',row.id]" *ngIf="edtPrms == 1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-holiday',row.id]" *ngIf="edtPrms == 1 || currentUser.user_role == '3' || currentUser.user_role == '6' || currentUser.prmsnId == '1'">
                                     <i class="fa fa-edit mr-50"></i> Edit Holiday
                                 </a>
                                 <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="edtPrms == 0">
@@ -101,12 +114,13 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+        </div>
 
         <!-- /Working User -->
 
             <!-- block User -->
 
-            <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+            <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10"  >
            

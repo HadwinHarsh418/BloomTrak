@@ -20,17 +20,14 @@ const routes = [
   {
     path: '',
     component: AgencyComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'add-agency',
     component: AddAgencyComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'edit-agency',
     component: EditAgencyComponent,
-    canActivate: [AuthGuard],
   },
 ];
 

@@ -6,7 +6,7 @@
     <!-- account setting page -->
     <section id="page-account-settings">
       <div class="row nav-vertical d-flex">
-        <div class="col-md-3 mb-2 mb-md-0">
+        <div class="col-md-3 mb-md-0">
           <ul ngbNav #navVertical="ngbNav" class="nav nav-pills flex-column nav-left">
 
             <li class="nav-item" ngbNavItem>
@@ -17,13 +17,13 @@
                 <span class="font-weight-bold">Basic Information</span>
               </a>
               <ng-template ngbNavContent>
-                <div class="card">
+                <div class="card agency-information">
                   <div class="card-header">
                     <h4 class="card-title">Agency Information</h4>
                   </div>
-                  <div class="card-body">
-
-                    <div class=" col-lg-12 mt-2" *ngFor="let agency of allAgency">
+                  <div class="card-body space-remove">
+                    <div class="row">
+                    <div class=" col-lg-12" *ngFor="let agency of allAgency">
                       <div class="card" *ngIf="allAgency">
                         <!-- <div class="card-header  pb-0">
                                         <div class="row">
@@ -31,117 +31,128 @@
                                         </div>
                                     </div> -->
                         <div class="row space mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4 ">
                             <h6>Agency Name : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{ agency.agency_name}}</span></div>
+                          <div class="col-md-8 col-8 "><span class="description"> {{ agency.agency_name}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
-                            <h6>Agency Phone : </h6>
+                          <div class="col-md-4 col-4">
+                            <h6>Agency Phone: </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_phone |numberFormat}}</span>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_phone |numberFormat}}</span>
                           </div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Email : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_email}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_email}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Website : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_website}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_website}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Address 1 : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.address1}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.address1}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Address 2 : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.address2}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.address2}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency City : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.city}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.city}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency State : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.state}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.state}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Zipcode : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.zipcode}}</span></div>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.zipcode}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Contact First Name : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_firstname}}</span>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_contact_firstname}}</span>
                           </div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Contact Last Name : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_lastname}}</span>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_contact_lastname}}</span>
                           </div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Contact Person Title : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_person_title}}</span>
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_contact_person_title}}</span>
                           </div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Contact Cell Number : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description"> {{agency.agency_contact_cell_number
+                          <div class="col-md-8 col-8"><span class="description"> {{agency.agency_contact_cell_number
                               |numberFormat}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Contact Email Address : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description ">
+                          <div class="col-md-8 col-8"><span class="description ">
                               {{agency.agency_contact_email_address}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Username : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description ">
+                          <div class="col-md-8 col-8"><span class="description ">
                               {{agency.username}}</span></div>
                         </div>
                         <div class="row space  mb-1">
-                          <div class="col-md-4">
+                          <div class="col-md-4 col-4">
                             <h6>Agency Short Code : </h6>
                           </div>
-                          <div class="col-md-8"><span class="description ">
+                          <div class="col-md-8 col-8"><span class="description ">
                               {{agency.sort_name}}</span></div>
                         </div>
                       </div>
                     </div>
-                    <button type="button" (click)="closeded()" class="btn btn-primary ml-1" [disabled]="btnShow" *ngIf="allAgency">
-                      Cancel
-                    </button>
-                    <div class="d-flex justify-content-center" *ngIf="!allAgency"> 
-                      <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
                   </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <button type="button" (click)="closeded()" class="btn btn-primary ml-1" [disabled]="btnShow" *ngIf="allAgency">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <div class="d-flex justify-content-center" *ngIf="!allAgency"> 
+                          <p>Loading...</p><span class="spinner-border spinner-border-sm" role="status"></span>
+                      </div>
+                      </div>
+                      </div>
+                   
+                   
                   </div>
                 </div>
               </ng-template>
@@ -156,19 +167,19 @@
               <ng-template ngbNavContent>
                  <form class="user" [formGroup]="contractform" (ngSubmit)="uploadNow()">
 
-                 <div class="card">
+                 <div class="card card-boxes-1">
                    <div class="card-header">
                      <h1 class="card-title">Upload File</h1>
                    </div>
 
-                   <div class="d-flex">
-                    <div><h4 class="card-title" style="margin-left: 10px;">Upload Agency Contract :</h4></div>
-                    <div><button type="button"  (click)="fileInput.click()"  class="btn-sm btn-info ml-2">
+                   <div class="d-flex flex-wrap justify-content-between m45 my-1 mx-md-2 mx-lg-2">
+                  <div><h4>Upload Agency Contract:</h4></div>
+                    <div><button type="button"  (click)="fileInput.click()"  class="btn-sm btn-info">
                        <i class="fa fa-file "></i>   Import File
                        <input #fileInput type="file" formControlName="fileToUpload" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
                      </button>
                     </div>
-                     <div style="margin-left: 15px;" *ngIf="fileInput.value.length">{{filename}}</div>                     
+                     <div class="mt-1 mt-md-0 mt-lg-0" *ngIf="fileInput.value.length">{{filename}}</div>                     
                    </div>
 
                                                             
@@ -194,7 +205,7 @@
                              <div class="invalid-feedback"
                                  *ngIf="contractform_Control['contract_start_date'].hasError('required')"
                                  class="text text-danger">
-                                 This field required
+                                 This field is Required
                              </div>
                          </span>
                      </div>
@@ -222,13 +233,13 @@
                      <div class="invalid-feedback"
                          *ngIf="contractform_Control['contract_end_date'].hasError('required')"
                          class="text text-danger">
-                         This field required
+                         This field is Required
                      </div>
                  </span>
              </div>
          </div>                                                  
  </div>     
- <div class="col-lg-4">
+ <div class="col-lg-4 btn-submit">
  <button type="submit" class="btn btn-primary">save</button>
 </div>
 </div>  
@@ -251,17 +262,17 @@
                      <h4 class="card-title">Download File</h4>
                    </div>
                    <div class="main-menu-content">
-                    <ul class="navigation navigation-main mt-1"></ul>
+                    <ul class="navigation navigation-main "></ul>
                     <div class="text-center my-2">
                       <!-- <a (click)="download()" [download]="myFileName"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; " *ngIf="fileUrl">Download Agency Contract Form</h4></a> -->
                       <a [href]="fileUrl" [download]="myFileName"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; " *ngIf="fileUrl">Download Agency Contract Form</h4></a>
                       <h4 style="color: #ff6633 ; font-weight: bold;" *ngIf="!fileUrl">No Contract Found</h4>
                   </div>
                   </div> 
-                  
-                  <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+                  <div class="table_res_mob" style="overflow: auto;">
+                    <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
                   [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-                  [count]="" [offset]="" [limit]="10">
+                  [count]="" [offset]="" [limit]="10" [scrollbarH]="true" [virtualization]="false">
                  
                   <ngx-datatable-column name="Start Date" prop="contract_start_date" [width]="100">
                       <ng-template let-contract_start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -275,14 +286,38 @@
                       </ng-template>
                   </ngx-datatable-column>
 
+                  <ngx-datatable-column name="community_name" prop="community_name" [width]="100">
+                    <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                        {{ community_name }}
+                    </ng-template>
+                </ngx-datatable-column>
+
                   <ngx-datatable-column name="File" prop="contract" [width]="100">
                     <ng-template let-contract="value" let-expanded="expanded" ngx-datatable-cell-template>
                       <!-- <a (click)="download()"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; ">Download</h4></a> -->
-                      <a [href]="contract" download="myFileName"><h4 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; ">Download</h4></a>
+                      <a [href]="contract" download="myFileName"><h5 style="color: #ff6633 ; font-weight: bold; text-decoration: underline ; ">Download</h5></a>
                     </ng-template>
                 </ngx-datatable-column>
-                </ngx-datatable>
 
+                <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="100">
+                  <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                      <div class="d-flex align-items-center">
+                          <div ngbDropdown container="body">
+                              <a ngbDropdownToggle  class="hide-arrow" id="dropdownBrowserState"
+                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                              </a>
+                              <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                  <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)">
+                                      <i class="fa fa-trash mr-50"></i> Delete 
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </ng-template>
+              </ngx-datatable-column>
+                </ngx-datatable>
+                  </div>
                 </div>        
                 
 
@@ -303,7 +338,7 @@
                   </div>
                   <div class="card-body">
                    <div class="row"> 
-                      <div class="col-md-4">
+                      <div class="col-md-4 col-4">
                           For Sms Notification :
                       </div>
                       <div class="col-md-8">
@@ -312,7 +347,7 @@
                   </div> 
 
                   <div class="row"> 
-                      <div class="col-md-4">
+                      <div class="col-md-4 col-4">
                           For Email Notification:
                       </div>
                       <div class="col-md-8">
@@ -356,7 +391,7 @@
                                 <span *ngIf="bControls['budget'].dirty && bControls['budget'].errors">
                                   <div class="invalid-feedback" *ngIf="bControls['budget'].hasError('required')"
                                     class="text text-danger">
-                                    This field required
+                                    This field is Required
                                   </div>
                                 </span>
                               </div>

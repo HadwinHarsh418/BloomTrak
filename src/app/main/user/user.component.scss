@@ -1,4 +1,7 @@
 .row.addUserbtn {
   justify-content: space-between;
 }
-
+button.activeTab {
+  background-color: white !important;
+  color: black !important;
+}

@@ -1,26 +1,62 @@
 <div class="card">
+      <form class="user" [formGroup]="formRoleData">
+   <div class="row my-1 ms-1 p-2" *ngIf="currentUser.role == 'Admin'">
+           <div class="col-lg-4">
+               <div class="common-form-left form-group">
+                   <select class="form-control" formControlName="community_id" [class.inputdisabled]="isDisabled" (change)="selectCommunity($event.target.value)">
+                       <!-- <option value="undefined" selected="selected" disabled>---Select Community---</option> -->
+                       <option value="undefined" selected="selected">---Select Communities---</option>
+                       <!-- <option value="">All Communities</option> -->
+                       <option value="{{item.cp_id || item.id}}"
+                       *ngFor="let item of allCommunity1">
+                           {{item.community_name}}</option>
+                   </select>
+               </div>
+           </div>
+           <div class="col-lg-4">
+               <div class="common-form-left form-group">
+                   <select class="form-control" formControlName="agency_id" [class.inputdisabled]="isDisable" (change)="SelectAgency($event.target.value)">
+                       <option value="undefined" selected="selected">---Select Agency---</option>
+                       <!-- <option value="">All Agency</option> -->
+                       <option value="{{item.cp_id || item.id}}"
+                       *ngFor="let item of allAgency">
+                           {{item.agency_name}}</option>
+                   </select>
+               </div>
+           </div>
+           <div class="col-lg-4">
+               <div class="common-form-left form-group">
+                   <select class="form-control" formControlName="managment_id" [class.inputdisabled]="isDisableMan" (change)="selectMan($event.target.value)">
+                       <option value="undefined" selected="selected">---Select Managment---</option>
+                       <!-- <option value="">All Agency</option> -->
+                       <option value="{{item.id}}"
+                       *ngFor="let item of allManagmentUser">{{item.mg_name}}</option>
+                   </select>
+               </div>
+           </div>
+         </div>
+      </form>
    <div class="card-body mt-1">
-
       <div class="row ml-1 mb-1"  *ngIf="['6'].includes(currentUser.prmsnId)">
-         <div class="form-check mr-3">
+         <div class="form-check col-lg-3">
             <input class="form-check-input" type="radio"  (change)="handleChange('3')" name="flexRadioDefault" id="flexRadioDefault1">
             <label class="form-check-label" for="flexRadioDefault1">
               Management
             </label>
           </div>
-          <div class="form-check mr-3">
+          <div class="form-check  col-lg-3">
             <input class="form-check-input" type="radio"  (change)="handleChange('1')" name="flexRadioDefault" id="flexRadioDefault2" checked>
             <label class="form-check-label" for="flexRadioDefault2">
               Community
             </label>
           </div>
-          <div class="form-check mr-3">
+          <div class="form-check col-lg-3">
             <input class="form-check-input" type="radio"  (change)="handleChange('2')" name="flexRadioDefault" id="flexRadioDefault3" >
             <label class="form-check-label" for="flexRadioDefault3">
               Agency
             </label>
           </div>
-          <div class="form-check" *ngIf="currentUser.prmsnId == '6'">
+          <div class="form-check col-lg-3" *ngIf="currentUser.prmsnId == '6'">
             <input class="form-check-input" type="radio"  (change)="handleChange('4')" name="flexRadioDefault" id="flexRadioDefault4" >
             <label class="form-check-label" for="flexRadioDefault4">
               Default
@@ -29,7 +65,7 @@
       </div>
 
       <div class="row">
-         <div class="{{colDefine}}"  *ngIf="currentUser.prmsnId == '6' && usrRlNo <=3">
+         <div class="{{colDefine}} mb-1"  *ngIf="currentUser.prmsnId == '6' && usrRlNo <=3">
             <select  class="form-control" (change)="slctCom($event.target.value)">
                <option value="" selected="selected" disabled *ngIf="usrRlNo =='1'">---Select Community---</option>
                <option value="" selected="selected" disabled *ngIf="usrRlNo =='2'">---Select Agency---</option>
@@ -38,26 +74,26 @@
            </select>
          </div>
 
-         <div class="{{colDefine}}">
+         <div class="{{colDefine}} mb-1">
             <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onChange1($event.target.value)" >
                <option  value="" selected disabled> ---Roles---</option>
                <option [value]="data.id" *ngFor="let data of roleData"> {{data.name}}</option>
-               <option  *ngIf="!roleData.length"> No Data To Display</option>
+               <option  *ngIf="!roleData.length"  disabled> No Data To Display</option>
             </select>
          </div>
       
-         <div class="{{colDefine}}">
+         <div class="{{colDefine}} mb-1">
             <select placeholder="HH:MM" name="startTime" class="form-control" (change)="onMenuChange($event.target.value)" >
                <option  value="" selected disabled> ---Menu---</option>
                <option [value]="data.id" *ngFor="let data of permissionData"> {{data.name}}</option>
-               <option  *ngIf="!permissionData.length"> No Data To Display</option>
+               <option  *ngIf="!permissionData.length"  disabled> No Data To Display</option>
 
             </select>
          </div>
-         <div class="{{colDefine}}">
+         <div class="{{colDefine}} mb-1">
             <button type="button" (click)="fileInput.click()"  class="btn btn-info btn-block" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
                <i class="fa fa-file "></i>   Import File
-               <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none; height: 2.714rem;" />
+               <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none; height: 2.714rem;"accept=".csv, .xls"  />
              </button>
          </div>
       </div>

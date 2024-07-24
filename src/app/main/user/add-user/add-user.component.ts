@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmedValidator } from 'app/auth/helpers/mustMacth';
 import { Patterns } from 'app/auth/helpers/patterns';
@@ -16,7 +16,7 @@ import { ToastrManager } from 'ng6-toastr-notifications';
   templateUrl: './add-user.component.html',
   styleUrls: ['./add-user.component.scss']
 })
-export class AddUserComponent implements OnInit {
+export class AddUserComponent implements OnInit,OnDestroy  {
   formData!: FormGroup;
   currentUser: any;
   crrntUsrId: any[] = []
@@ -41,6 +41,7 @@ export class AddUserComponent implements OnInit {
   allAgenciesID: any = [];
   rows1: any = []
   mngmNames: any= [];
+  value:any;
 
   public isDropdownDisabled = false;
 
@@ -100,13 +101,16 @@ export class AddUserComponent implements OnInit {
     closeDropDownOnSelection: true,
     itemsShowLimit: 3,
     allowSearchFilter: true,
-    maxHeight:250
+    maxHeight:100
   };
   phoneUsd: { name: string; flag: string; code: string; dial_code: string; }[];
   selectedDataValue  = "+1";
   slctSrtNm: any;
   comId: any;
+  public passwordTextType: boolean;
+  public passwordTextType2: boolean;
   comConf: boolean;
+  community_id: any;
 
   
   
@@ -121,7 +125,8 @@ export class AddUserComponent implements OnInit {
   ) { 
     this.phoneUsd = this.phoneService.phoneUsdCode
     this._authenticationService.currentUser.subscribe((x: any) => {
-      this.currentUser = x
+      this.currentUser = x;
+      this.currentUser?.user_role == 5  ? this.currentUser.role = 'Agency' : ''
       this.crrntUsrId.push(this.currentUser?.role == 'Admin' ?  x?._id : x?.id)
     });
   }
@@ -134,6 +139,7 @@ export class AddUserComponent implements OnInit {
     this.getCmmntNm()
     this.getagenciesID()
     this.getManagementNames()
+    if(this.currentUser?.user_role == 5)
     this.getRoles()
     this.formData = this.fb.group({
       DOB: [''],
@@ -142,7 +148,7 @@ export class AddUserComponent implements OnInit {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone_number: ['', [Validators.required, Validators.pattern(Patterns.number)]],
-      addUsrRl: this.currentUser.role != 'Admin' ?  ['', Validators.required] : [''],
+      addUsrRl: this.currentUser?.role != 'Admin' ?  ['', Validators.required] : [''],
       community_id: [''],
       agency_id: [''],
       hourly_rate: [''],
@@ -154,14 +160,14 @@ export class AddUserComponent implements OnInit {
       validator: ConfirmedValidator('password', 'cnfrmpassword')
     },
     )
-    if(this.currentUser.role != 'Admin')
+    if(this.currentUser?.role != 'Admin')
     {
      this.formData.controls['management_co_user'].clearValidators();
     //  this.formData.controls['community_id'].clearValidators();
      this.formData.controls['hourly_rate'].clearValidators();
      this.formData.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'Admin')
+    if(this.currentUser?.role == 'Admin')
     {
      this.formData.controls['management_co_user'].setValidators(Validators.required);
     //  this.formData.controls['community_id'].setValidators(Validators.required);
@@ -170,22 +176,22 @@ export class AddUserComponent implements OnInit {
     //  this.manaDetls()
     }
 
-    // if(this.currentUser.role == 'Agency')
+    // if(this.currentUser?.role == 'Agency')
     // {
     //  this.formData.controls['DOB'].clearValidators();
     // this.formData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role != 'Agency')
+    // if(this.currentUser?.role != 'Agency')
     // {
     //  this.formData.controls['DOB'].setValidators(Validators.required);
     //  this.formData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role == 'Agency')
+    // if(this.currentUser?.role == 'Agency')
     // {
     //  this.formData.controls['DOB'].clearValidators();
     //  this.formData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role != 'Agency')
+    // if(this.currentUser?.role != 'Agency')
     // {
     //  this.formData.controls['DOB'].setValidators(Validators.required);
     //  this.formData.updateValueAndValidity();
@@ -193,7 +199,7 @@ export class AddUserComponent implements OnInit {
 
 
     this.contentHeader = {
-      headerTitle: this.currentUser.role == 'Agency' ? 'Agency Personnel' : 'Add User',
+      headerTitle: this.currentUser?.role == 'Agency' ? 'Agency Personnel' : 'Add User',
       actionButton: false,
       breadcrumb: {
         type: '',
@@ -204,15 +210,22 @@ export class AddUserComponent implements OnInit {
             link: '/'
           },
           {
-            name: this.currentUser.role == 'Agency' ? 'Agency Personnel' : 'User',
+            name: this.currentUser?.role == 'Agency' ? 'Agency Personnel' : 'User',
             isLink: true,
-            link: '/user'
+            link: this.currentUser?.role == 'Agency' || this.currentUser?.user_role == 5 ? '/agency-personnel':'/user'
           }
         ]
       }
     };
   }
 
+  togglePasswordTextType() {
+    this.passwordTextType = !this.passwordTextType;
+  }
+
+  togglePasswordTextType2() {
+    this.passwordTextType2 = !this.passwordTextType2;
+  }
 
   uncheckDropdown1() {
     if (this.formData.value.community_id) {
@@ -249,8 +262,18 @@ export class AddUserComponent implements OnInit {
 get controls() {
     return this.formData.controls;
   }
+  dateErrorFxn(){
+    let date = new Date();
+    let inputDate = new Date(this.formData.value.DOB)
+    return date < inputDate ? true : false;
+}
   
   submitted() {
+    if(this.dateErrorFxn()){
+      this.tost.errorToastr('Please select valid date!')
+      return;
+    }
+
     for (let item of Object.keys(this.controls)) {
       this.controls[item].markAsDirty()
     }
@@ -261,10 +284,10 @@ get controls() {
       return;
     }
 
-    if (this.currentUser.role == "SuperAdmin") {
+    if (this.currentUser?.role == "SuperAdmin") {
       if (this.formData.value.community_id) {
         this.formData.value.community_id?.forEach(element => {
-          this.submitId.push(this.currentUser.role == 'Admin' ? element.cp_id : element.id )
+          this.submitId.push(this.currentUser?.role == 'Admin' ? element.cp_id : element.id )
         }); 
       } else {
         this.formData.value.agency_id?.forEach(element => {
@@ -286,15 +309,15 @@ get controls() {
             first_name: this.formData.value.first_name,
             last_name: this.formData.value.last_name,
             DOB: this.formData.value.DOB,
-            isAdmin: this.currentUser.prmsnId,
-            role_assign: this.formData.value.addUsrRl,
-            username: this.slctSrtNm +'-'+ this.formData.value.username,
+            isAdmin: this.currentUser?.prmsnId,
+            roles_assign: this.formData.value.addUsrRl,
+            username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
             hourly_rate: parseFloat( this.formData.value.hourly_rate),
             community_id: this.formData.value.community_id ? this.submitId : '',
             password: this.formData.value.password,
             management_Co: this.formData.value.management_Co ,
             management_co_user:  this.formData.value.management_co_user ,
-            management_id : this.currentUser.id,
+            management_id : this.currentUser?.id,
             country_code:this.selectedDataValue? this.selectedDataValue : ''
           }
         }else{
@@ -310,15 +333,15 @@ get controls() {
             first_name: this.formData.value.first_name,
             last_name: this.formData.value.last_name,
             DOB: this.formData.value.DOB,
-            isAdmin:this.currentUser.prmsnId,
-            role_assign: this.formData.value.addUsrRl,
-            username: this.slctSrtNm +'-'+ this.formData.value.username,
+            isAdmin:this.currentUser?.prmsnId,
+            roles_assign: this.formData.value.addUsrRl,
+            username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
             // PIN_code: this.formData.value.PIN_code,
             hourly_rate: parseFloat( this.formData.value.hourly_rate),
             community_id: this.formData.value.community_id ? this.submitId : '',
             password: this.formData.value.password,
-            management_Co: this.formData.value.management_Co ,
-            management_co_user:  this.formData.value.management_co_user ,
+            // management_Co: this.formData.value.management_Co ,
+            // management_co_user:  this.formData.value.management_co_user ,
             management_id : '',
             country_code:this.selectedDataValue? this.selectedDataValue : ''
           }
@@ -338,55 +361,56 @@ get controls() {
           first_name: this.formData.value.first_name,
           last_name: this.formData.value.last_name,
           DOB: this.formData.value.DOB,         
-         isAdmin: this.currentUser.prmsnId,
-         role_assign: this.formData.value.addUsrRl,
+         isAdmin: '5',
+         roles_assign: this.formData.value.addUsrRl,
           // PIN_code: this.formData.value.PIN_code,
           management_Co: this.formData.value.management_Co ,
           management_co_user:  this.formData.value.management_co_user ,
           agency_id: this.formData.value.agency_id ? this.submitId2 : '',
           password: this.formData.value.password,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
           // isAdmin : '5',
           country_code:this.selectedDataValue? this.selectedDataValue : ''
         }
       }
     }
-    else if (this.currentUser.role == 'Agency') {
+    else if (this.currentUser?.role == 'Agency' || this.currentUser?.user_role == 5) {
       this.data4 = {
         phone_number: this.formData.value.phone_number?.replace(/\D/g, ''),
         email: this.formData.value.email,
         first_name: this.formData.value.first_name,
         last_name: this.formData.value.last_name,
         DOB: this.formData.value.DOB,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
         // PIN_code: this.formData.value.PIN_code,
         management_Co: this.formData.value.management_Co ,
         management_co_user:  this.formData.value.management_co_user ,
+        management_id:'',
         password: this.formData.value.password,
-        agency_id: this.crrntUsrId,
-        role_assign: this.formData.value.addUsrRl,
+        agency_id: this.currentUser?.user_role == 5 ? [this.currentUser?.com_id] : this.crrntUsrId,
+        roles_assign: this.formData.value.addUsrRl,
         isAdmin : '5',
         country_code:this.selectedDataValue? this.selectedDataValue : ''
       }
-    } else if (this.currentUser.role == 'Community' || this.currentUser.role == 'Community User') {
+    } else if (this.currentUser?.role == 'Community' || this.currentUser?.user_role == 4) {
       this.data5 = {
         phone_number: this.formData.value.phone_number?.replace(/\D/g, ''),
         email: this.formData.value.email,
         first_name: this.formData.value.first_name,
         last_name: this.formData.value.last_name,
         DOB: this.formData.value.DOB,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
         hourly_rate : parseFloat( this.formData.value.hourly_rate),
         password: this.formData.value.password,
         management_co_user:  this.formData.value.management_co_user ,
-        community_id: [this.currentUser.id],
+        community_id: this.currentUser?.user_role == 4 ? [this.currentUser?.com_id] : [this.currentUser?.id],
         country_code:this.selectedDataValue? this.selectedDataValue : '',
         isAdmin: '4',
-        role_assign: this.formData.value.addUsrRl,
+        roles_assign: this.formData.value.addUsrRl,
 
       }
     }
-    else if (this.currentUser.role == 'Admin') {
+    else if (this.currentUser?.role == 'Admin') {
       if (this.formData.value.community_id) {
         this.formData.value.community_id?.forEach(element => {
           this.submitId.push( element.cp_id )
@@ -398,18 +422,20 @@ get controls() {
         first_name: this.formData.value.first_name,
         last_name: this.formData.value.last_name,
         DOB: this.formData.value.DOB,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
         community_id: this.submitId,
         hourly_rate : parseFloat( this.formData.value.hourly_rate),
         password: this.formData.value.password,
         management_co_user:  this.formData.value.management_co_user ,
         country_code:this.selectedDataValue? this.selectedDataValue : '',
-        management_id : this.currentUser.id
+        management_id : this.currentUser?.id,
+        roles_assign: this.formData.value.addUsrRl,
       }
     }
     this.btnShow = true;
 
-    let body = this.currentUser.role == "SuperAdmin" ? this.formData.value.community_id ? this.data : this.data1 : this.currentUser.role == "Community" || this.currentUser.role == 'Community User' ? this.data5 : this.currentUser.role == "Admin" ? this.data5 : this.data4
+    let body = this.currentUser?.role == "SuperAdmin" ? this.formData.value.community_id ? this.data : this.data1 : this.currentUser?.role == "Community" || this.currentUser?.user_role == 4 ? this.data5 : this.currentUser?.role == "Admin" ? this.data5 : this.data4
+
     this.dataService.addUser(body).subscribe((res: any) => {
       if (!res.error) {
         this.tost.successToastr(res.msg)
@@ -420,7 +446,7 @@ get controls() {
       } else {
         this.btnShow = false;
         this.submitId = []
-        this.submitId2 = []
+        this.submitId2 = [] 
         this.tost.errorToastr(res.msg)
       }
     },
@@ -444,10 +470,16 @@ get controls() {
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
       });
-      if(this.currentUser.prmsnId == '1'){
-        this.onItemSelect(this.currentUser.com_id || this.currentUser.id,1)
-      }else if(this.currentUser.prmsnId == '2'){
-        this.onItemSelect( this.currentUser.id,1)
+      if(this.currentUser?.user_role == 5){
+        this.dataService.getAgenciesByID(this.currentUser?.com_id).subscribe((res: any) => {
+          this.slctSrtNm =  res.body[0].sort_name
+          this.comConf = false
+      })
+      }
+      if(this.currentUser?.prmsnId == '1' || this.currentUser?.user_role == 4){
+        this.onItemSelect(this.currentUser?.com_id || this.currentUser?.id,1)
+      }else if(this.currentUser?.prmsnId == '2'){
+        this.onItemSelect( this.currentUser?.id,1)
       }
         //this.toastr.successToastr(response.msg);
       } else if (response['error'] == true) {
@@ -460,15 +492,24 @@ get controls() {
   }
 
   getCmmntNm(){
-      if(this.currentUser.id && this.currentUser.com_id){
+      if(this.currentUser?.id && this.currentUser?.com_id){
         let data = {
-          userId : this.currentUser.id,
-          mangId : this.currentUser.com_id
+          userId : this.currentUser?.id,
+          mangId : this.currentUser?.management
         }
         this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
           if (!res.error) {
+            let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
             // this.mangComs = res.body[1].userAvailableCommunities
-            this.cmmntNames = res.body[0].user_added_communities.sort(function(a, b){
+            let e=[]
+            let c =[]
+            d.forEach(element => {
+              if(!e.includes(element.community_id)){
+                e.push(element.community_id)
+                c.push(element)
+              }
+            });
+            this.allCommunity = c.sort(function(a, b){
               if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
               if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
               return 0;
@@ -482,13 +523,14 @@ get controls() {
           })
       }
       else{
-        this.dataService.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+        this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
           if (response['error'] == false) {
             this.cmmntNames = response.body.sort(function(a, b){
               if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
               if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
               return 0;
           })  ;
+          this.community_id = response?.body[0]?.cp_id
             //this.toastr.successToastr(response.msg);
           } else if (response['error'] == true) {
             this.tost.errorToastr(response.msg);
@@ -519,7 +561,7 @@ get controls() {
   }
 
   getManagementNames(){
-    if(this.currentUser.role == 'SuperAdmin'){
+    if(this.currentUser?.role == 'SuperAdmin'){
       this.dataService.getManagementNames().subscribe(res => {
         if (!res.error) {
           this.mngmNames = res.body.sort(function(a, b){
@@ -538,22 +580,22 @@ get controls() {
       //   this.isDropdownDisabled = true;
       // }
 
-      getRoles(){
-        // let comunity_id=this.currentUser.id
-    let id =this.currentUser.prmsnId
+      getRoles(comId?:any){
+        // let comunity_id=this.currentUser?.id
+    let id =this.currentUser?.prmsnId
         let data = {
-          prms : (id == '1' || this.comConf) ? 'community_id' : (id == '2' || !this.comConf) ? 'agency_id' : 'null',
-           id : this.comId || this.currentUser.id
-        }
+          prms : (id == '1' || this.comConf || this.currentUser?.user_role == 4) ? 'community_id' : this.currentUser?.user_role == 3  ? 'community_id': (id == '2' || !this.comConf || this.currentUser?.user_role ==5) ? 'agency_id' : 'null',
+           id : comId?comId:this.currentUser?.user_role == 4 || this.currentUser?.user_role ==5 ? this.currentUser?.com_id : this.comId || this.currentUser?.id
+        } 
         this.dataService.getRole(data).subscribe((res:any)=>{
           if(!res.error){
             this.data1 = res.body.sort(function(a, b){
-              if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
-              if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+              if(a.name?.toUpperCase() < b.name?.toUpperCase()) { return -1; }
+              if(a.name?.toUpperCase() > b.name?.toUpperCase()) { return 1; }
               return 0;
-          });;
+          });
           
-            // if(this.currentUser.prmsnId =='2'){
+            // if(this.currentUser?.prmsnId =='2'){
             //   this.data1 = this.data1.filter(i=>{
             //     if(i.name == 'Agency User'){
             //       return i
@@ -575,16 +617,17 @@ get controls() {
     onItemSelect(e,no){
       this.comId = e
       if(no ==1){
-        if(this.currentUser.user_role == 3){
+        if(this.currentUser?.user_role == 3){
           this.cmmntNames.filter(i=>{
             if(e == i.cp_id){
               this.slctSrtNm =   i.community_short_name
               this.comConf = false
             }
           })
+          this.getRoles()
         }
-        else if(this.currentUser.user_role == 2){
-          this.dataService.getAgenciesByID(this.currentUser.id).subscribe((res: any) => {
+        else if(this.currentUser?.user_role == 2){
+          this.dataService.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
             this.slctSrtNm =  res.body[0].sort_name
             this.comConf = false
         })
@@ -603,15 +646,56 @@ get controls() {
       })
       this.comConf = false
       }
-  
-      this.getRoles()
+      this.getRoles(this.comId)
     }
 
     // manaDetls(){
-    //   this.dataService.getManagementById(this.currentUser.id).subscribe((res: any) => {
+    //   this.dataService.getManagementById(this.currentUser?.id).subscribe((res: any) => {
     //    console.log(res);
     //       this.slctSrtNm = res.body[0].short_name
     //   })
     // }
-  
+    mgmcoUser(event:any){
+      console.log(event.target.value)
+      if(this.data1.length > 0) this.data1=[]
+      if(event.target.value == 0) this.mngRole()
+      else if(event.target.value ==1) this.getRoles(this.comId)
+    }
+    mngRole(){
+        let data = {
+          // prms : (id == '1' || this.comConf || this.currentUser?.user_role == 4) ? 'community_id' : this.currentUser?.user_role == 3  ? 'community_id': (id == '2' || !this.comConf || this.currentUser?.user_role ==5) ? 'agency_id' : 'null',
+          //  id : comId?comId:this.currentUser?.user_role == 4 || this.currentUser?.user_role ==5 ? this.currentUser?.com_id : this.comId || this.currentUser?.id
+           prms : 'management_id',
+           id : this.currentUser?.id
+        } 
+        this.dataService.getRole(data).subscribe((res:any)=>{
+          if(!res.error){
+            this.data1 = res.body.sort(function(a, b){
+              if(a.name?.toUpperCase() < b.name?.toUpperCase()) { return -1; }
+              if(a.name?.toUpperCase() > b.name?.toUpperCase()) { return 1; }
+              return 0;
+          });
+          
+            // if(this.currentUser?.prmsnId =='2'){
+            //   this.data1 = this.data1.filter(i=>{
+            //     if(i.name == 'Agency User'){
+            //       return i
+            //     }
+            //   })
+            //   this.formData.patchValue({
+            //     addUsrRl: this.data1
+            //   })
+            //   this.someMethod()
+            // }
+          }else{
+          this.tost.errorToastr('Something went wrong please try again later')
+          }
+        },err=>{
+          this.dataService.genericErrorToaster()
+        })
+    }
+    ngOnDestroy(): void{
+      if(this.currentUser)
+      this.currentUser?.user_role == 5  ? this.currentUser.role = 'User' : ''
+    }
 }

@@ -26,10 +26,11 @@
      </div> -->
     </div>
     <div class="ovrFlwCon">
-        
-    <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows"  [columnMode]="'force'"
+        <div class="overflow" style="overflow: auto;">
+    <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows"  [columnMode]="'force'"
     [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false" 
     [count]="rows.length" [offset]="" [limit]="10" 
+    [scrollbarH]="true" [virtualization]="false"
     >
     <ngx-datatable-column name="name" prop="name" [width]="150" >
        <ng-template let-name="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -63,4 +64,5 @@
        </ng-template>
     </ngx-datatable-column> -->
     </ngx-datatable>
+   </div>
    </div>

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, NgModule } from '@angular/core';
 
 @Directive({
   selector: '[appPercentageDirective]'
@@ -67,3 +67,13 @@ export class PercentageDirectiveDirective {
  
 
   }}
+
+  @NgModule({
+    declarations: [
+      PercentageDirectiveDirective,
+    ],
+    exports: [
+      PercentageDirectiveDirective
+    ]
+  })
+  export class CustomDirectives { }

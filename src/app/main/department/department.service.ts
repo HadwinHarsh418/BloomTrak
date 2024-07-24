@@ -11,8 +11,8 @@ apiUrl:any;
       this.apiUrl = environment.baseApiUrl
     }
 
-  getDepartmentListing(id,isf?): Observable<any> {
-    return this._http.get(`${this.apiUrl}getDepartment?community_id=${id}&is_for=${isf}`)
+  getDepartmentListing(id,isf?,searchStr?:any): Observable<any> {
+    return this._http.get(`${this.apiUrl}getDepartment?community_id=${id}&is_for=${isf}&searchStr=${searchStr}`)
   }
 
   addDepartment(body:any):Observable<any>{

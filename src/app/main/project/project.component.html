@@ -38,12 +38,12 @@
             </div>
         </div>
 
-        <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <!-- <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
             [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)"> -->
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" [scrollbarH]="true" [virtualization]="false">
             <!-- [columns]="[{ name: 'Date' }, { name: 'From' }, { name: 'To' }, { name: 'Description' }, { name: 'Amount' }]" -->
 
             <ngx-datatable-column name="title" prop="title" [width]="50">
@@ -162,7 +162,7 @@
                             <span *ngIf="controls['title'].dirty && controls['title'].invalid">
                                 <div class="invalid-feedback" *ngIf="controls['title'].hasError('required')"
                                     class="text text-danger">
-                                    This field required
+                                    This field is Required
                                 </div>
                             </span>
                         </div>
@@ -189,7 +189,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['description'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -212,7 +212,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['budget'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                             <div class="invalid-feedback" *ngIf="controls['budget'].hasError('pattern')"
                                                 class="text text-danger">
@@ -239,7 +239,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['start_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -262,7 +262,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['end_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -290,7 +290,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="controls['community_id'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -351,7 +351,7 @@
                             <span *ngIf="ef['title'].dirty && ef['title'].invalid">
                                 <div class="invalid-feedback" *ngIf="ef['title'].hasError('required')"
                                     class="text text-danger">
-                                    This field required
+                                    This field is Required
                                 </div>
                             </span>
                         </div>
@@ -378,7 +378,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="ef['description'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -401,7 +401,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="ef['budget'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                             <div class="invalid-feedback" *ngIf="ef['budget'].hasError('pattern')"
                                                 class="text text-danger">
@@ -428,7 +428,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="ef['start_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>
@@ -451,7 +451,7 @@
                                             <div class="invalid-feedback"
                                                 *ngIf="ef['end_date'].hasError('required')"
                                                 class="text text-danger">
-                                                This field required
+                                                This field is Required
                                             </div>
                                         </span>
                                     </div>

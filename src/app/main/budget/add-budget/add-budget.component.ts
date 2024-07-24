@@ -29,6 +29,10 @@ export class AddBudgetComponent implements OnInit {
   minDate: any;
   deptDsbl: boolean;
   type: any[];
+  vwPrms: any;
+  roleData: any;
+  community_id: any;
+  community_name: any;
   constructor(
     private formBuilder : FormBuilder,
     private location : Location,
@@ -50,6 +54,7 @@ export class AddBudgetComponent implements OnInit {
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
     })
+    this.currentUser?.user_role == 3||this.currentUser?.user_role == 8?this.getCmmntNm():this.getCommunityId()
   }
 
   ngOnInit(): void {
@@ -71,7 +76,9 @@ export class AddBudgetComponent implements OnInit {
           }
         ]
       }
+    
     };
+    this.getPrmsnData()
     
     this.formRoleData = this.formBuilder.group({
       community_name: ['', Validators.required],
@@ -104,16 +111,16 @@ export class AddBudgetComponent implements OnInit {
       this.deptDsbl = true
       this.getBudgetTableById();
     }
-    if(['6'].includes(this.currentUser.prmsnId)){
+    if(['6'].includes(this.currentUser?.prmsnId)){
       this.getCommunityId()
     }
 
-    if(['1'].includes(this.currentUser.prmsnId))
+    if(['1'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['community_name'].clearValidators();
      this.formRoleData.updateValueAndValidity();
     }
-    if(['6'].includes(this.currentUser.prmsnId))
+    if(['6'].includes(this.currentUser?.prmsnId))
     {
      this.formRoleData.controls['community_name'].setValidators(Validators.required);
      this.formRoleData.updateValueAndValidity();
@@ -121,9 +128,9 @@ export class AddBudgetComponent implements OnInit {
   }
 
   ngAfterContentInit(){
-    if(['1'].includes(this.currentUser.prmsnId)){
+    if(['1'].includes(this.currentUser?.prmsnId)){
       this.getCommunityDetails()
-     this.slctCom(this.currentUser.id,2)
+     this.slctCom(this.currentUser?.id,2)
     }
   }
 
@@ -156,12 +163,12 @@ export class AddBudgetComponent implements OnInit {
 // }
   
   getBudgetTableById(){
-    this.dataSrv.getBudgetTableById(this.prmsUsrId.id).subscribe((res:any)=>{
+    this.dataSrv.getBudgetTableById(this.prmsUsrId.id).subscribe((res:any)=>{      
       if(!res.err){
         if(this.prmsUsrId.id){
           this.ptchDrpt = res.body[0].department
           this.comid = res.body[0].community_id
-          if(this.currentUser.user_role == '6'){
+          if(this.currentUser?.user_role == '6'){
           this.slctCom(res.body[0].community_id,3)
         }
           this.formRoleData.patchValue({
@@ -223,7 +230,7 @@ export class AddBudgetComponent implements OnInit {
       });
       this.loading=  true;
       let data ={
-        community_name:this.currentUser.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name,
+        community_name:this.currentUser?.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name,
         GLA_id: this.formRoleData.value.GLA_id,
         labor_type:this.formRoleData.value.labor_type,
         description: this.formRoleData.value.description,
@@ -249,6 +256,10 @@ export class AddBudgetComponent implements OnInit {
         end_date: this.formRoleData.value.end_date,
         id : this.prmsUsrId.id
       }
+      if(this.formRoleData.value.end_date<=this.formRoleData.value.start_date){
+        this.toaster.errorToastr("End Date must be after Start Date")
+        this.loading=  false;
+      }else{
         this.dataSrv.editBudgetTable(data).subscribe((res:any)=>{
           // console.log(res)
           if(!res.error){
@@ -262,10 +273,10 @@ export class AddBudgetComponent implements OnInit {
         },err=>{
           this.loading=  false;
           this.dataSrv.genericErrorToaster()
-        })
+        })}
     }else{
        let data ={
-      community_name: this.currentUser.prmsnId == '1' ? this.comName.community_name : this.submitId2[0].community_name,
+      community_name: this.currentUser?.prmsnId == '1' ? this.comName.community_name :this.currentUser?.user_role ==3 ?this.community_name:this.submitId2[0].community_name,
       GLA_id: this.formRoleData.value.GLA_id,
       labor_type:this.formRoleData.value.labor_type,
       description: this.formRoleData.value.description,
@@ -290,6 +301,9 @@ export class AddBudgetComponent implements OnInit {
       start_date: this.formRoleData.value.start_date,
       end_date: this.formRoleData.value.end_date,
     }
+    if(this.formRoleData.value.end_date<=this.formRoleData.value.start_date){
+      this.toaster.errorToastr('End date will be after start date')
+    }else{
       this.loading=  true;
         this.dataSrv.addBudgetTable(data).subscribe((res:any)=>{
           // console.log(res)
@@ -305,6 +319,7 @@ export class AddBudgetComponent implements OnInit {
           this.loading=  false;
           this.dataSrv.genericErrorToaster()
         })
+    }
     }
   }
 
@@ -332,9 +347,9 @@ export class AddBudgetComponent implements OnInit {
     this.allCommunity?.forEach(element => {
       if(element.id == e.target.value  ) this.submitId2.push( element)
     });
-    this.getDepartment(no == 2 ? this.currentUser.id : no==3? e : e.target.value)
+    this.getDepartment(no == 2 ? this.currentUser?.id : no==3? e : e.target.value)
     let data = {
-      id : no == 2 ? this.currentUser.id : no==3? e : e.target.value,
+      id : no == 2 ? this.currentUser?.id : no==3? e : e.target.value,
       community_id : 'community_id'
     }
     this.dataSrv.getLedgerById(data).subscribe((res:any)=>{
@@ -361,7 +376,7 @@ export class AddBudgetComponent implements OnInit {
   }
 
   getCommunityDetails() {
-    this.dataSrv.getcommunityById(this.currentUser.id).subscribe(response => {
+    this.dataSrv.getcommunityById(this.currentUser?.id).subscribe(response => {
       if (!response.error) {
           this.comName = response.body[0]
       } else {
@@ -384,10 +399,60 @@ export class AddBudgetComponent implements OnInit {
         })  ;
       }
   }
+  getCmmntNm(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id=response.body[0].cp_id,
+        this.community_name= response?.body[0]?.community_name
 
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
+}
 
   getDepartment(e){
-    let isfor =  6;
+    let isfor = this.currentUser?.user_role == 6 ? 6 :'';
     let for_other = null
 
     this.dataSrv.getDepartmentListing(e,isfor,for_other).subscribe((res:any)=>{
@@ -400,6 +465,34 @@ export class AddBudgetComponent implements OnInit {
     },err=>{
       this.toaster.errorToastr('Something went wrong please try again leter')
     })
+  }
+
+  getPrmsnData(){
+    this.dataSrv.getPermissionByAdminRole().subscribe(
+      (res:any) => {
+        if (!res.error) {
+          // this.rows=[]
+          res.body.map(i=>{
+            //comunity User
+            if(this.roleData?.includes(i.role_id)){
+              if(i.permission_name == 'Department'){              
+              this.vwPrms  = i.view_permission
+              this.dprtmnt=JSON.parse(i.row_data);
+              this.dprtmnt =  this.dprtmnt.sort(function(a, b){
+                if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
+                if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
+                return 0;
+            });
+              }
+              
+            }
+          })
+          
+        } 
+    }, (error:any) => {
+      this.dataSrv.genericErrorToaster()
+    }
+    )
   }
 
 

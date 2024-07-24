@@ -20,17 +20,14 @@ const routes = [
   {
       path: '',
       component: ManagementUserComponent,
-      canActivate: [AuthGuard],
   },
   {
     path:'add-managementUser',
     component: AddManagementUserComponent,
-    canActivate: [AuthGuard]
   },
   {
     path: 'add-managementUser/:id',
     component: AddManagementUserComponent,
-    canActivate: [AuthGuard],
   }
 ];
 

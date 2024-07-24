@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { shift, User } from 'app/auth/models';
 import { AuthenticationService, UserService } from 'app/auth/service';
@@ -11,12 +11,16 @@ import {Location} from '@angular/common';
 import { CertificationService } from 'app/main/certification/certification.service';
 import { DepartmentService } from 'app/main/department/department.service';
 import { PositionService } from 'app/main/position/position.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-shift-confirmation',
   templateUrl: './shift-confirmation.component.html',
   styleUrls: ['./shift-confirmation.component.scss']
 })
 export class ShiftConfirmationComponent implements OnInit {
+  @ViewChild('createnew') createnew: ElementRef<any>;
+  @ViewChild('createnewdublication') createnewdublication: ElementRef<any>;
+  @ViewChild('createnewadd') createnewadd: ElementRef<any>;
   public rows: any
   public page = new Page();
   public contentHeader: object;
@@ -27,6 +31,7 @@ export class ShiftConfirmationComponent implements OnInit {
   submit: boolean = false
   todaysDate: any;
   shiftDates: boolean = false;
+  shiftduration : any;
   
   dropdownSettings: IDropdownSettings = {
     singleSelection: true,
@@ -181,6 +186,7 @@ export class ShiftConfirmationComponent implements OnInit {
   delay: number;
   additional_note: string;
   overtime: number;
+  spread_hourly_rate:number;
   chngCommntyList: any =[]
   certificationDpw: any;
   departmentDpw: any;
@@ -192,6 +198,16 @@ export class ShiftConfirmationComponent implements OnInit {
   roleData1: any=[];
   roleData2: any=[];
   shortBreak: any;
+  allCommunity1: any;
+  str: any;
+  typ_shift_length: any;
+  durationflag: boolean = false;
+  shiftlength: number;
+  shifttime: number;
+  datedisable: boolean;
+  disableInput: boolean = true;
+  flaghorlyhate: any;
+  spread_rate: boolean;
 
   constructor(
     private tost: ToastrManager,
@@ -203,7 +219,8 @@ export class ShiftConfirmationComponent implements OnInit {
     private certificationService:CertificationService,
     private departmentService:DepartmentService,
     private positionService:PositionService,
-    private dp : DepartmentService
+    private dp : DepartmentService,
+    private modalService: NgbModal,
   ) {
     this._authenticationService.currentUser.subscribe
       (x => {
@@ -213,19 +230,31 @@ export class ShiftConfirmationComponent implements OnInit {
       this.getCommunityBreakSetting()
   }
 
+  // updateDate(event, index, type) {
+  //   if(type == 'start-shift'){
+  //     this.blankArray[index].start_date = event;
+  //       this.getTm1(this.blankArray[index].start_date,index)
+  //       this.disableInput=false
+  //   }else{
+  //     this.blankArray[index].end_date = event;
+  //       this.getTm3(this.blankArray[index].end_date,index)
+  //   }  }
+
  
   ngOnInit(): void {
+    this.getAgency()
     this.certificationDpw=[];
+    this.getuserDetails()
     this.positionDpw=[]
     this.getRole()
     if(this.currentUser.user_role != '6' && this.currentUser.user_role != '3' && this.currentUser.user_role != 4){
       this.getCertification();
       this.getPosition()
     }
-    if(this.currentUser.user_role !='4'&& this.currentUser.user_role !='2' && this.currentUser.user_role !='5')
+    if(this.currentUser?.user_role !='4'&& this.currentUser?.user_role !='2' && this.currentUser?.user_role !='5')
     this.getDepartment()
-   this.getData();
-   this.getCommunityId()
+   this.currentUser?.user_role != 3 && this.currentUser?.user_role != 8 ? this.getData() : '';
+   this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.getMngComunity() : this.getCommunityId()
     let today = new Date();
     // this.todaysDate = { day: today.getDate(), month: today.getMonth() + 1, year: today.getFullYear() };
     // this.todaysDate = this.todaysDate.year  + '-' +  this.todaysDate.month +'-' +   this.todaysDate.day
@@ -236,6 +265,7 @@ export class ShiftConfirmationComponent implements OnInit {
     this.user.rate_type = 'Normal';
     // this.user.is_urgent = 'urgent';
     this.todaysDate = this.getDate(today)
+    
     
     this.blankArray.push(this.user)
     this.contentHeader = {
@@ -260,9 +290,13 @@ export class ShiftConfirmationComponent implements OnInit {
 
   }
 
+  goBackShift(){
+    this.rout.navigate(['/shift','id'])
+  }
+
  getCertification(){
   let isf = ''
-  let data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  : this.currentUser.id }
+  let data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  : this.currentUser?.id }
   this.certificationService.getCertificationListing(data).subscribe((res:any)=>{
     this.certificationDpw = res.body.sort(function(a, b){
       if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
@@ -270,7 +304,7 @@ export class ShiftConfirmationComponent implements OnInit {
       return 0;
   })  ;
   })
-  // this.departmentService.getDepartmentListing(this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id :this.currentUser.id,isf).subscribe((res:any)=>{
+  // this.departmentService.getDepartmentListing(this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id :this.currentUser?.id,isf).subscribe((res:any)=>{
   //   this.departmentDpw = res.body.sort(function(a, b){
   //     if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
   //     if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
@@ -281,7 +315,7 @@ export class ShiftConfirmationComponent implements OnInit {
  }
  
  getPosition(){
-  let community_id= this.currentUser.user_role == 4 ? this.currentUser.com_id : this.currentUser.id
+  let community_id= this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id
   
   this.positionService.getPosition(community_id).subscribe((res:any)=>{
     this.positionDpw = res.body.sort(function(a, b){
@@ -342,13 +376,19 @@ export class ShiftConfirmationComponent implements OnInit {
          this.blankArray[i].breakTime = this.findBreakTime(hours,minutes)
          
      }
+     if(!isNaN(hours) && !isNaN(minutes)){
+     this.shiftduration = hDiff
+     }
+     
   }
   getCommunityBreakSetting(){
  
-    this.dataService.getCommunityBreakSetting(this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getCommunityBreakSetting(this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
-        let d= JSON.parse(res.body[0].variance_val)
-            this.shortBreak = JSON.parse(d).map(i=>{i.editing=false; return i;});
+        if(res?.body[0]?.variance_val){
+          let d= JSON.parse(res?.body[0]?.variance_val)
+              this.shortBreak = JSON.parse(d).map(i=>{i.editing=false; return i;});
+        }
             
       }
     },
@@ -356,6 +396,55 @@ export class ShiftConfirmationComponent implements OnInit {
         this.dataService.genericErrorToaster();
   
       })
+  }
+
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else {
+          this.tost.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataService.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else if (response['error'] == true) {
+          this.tost.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataService.genericErrorToaster();
+  
+      })
+    }
   }
   
   getCommunityId() {
@@ -378,7 +467,7 @@ export class ShiftConfirmationComponent implements OnInit {
 
   }
 
-  submitted() {
+  submitted(d?:any) {    
     this.data = [];
     for (let x = 0; x < this.blankArray.length; x++) {
       this.blankArray[x].shift = 'confirmation'
@@ -386,7 +475,8 @@ export class ShiftConfirmationComponent implements OnInit {
       if (!this.blankArray[x].for_cp 
         || !this.blankArray[x].delay 
         || !this.blankArray[x].h_m || !this.blankArray[x].startTime || !this.blankArray[x].description
-        || !this.blankArray[x].endTime || !this.blankArray[x].overtime || !this.blankArray[x].rate_type 
+        || !this.blankArray[x].endTime
+        || !this.blankArray[x].end_date || !this.blankArray[x].overtime || this.spread_rate ? !this.blankArray[x].spread_hourly_rate : this.blankArray[x].spread_hourly_rate || !this.blankArray[x].rate_type || !this.blankArray[x].certification
       ) {
         this.submit = true
         this.tost.errorToastr('Form is invalid')
@@ -422,6 +512,7 @@ export class ShiftConfirmationComponent implements OnInit {
         delay: this.blankArray[x].delay,
         additional_note : this.blankArray[x].additional_note,
         overtime: this.blankArray[x].overtime ,
+        spread_hourly_rate: this.blankArray[x].spread_hourly_rate ?? '' ,
         for_cp: this.blankArray[x].for_cp,
         rate_type: this.blankArray[x].rate_type,
         agcy_app_rate: this.blankArray[x].agcy_app_rate,
@@ -430,7 +521,7 @@ export class ShiftConfirmationComponent implements OnInit {
         position: this.blankArray[x].position,
         start_time: this.cnvrtnewDt(this.blankArray[x].start_date + ' ' + this.blankArray[x].startTime),
         end_time: this.cnvrtnewDt(this.blankArray[x].end_date + ' ' + this.blankArray[x].endTime),
-        community_id: this.currentUser.role == 'Admin' ? this.blankArray[x].community :  this.currentUser.role == 'SuperAdmin' ? this.blankArray[x].community : this.currentUser.prmsnId == '15' ? this.currentUser.com_id : this.currentUser.id,
+        community_id: this.currentUser?.role == 'Admin' || this.currentUser?.user_role == 8 ? this.blankArray[x].community :  this.currentUser?.role == 'SuperAdmin' ? this.blankArray[x].community : this.currentUser?.prmsnId == '15' ? this.currentUser?.com_id : this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id,
         breakTime:this.blankArray[x].breakTime ?? 0
       })
     }
@@ -445,9 +536,16 @@ export class ShiftConfirmationComponent implements OnInit {
     }else{
       this.updtDate =  crntDate.setHours(crntDate.getHours() + dl );
     }
+    
+    if(this.durationflag == false && !d){
+      if(this.shiftduration > this.shiftlength){
+        this.modalOpenOSE(this.createnew, 's');
+        return
+      }
+  }
 
-    if (date1 > date2) {
-      this.tost.errorToastr('End date and time is greater then start date and time')
+    if (date1 >= date2) {
+      this.tost.errorToastr('End Date and Time must be after Start Date and Time')
       return
     }
     if (this.updtDate > updtSrt) {
@@ -466,13 +564,13 @@ export class ShiftConfirmationComponent implements OnInit {
     this.rout.navigate(['/shift'])
   }
 
-  addForm() {
+  addForm(d?:any) {
     for (let x = 0; x < this.blankArray.length; x++) {
       if (!this.blankArray[x].for_cp ||
         !this.blankArray[x].description
         || !this.blankArray[x].delay 
         || !this.blankArray[x].h_m || !this.blankArray[x].startTime
-        || !this.blankArray[x].endTime || !this.blankArray[x].overtime || !this.blankArray[x].rate_type
+        || !this.blankArray[x].endTime || !this.blankArray[x].overtime  || this.spread_rate == true ? !this.blankArray[x].spread_hourly_rate : this.blankArray[x].spread_hourly_rate || !this.blankArray[x].rate_type
       ) {
         this.tost.errorToastr('Form is invalid')
         this.rows1 = []
@@ -509,13 +607,19 @@ export class ShiftConfirmationComponent implements OnInit {
       }
       
       if (date1 > date2) {
-        this.tost.errorToastr('End date and time is greater then start date and time')
+        this.tost.errorToastr('End Date and Time must be after Start Date and Time')
         return
       }
       if (this.updtDate > updtstart_time) {
         this.tost.errorToastr('Your Delay Period ends on or after the shift start time')
         return
       }
+      if(this.durationflag == false && !d){
+        if(this.shiftduration > this.shiftlength){
+          this.modalOpenOSE(this.createnewadd, 's');
+          return
+        }
+    }
     }
     this.user = new shift()
     this.user.h_m = 'Hours';
@@ -532,11 +636,11 @@ export class ShiftConfirmationComponent implements OnInit {
 
   }
 
-  duplctSft(){
+  duplctSft(d? : any){
     let dup =   JSON.parse(JSON.stringify(this.blankArray[this.blankArray.length-1]))
     if (!dup.for_cp || !dup.description
       || !dup.delay || !dup.h_m || !dup.startTime
-      || !dup.endTime || !dup.overtime || !dup.rate_type
+      || !dup.endTime || !dup.overtime || !dup.rate_type || this.spread_rate == true ? !dup.spread_hourly_rate : dup.spread_hourly_rate
     ) {
       this.tost.errorToastr('Form is invalid')
       return;
@@ -566,13 +670,20 @@ export class ShiftConfirmationComponent implements OnInit {
     }
     
     if (date1 > date2) {
-      this.tost.errorToastr('End date and time is greater then start date and time')
+      this.tost.errorToastr('End Date and Time must be after Start Date and Time')
       return
     }
     if (this.updtDate > updtstart_time) {
       this.tost.errorToastr('Your Delay Period ends on or after the shift start time')
       return
     }
+
+    if(this.durationflag == false && !d){
+      if(this.shiftduration > this.shiftlength){
+        this.modalOpenOSE(this.createnewdublication, 's');
+        return
+      }
+  }
 
     this.blankArray.push(dup);
   }
@@ -662,6 +773,11 @@ export class ShiftConfirmationComponent implements OnInit {
   //   }
   // }
 
+  closededApply(modal: NgbModalRef) {
+    this.durationflag = false;
+    modal.dismiss();
+  }
+
   getCurrentHours() {
     for (let x = 0; x < this.blankArray.length; x++) {
 
@@ -726,9 +842,9 @@ export class ShiftConfirmationComponent implements OnInit {
     this.location.back();
   }
   getDepartment(){
-    // if(this.currentUser.prmsnId == '6'){
+    // if(this.currentUser?.prmsnId == '6'){
       let  isf= ''
-      this.departmentService.getDepartmentListing(this.currentUser.user_role == '4' ? this.currentUser.com_id : this.currentUser.id,this.currentUser.user_role == '4' ? 'community' : '6').subscribe((res:any)=>{
+      this.departmentService.getDepartmentListing(this.currentUser?.user_role == '4' ? this.currentUser?.com_id : this.currentUser?.id,this.currentUser?.user_role == '4' ? 'community' : '6').subscribe((res:any)=>{
         this.departmentDpw = res.body.sort(function(a, b){
           if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
           if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
@@ -742,10 +858,12 @@ export class ShiftConfirmationComponent implements OnInit {
  
   }
   cmntyCng(e){
-    let str = e
-    let words = str.split(' ');
+    this.str = e
+    console.log(this.str);
+    
+    let words = this.str.split(' ');
     let isf = 6
-    let community_id= this.currentUser.user_role == 4 ? this.currentUser.com_id : this.currentUser.id
+    let community_id= this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id
 
     let data = {usrRole :'' , comId : community_id }
     this.dp.getDepartmentListing(words[1],isf).subscribe((res:any)=>{
@@ -757,8 +875,8 @@ export class ShiftConfirmationComponent implements OnInit {
     },err=>{
       this.tost.errorToastr('Something went wrong please try again leter')
     })
-
-    this.certificationService.getCertificationListing(data).subscribe((res:any)=>{
+    let data1 = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' || this.currentUser?.user_role == 8 ? words[1] : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.user_role == 3 ? words[1] : this.currentUser?.id }
+    this.certificationService.getCertificationListing(data1).subscribe((res:any)=>{community_id
       this.certificationDpw = res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
         if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
@@ -776,7 +894,7 @@ export class ShiftConfirmationComponent implements OnInit {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
       
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})
@@ -800,9 +918,9 @@ export class ShiftConfirmationComponent implements OnInit {
       res => {
         if (!res.error) {
           res.body.filter(i=>{
-            if(i.permission_name == 'Department' && this.currentUser.user_role != 6 && this.currentUser.user_role != 1){
-              // if((i.trak_type == '1'|| i.trak_type == null && this.currentUser.role !='Community')){
-              if((i.trak_type == '1'|| i.trak_type == null)){
+            if(i.permission_name == 'Department' && this.currentUser?.user_role != 6 && this.currentUser?.user_role != 1){
+              // if((i.trak_type == '1'|| i.trak_type == null && this.currentUser?.role !='Community')){
+              if((i.trak_type == '1')){
                 
                 this.departmentDpw=JSON.parse(i.row_data);
                 this.departmentDpw =  this.departmentDpw.sort(function(a, b){
@@ -832,22 +950,69 @@ export class ShiftConfirmationComponent implements OnInit {
   }
 
   findBreakTime(hours,min){
-    if(hours < 1 && min < 59){
+    if(this.shortBreak)
+    if(hours <= 1 && min < 59){
       return this.shortBreak[0].value
-    }else if(hours < 2 && hours >= 1 && min < 59){
+    }else if(hours <= 2 && hours >= 1 && min < 59){
       return this.shortBreak[1].value
-    }else if(hours < 3 && hours >= 2 && min < 59){
+    }else if(hours <= 3 && hours >= 2 && min < 59){
       return this.shortBreak[2].value
-    }else if(hours < 4 && hours >= 3 && min < 59){
+    }else if(hours <= 4 && hours >= 3 && min < 59){
       return this.shortBreak[3].value
-    }else if(hours < 5 && hours >= 4 && min < 59){
+    }else if(hours <= 5 && hours >= 4 && min < 59){
       return this.shortBreak[4].value
-    }else if(hours < 6 && hours >= 5 && min < 59){
+    }else if(hours <= 6 && hours >= 5 && min < 59){
       return this.shortBreak[5].value
-    }else if(hours < 7 && hours >= 6 && min < 59){
+    }else if(hours <= 7 && hours >= 6 && min < 59){
       return this.shortBreak[6].value
     }else{
       return this.shortBreak[7].value
     }
   }
-}
+  modalOpenOSE(modalOSE, size = 'md') {
+    this.modalService.open(modalOSE,
+      {
+        backdrop: false,
+        size: size,
+        centered: true,
+      }
+    );
+  }
+
+  getuserDetails() {
+    if ((this.currentUser?.user_role == 4) || this.currentUser?.user_role == 5) {
+      let id = this.currentUser?.id;
+      let is_for = 'user'
+      this.dataService.getUserById('', id, is_for).subscribe(response => {
+        if (response.body && response.body[0] && response.body[0]) {
+          this.shiftlength = response.body[0].typ_shift_length
+        }
+      })
+    }
+    else {
+      this.dataService.getcommunityById(this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id).subscribe(response => {
+        if (!response.error) {
+          if (response.body && response.body[0] && response.body[0]) {
+          this.shiftlength = response.body[0].typ_shift_length          
+          }
+
+        }
+      }
+
+      );
+    }
+  }
+
+  getAgency(){
+    this.dataService.getAllAgenciesType(this.currentUser.user_role == 4 ? this.currentUser.com_id : this.currentUser.id).subscribe(res=>{
+      if (!res.error){
+        this.flaghorlyhate = res.body.filter(agency => agency.agency_type === '1');
+        if (this.flaghorlyhate.length > 0) {
+          this.spread_rate = true;
+        } else {
+          this.spread_rate = false;
+        }
+      } 
+    }
+  );
+}}

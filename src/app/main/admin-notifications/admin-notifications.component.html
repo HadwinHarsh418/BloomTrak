@@ -12,8 +12,15 @@
                     <button type="button" class="btn-sm btn-info" [routerLink]="['/admin-notifications/add-notifications']">
                         <i class="fa fa-plus mr-50"></i> Add Notification
                     </button>
-                   
+                    <div class="col-6" *ngIf="currentUser.role == 'Agency' || currentUser.user_role == 5 || currentUser.user_role == 3 || currentUser.user_role == 8">
+                        <select id="inputState" class="form-control" (change)="selectCommunity1($event.target.value)" [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                          <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                          <option value="{{item.cp_id}}" *ngFor="let item of allCommunity1">
+                            {{item.community_name}}</option>
+                        </select>
+                      </div>
                 </div>
+                
             </div>
             <!-- <div class="col-md-6 col-12 d-flex justify-content-md-end">
                 <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
@@ -24,10 +31,11 @@
                 </div>
             </div> -->
         </div>
-        
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+        <div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-            [count]="" [offset]="" [limit]="" >
+      [scrollbarH]="true" [virtualization]="false"
+      [count]="" [offset]="" [limit]="" >
 
             <ngx-datatable-column name="group name" prop="group_name" [width]="150">
                 <ng-template let-group_name="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -81,5 +89,6 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>
     </div>
 </div>

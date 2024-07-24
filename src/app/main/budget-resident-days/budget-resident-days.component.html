@@ -1,27 +1,47 @@
 <div class="card">
-    <div class="card-header d-flex flex-column align-items-start pb-0">
-       <p class="font-weight-bolder ml-1" >Budget Resident Days List</p>
-    </div>
-    <div class="card-body mt-1">
-    <div class="row mb-1">
-       <div class="col-md-6 col-12">
-          <div class="d-flex">
-             <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.user_role == '6'|| currentUser.prmsnId == '1'"
-                [routerLink]="['add-budget-resident']" >  <i class="fa fa-plus mr-50"></i>Add Budget Resident days
-             </button> 
+   <div class="card-header d-flex flex-column align-items-start pb-0">
+      <p class="font-weight-bolder ml-1">Budget Resident Days List</p>
+   </div>
+   <div class="card-body ">
+      <div class="row mb-1">
+         <div class="col-lg-6 col-12">
+            <div class="d-flex custom-button">
+               <button type="button" class="btn-sm btn-info"
+                  *ngIf="addPrms ==1|| currentUser.user_role == '6'|| currentUser.user_role == 3 || currentUser.prmsnId == '1'"
+                  [routerLink]="['add-budget-resident']"> <i class="fa fa-plus mr-50"></i>Add Budget Resident days
+               </button>
 
-             <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
-               <i class="fa fa-file "></i>   Import File
-               <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
-             </button>
-             <button type="button" class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" (click)="openMdl()">  <i class="fa fa-trash mr-50"></i>Delete Import
-             </button> 
-          </div>
-       </div>
-    </div>
-    <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-    [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-    [count]="" [offset]="" [limit]="10" >
+               <button type="button" (click)="fileInput.click()" class="btn-sm btn-info ml-1"
+                  *ngIf="['1','6','3','16'].includes(currentUser.prmsnId)">
+                  <i class="fa fa-file "></i> Import File
+                  <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)"
+                     style="display:none;" accept=".csv, .xls" />
+               </button>
+               <button type="button" class="btn-sm btn-info ml-1"
+                  *ngIf="['1','6','3','16'].includes(currentUser.prmsnId)" (click)="openMdl()"> <i
+                     class="fa fa-trash mr-50"></i>Delete Import
+               </button>
+
+            </div>
+
+         </div>
+         <div class="col-md-6 col-12">
+            <div class="col-6 d-flex justify-content-end "
+               *ngIf="currentUser.role == 'Agency' || currentUser.user_role == 5 || currentUser.user_role == 3 || currentUser.user_role == 8">
+               <select id="inputState" class="form-control" (change)="selectCommunity1($event.target.value)"
+                  [(ngModel)]="community_id">
+                  <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                  <option value="{{item.cp_id || item.id || item.community_id}}" *ngFor="let item of allCommunity1">
+                     {{item.community_name}}</option>
+               </select>
+            </div>
+         </div>
+      </div>
+      <div class="overflow" style="overflow-y: auto;">
+      <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+      [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+      [scrollbarH]="true" [virtualization]="false"
+      [count]="" [offset]="" [limit]="10" >
     <ngx-datatable-column name="Community Name" prop="community_name" [width]="100" >
        <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
           {{ community_name }}
@@ -116,10 +136,10 @@
                 <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
                 </a>
                 <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                   <a ngbDropdownItem class="d-flex align-items-center" *ngIf="edtPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'" [routerLink]="['edit-budget-resident',row.id]">
+                   <a ngbDropdownItem class="d-flex align-items-center" *ngIf="edtPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1' || currentUser.user_role == 3" [routerLink]="['edit-budget-resident',row.id]">
                    <i class="fa fa-edit mr-50"></i> Edit 
                    </a>
-                   <a ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1'" (click)="delete(row.id)">
+                   <a ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms ==1 || currentUser.user_role == '6' || currentUser.prmsnId == '1' ||  currentUser.user_role == 3" (click)="delete(row.id)">
                    <i class="fa fa-trash mr-50"></i> Delete 
                    </a>
                    <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="dltPrms ==0 && edtPrms == 0">
@@ -131,97 +151,95 @@
        </ng-template>
     </ngx-datatable-column>
     </ngx-datatable>
+   </div>
+   </div>
+</div>
 
 
-             <!-- OtpModal -->
- <ng-template #dltImprt let-modal>
+
+<!-- OtpModal -->
+<ng-template #dltImprt let-modal>
    <div class="modal-header bg-danger">
-     <h4 class="modal-title text-white" id="modal-basic-title">Delete Import </h4>
-     <button type="button" class="close" aria-label="Close" (click)="closeVerificationModal()">&times;</button>
- </div>
- <div class="modal-body" tabindex="0" ngbAutofocus>
-   <form class="user" [formGroup]="dltForm" (ngSubmit)="dltFormSub()">
+      <h4 class="modal-title text-white" id="modal-basic-title">Delete Import </h4>
+      <button type="button" class="close" aria-label="Close" (click)="closeVerificationModal()">&times;</button>
+   </div>
+   <div class="modal-body" tabindex="0" ngbAutofocus>
+      <form class="user" [formGroup]="dltForm" (ngSubmit)="dltFormSub()">
 
-      <div class="row">
-         <div class="col-lg-4">
-            <div class="common-form-left">
-               <label for="inputPassword6" class="col-form-label">Select Community <span class="text-danger">*</span>
-               </label>
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Select Community <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <select class="form-control" formControlName="community_name">
+                     <option value="" selected="selected" disabled>---Select Community---</option>
+                     <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                  </select>
+                  <span *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
+                     <div class="invalid-feedback" *ngIf="FormData_Control['community_name'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
             </div>
          </div>
-         <div class="col-lg-8">
-            <div class="common-form-left form-group">
-             <select  class="form-control" formControlName="community_name">
-                 <option value="" selected="selected" disabled>---Select Community---</option>
-                 <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
-             </select>
-               <span *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
-                  <div class="invalid-feedback"
-                     *ngIf="FormData_Control['community_name'].hasError('required')"
-                     class="text text-danger">
-                     This field required
-                  </div>
-               </span>
+
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">Start Date <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="date"
+                     [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
+                     formControlName="start_date" class="form-control form-control-user" id="start_date"
+                     class="form-control" placeholder="Start Date" aria-describedby="passwordHelpInline">
+                  <span *ngIf="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid">
+                     <div class="invalid-feedback" *ngIf="FormData_Control['start_date'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
             </div>
          </div>
-      </div>
-      
-       <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">Start Date <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-                 <input type="date"
-                    [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
-                    formControlName="start_date" class="form-control form-control-user"
-                    id="start_date" class="form-control"
-                    placeholder="Start Date" aria-describedby="passwordHelpInline">
-                 <span *ngIf="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="FormData_Control['start_date'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-        </div>
 
-        <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">End Date <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-                 <input type="date"
-                    [class.is-invalid]="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid"
-                    formControlName="end_date" class="form-control form-control-user"
-                    id="end_date" class="form-control"
-                    placeholder="Start Date" aria-describedby="passwordHelpInline">
-                 <span *ngIf="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="FormData_Control['end_date'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-           <button type="submit" class="btn btn-primary ml-1" [disabled]="btnShow">
-               <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
-                   aria-hidden="true"></span>
-                  Delete
-           </button>
-        </div>
-   </form>
- </div>
- 
- </ng-template>
- <!-- / Modal -->
+         <div class="row">
+            <div class="col-lg-4">
+               <div class="common-form-left">
+                  <label for="inputPassword6" class="col-form-label">End Date <span class="text-danger">*</span>
+                  </label>
+               </div>
+            </div>
+            <div class="col-lg-8">
+               <div class="common-form-left form-group">
+                  <input type="date"
+                     [class.is-invalid]="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid"
+                     formControlName="end_date" class="form-control form-control-user" id="end_date"
+                     class="form-control" placeholder="Start Date" aria-describedby="passwordHelpInline">
+                  <span *ngIf="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid">
+                     <div class="invalid-feedback" *ngIf="FormData_Control['end_date'].hasError('required')"
+                        class="text text-danger">
+                        This field is Required
+                     </div>
+                  </span>
+               </div>
+            </div>
+            <button type="submit" class="btn btn-primary ml-1" [disabled]="btnShow">
+               <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+               Delete
+            </button>
+         </div>
+      </form>
+   </div>
+
+</ng-template>
+<!-- / Modal -->

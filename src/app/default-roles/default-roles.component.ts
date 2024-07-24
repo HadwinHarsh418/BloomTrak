@@ -36,11 +36,7 @@ export class DefaultRolesComponent implements OnInit {
   getRoles(){
     this.dataSrv.getDefaultRole().subscribe((res:any)=>{
       if(!res.err){
-        this.rows = res.body.sort(function(a, b){
-          if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
-          if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
-          return 0;
-      });
+        this.rows = res.body.sort((a, b) => (a.name?.trim().toLowerCase() > b.name?.trim().toLowerCase()) ? 1 : ((b.name?.trim().toLowerCase() > a.name?.trim() .toLowerCase()) ? -1 : 0));
       }else{
       this.toaster.errorToastr('Something went wrong please try again leter')
       }

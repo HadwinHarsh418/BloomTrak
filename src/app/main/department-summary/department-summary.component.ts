@@ -82,9 +82,12 @@ export class DepartmentSummaryComponent implements OnInit {
   // totBudget_ytd: number = 0;
   // totVarnc_ytd: number = 0;
   resValCal: any;
-  rows2: any;
+  rows2: any[];
   FnlreconciliationText: any;
   rows1: any=[];
+  selectedMnth: any;
+  finalizeData:any[]=[]
+  formSubmitValue: boolean=false;
 
   constructor(
     private _authenticationService : AuthenticationService,
@@ -122,7 +125,7 @@ export class DepartmentSummaryComponent implements OnInit {
       department: ['',Validators.required],
       final: ['',Validators.required],
       receipt_id: [''],
-      entered_by: [this.currentUser.id],
+      entered_by: [this.currentUser?.id],
       start_date:[this.minDate],
       // invoice_date:[''],
       // invoice_number:['']
@@ -130,8 +133,8 @@ export class DepartmentSummaryComponent implements OnInit {
     
   
     this.getCommunityId()
-    // if(this.currentUser.prmsnId == '1'){
-    //   this.getDepartment(this.currentUser.id)
+    // if(this.currentUser?.prmsnId == '1'){
+    //   this.getDepartment(this.currentUser?.id)
     // }
     this.getCurrentYear = new Date().getFullYear(); // current year
     this.listOfYears = Array.from({length: 3}, (_, i) => this.getCurrentYear - i);
@@ -145,7 +148,7 @@ export class DepartmentSummaryComponent implements OnInit {
     this.dprtmnt =[]
     let isfor =  6
     let for_other = null
-    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser.prmsnId) ? this.currentUser.id : e,isfor,for_other).subscribe((res:any)=>{
+    this.dataSrv.getDepartmentListing(['1'].includes(this.currentUser?.prmsnId) ? this.currentUser?.id : e,isfor,for_other).subscribe((res:any)=>{
       this.dprtmnt = res.body.sort(function(a, b){
         if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
         if(a.name.toUpperCase() > b.name.toUpperCase()) { return 1; }
@@ -158,7 +161,7 @@ export class DepartmentSummaryComponent implements OnInit {
   }
 
   getCommunityId() {
-    if(this.currentUser.user_role != 3 && this.currentUser.user_role != 8){
+    if(this.currentUser?.user_role != 3 && this.currentUser?.user_role != 8){
       this.dataSrv.getCommunityId().subscribe((response: any) => {
         if (response['error'] == false) {
           this.allCommunity = response.body.sort(function(a, b){
@@ -166,15 +169,15 @@ export class DepartmentSummaryComponent implements OnInit {
             if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
             return 0;
         })  ;
-        if(!['1','2','3','4','5','6'].includes(this.currentUser.prmsnId)){
-          this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser.com_id){ return i}})
+        if(!['1','2','3','4','5','6'].includes(this.currentUser?.prmsnId)){
+          this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser?.com_id){ return i}})
         }
         this.frsCom = this.allCommunity[0].id
-        if(this.currentUser.prmsnId ==6){
+        if(this.currentUser?.prmsnId ==6){
           this.getDepartment(this.frsCom)
           }
-          else if(this.currentUser.prmsnId ==1){
-            this.getDepartment(this.currentUser.id)
+          else if(this.currentUser?.prmsnId ==1){
+            this.getDepartment(this.currentUser?.id)
           }
           //this.toastr.successToastr(response.msg);
         } else if (response['error'] == true) {
@@ -186,15 +189,24 @@ export class DepartmentSummaryComponent implements OnInit {
       })
     }
     else{
-        if(this.currentUser.id && this.currentUser.com_id){
+        if(this.currentUser?.id && this.currentUser?.com_id){
           let data = {
-            userId : this.currentUser.id,
-            mangId : this.currentUser.com_id
+            userId : this.currentUser?.id,
+            mangId : this.currentUser?.management
           }
           this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
             if (!res.error) {
+              let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
               // this.mangComs = res.body[1].userAvailableCommunities
-              this.allCommunity = res.body[0].user_added_communities.sort(function(a, b){
+              let e=[]
+              let c =[]
+              d.forEach(element => {
+                if(!e.includes(element.community_id)){
+                  e.push(element.community_id)
+                  c.push(element)
+                }
+              });
+              this.allCommunity = c.sort(function(a, b){
                 if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
                 if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
                 return 0;
@@ -210,7 +222,7 @@ export class DepartmentSummaryComponent implements OnInit {
             })
         }
         else{
-          this.dataSrv.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+          this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
             if (response['error'] == false) {
               this.allCommunity = response.body.sort(function(a, b){
                 if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -235,7 +247,7 @@ export class DepartmentSummaryComponent implements OnInit {
   slct(e){
     this.slctCom = e.target.value
     this.frsCom = e.target.value
-    // if(this.currentUser.user_role == 3){
+    // if(this.currentUser?.user_role == 3){
     //   this.getPrmsnData()
     // }
     // else{
@@ -245,7 +257,7 @@ export class DepartmentSummaryComponent implements OnInit {
 
   chngDprt(value){
     this.slctDpt = value
-    this.frstDp = value
+    this.frstDp = value 
   }
 
   chngD(e){
@@ -262,13 +274,14 @@ export class DepartmentSummaryComponent implements OnInit {
   }
 
   chngYr(value){
-    this.slctYr = value
+    this.slctYr = value;
     this.custmDt = (this.slcMnt || this.curMnt) +'-'+ '01' +'-'+ (this.slctYr || this.currYear) 
     this.getDate1(this.custmDt)
   }
 
   chngMnt(value){
-    this.slcMnt = value 
+    this.slcMnt = value;
+    this.selectedMnth = value;
     this.custmDt = (this.slcMnt || this.curMnt) +'-'+ '01' +'-'+ (this.slctYr || this.currYear) 
     this.getDate1(this.custmDt)
   }
@@ -284,9 +297,9 @@ export class DepartmentSummaryComponent implements OnInit {
     this.dataByCom[0].totVarnc_ytd = 0
 
     let data = {
-      community_id :  this.currentUser.prmsnId == 1 ? this.currentUser.id : this.frsCom,
-      department:this.frstDp,
-      year:'2023',
+      community_id :  this.currentUser?.prmsnId == 1 ? this.currentUser?.id : this.frsCom,
+      department:this.slctDpt || this.frstDp,
+      year:this.slctYr || this.getCurrentYear,
       month: this.curMnt
     }
     this.dataSrv.getDepartmentSummary(data).subscribe((response: any) => {
@@ -318,51 +331,51 @@ export class DepartmentSummaryComponent implements OnInit {
         })
 
           if(this.slcMnt =='01'){
-            this.updResVal = this.rows2[0].january
-            this.resValCal = this.rows2[0].january * 31
+            this.updResVal = this.rows2[0]?.january
+            this.resValCal = this.rows2[0]?.january * 31
           }
           else if(this.slcMnt =='02'){
-            this.updResVal = this.rows2[0].february
-            this.resValCal = this.rows2[0].february * 28
+            this.updResVal = this.rows2[0]?.february
+            this.resValCal = this.rows2[0]?.february * 28
           }
           else if(this.slcMnt =='03'){
-            this.updResVal = this.rows2[0].march
-            this.resValCal = this.rows2[0].march * 31
+            this.updResVal = this.rows2[0]?.march
+            this.resValCal = this.rows2[0]?.march * 31
           }
           else if(this.slcMnt =='04'){
-            this.updResVal = this.rows2[0].april
-            this.resValCal = this.rows2[0].april*30
+            this.updResVal = this.rows2[0]?.april
+            this.resValCal = this.rows2[0]?.april*30
           }
           else if(this.slcMnt =='05'){
-            this.updResVal = this.rows2[0].may
-            this.resValCal = this.rows2[0].may*31
+            this.updResVal = this.rows2[0]?.may
+            this.resValCal = this.rows2[0]?.may*31
           }
           else if(this.slcMnt =='06'){
-            this.updResVal = this.rows2[0].june
-            this.resValCal = this.rows2[0].june*30
+            this.updResVal = this.rows2[0]?.june
+            this.resValCal = this.rows2[0]?.june*30
           }
           else if(this.slcMnt =='07'){
-            this.updResVal = this.rows2[0].july
-            this.resValCal = this.rows2[0].july*31
+            this.updResVal = this.rows2[0]?.july
+            this.resValCal = this.rows2[0]?.july*31
           }
           else if(this.slcMnt =='08'){
-            this.updResVal = this.rows2[0].august
-            this.resValCal = this.rows2[0].august*31
+            this.updResVal = this.rows2[0]?.august
+            this.resValCal = this.rows2[0]?.august*31
           }
           else if(this.slcMnt =='09'){
-            this.updResVal = this.rows2[0].september
-            this.resValCal = this.rows2[0].september*30
+            this.updResVal = this.rows2[0]?.september
+            this.resValCal = this.rows2[0]?.september*30
           }
           else if(this.slcMnt =='10'){
-            this.updResVal = this.rows2[0].october
-            this.resValCal = this.rows2[0].october*31
+            this.updResVal = this.rows2[0]?.october
+            this.resValCal = this.rows2[0]?.october*31
           }
           else if(this.slcMnt =='11'){
-            this.updResVal = this.rows2[0].november
-            this.resValCal = this.rows2[0].november*30
+            this.updResVal = this.rows2[0]?.november
+            this.resValCal = this.rows2[0]?.november*30
           } else if(this.slcMnt =='12'){
-            this.updResVal = this.rows2[0].december
-            this.resValCal = this.rows2[0].december*31
+            this.updResVal = this.rows2[0]?.december
+            this.resValCal = this.rows2[0]?.december*31
           }
 
         for (let i = 0; i < this.rows.length; ++i) {
@@ -394,20 +407,25 @@ export class DepartmentSummaryComponent implements OnInit {
   }
 
   subExp(modal){
+    this.formSubmitValue=true
+    if(!this.expltn){
+      return;
+    }
     if(this.expltnBool == true){
       let data = {
-        community_id: this.currentUser.prmsnId == 1 ? this.currentUser.id : (this.slctCom || this.frsCom),
+        community_id: this.currentUser?.prmsnId == 1 ? this.currentUser?.id : (this.slctCom || this.frsCom),
         gl_acc : this.rowdata.GLA_id,
         department : this.rowdata.department,
         explanation : this.expltn,
         spend_id :  this.rowdata.id,
-        year : this.slctYr || '2023',
+        year : this.slctYr || this.getCurrentYear,
         month : this.slcMnt || this.curMnt
       }
       this.dataSrv.addDepartmentExplanation(data).subscribe((response: any) => {
         if (response['error'] == false) {
           this.closeded(modal)
-          this.getDpartSmmry()
+          this.getDpartSmmry();
+          this.toaster.successToastr('Successful')
         } else if (response['error'] == true) {
           this.toaster.errorToastr(response.msg);
         }
@@ -462,9 +480,9 @@ export class DepartmentSummaryComponent implements OnInit {
     this.dataByCom[0].totVarnc_ytd = 0
     
     let data = {
-      community_id : this.currentUser.prmsnId ==1 ? this.currentUser.id : this.slctCom || this.frsCom,
+      community_id : this.currentUser?.prmsnId ==1 ? this.currentUser?.id : this.slctCom || this.frsCom,
       department:this.slctDpt || this.frstDp,
-      year:this.slctYr || '2023',
+      year:this.slctYr || this.getCurrentYear,
       month:this.slcMnt || this.curMnt
     }
     this.btnShow = true
@@ -571,12 +589,18 @@ export class DepartmentSummaryComponent implements OnInit {
     this.dataSrv.getPermissionByAdminRole().subscribe(
       (res:any) => {
         if (!res.error) {
-          res.body.map(i=>{
-            //comunity
+          res.body.forEach(i=>{
+            if(i.permission_name == 'Department Summary'){
+              this.addPrms  = i.add_permission
+              this.dltPrms  = i.delete_permission
+              this.edtPrms  = i.edit_permission
+              this.vwPrms  = i.view_permission
+              this.aplyPrms  = i.apply_permission
+              this.assPrms  = i.assignResidentCount_permission
+            }
             if(this.roleData.includes(i.role_id)){
               if(i.permission_name == 'Department'){
                 if(i.trak_type == '0' || !i.trak_type){
-                // this.assPrms  = i.assignResidentCount_permission
                   this.dprtmnt=JSON.parse(i.row_data);
                   this.dprtmnt =  this.dprtmnt.sort(function(a, b){
                     if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
@@ -587,14 +611,7 @@ export class DepartmentSummaryComponent implements OnInit {
               
               this.frstDp = this.dprtmnt[0]?.name
             }
-            if(i.permission_name == 'Department Summary'){
-              this.addPrms  = i.add_permission
-              this.dltPrms  = i.delete_permission
-              this.edtPrms  = i.edit_permission
-              this.vwPrms  = i.view_permission
-              this.aplyPrms  = i.apply_permission
-              this.assPrms  = i.assignResidentCount_permission
-            }
+            
             }
           })
         } 
@@ -616,7 +633,7 @@ export class DepartmentSummaryComponent implements OnInit {
           this.roleData2.push(i)
         }
        })
-       if(this.roleData2.includes(this.currentUser.prmsnId)){
+       if(this.roleData2.includes(this.currentUser?.prmsnId)){
         this.getPrmsnData()
       }
       }
@@ -687,20 +704,20 @@ export class DepartmentSummaryComponent implements OnInit {
         department:  this.frstDp,
         final: '1',
         // receipt_id: this.rowData,
-        entered_by: this.currentUser.id,
+        entered_by: this.currentUser?.id,
         start_date:this.minDate,
         // invoice_date:[''],
         // invoice_number: this.rowData.invoice_number
           })
       let data = {
-        id : this.currentUser.user_role == 8 ? (this.slctCom || this.frsCom) : this.currentUser.prmsnId == '1' ? this.currentUser.id :this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : (this.slctCom || this.frsCom),
+        id : this.currentUser?.user_role == 8 ? (this.slctCom || this.frsCom) : this.currentUser?.prmsnId == '1' ? this.currentUser?.id :this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : (this.slctCom || this.frsCom),
         community_id : 'community_id'
       }
       this.dataSrv.getLedgerById(data).subscribe((res:any)=>{
         if(!res.err){
           this.ledgerData =  res.body
           this.chngD(this.slctDpt ||  this.frstDp)
-          // if(this.currentUser.prmsnId == '6'){
+          // if(this.currentUser?.prmsnId == '6'){
           //   this.getDepartment(community_id)
           // }
         }
@@ -730,7 +747,7 @@ export class DepartmentSummaryComponent implements OnInit {
         department: this.rowData.department,
         final: '1',
         receipt_id: this.rowData,
-        entered_by: this.currentUser.id,
+        entered_by: this.currentUser?.id,
         start_date:this.minDate,
         // invoice_date:[''],
         // invoice_number: this.rowData.invoice_number
@@ -741,7 +758,7 @@ export class DepartmentSummaryComponent implements OnInit {
 
   getvendors(){
     this.vendorData = []
-    let data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id }
+    let data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id }
     this.dataSrv.getVendor(data).subscribe((res:any)=>{
       if(!res.err){
         this.vendorData=    res.body.sort(function(a, b){
@@ -798,14 +815,14 @@ export class DepartmentSummaryComponent implements OnInit {
     this.ledgerData = []
    
     let data = {
-      id : this.currentUser.user_role == 8 ? community_id : this.currentUser.prmsnId == '1' ? this.currentUser.id :this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : community_id,
+      id : this.currentUser?.user_role == 8 ? community_id : this.currentUser?.prmsnId == '1' ? this.currentUser?.id :this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : community_id,
       community_id : 'community_id'
     }
     this.dataSrv.getLedgerById(data).subscribe((res:any)=>{
           if(!res.err){
             this.ledgerData =  res.body
             this.chngD(department)
-            if(this.currentUser.prmsnId == '6'){
+            if(this.currentUser?.prmsnId == '6'){
               this.getDepartment(community_id)
             }
           }
@@ -820,24 +837,24 @@ export class DepartmentSummaryComponent implements OnInit {
   }
 
   getCommunityDetails() {
-    if(this.currentUser.user_role == '3'){
-      this.dataSrv.getManagementById(this.currentUser.id).subscribe((res: any) => {
+    if(this.currentUser?.user_role == '3'){
+      this.dataSrv.getManagementById(this.currentUser?.id).subscribe((res: any) => {
         this.comName = res.body[0]
       })
     }
-    else if(this.currentUser.user_role == '8'){
+    else if(this.currentUser?.user_role == '8'){
       let searchStr = ''
-      this.dataSrv.getUserById(searchStr ,this.currentUser.id ,'user').subscribe((res: any) => {
+      this.dataSrv.getUserById(searchStr ,this.currentUser?.id ,'user').subscribe((res: any) => {
         if (res.body[0]?.first_name) {
           this.userName = res.body[0]
         } 
       })
     }
     else{
-      this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id : this.currentUser.id).subscribe(response => {
+      this.dataSrv.getcommunityById(this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id : this.currentUser?.id).subscribe(response => {
         if (!response.error) {
             this.comName = response.body[0]
-            if(this.roleData2.includes(this.currentUser.prmsnId)){
+            if(this.roleData2.includes(this.currentUser?.prmsnId)){
               this.getUserDtl()
             }
         } else {
@@ -853,7 +870,7 @@ export class DepartmentSummaryComponent implements OnInit {
 getUserDtl(){
   let is_for = 'user'
   let searchStr = ''
-  this.dataSrv.getUserById(searchStr = '',this.currentUser.id,is_for).subscribe(response => {
+  this.dataSrv.getUserById(searchStr = '',this.currentUser?.id,is_for).subscribe(response => {
     if (!response.error) {
         this.userName = response.body[0]
     } else {
@@ -872,11 +889,11 @@ submitted(modal){
   if (this.formRoleData.invalid) {
     return;
   }
-  // let comId = this.rowData?.community_id || this.formRoleData.value.com_name || this.currentUser.id
-  let comId = ['3','6','8'].includes( this.currentUser.user_role) ? this.formRoleData.value.com_name : this.currentUser.prmsnId == '1' ? this.currentUser.id :   this.rowData?.community_id;
-   let com = this.currentUser.user_role == 3 ? this.allCommunity.filter(c => c.cp_id == comId ) : this.currentUser.user_role == 8 ? this.allCommunity.filter(c => c.community_id == comId ) :  this.allCommunity.filter(c => c.id == comId )
+  // let comId = this.rowData?.community_id || this.formRoleData.value.com_name || this.currentUser?.id
+  let comId = ['3','6','8'].includes( this.currentUser?.user_role) ? this.formRoleData.value.com_name : this.currentUser?.prmsnId == '1' || this.currentUser?.user_role == 4 ? this.currentUser?.id :   this.rowData?.community_id;
+   let com = this.currentUser?.user_role == 3 ? this.allCommunity.filter(c => c.cp_id == comId ) : this.currentUser?.user_role == 8 ? this.allCommunity.filter(c => c.community_id == comId ) :  this.allCommunity.filter(c => c.id == comId )
   let  data = [{
-      community_name: com[0].community_name ,
+      community_name: this.currentUser?.user_role == 4 ? this.comName.community_name : com[0]?.community_name ,
       purchage_date:this.formRoleData.value.pur_date,
       vendor: 'Reconciliation',
       // description:this.formRoleData.value.desc,
@@ -887,7 +904,7 @@ submitted(modal){
       department:this.formRoleData.value.department,
       pmt_type: this.formRoleData.value.pay_type,
       final: this.formRoleData.value.final,
-      entered_by:this.currentUser.id,
+      entered_by:this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id,
       start_date:this.minDate,
       // invoice_date:this.formRoleData.value.invoice_date,
       // invoice_number:this.formRoleData.value.invoice_number
@@ -984,7 +1001,7 @@ updREs(){
       december: this.slcMnt == '12' ? this.updResVal : null,
       is_month : this.slcMnt,
       residents_value : this.resValCal,
-      community_id:this.currentUser.prmsnId == 1 ? this.currentUser.id : !['1','2','3','4','5','6','8'].includes(this.currentUser.prmsnId)? this.currentUser.com_id : this.slctCom , 
+      community_id:this.currentUser?.prmsnId == 1 ? this.currentUser?.id : !['1','2','3','4','5','6','8'].includes(this.currentUser?.prmsnId)? this.currentUser?.com_id : this.slctCom , 
       department:this.slctDpt || this.frstDp,
       year:this.slctYr || this.getCurrentYear,
       month: mnt
@@ -1002,37 +1019,52 @@ updREs(){
 }
 
 Fnlreconciliation(){
+  let data = {
+    community_id :  this.currentUser?.prmsnId == 1 ? this.currentUser?.id : this.frsCom,
+    department:this.frstDp,
+    year:this.slctYr || this.getCurrentYear,
+    month: this.selectedMnth
+  }
   let mnt =  moment(this.slcMnt, 'MM').format('MMMM');
   this.FnlreconciliationText = `Are you sure you want to reconcile all unreconciled GL Accounts in ${this.frstDp} for ${mnt} ${this.slctYr || this.currYear} ?`
   this.modalOpenOSE(this.rfp, 'lg')
-}
+  this.dataSrv.getMissingReconciliationGL(data).subscribe((response: any) => {
+    if (response['error'] == true) {
+      this.rows2 = response.body.sort(function(a, b){
+        if(a.GLA_id.toUpperCase() < b.GLA_id.toUpperCase()) { return -1; }
+        if(a.GLA_id.toUpperCase() > b.GLA_id.toUpperCase()) { return 1; }
+        return 0;
+    })
+    this.finalizeData = response.body.sort(function(a, b){
+      if(a.GLA_id.toUpperCase() < b.GLA_id.toUpperCase()) { return -1; }
+      if(a.GLA_id.toUpperCase() > b.GLA_id.toUpperCase()) { return 1; }
+      return 0;
+  })
+  }
+})}
+
 
 yesFinalization(modal){
-  this.rows1 =  this.rows.filter(i=>{
-    if(i.pmt_type != 'Reconciliation'){
-      return i
-    }
-  })
-  const finalResult = this.rows1.map(item => {
+  
+  const finalResult = this.finalizeData.map(item => {
     return {
       community_id: item.community_id,
       vendor:"Reconciliation",
       description: "Reconciliation Expense",
       gl_account: item.GLA_id,
+      GLA_id:item.GLA_id,
       department: item.department,
       amount: '0',
       pmt_type: "Reconciliation",
       final:"1",
       receipt_id: uuid.v4(),
-      entered_by:this.currentUser.id,
+      entered_by:this.currentUser?.id,
       invoice_date: null,
       invoice_number: null,
       start_date:this.minDate,
       purchage_date:this.datePipe.transform( this.lastDay, 'yyyy-MM-dd'),
     }
   })
-  console.log('this.rowsthis.rowsthis.rowsthis.rows',finalResult);
-
   if(!finalResult.length){
     this.toaster.errorToastr('All GLs are reconciled')
   }else{

@@ -167,7 +167,7 @@ export class ContractProfileComponent implements OnInit {
     if (this.intrvl)
       clearInterval(this.intrvl)
     this.intrvl = setInterval(() => { this.setTime() }, 10000)
-    let data = { user_id: this.currentUser.id, contract_id: this.comunityId }
+    let data = { user_id: this.currentUser?.id, contract_id: this.comunityId }
     this._userService.startWork(data).subscribe((res: any) => {
       this.workId = res.body
     })
@@ -190,7 +190,7 @@ export class ContractProfileComponent implements OnInit {
     this.startDateTime = new Date().getTime();
   }
   hideCalendar() {
-    if (this.currentUser && this.currentUser.role == 'User') {
+    if (this.currentUser && this.currentUser?.role == 'User') {
       this.hideCalendar1 = true;
     } else {
       this.hideCalendar1 = false;
@@ -380,7 +380,7 @@ export class ContractProfileComponent implements OnInit {
 
   getLoginLogs() {
     this.logLoading = true
-    this.dataService.getLoginLogs(this.currentUser._id).subscribe((res) => {
+    this.dataService.getLoginLogs(this.currentUser?._id).subscribe((res) => {
       if (!res['error']) {
         this.logs = res['body']
         this.logLoading = false

@@ -1,5 +1,5 @@
-import { NgModule, Pipe, PipeTransform } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Directive, ElementRef, HostListener, NgModule, Pipe, PipeTransform } from '@angular/core';
+import { NgControl } from '@angular/forms';
 
 
 @Pipe({
@@ -16,13 +16,42 @@ export class numberFormat implements PipeTransform {
     return `(${countryCodeStr}) ${areaCodeStr}-${midSectionStr}`;
   }
 }
+@Directive({
+  selector: '[noLeadingSpace]'
+})
+export class NoLeadingSpaceDirective {
+  constructor(private el: ElementRef, private ngControl: NgControl) { }
+
+  @HostListener('input', ['$event']) onInputChange(event) {
+    const initialValue = this.el.nativeElement.value;
+    const newValue = initialValue.replace(/\s/g, ''); // Remove spaces
+    if (initialValue !== newValue) {
+      this.el.nativeElement.value = newValue;
+      this.ngControl.control.setValue(newValue);
+      event.stopPropagation();
+    }
+  }
+}
+@Pipe({
+  name: 'replaceSpaces'
+})
+export class ReplaceSpacesPipe implements PipeTransform {
+  transform(value: string, replaceWith: string): string {
+    if(value)
+    return value.replace(/ /g, replaceWith);
+  }
+}
 
 @NgModule({
   declarations: [
-    numberFormat
+    numberFormat,
+    NoLeadingSpaceDirective,
+    ReplaceSpacesPipe
   ],
   exports:[
-    numberFormat
+    numberFormat,
+    NoLeadingSpaceDirective,
+    ReplaceSpacesPipe
   ]
 })
 export class SharedpipeModule { }

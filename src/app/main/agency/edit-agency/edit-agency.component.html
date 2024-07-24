@@ -36,14 +36,14 @@
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6"
                                                     class="col-form-label">Agency Name <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['agency_name'].dirty && controls['agency_name'].invalid"
@@ -57,21 +57,21 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_name'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6"
                                                     class="col-form-label">Agency Phone No <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text" phoneMask
                                                  [preValue]="formData.value.agency_phone"
@@ -85,7 +85,7 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_phone'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_phone'].hasError('pattern')"
@@ -97,14 +97,14 @@
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6"
                                                     class="col-form-label">Agency Email
                                                  Address</label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="email"
                                                     [class.is-invalid]="controls['agency_email'].dirty && controls['agency_email'].invalid"
@@ -149,7 +149,7 @@
                                                                    <div class="invalid-feedback"
                                                                        *ngIf="controls['community_id'].hasError('required')"
                                                                        class="text text-danger">
-                                                                       This field required
+                                                                       This field is Required
                                                                    </div>
                                                                </span>
                                                            </div>
@@ -159,14 +159,14 @@
                                            </div>
                                            </div> -->
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6" class="col-form-label">
                                                  Agency Website <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['agency_website'].dirty && controls['agency_website'].invalid"
@@ -180,7 +180,7 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_website'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                                  <!-- <div class="invalid-feedback"
@@ -192,14 +192,14 @@
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label class="col-form-label">
                                                  Agency Address <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-6">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['address1'].dirty && controls['address1'].invalid"
@@ -212,12 +212,12 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['address1'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['address2'].dirty && controls['address2'].invalid"
@@ -229,14 +229,14 @@
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6" class="col-form-label">
                                                  Agency State <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <select id="inputState" class="form-control"
                                                     formControlName="state">
@@ -251,21 +251,21 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['state'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6" class="col-form-label">
                                                  Agency City <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['city'].dirty && controls['city'].invalid"
@@ -278,21 +278,21 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['city'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6" class="col-form-label">
                                                  Agency Zip Code <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['zipcode'].dirty && controls['zipcode'].invalid"
@@ -307,14 +307,14 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['zipcode'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6"
                                                     class="col-form-label">Show The Shift To User
@@ -322,7 +322,7 @@
                                                  </label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group d-flex">
                                                  <div class="form-check">
                                                     <input class="form-check-input"
@@ -350,20 +350,20 @@
                                                  <div class="invalid-feedback"
                                                     *ngIf="controls['show_shift_user'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                               </span>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label class="col-form-label">
                                                  Agency Contact First Name <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['agency_contact_firstname'].dirty && controls['agency_contact_firstname'].invalid"
@@ -377,21 +377,21 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_contact_firstname'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label class="col-form-label">
                                                  Agency Contact Last Name <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['agency_contact_lastname'].dirty && controls['agency_contact_lastname'].invalid"
@@ -405,21 +405,21 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_contact_lastname'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label class="col-form-label">
                                                  Agency Contact Person Title <span
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="text"
                                                     [class.is-invalid]="controls['agency_contact_person_title'].dirty && controls['agency_contact_person_title'].invalid"
@@ -433,7 +433,7 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_contact_person_title'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                  </span>
                                               </div>
@@ -441,15 +441,15 @@
                                         </div>
 
                                         <div class="row">
-                                          <div class="col-lg-4">
+                                          <div class="col-lg-3">
                                              <div class="common-form-left">
                                                 <label class="col-form-label">
                                                 Agency Username </label>
                                              </div>
                                           </div>
-                                          <div class="col-lg-8">
+                                          <div class="col-lg-9">
                                              <div class="common-form-left form-group">
-                                                <input type="text"
+                                                <input type="text" noLeadingSpace
                                                    [class.is-invalid]="controls['username'].dirty && controls['username'].invalid"
                                                    formControlName="username"
                                                    class="form-control form-control-user"
@@ -462,13 +462,44 @@
                                        </div>
 
                                        <div class="row">
-                                          <div class="col-lg-4">
+                                          <div class="col-lg-3">
+                                              <div class="common-form-left">
+                                                  <label for="inputPassword6"
+                                                      class="col-form-label">Agency Type
+                                                      <span class="text-danger">*</span>
+                                                  </label>
+                                              </div>
+                                          </div>
+                                          <div class="col-lg-9">
+                                              <div class="common-form-left form-group">
+                                                  <select name="agency_type" id="agency_type"
+                                                      formControlName="agency_type"
+                                                      class="form-control form-control-user">
+                                                      <option value="0">Agency - Contract Rates
+                                                      </option>
+                                                      <option value="1">Agency - Rate Plus Fee
+                                                      </option>
+                                                  </select>
+                                                  <span
+                                                      *ngIf="controls['agency_type'].dirty && controls['agency_type'].invalid">
+                                                      <div class="invalid-feedback"
+                                                          *ngIf="controls['agency_type'].hasError('required')"
+                                                          class="text text-danger">
+                                                          This field required
+                                                      </div>
+                                                  </span>
+                                              </div>
+                                          </div>
+                                      </div>
+
+                                       <div class="row">
+                                          <div class="col-lg-3">
                                              <div class="common-form-left">
                                                 <label class="col-form-label">
                                                 Agency Short Code </label>
                                              </div>
                                           </div>
-                                          <div class="col-lg-8">
+                                          <div class="col-lg-9">
                                              <div class="common-form-left form-group">
                                                 <input type="text"
                                                    [class.is-invalid]="controls['sort_name'].dirty && controls['sort_name'].invalid"
@@ -482,7 +513,7 @@
                                           </div>
                                        </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6"
                                                     class="col-form-label">Agency Contact Cell
@@ -490,7 +521,7 @@
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="row">
                                                  <div class="col-3 test_data">
                                                     <div ngbDropdown class="d-inline-block">
@@ -527,7 +558,7 @@
                                                           <div class="invalid-feedback"
                                                              *ngIf="controls['agency_contact_cell_number'].hasError('required')"
                                                              class="text text-danger">
-                                                             This field required
+                                                             This field is Required
                                                           </div>
                                                           <div class="invalid-feedback"
                                                              *ngIf="controls['agency_contact_cell_number'].hasError('pattern')"
@@ -541,7 +572,7 @@
                                            </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-lg-4">
+                                           <div class="col-lg-3">
                                               <div class="common-form-left">
                                                  <label for="inputPassword6"
                                                     class="col-form-label">Agency Contact Email
@@ -549,7 +580,7 @@
                                                     class="text-danger">*</span></label>
                                               </div>
                                            </div>
-                                           <div class="col-lg-8">
+                                           <div class="col-lg-9">
                                               <div class="common-form-left form-group">
                                                  <input type="email"
                                                     [class.is-invalid]="controls['agency_contact_email_address'].dirty && controls['agency_contact_email_address'].invalid"
@@ -561,7 +592,7 @@
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_contact_email_address'].hasError('required')"
                                                        class="text text-danger">
-                                                       This field required
+                                                       This field is Required
                                                     </div>
                                                     <div class="invalid-feedback"
                                                        *ngIf="controls['agency_contact_email_address'].hasError('email')"
@@ -615,27 +646,35 @@
                                         </div>
                                         <div class="col-lg-8">
                                            <div class="common-form-left form-group">
-                                              <input type="password"
+                                              <input [type]="passwordTextType3 ? 'text' : 'password'"
                                                  [class.is-invalid]="pControls['password'].dirty && pControls['password'].invalid"
                                                  formControlName="password"
                                                  placeholder="Old Password"
                                                  class="form-control form-control-user"
                                                  id="password">
+                                                 <div class="input-group-append">
+                                                   <span class="input-group-text cursor-pointer eyeBtn"
+                                                     ><i
+                                                       class="feather font-small-4"
+                                                       [ngClass]="{
+                                                         'icon-eye': passwordTextType3,
+                                                         'icon-eye-off': !passwordTextType3
+                                                       }"
+                                                       (click)="passwordTextType3=!passwordTextType3"
+                                                     ></i
+                                                   ></span>
+                                                 </div>
                                               <span
                                                  *ngIf="pControls['password'].dirty && pControls['password'].errors">
                                                  <div class="invalid-feedback"
                                                     *ngIf="pControls['password'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                                  <div class="invalid-feedback"
                                                     *ngIf="pControls['password'].hasError('pattern')"
                                                     class="text text-danger">
-                                                    A minimum 8 characters password contains a
-                                                    combination of
-                                                    uppercase and lowercase letter and special
-                                                    character are
-                                                    required.
+                                                    Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                                  </div>
                                               </span>
                                            </div>
@@ -650,26 +689,34 @@
                                         </div>
                                         <div class="col-lg-8">
                                            <div class="common-form-left form-group">
-                                              <input type="password"
+                                              <input [type]="passwordTextType ? 'text' : 'password'"
                                                  [class.is-invalid]="pControls['newPassword'].dirty && pControls['newPassword'].invalid"
                                                  formControlName="newPassword" placeholder="Password"
                                                  class="form-control form-control-user"
                                                  id="newPassword">
+                                                 <div class="input-group-append">
+                                                   <span class="input-group-text cursor-pointer eyeBtn"
+                                                     ><i
+                                                       class="feather font-small-4"
+                                                       [ngClass]="{
+                                                         'icon-eye': passwordTextType,
+                                                         'icon-eye-off': !passwordTextType
+                                                       }"
+                                                       (click)="passwordTextType=!passwordTextType"
+                                                     ></i
+                                                   ></span>
+                                                 </div>
                                               <span
                                                  *ngIf="pControls['newPassword'].dirty && pControls['newPassword'].invalid">
                                                  <div class="invalid-feedback"
                                                     *ngIf="pControls['newPassword'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                                  <div class="invalid-feedback"
                                                     *ngIf="pControls['newPassword'].hasError('pattern')"
                                                     class="text text-danger">
-                                                    A minimum 8 characters password contains a
-                                                    combination of
-                                                    uppercase and lowercase letter and special
-                                                    character are
-                                                    required.
+                                                    Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                                  </div>
                                               </span>
                                            </div>
@@ -684,18 +731,30 @@
                                         </div>
                                         <div class="col-lg-8">
                                            <div class="common-form-left form-group">
-                                              <input type="password"
+                                              <input [type]="passwordTextType2 ? 'text' : 'password'"
                                                  [class.is-invalid]="pControls['confPassword'].dirty && pControls['confPassword'].invalid"
                                                  formControlName="confPassword"
                                                  placeholder="Confirm Password"
                                                  class="form-control form-control-user"
                                                  id="confPassword">
+                                                 <div class="input-group-append">
+                                                   <span class="input-group-text cursor-pointer eyeBtn"
+                                                     ><i
+                                                       class="feather font-small-4"
+                                                       [ngClass]="{
+                                                         'icon-eye': passwordTextType2,
+                                                         'icon-eye-off': !passwordTextType2
+                                                       }"
+                                                       (click)="passwordTextType2=!passwordTextType2"
+                                                     ></i
+                                                   ></span>
+                                                 </div>
                                               <span
                                                  *ngIf="pControls['confPassword'].dirty && pControls['confPassword'].invalid">
                                                  <div class="invalid-feedback"
                                                     *ngIf="pControls['confPassword'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                                  <div class="invalid-feedback"
                                                     *ngIf="pControls['confPassword'].hasError('mustMatch')"
@@ -771,7 +830,7 @@
                                               </div>
                                            </div>
                                            <span *ngIf="errTru" style="color:#ea5455;">
-                                           This field required
+                                           This field is Required
                                            </span>
                                         </div>
                                      </div>
@@ -846,7 +905,7 @@
                                               </div>
                                            </div>
                                            <span *ngIf="errTru" style="color:#ea5455;">
-                                           This field required
+                                           This field is Required
                                            </span>
                                         </div>
                                      </div>
@@ -892,7 +951,7 @@
                                         </div>
                                         <div class="col-lg-8">
                                            <div class="common-form-left form-group">
-                                              <!-- <input type="password"
+                                              <!-- <input [type]="passwordTextType ? 'text' : 'password'"
                                                  [class.is-invalid]="pControls['com_id'].dirty && pControls['password'].invalid"
                                                  formControlName="password" placeholder="Old Password"
                                                  class="form-control form-control-user"
@@ -908,7 +967,7 @@
                                                  <div class="invalid-feedback"
                                                     *ngIf="comCn['com_id'].hasError('required')"
                                                     class="text text-danger">
-                                                    This field required
+                                                    This field is Required
                                                  </div>
                                               </span>
                                            </div>
@@ -973,7 +1032,7 @@
                                     <div class="invalid-feedback"
                                         *ngIf="contractform_Control['contract_start_date'].hasError('required')"
                                         class="text text-danger">
-                                        This field required
+                                        This field is Required
                                     </div>
                                 </span>
                             </div>
@@ -1001,7 +1060,7 @@
                             <div class="invalid-feedback"
                                 *ngIf="contractform_Control['contract_end_date'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>

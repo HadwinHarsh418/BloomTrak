@@ -32,6 +32,7 @@ export class ReportsComponent implements OnInit {
   data1: boolean = false
   data2: boolean = false
   data3: boolean = false
+  loadingSite: boolean = false;
   public page = new Page();
 
   Difference_In_Time: number;
@@ -57,10 +58,10 @@ export class ReportsComponent implements OnInit {
   stDt:any
   trndRpt: boolean = false;
   AlldataAgency1: any;
-  totNumOfShft: any;
-  totHrSchld: any;
-  totAdjHr: any;
-  totAdjPay: any;
+  totNumOfShft:number=0;
+  totHrSchld:number=0;
+  totAdjHr:number=0;
+  totAdjPay:number=0;
   minDate: any;
   diffInDys: boolean = false;
   Difference_In_Days1: number;
@@ -85,6 +86,18 @@ export class ReportsComponent implements OnInit {
   start_day2: any;
   runPrms: any;
   roleData: any=[]
+  totalValues ={adjAgencyPayable:0,adjHourSchedule:0,hourSchedule:0,noOfShifts:0};
+  noOfShifts: any[]=[];
+  adjAgencyPayable: any[]=[];
+  adjHourSchedule: any[]=[];
+  hourSchedule: any[]=[];
+  showDataAgency: any[]=[];
+  allCommunity1: any;
+  comid: any;
+  allAgency: any[];
+  selectAgency: any;
+  allCommunityNew: any;
+  comId: any;
 
   constructor(
     public datepipe: DatePipe,
@@ -99,15 +112,19 @@ export class ReportsComponent implements OnInit {
   ) {
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
-      
+      this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.getMngComunity() : this.getCommunityId()
+
     });
+    this.getCommunityByAgencyID()
     this.getRole()
 
     this.fromDate = calendar.getToday();
 		this.toDate = calendar.getNext(calendar.getToday(), 'd', 10);
-    if(this.currentUser.role == 'SuperAdmin'){
+    if(this.currentUser?.role == 'SuperAdmin'){
       this.getagenciesID()
-    }else{
+    }else if(this.currentUser?.user_role==3)
+    this.getAllAgency()
+    else{
       this.getAgencyListing()
     }
   }
@@ -128,7 +145,6 @@ export class ReportsComponent implements OnInit {
       }
     };
     this.getAgncyDtail()
-    this.getCommunityId()
     this.mgnmntNames()
     this.getDate()
   }
@@ -144,6 +160,17 @@ export class ReportsComponent implements OnInit {
       } else if (response['error'] == true) {
         this.toastr.errorToastr(response.msg);
       }
+    },
+      (err) => {
+        this.dataService.genericErrorToaster();
+      })
+  }
+
+  getCommunityByAgencyID() {
+    this.dataService.getCommunityByAgencyID(this.currentUser?.user_role == 5 ? this.currentUser?.com_id : this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity1 = response.body
+      } 
     },
       (err) => {
         this.dataService.genericErrorToaster();
@@ -225,7 +252,8 @@ export class ReportsComponent implements OnInit {
       this.agncyDtlTimeRept = ''
       this.trndRpt = false
       this.agncyDrp = false
-      this.agency_id = 'undefined'
+      this.agency_id = 'undefined';
+      this.stDt = ''
       this.enDt = ''
       this.enDt = ''
     }else if(this.data1 == true){
@@ -242,7 +270,7 @@ export class ReportsComponent implements OnInit {
       this.AlldataAgency = ''
       this.agency_id = 'undefined'
       this.agncyDrp = true
-      if(this.currentUser.user_role == 5){
+      if(this.currentUser?.user_role == 5){
         this.getAgncyDtail(this.currentUser?.com_id)
       }
     }
@@ -261,11 +289,72 @@ export class ReportsComponent implements OnInit {
 
   }
 
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else {
+          this.toastr.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataService.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        } else if (response['error'] == true) {
+          this.toastr.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataService.genericErrorToaster();
+  
+      })
+    }
+  }
+
+  selectCommunity1(id:any){
+    this.comid=id
+  }
+
   selectCommunity(id:any){
+    this.comId = id;
+    
     let is_for = 'community'
     let typeDrop = true
     this.dataService.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, id,is_for,typeDrop).subscribe((res:any)=>{
       this.agencyListingData = res.body
+    })
+  }
+  getAllAgency(){
+    this.dataService.getAgencyForManagement().subscribe(res=>{
+      this.agencyListingData = res.body;
+      this.agency_id=res.body[0].id;
     })
   }
 
@@ -286,7 +375,7 @@ export class ReportsComponent implements OnInit {
     // To calculate the no. of days between two dates
     this.Difference_In_Days = this.Difference_In_Time / (1000 * 3600 * 24);
     
-
+  this.loadingSite = false
       if(this.start_day != 'year'){
 
         let today = new Date();
@@ -297,7 +386,7 @@ export class ReportsComponent implements OnInit {
         
       }
     }
-
+  
     
 
     // if(this.priorDays == 'Invalid date' && !this.data1 && !this.data2 && this.start_day == 'year'){
@@ -312,8 +401,8 @@ export class ReportsComponent implements OnInit {
         this.today1 = this.enDt
         this.priorDays = this.stDt 
         this.diffInDys = true
-        this.Apicall.getCurrentStatusReport(this.currentUser.role == 'SuperAdmin' ? this.community_id : this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.role == 'Community User' ? this.currentUser.com_id :this.currentUser.id,  this.stDt,  this.enDt).subscribe(res => {
-        
+        this.Apicall.getCurrentStatusReport(this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.comId : this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.role == 'Community User' ? this.currentUser?.com_id :this.currentUser?.id,  this.stDt,  this.enDt).subscribe(res => {
+          this.loadingSite = false;
           if (!res.error) {
             this.Alldata = res.body
             this.SHIFT_VARIANCE= res.body[0].filledByAgency -res.body[0].agencyShiftBudget 
@@ -328,8 +417,9 @@ export class ReportsComponent implements OnInit {
           }
         })
       } else{
-        this.Apicall.getCurrentStatusReport(this.currentUser.role == 'SuperAdmin' ? this.community_id : this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.id,this.priorDays, this.today1  ).subscribe(res => {
+        this.Apicall.getCurrentStatusReport(this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.comId : this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.id,this.priorDays, this.today1  ).subscribe(res => {
         this.diffInDys = false
+        this.loadingSite = false;
           if (!res.error) {
             
             this.Alldata = res.body
@@ -351,16 +441,56 @@ export class ReportsComponent implements OnInit {
         this.today1 = this.enDt 
         this.priorDays =  this.stDt      
          this.diffInDys = true
-        this.Apicall.getAgencyPositionReport(this.currentUser.role == 'SuperAdmin' ? this.community_id :this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.role == 'Community User' ? this.currentUser.com_id : this.currentUser.id,  this.stDt, this.enDt).subscribe(res => {
+         this.showDataAgency = [],
+         this.totNumOfShft = 0,
+        this.totHrSchld = 0,
+        this.totAdjHr = 0,
+        this.totAdjPay = 0,
+        this.Apicall.getAgencyPositionReport(this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.user_role==3 || this.currentUser?.user_role == 8 ? this.community_id : this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.role == 'Community User' ? this.currentUser?.com_id : this.currentUser?.id,  this.stDt, this.enDt).subscribe(res => {
           // 
+          this.loadingSite = false;
           if (!res.error) {
-            // 
-            this.AlldataAgency = res.body[0].positions
+            //
+            res.body[0].positions.sort(function(a, b){
+              if(a.toUpperCase() < b.toUpperCase()) { return -1; }
+              if(a.toUpperCase() > b.toUpperCase()) { return 1; }
+              return 0;
+          });
+            res.body[0].positions.forEach(i=>this.showDataAgency.push({show:this.changeText(i),compare:i})) 
+            this.AlldataAgency = res.body[0].positions;
+            
             this.AlldataAgency1 = res.body[0].data
-            this.totNumOfShft = this.AlldataAgency1?.activities_assistant?.noOfShifts + this.AlldataAgency1?.direct_care_aide?.noOfShifts + this.AlldataAgency1?.cook?.noOfShifts + this.AlldataAgency1?.registered_medication_aide?.noOfShifts + this.AlldataAgency1?.shift_supervisor?.noOfShifts
-            this.totHrSchld = this.AlldataAgency1?.activities_assistant?.hourSchedule + this.AlldataAgency1?.direct_care_aide?.hourSchedule + this.AlldataAgency1?.cook?.hourSchedule + this.AlldataAgency1?.registered_medication_aide?.hourSchedule + this.AlldataAgency1?.shift_supervisor?.hourSchedule
-            this.totAdjHr = this.AlldataAgency1?.activities_assistant?.adjHourSchedule + this.AlldataAgency1?.direct_care_aide?.adjHourSchedule + this.AlldataAgency1?.cook?.adjHourSchedule + this.AlldataAgency1?.registered_medication_aide?.adjHourSchedule + this.AlldataAgency1?.shift_supervisor?.adjHourSchedule
-            this.totAdjPay = this.AlldataAgency1?.activities_assistant?.adjAgencyPayable + this.AlldataAgency1?.direct_care_aide?.adjAgencyPayable + this.AlldataAgency1?.cook?.adjAgencyPayable + this.AlldataAgency1?.registered_medication_aide?.adjAgencyPayable + this.AlldataAgency1?.shift_supervisor?.adjAgencyPayable
+            // this.totNumOfShft = this.AlldataAgency1?.activities_assistant?.noOfShifts + this.AlldataAgency1?.direct_care_aide?.noOfShifts + this.AlldataAgency1?.cook?.noOfShifts + this.AlldataAgency1?.registered_medication_aide?.noOfShifts + this.AlldataAgency1?.shift_supervisor?.noOfShifts
+            // this.totHrSchld = this.AlldataAgency1?.activities_assistant?.hourSchedule + this.AlldataAgency1?.direct_care_aide?.hourSchedule + this.AlldataAgency1?.cook?.hourSchedule + this.AlldataAgency1?.registered_medication_aide?.hourSchedule + this.AlldataAgency1?.shift_supervisor?.hourSchedule
+            // this.totAdjHr = this.AlldataAgency1?.activities_assistant?.adjHourSchedule + this.AlldataAgency1?.direct_care_aide?.adjHourSchedule + this.AlldataAgency1?.cook?.adjHourSchedule + this.AlldataAgency1?.registered_medication_aide?.adjHourSchedule + this.AlldataAgency1?.shift_supervisor?.adjHourSchedule
+            // this.totAdjPay = this.AlldataAgency1?.activities_assistant?.adjAgencyPayable + this.AlldataAgency1?.direct_care_aide?.adjAgencyPayable + this.AlldataAgency1?.cook?.adjAgencyPayable + this.AlldataAgency1?.registered_medication_aide?.adjAgencyPayable + this.AlldataAgency1?.shift_supervisor?.adjAgencyPayable
+           
+           
+            const sumData = {};
+            this.AlldataAgency.forEach(position => {
+              sumData[position] = {
+                  "noOfShifts": 0,
+                  "hourSchedule": 0,
+                  "adjHourSchedule": 0,
+                  "adjAgencyPayable": 0
+              };
+          
+              // Iterate through the data for each position
+              Object.keys(sumData[position]).forEach(key => {
+                  sumData[position][key] += this.AlldataAgency1[position][key]
+              });
+          });
+
+          // Object.keys()
+
+          // Calculate sums
+          Object.values(sumData).forEach((position:any) => {
+              this.totNumOfShft += position.noOfShifts;
+              this.totHrSchld += position.hourSchedule;
+              this.totAdjHr += position.adjHourSchedule;
+              this.totAdjPay += position.adjAgencyPayable;
+          });
+            
           }
           else {
             this.toastr.errorToastr(res.msg)
@@ -369,18 +499,53 @@ export class ReportsComponent implements OnInit {
         })
       }
       else{
-        this.Apicall.getAgencyPositionReport(this.currentUser.role == 'SuperAdmin' ? this.community_id :this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.role == 'Community User' ? this.currentUser.com_id: this.currentUser.id,  this.priorDays,this.today1  ).subscribe(res => {
+        this.showDataAgency = [],
+        this.totNumOfShft = 0,
+        this.totHrSchld = 0,
+        this.totAdjHr = 0,
+        this.totAdjPay = 0,
+        this.Apicall.getAgencyPositionReport(this.currentUser?.role == 'SuperAdmin' ? this.community_id :this.currentUser?.user_role==3 || this.currentUser?.user_role == 8 ? this.community_id :this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.role == 'Community User' ? this.currentUser?.com_id: this.currentUser?.id,  this.priorDays,this.today1  ).subscribe(res => {
           // 
+          this.loadingSite = false;
           this.diffInDys = false
           if (!res.error) {
             // 
-            this.AlldataAgency = res.body[0].positions
+            res.body[0].positions.sort(function(a, b){
+              if(a.toUpperCase() < b.toUpperCase()) { return -1; }
+              if(a.toUpperCase() > b.toUpperCase()) { return 1; }
+              return 0;
+          });
+            res.body[0].positions.forEach(i=>this.showDataAgency.push({show:this.changeText(i),compare:i})) 
+            this.AlldataAgency = res.body[0].positions;
             this.AlldataAgency1 = res.body[0].data
-            this.totNumOfShft = this.AlldataAgency1?.activities_assistant?.noOfShifts + this.AlldataAgency1?.direct_care_aide?.noOfShifts + this.AlldataAgency1?.cook?.noOfShifts + this.AlldataAgency1?.registered_medication_aide?.noOfShifts + this.AlldataAgency1?.shift_supervisor?.noOfShifts
-            this.totHrSchld = this.AlldataAgency1?.activities_assistant?.hourSchedule + this.AlldataAgency1?.direct_care_aide?.hourSchedule + this.AlldataAgency1?.cook?.hourSchedule + this.AlldataAgency1?.registered_medication_aide?.hourSchedule + this.AlldataAgency1?.shift_supervisor?.hourSchedule
-            this.totAdjHr = this.AlldataAgency1?.activities_assistant?.adjHourSchedule + this.AlldataAgency1?.direct_care_aide?.adjHourSchedule + this.AlldataAgency1?.cook?.adjHourSchedule + this.AlldataAgency1?.registered_medication_aide?.adjHourSchedule + this.AlldataAgency1?.shift_supervisor?.adjHourSchedule
-            this.totAdjPay = this.AlldataAgency1?.activities_assistant?.adjAgencyPayable + this.AlldataAgency1?.direct_care_aide?.adjAgencyPayable + this.AlldataAgency1?.cook?.adjAgencyPayable + this.AlldataAgency1?.registered_medication_aide?.adjAgencyPayable + this.AlldataAgency1?.shift_supervisor?.adjAgencyPayable
+            // this.totNumOfShft = this.AlldataAgency1?.activities_assistant?.noOfShifts + this.AlldataAgency1?.direct_care_aide?.noOfShifts + this.AlldataAgency1?.cook?.noOfShifts + this.AlldataAgency1?.registered_medication_aide?.noOfShifts + this.AlldataAgency1?.shift_supervisor?.noOfShifts
+            // this.totHrSchld = this.AlldataAgency1?.activities_assistant?.hourSchedule + this.AlldataAgency1?.direct_care_aide?.hourSchedule + this.AlldataAgency1?.cook?.hourSchedule + this.AlldataAgency1?.registered_medication_aide?.hourSchedule + this.AlldataAgency1?.shift_supervisor?.hourSchedule
+            // this.totAdjHr = this.AlldataAgency1?.activities_assistant?.adjHourSchedule + this.AlldataAgency1?.direct_care_aide?.adjHourSchedule + this.AlldataAgency1?.cook?.adjHourSchedule + this.AlldataAgency1?.registered_medication_aide?.adjHourSchedule + this.AlldataAgency1?.shift_supervisor?.adjHourSchedule
+            // this.totAdjPay = this.AlldataAgency1?.activities_assistant?.adjAgencyPayable + this.AlldataAgency1?.direct_care_aide?.adjAgencyPayable + this.AlldataAgency1?.cook?.adjAgencyPayable + this.AlldataAgency1?.registered_medication_aide?.adjAgencyPayable + this.AlldataAgency1?.shift_supervisor?.adjAgencyPayable
+            const sumData = {};
+            this.AlldataAgency.forEach(position => {
+              sumData[position] = {
+                  "noOfShifts": 0,
+                  "hourSchedule": 0,
+                  "adjHourSchedule": 0,
+                  "adjAgencyPayable": 0
+              };
+          
+              // Iterate through the data for each position
+              Object.keys(sumData[position]).forEach(key => {
+                  sumData[position][key] += this.AlldataAgency1[position][key]
+              });
+          });
 
+          // Object.keys()
+
+          // Calculate sums
+          Object.values(sumData).forEach((position:any) => {
+              this.totNumOfShft += position.noOfShifts;
+              this.totHrSchld += position.hourSchedule;
+              this.totAdjHr += position.adjHourSchedule;
+              this.totAdjPay += position.adjAgencyPayable;
+          });
           }
           else {
             this.toastr.errorToastr(res.msg)
@@ -398,10 +563,12 @@ export class ReportsComponent implements OnInit {
       let comprtvEdDt =  this.dateFrmtChng(this.toDate?.year + '-' + this.toDate?.month + '-' + this.toDate?.day)
 
      
+      this.loadingSite = true;
 
-      this.Apicall.trendAnalysisReport(this.currentUser.role == 'SuperAdmin' ? this.community_id : this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.role == 'Community User' ? this.currentUser.com_id: this.currentUser.id, curStrDt , curEndDt, comprtvStrDt,comprtvEdDt ).subscribe(res => {
+      this.Apicall.trendAnalysisReport(this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.comId : this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.role == 'Community User' ? this.currentUser?.com_id: this.currentUser?.id, curStrDt , curEndDt, comprtvStrDt,comprtvEdDt ).subscribe(res => {
         // 
       // this.timeprd = false
+      this.loadingSite = false;
 
         if (!res.error) {
           // 
@@ -427,8 +594,9 @@ export class ReportsComponent implements OnInit {
         this.priorDays =  this.stDt
         this.diffInDys = true
         let agId = 
-        this.Apicall.agencyDetailTimeReport(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : this.currentUser.role == 'SuperAdmin' ? this.community_id :this.currentUser.role == 'Community User' ? this.currentUser.com_id: this.currentUser.id,  this.stDt, this.enDt, this.currentUser.role == 'Agency' ? this.currentUser.id : this.agency_id).subscribe(res => {
+        this.Apicall.agencyDetailTimeReport(this.currentUser?.role =='Agency' ? this.comid : this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.comId : this.currentUser?.role == 'Community User' ? this.currentUser?.com_id: this.currentUser?.user_role == 5 ? this.currentUser?.com_id : this.currentUser?.user_role==3 ? this.community_id: this.currentUser?.id,  this.stDt, this.enDt, this.currentUser?.role == 'Agency' ? this.currentUser?.id : this.agency_id).subscribe(res => {
           // 
+          this.loadingSite = false;
           if (!res.error) {
             
             this.agncyDtlTimeRept = res.body.sort((a, b) => {
@@ -460,10 +628,12 @@ export class ReportsComponent implements OnInit {
       }
       else{
         this.diffInDys = false
-        this.Apicall.agencyDetailTimeReport(this.currentUser.role =='Agency' ?   this.agcydata.community_id  : this.currentUser.role == 'SuperAdmin' ? this.community_id :this.currentUser.role == 'Community User' ? this.currentUser.com_id: this.currentUser.id,  this.priorDays || this.enDt,this.today1 || this.stDt,this.currentUser.role == 'Agency' ? this.currentUser.id : this.agency_id).subscribe(res => {
-          // 
+        this.Apicall.agencyDetailTimeReport(this.currentUser?.role =='Agency' ? this.comid : this.currentUser?.role == 'SuperAdmin' ? this.community_id : this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.comId :this.currentUser?.role == 'Community User' ? this.currentUser?.com_id : this.currentUser?.user_role == 5 ? this.comid :this.currentUser?.user_role==3 ? this.community_id: this.currentUser?.id,  this.priorDays || this.enDt,this.today1 || this.stDt,this.currentUser?.role == 'Agency' ? this.currentUser?.id : this.currentUser?.user_role == 5 ? this.currentUser?.com_id : this.agency_id).subscribe(res => {
+          //          
+           this.loadingSite = false;
           if (!res.error) {
             // 
+            
             this.agncyDtlTimeRept = res.body.sort((a, b) => {
               return new Date(b.scheduleStartDate).getTime() - new Date(a.scheduleStartDate).getTime();
             });
@@ -506,7 +676,7 @@ export class ReportsComponent implements OnInit {
     // 
     // this.end_day = this.datepipe.transform(this.end_day, "yyyy-MM-dd")
     // 
-    // this.Apicall.getCurrentStatusReport(this.currentUser.id, this.start_day, this.end_day).subscribe(res => {
+    // this.Apicall.getCurrentStatusReport(this.currentUser?.id, this.start_day, this.end_day).subscribe(res => {
     //   // 
     //   if (res.msg == "Success") {
     //     // 
@@ -519,6 +689,14 @@ export class ReportsComponent implements OnInit {
     // })
   }
 
+  // updateTotals(position:any) {
+  //   if (this.AlldataAgency1) {
+  //     this.totNumOfShft += this.AlldataAgency1.noOfShifts;
+  //     this.totHrSchld += this.AlldataAgency1.hourSchedule;
+  //     this.totAdjHr += this.AlldataAgency1.adjHourSchedule;
+  //     this.totAdjPay += this.AlldataAgency1.adjAgencyPayable;
+  //   }
+  // }
 
   export(): void {
     let element = document.getElementById(this.data0 == true ? "demo" : this.data1 == true ? 'demo1' : 'demo2');
@@ -642,7 +820,7 @@ export class ReportsComponent implements OnInit {
     }
     let year = todayDate.getFullYear();
     if(this.data2 == true){
-      this.minDate1 = { year: parseInt(year), month: parseInt(month), day: parseInt(toDate) }
+      this.minDate1 = { year: year, month: month, day: toDate }
       this.minDate3 =[ { year: parseInt(year), month: parseInt(month), day: parseInt(toDate) }]
     }else{
       this.minDate = year + '-' + month + '-' + toDate
@@ -656,7 +834,7 @@ export class ReportsComponent implements OnInit {
   // }
 
   getAgencyListing(){
-    let community_id = this.currentUser.com_id ? this.currentUser.com_id : this.currentUser.id
+    let community_id = this.currentUser?.com_id ? this.currentUser?.com_id : this.currentUser?.id
     let is_for = 'community'
     let typeDrop = true
     this.dataService.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe((res:any)=>{
@@ -683,7 +861,7 @@ export class ReportsComponent implements OnInit {
   }
 
   getAgncyDtail(id?) {
-    this.dataService.getAgenciesByID(id ? id :this.currentUser.id).subscribe((res: any) => {
+    this.dataService.getAgenciesByID(id ? id :this.currentUser?.id).subscribe((res: any) => {
       if (!res.error) {
         this.agcydata = res.body[0];
         id ? this.agencyListingData = res.body : ''
@@ -734,10 +912,18 @@ export class ReportsComponent implements OnInit {
 
 
   dateFrmtChng(date){
-    let dt = new Date(date);
+    let dt1 = new Date(date);
+    var dt = new Date(dt1.getTime() + dt1.getTimezoneOffset() * 60000);
     var dateObj = moment(dt, "DD/MM/YYYY").toDate().toString();
     let start_day = (moment(dateObj).format("YYYY-MM-DD"));
     return start_day
+  }
+  changeText(string){
+    let words = string.split('_').map(function(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+
+    return words.join(' ');
   }
 
 

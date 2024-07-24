@@ -19,17 +19,18 @@
             </div>
         </div>
        </div> 
-       
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
+       <div class="overflow" style="overflow: auto;">
+        <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-            [count]="" [offset]="" [limit]="10" >
+      [scrollbarH]="true" [virtualization]="false"
+      [count]="" [offset]="" [limit]="10"  >
            
-            <ngx-datatable-column name="Name" prop="setting_name" [width]="100" >
+            <ngx-datatable-column name="Name" prop="setting_name" [width]="50" >
                 <ng-template let-setting_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ setting_name }}
                 </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column name="Value" prop="setting_value" [width]="100" >
+            <ngx-datatable-column name="Value" prop="setting_value" [width]="50" >
                 <ng-template let-setting_value="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ setting_value }}
                 </ng-template>
@@ -65,3 +66,4 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>

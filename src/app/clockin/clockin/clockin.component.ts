@@ -83,17 +83,21 @@ export class ClockinComponent implements OnInit {
   myItem: string;
   loggedUser: User;
   locl_Sec_k: any;
+  dummyUrl: string;
   
   constructor (private fb: FormBuilder,private dataService: DataService,private _authenticationService: AuthenticationService,
     private tost: ToastrManager,private modalService: NgbModal,private location: LocationStrategy) {
+      this.dummyUrl = window.location.pathname
       this._authenticationService.currentUser.subscribe(x => {this.currentUser = x});
       history.pushState(null, null, window.location.href);  
       this.location.onPopState(() => {
         history.pushState(null, null, window.location.href);
       });  
+      localStorage.setItem('ClockIn', JSON.stringify('Yes'));
     }
 
 ngOnInit(): void {
+  this.dummyUrl = window.location.pathname
   let today = new Date();
   this.todaysDate = this.getDate(today)
   this.getStrShftDtl()
@@ -323,9 +327,9 @@ agncyCng(e) {
     }
     this.btnShow = true;
     let data = {
-      username: this.agencyForm.value.username,
+      username: this.agencyForm.value.username.replace(' ','').trim(),
       agency_id: this.slctAgncy,
-      community_id:this.currentUser.id,
+      community_id:this.currentUser?.id,
       password:this.agencyForm.value.password
     }
 
@@ -723,7 +727,7 @@ agncyCng(e) {
         if (res) {
           
           let data = {
-            is_for: this.currentUser.user_role == '5' ? '' : "community_user",
+            is_for: this.currentUser?.user_role == '5' ? '' : "community_user",
             shift_id: this.slcSftForm.value.chooseShift,
             agency_id: this.agencyForm.value.agency
           }
@@ -756,7 +760,7 @@ agncyCng(e) {
           
 
           let data = {
-            is_for: this.currentUser.user_role == '5' ? '' : "community_user",
+            is_for: this.currentUser?.user_role == '5' ? '' : "community_user",
             shift_id: this.slcSftForm.value.chooseShift,
             agency_id: this.agencyForm.value.agency
           }

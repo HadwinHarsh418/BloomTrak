@@ -49,7 +49,7 @@ export class AddDepartmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.getHeaders()
-    this.getCommunityId()
+    this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3 ? this.getMngComunity() : this.getCommunityId()
     this.getNewDepartment()
     this.formDepartmentData = this.formBuilder.group({
       community_name: ['', Validators.required],
@@ -59,12 +59,12 @@ export class AddDepartmentComponent implements OnInit {
     this.formData = this.formBuilder.group({
       newVendor: ['', Validators.required],
      })
-    if(this.currentUser.role == 'Community')
+    if(this.currentUser?.role == 'Community' || this.currentUser?.user_role == 4)
     {
      this.formDepartmentData.controls['community_name'].clearValidators();
      this.formDepartmentData.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'SuperAdmin')
+    if(this.currentUser?.role == 'SuperAdmin')
     {
      this.formDepartmentData.controls['community_name'].setValidators(Validators.required);
      this.formDepartmentData.updateValueAndValidity();
@@ -105,8 +105,8 @@ export class AddDepartmentComponent implements OnInit {
     }
     let Data = {
       name  : this.formDepartmentData.value.department_name,
-      community_id : this.currentUser.role=='SuperAdmin' ? this.formDepartmentData.value.community_name : this.currentUser.id,
-      role_id : this.currentUser.prmsnId
+      community_id : this.currentUser?.role=='SuperAdmin' || this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.formDepartmentData.value.community_name : this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id ,
+      role_id : this.currentUser?.prmsnId
     }
    
     this.departmentService.addDepartment(Data).subscribe((res:any)=>{
@@ -115,6 +115,9 @@ export class AddDepartmentComponent implements OnInit {
         this.location.back()
       
       }
+      else{
+        this.tost.errorToastr(res.msg)
+      }
     })
   }
   goBack(){
@@ -122,14 +125,54 @@ export class AddDepartmentComponent implements OnInit {
   }
 
   getCommunityId() {
-    this.dataService.getCommunityId().subscribe((response: any) => {
+    this.dataService.getCommunityId().subscribe((response: any) => { 
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        })
+}
+
+getMngComunity(){
+  if(this.currentUser?.id && this.currentUser?.com_id){
+    let data = {
+      userId : this.currentUser?.id,
+      mangId : this.currentUser?.com_id
+    }
+    this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+      if (!res.error) {
+        let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+        // this.mangComs = res.body[1].userAvailableCommunities
+        let e=[]
+        let c =[]
+        d.forEach(element => {
+          if(!e.includes(element.community_id)){
+            e.push(element.community_id)
+            c.push(element)
+          }
+        });
+        this.allCommunity = c.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      })  ;
+      } else {
+        this.tost.errorToastr(res.msg);
+      }
+    },
+      (err) => {
+        this.dataService.genericErrorToaster();
+      })
+  }
+  else{
+    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
       if (response['error'] == false) {
         this.allCommunity = response.body.sort(function(a, b){
           if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
-      });
-        //this.toastr.successToastr(response.msg);
+      })  ;
       } else if (response['error'] == true) {
         this.tost.errorToastr(response.msg);
       }
@@ -138,6 +181,7 @@ export class AddDepartmentComponent implements OnInit {
 
     })
   }
+}
 
   modalOpenOSE(modalOSE, size = 'md') {
     this.modalService.open(modalOSE,

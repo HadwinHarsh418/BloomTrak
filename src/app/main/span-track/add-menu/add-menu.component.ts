@@ -50,7 +50,7 @@ export class AddMenuComponent implements OnInit {
           {
             name: 'Menu',
             isLink: true,
-            link: '/span-trak'
+            link: '/menu'
           }
         ]
       }

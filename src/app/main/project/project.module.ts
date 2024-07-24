@@ -13,7 +13,6 @@ const routes = [
   {
     path: '',
     component: ProjectComponent,
-    canActivate: [AuthGuard],
   },
 ];
 

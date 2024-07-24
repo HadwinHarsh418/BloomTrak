@@ -1,0 +1,16 @@
+.notifications-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.notifications-table table {
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+.notifications-table th, .notifications-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+

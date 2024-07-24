@@ -19,6 +19,8 @@ export class AddAgencyComponent implements OnInit {
   States:any = StatesJson;
   formData!: FormGroup;
   btnShow: boolean = false;
+  passwordTextType2: boolean = false;
+  passwordTextType1: boolean = false;
   searchSub: any = null;
   loadingList: boolean;
   currentUser: any;
@@ -37,6 +39,7 @@ export class AddAgencyComponent implements OnInit {
   selectedDataValue: any;
   allCommunity: any=[];
   usrExst: boolean;
+  slctSrtNm1: any;
   constructor(
     private dataService: DataService,
     private toastr: ToastrManager,
@@ -84,6 +87,7 @@ export class AddAgencyComponent implements OnInit {
       agency_website: ['',[ Validators.required]],
       state: ['',[ Validators.required]],
       username: ['',[ Validators.required]],
+      agency_type:['',Validators.required],
       sort_name: ['', [Validators.required, Validators.pattern(Patterns.sort_name)]],
       // hourly_rate: ['',[ Validators.required]],
       address1: ['',[ Validators.required]],
@@ -124,16 +128,16 @@ export class AddAgencyComponent implements OnInit {
       }
     };
 
-    if(this.currentUser.role != 'Admin')
+    if(this.currentUser?.role != 'Admin' && this.currentUser?.user_role != 8) 
     {
      this.formData.controls['community_id'].clearValidators();
      this.formData.controls['approval'].clearValidators();
      this.formData.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'Admin')
+    if(this.currentUser?.role == 'Admin' || this.currentUser?.user_role == 8)
     {
      this.formData.controls['community_id'].setValidators(Validators.required);
-     this.formData.controls['approval'].setValidators(Validators.required);
+    //  this.formData.controls['approval'].setValidators(Validators.required);
      this.formData.updateValueAndValidity();
     }
 
@@ -149,17 +153,18 @@ export class AddAgencyComponent implements OnInit {
     for (let item of Object.keys(this.controls)) {
       this.controls[item].markAsDirty()
     }
-    if (this.formData.invalid) {
+    if (this.formData.invalid || this.usrExst) {
+      this.toastr.errorToastr('Form Invalid')
       return;
     }
       //let data = { ...this.formData.value, ...{ community_id: this.tempAddId } }
-      if(this.currentUser.role == 'SuperAdmin'){
+      if(this.currentUser?.role == 'SuperAdmin'){
         this.formData.value.community_id?.forEach(element => {
           this.submitId2.push(element.id)
         });
       }
       this.btnShow = true;
-      if(this.currentUser.role == 'SuperAdmin'){
+      if(this.currentUser?.role == 'SuperAdmin'){
         this.formData.value.community_id?.forEach(element => {
           this.submitId2.push(element.id)
         });
@@ -174,7 +179,8 @@ export class AddAgencyComponent implements OnInit {
         address1: this.formData.value.address1,
         address2: this.formData.value.address2,
         city: this.formData.value.city,
-        username: this.formData.value.username,
+        username: this.formData.value.username.replace(' ','').trim(),
+        agency_type: this.formData.value.agency_type,
         sort_name: this.formData.value.sort_name,
         // hourly_rate: parseFloat(this.formData.value.hourly_rate),
         show_shift_user: this.formData.value.show_shift_user,
@@ -185,9 +191,9 @@ export class AddAgencyComponent implements OnInit {
         agency_contact_person_title: this.formData.value.agency_contact_person_title,
         agency_contact_cell_number: this.formData.value.agency_contact_cell_number.replace(/\D/g, ''),
         agency_contact_email_address: this.formData.value.agency_contact_email_address,
-        community_id: this.currentUser.role == 'Community' ? [this.currentUser.id] : this.submitId2,
+        community_id: this.currentUser?.role == 'Community' ? [this.currentUser?.id] : this.currentUser?.user_role == 3  ? this.formData.value.community_id.map(i=>i.cp_id) : this.currentUser?.user_role == 8 ? this.formData.value.community_id.map(i=>i.community_id) : this.submitId2,
         country_code:this.selectedDataValue? this.selectedDataValue : '',
-        approval : this.currentUser.role == 'SuperAdmin' ? '1' : '0'
+        approval : this.currentUser?.role == 'SuperAdmin' ? '1' : '0'
       }
       this.btnShow = true;
       this.dataService.addAgency(body1).subscribe((res: any) => {
@@ -212,7 +218,7 @@ export class AddAgencyComponent implements OnInit {
   }
 
   getCommunityId() {
-    if(this.currentUser.prmsnId == '6'){
+    if(this.currentUser?.prmsnId == '6'){
     this.dataService.getCommunityId().subscribe((response: any) => {
       if (response['error'] == false) {
         this.allCommunity = response.body.sort(function(a, b){
@@ -229,26 +235,35 @@ export class AddAgencyComponent implements OnInit {
 
     })
   }
-  else if(this.currentUser.prmsnId == '1'){
-    this.dataService.getcommunityById(this.currentUser.id).subscribe((res: any) => {
+  else if(this.currentUser?.prmsnId == '1'){
+    this.dataService.getcommunityById(this.currentUser?.id).subscribe((res: any) => {
         this.slctSrtNm = res.body[0]?.sort_name
     })
   }
-  else if(this.currentUser.prmsnId == '3'){
+  else{
     this.getCmmntNm()
   }
   }
 
   getCmmntNm(){
-    if(this.currentUser.id && this.currentUser.com_id){
+    if(this.currentUser?.id && this.currentUser?.com_id){
       let data = {
-        userId : this.currentUser.id,
-        mangId : this.currentUser.com_id
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
       }
       this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
         if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
           // this.mangComs = res.body[1].userAvailableCommunities
-          this.cmmntNames = res.body[0].user_added_communities.sort(function(a, b){
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
             if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
             if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
             return 0;
@@ -262,14 +277,13 @@ export class AddAgencyComponent implements OnInit {
         })
     }
     else{
-      this.dataService.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+      this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
         if (response['error'] == false) {
           this.cmmntNames = response.body.sort(function(a, b){
             if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
             if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
             return 0;
         })  ;
-          //this.toastr.successToastr(response.msg);
         } else if (response['error'] == true) {
           this.toastr.errorToastr(response.msg);
         }
@@ -281,13 +295,21 @@ export class AddAgencyComponent implements OnInit {
 }
 
   onItemSelect(e){
-    if(this.currentUser.user_role == 3){
+    if(this.currentUser?.user_role == 3){
       this.cmmntNames.filter(i=>{
         if(e == i.cp_id){
           this.slctSrtNm =   i.community_short_name
         }
       })
     }
+    else if(this.currentUser?.user_role == 8){
+      this.cmmntNames.filter(i=>{
+           if(e == i.community_id){
+             this.slctSrtNm1 =   i.sort_name            
+           }
+         })
+    }
+    
     else{
       this.allCommunity.filter(i=>{
            if(e == i.id){

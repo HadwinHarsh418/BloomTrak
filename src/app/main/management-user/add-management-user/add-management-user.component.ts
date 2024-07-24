@@ -42,7 +42,8 @@ export class AddManagementUserComponent implements OnInit {
   allAgenciesID: any = [];
   rows1: any = []
   mngmNames: any= [];
-
+  passwordTextType2: boolean = false;
+  passwordTextType1: boolean = false;
   @ViewChild('searchStrInput', { static: true }) searchStrInput: ElementRef;
 
   dropdownSettings2: IDropdownSettings = {
@@ -111,6 +112,7 @@ export class AddManagementUserComponent implements OnInit {
   agnArr: any;
   userName: any;
   dataRoles: any[];
+  currentRout: string;
 
   constructor(
     private fb: FormBuilder,
@@ -128,7 +130,7 @@ export class AddManagementUserComponent implements OnInit {
       this.currentUser = x
       this.crrntUsrId.push(this.currentUser?.role == 'Admin' ?  x?._id : x?.id)
     });
-
+    this.currentRout = window.location.href;
     this.aCtRoute.params.subscribe(
       res => {
         if (res.id) {
@@ -149,7 +151,7 @@ export class AddManagementUserComponent implements OnInit {
     this.getagenciesID()
     this.getManagementNames()
     this.getRoles()
-    let validtr = (this.currentUser.role != 'Admin' || this.currentUser.user_role ==3) ? [Validators.required] : ['']
+    let validtr = (this.currentUser?.role != 'Admin' || this.currentUser?.user_role ==3) ? [Validators.required] : ['']
     this.formData = this.fb.group({
       DOB: [''],
       first_name: ['', Validators.required],
@@ -169,14 +171,14 @@ export class AddManagementUserComponent implements OnInit {
       validator: ConfirmedValidator('password', 'cnfrmpassword')
     },
     )
-    if(this.currentUser.role != 'Admin')
+    if(this.currentUser?.role != 'Admin')
     {
     //  this.formData.controls['management_co_user'].clearValidators();
     //  this.formData.controls['community_id'].clearValidators();
     //  this.formData.controls['hourly_rate'].clearValidators();
      this.formData.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'Admin')
+    if(this.currentUser?.role == 'Admin')
     {
     //  this.formData.controls['management_co_user'].setValidators(Validators.required);
     //  this.formData.controls['community_id'].setValidators(Validators.required);
@@ -185,22 +187,22 @@ export class AddManagementUserComponent implements OnInit {
      this.manaDetls()
     }
 
-    // if(this.currentUser.role == 'Agency')
+    // if(this.currentUser?.role == 'Agency')
     // {
     //  this.formData.controls['DOB'].clearValidators();
     // this.formData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role != 'Agency')
+    // if(this.currentUser?.role != 'Agency')
     // {
     //  this.formData.controls['DOB'].setValidators(Validators.required);
     //  this.formData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role == 'Agency')
+    // if(this.currentUser?.role == 'Agency')
     // {
     //  this.formData.controls['DOB'].clearValidators();
     //  this.formData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role != 'Agency')
+    // if(this.currentUser?.role != 'Agency')
     // {
     //  this.formData.controls['DOB'].setValidators(Validators.required);
     //  this.formData.updateValueAndValidity();
@@ -221,7 +223,7 @@ export class AddManagementUserComponent implements OnInit {
           {
             name: 'Management User',
             isLink: true,
-            link: '/management'
+            link: '/management-user'
           }
         ]
       }
@@ -264,8 +266,17 @@ export class AddManagementUserComponent implements OnInit {
 get controls() {
     return this.formData.controls;
   }
+  dateErrorFxn(){
+    let date = new Date();
+    let inputDate = new Date(this.formData.value.DOB)
+    return date < inputDate ? true : false;
+}
   
-  submitted() {
+  submitted() { 
+    if(this.dateErrorFxn()){
+      this.tost.errorToastr('Please select valid date!')
+      return;
+    }
     for (let item of Object.keys(this.controls)) {
       this.controls[item].markAsDirty()
     }
@@ -276,10 +287,10 @@ get controls() {
       return;
     }
 
-    if (this.currentUser.role == "SuperAdmin") {
+    if (this.currentUser?.role == "SuperAdmin") {
       if (this.formData.value.community_id) {
         this.formData.value.community_id?.forEach(element => {
-          this.submitId.push(this.currentUser.role == 'Admin' ? element.cp_id : element.id )
+          this.submitId.push(this.currentUser?.role == 'Admin' ? element.cp_id : element.id )
         }); 
       } else {
         this.formData.value.agency_id?.forEach(element => {
@@ -302,13 +313,13 @@ get controls() {
             last_name: this.formData.value.last_name,
             DOB: this.formData.value.DOB,
             isAdmin: this.formData.value.addUsrRl[0].id,
-            username: this.slctSrtNm +'-'+ this.formData.value.username,
+            username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
             // hourly_rate: parseFloat( this.formData.value.hourly_rate),
             community_id: this.formData.value.community_id ? this.submitId : '',
             password: this.formData.value.password,
             management_Co: this.formData.value.management_Co ,
             // management_co_user:  this.formData.value.management_co_user ,
-            management_id : this.currentUser.id,
+            management_id : this.currentUser?.id,
             country_code:this.selectedDataValue? this.selectedDataValue : '',
           }
         }else{
@@ -324,16 +335,18 @@ get controls() {
             first_name: this.formData.value.first_name,
             last_name: this.formData.value.last_name,
             DOB: this.formData.value.DOB,
-            isAdmin: this.formData.value.addUsrRl[0].id,
-            username: this.slctSrtNm +'-'+ this.formData.value.username,
+            // isAdmin: this.formData.value.addUsrRl[0].id,
+            username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
             // PIN_code: this.formData.value.PIN_code,
             // hourly_rate: parseFloat( this.formData.value.hourly_rate),
-            community_id: this.formData.value.community_id ? this.submitId : '',
+            // community_id: this.formData.value.community_id ? this.submitId : '',
             password: this.formData.value.password,
             management_Co: this.formData.value.management_Co ,
             // management_co_user:  this.formData.value.management_co_user ,
             management_id : '',
-            country_code:this.selectedDataValue? this.selectedDataValue : ''
+            country_code:this.selectedDataValue? this.selectedDataValue : '', 
+        isAdmin : '8',
+        roles_assign: this.formData.value.addUsrRl??'',
           }
         }
       
@@ -357,13 +370,13 @@ get controls() {
           // management_co_user:  this.formData.value.management_co_user ,
           agency_id: this.formData.value.agency_id ? this.submitId2 : '',
           password: this.formData.value.password,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
           // isAdmin : '5',
           country_code:this.selectedDataValue? this.selectedDataValue : ''
         }
       }
     }
-    else if (this.currentUser.role == 'Agency') {
+    else if (this.currentUser?.role == 'Agency') {
       this.data4 = {
         phone_number: this.formData.value.phone_number?.replace(/\D/g, ''),
         email: this.formData.value.email,
@@ -378,43 +391,46 @@ get controls() {
         isAdmin : '5',
         country_code:this.selectedDataValue? this.selectedDataValue : ''
       }
-    } else if (this.currentUser.role == 'Community') {
+    } else if (this.currentUser?.role == 'Community') {
       this.data5 = {
         phone_number: this.formData.value.phone_number?.replace(/\D/g, ''),
         email: this.formData.value.email,
         first_name: this.formData.value.first_name,
         last_name: this.formData.value.last_name,
         DOB: this.formData.value.DOB,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
         // hourly_rate : parseFloat( this.formData.value.hourly_rate),
         password: this.formData.value.password,
         // management_co_user:  this.formData.value.management_co_user ,
-        community_id: [this.currentUser.id],
+        community_id: [this.currentUser?.id],
         country_code:this.selectedDataValue? this.selectedDataValue : '',
-        role_assign: this.formData.value.addUsrRl,
+        roles_assign: this.formData.value.addUsrRl,
 
       }
     }
-    else if (this.currentUser.role == 'Admin') {
+    else if (this.currentUser?.role == 'Admin') {
+
       this.data5 = {
         phone_number: this.formData.value.phone_number?.replace(/\D/g, ''),
         email: this.formData.value.email,
         first_name: this.formData.value.first_name,
         last_name: this.formData.value.last_name,
         DOB: this.formData.value.DOB,
-        username: this.slctSrtNm +'-'+ this.formData.value.username,
+        username: this.slctSrtNm +'-'+ this.formData.value.username.replace(' ','').trim(),
+        // community_id:this.formData.value.community_id.map(i=>i.cp_id),
         // hourly_rate : parseFloat( this.formData.value.hourly_rate),
         password: this.formData.value.password,
         // management_co_user:  this.formData.value.management_co_user ,
         country_code:this.selectedDataValue? this.selectedDataValue : '',
-        management_id : this.currentUser.id,
-        role_assign: this.formData.value.addUsrRl ?? '',
-
+        management_id : this.currentUser?.id,
+        isAdmin : '8',
+        roles_assign: this.formData.value.addUsrRl??'',
       }
+      if(!this.currentRout.includes('add-managementUser')) this.data5.community_id = this.formData.value.community_id.map(i=>i.cp_id)
     }
     this.btnShow = true;
 
-    let body = this.currentUser.role == "SuperAdmin" ? this.formData.value.community_id ? this.data : this.data1 : this.currentUser.role == "Community" ? this.data5 : this.currentUser.role == "Admin" ? this.data5 : this.data4
+    let body = this.currentUser?.role == "SuperAdmin" ? this.formData.value.community_id ? this.data : this.data1 : this.currentUser?.role == "Community" ? this.data5 : this.currentUser?.role == "Admin" ? this.data5 : this.data4
     this.dataService.addUser(body).subscribe((res: any) => {
       if (!res.error) {
         this.tost.successToastr(res.msg)
@@ -437,6 +453,16 @@ get controls() {
 
       })
   }
+  findInvalidControls() {
+    const invalid = [];
+    const controls = this.formData.controls;
+    for (const name in controls) {
+        if (controls[name].invalid) {
+            invalid.push(name);
+        }
+    }
+    return invalid;
+}
 
   EditUser(row: any) {
     this.getagenciesID()
@@ -454,7 +480,7 @@ get controls() {
         this.formData.patchValue({
           DOB: this.currenUserId?.DOB,
           first_name: this.currenUserId?.first_name,
-          // username: this.currenUserId?.username,
+          username: this.currenUserId?.username,
           last_name: this.currenUserId?.last_name,
           email: this.currenUserId?.email,
           // hourly_rate: this.currenUserId?.hourly_rate,
@@ -467,7 +493,7 @@ get controls() {
         });
       }
       for(let i = 0; i < res.body[0].linked_with.length; i++){
-        if(this.currentUser.role == 'SuperAdmin'){
+        if(this.currentUser?.role == 'SuperAdmin'){
           let allAssigned = [];
           this.currenUserId.forEach(rate => {allAssigned.push(rate.community_name)});
           this.cmntArr = this.allCommunity.filter(item => allAssigned.includes(item.community_name));
@@ -521,8 +547,8 @@ get controls() {
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
       });
-      if(this.currentUser.prmsnId == '1'){
-        this.onItemSelect(this.currentUser.id)
+      if(this.currentUser?.prmsnId == '1'){
+        this.onItemSelect(this.currentUser?.id)
       }
         //this.toastr.successToastr(response.msg);
       } else if (response['error'] == true) {
@@ -571,7 +597,7 @@ get controls() {
   }
 
   getManagementNames(){
-    if(this.currentUser.role == 'SuperAdmin'){
+    if(this.currentUser?.role == 'SuperAdmin'){
       this.dataService.getManagementNames().subscribe(res => {
         if (!res.error) {
           this.mngmNames = res.body.sort(function(a, b){
@@ -587,13 +613,13 @@ get controls() {
       }
      
       getRoles(){
-        // let comunity_id=this.currentUser.id
+        // let comunity_id=this.currentUser?.id
         let data = {
-          prms : (this.currentUser.prmsnId == '1' || this.currentUser.user_role == 3) ? 'community_id' : this.currentUser.prmsnId == '2' ? 'agency_id' : 'agency_id',
-           id : this.currentUser.prmsnId == '6' ? null : this.currentUser.id
+          prms : (this.currentUser?.prmsnId == '1') ? 'community_id' :this.currentUser?.user_role == 3 ? 'management_id': this.currentUser?.prmsnId == '2' ? 'agency_id' : 'agency_id',
+           id : this.currentUser?.prmsnId == '6' ? null : this.currentUser?.id
         }
         
-        this.dataService.getRole(data).subscribe((res:any)=>{
+        this.dataService.getRole(this.currentUser?.user_role == 6 ? '': data).subscribe((res:any)=>{
           if(!res.error){
             this.dataRoles = res.body.sort(function(a, b){
               if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
@@ -617,7 +643,7 @@ get controls() {
     }
 
     manaDetls(){
-      this.dataService.getManagementById(this.currentUser.id).subscribe((res: any) => {
+      this.dataService.getManagementById(this.currentUser?.id).subscribe((res: any) => {
       this.slctSrtNm = res.body[0].short_name
       })
     }

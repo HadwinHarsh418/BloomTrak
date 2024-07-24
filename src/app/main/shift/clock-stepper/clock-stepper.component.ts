@@ -1,4 +1,4 @@
-import { Location } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { Component, ElementRef, OnInit, Output, ViewChild ,HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from 'app/auth/models';
@@ -14,12 +14,13 @@ import { Patterns } from 'app/main/authentication/register/helpers/patterns';
 @Component({
   selector: 'app-clock-stepper',
   templateUrl: './clock-stepper.component.html',
-  styleUrls: ['./clock-stepper.component.scss']
+  styleUrls: ['./clock-stepper.component.scss'],
+  providers:[DatePipe]
 })
 export class ClockStepperComponent implements OnInit {
 
   private timeoutId: any;
-  private readonly inactivityDuration = 30000; // 30 Sec
+  private readonly inactivityDuration = 69000; // 1 min 15 Sec
   formData!: FormGroup;
   form2Data!: FormGroup;
   slcSftForm!: FormGroup;
@@ -77,6 +78,8 @@ export class ClockStepperComponent implements OnInit {
   loggedUser: User;
   locl_Sec_k: any;
   showClockOut: any;
+  getDifferenceDate: any;
+  agencyidd: any;
 
 
   constructor
@@ -86,6 +89,7 @@ export class ClockStepperComponent implements OnInit {
       private _authenticationService: AuthenticationService,
       private tost: ToastrManager,
     private modalService: NgbModal,
+    private datePipe:DatePipe
 
   ) {
     this._authenticationService.currentUser.subscribe
@@ -110,10 +114,23 @@ export class ClockStepperComponent implements OnInit {
     })
 
     this.form2Data = this.fb.group({
-      agency: ['', [Validators.required]],
+      agency: ['',],
       username: ['', [Validators.required]],
+      shift_key: ['', [Validators.required]],
       password: ['', [Validators.required]],
     })
+    this.form2Data.get('username').valueChanges.subscribe(() => {
+      this.clearShiftKeyValidation();
+    });
+  
+    this.form2Data.get('password').valueChanges.subscribe(() => {
+      this.clearShiftKeyValidation();
+    });
+  
+    this.form2Data.get('shift_key').valueChanges.subscribe(() => {
+      this.updateUsernameAndPasswordValidation();
+    });
+
 
     this.slcSftForm = this.fb.group({
       chooseShift: ['', [Validators.required]],
@@ -162,12 +179,93 @@ resetTimeout() {
   
   this.timeoutId = setTimeout(() => {
     this.form2Data.reset();
-    this.form2Data.get('agency').setValue('')
+    this.form2Data.get('username').setValue('')
+    this.form2Data.get('password').setValue('')
     this.slcSftForm.reset();
     this.slcSftForm.get('chooseShift').setValue('')
+    this.rfsh()
     
   }, this.inactivityDuration);
 }
+
+clearShiftKeyValidation(): void {
+    const username = this.form2Data.get('username');
+    const password = this.form2Data.get('password');
+    const shiftKey = this.form2Data.get('shift_key');
+  
+    if (username.valid && password.valid) {
+        shiftKey.clearValidators();
+        shiftKey.updateValueAndValidity();
+        shiftKey.disable();
+        this.form2Data.get('shift_key').reset();
+      } else {
+        shiftKey.enable();
+      }
+  }
+  
+  
+  updateUsernameAndPasswordValidation(): void {
+    const shiftKey = this.form2Data.get('shift_key').value;
+    const usernameControl = this.form2Data.get('username');
+    const passwordControl = this.form2Data.get('password');
+  
+    if (shiftKey.valid) {
+     
+        usernameControl.clearValidators();
+        passwordControl.clearValidators();
+  
+        usernameControl.updateValueAndValidity();
+        passwordControl.updateValueAndValidity();
+  
+        
+        usernameControl.disable();
+        passwordControl.disable();
+    } else {
+       
+        usernameControl.enable();
+        passwordControl.enable();
+    }
+  }
+  
+  
+  
+      isShiftKeyDisabled(): boolean {
+        if(this.form2Data.get('username').value || this.form2Data.get('password').value){
+          this.form2Data.get('shift_key').clearValidators();
+          this.form2Data.get('shift_key').disable();
+          this.form2Data.get('shift_key').updateValueAndValidity();
+        }else{
+          this.form2Data.get('shift_key').setValidators([Validators.required]);
+          this.form2Data.get('shift_key').enable();
+          this.form2Data.get('shift_key').updateValueAndValidity();
+        }
+        return this.form2Data.get('username').value || this.form2Data.get('password').value ? true : false;
+      }
+      
+      isUsernameDisabled(): boolean {
+        return this.form2Data.get('shift_key').value ? true : false;
+      }
+      
+  
+  
+      shiftkey(value){
+        if(value){
+          this.form2Data.get('username').clearValidators();
+          this.form2Data.get('username').disable();
+          this.form2Data.get('username').updateValueAndValidity();
+          this.form2Data.get('password').clearValidators();
+          this.form2Data.get('password').disable();
+          this.form2Data.get('password').updateValueAndValidity();
+        }else{
+                  this.form2Data.get('username').enable();
+          this.form2Data.get('username').setValidators([Validators.required]);
+          this.form2Data.get('username').updateValueAndValidity();
+                  this.form2Data.get('password').enable();
+          this.form2Data.get('password').setValidators([Validators.required]);
+          this.form2Data.get('password').updateValueAndValidity();
+        }
+      }
+  
 
 
   get fc() {
@@ -197,7 +295,7 @@ resetTimeout() {
       PIN_code: this.formData.value.pin,
       DOB: this.formData.value.dob,
       SSN: this.formData.value.ssn,
-      id: this.currentUser.id
+      id: this.currentUser?.id
     }
     this.dataService.addUserData(data).subscribe((res: any) => {
       if (res) {
@@ -214,7 +312,7 @@ resetTimeout() {
  
     let data = {
       shift_id: this.slcSftForm.value.chooseShift,
-      agency_id: this.form2Data.value.agency,
+      agency_id: this.agencyidd,
     }
     this.dataService.getShiftClockIn(data).subscribe((res: any) => {
       if (res) {
@@ -247,7 +345,7 @@ resetTimeout() {
   getClockOut() {
     
     let data = {shift_id:this.slcSftForm.value.chooseShift,
-               agency_id : this.form2Data.value.agency,
+               agency_id : this.agencyidd,
       clockIn:'2'
               }
     
@@ -292,12 +390,21 @@ resetTimeout() {
       return;
     }
     this.btnShow = true;
-    let data = {
-      username: this.form2Data.value.username,
-      // PIN_code: this.form2Data.value.pin,
-      agency_id: this.slctAgncy,
-      community_id:this.currentUser.id,
-      password:this.form2Data.value.password
+    let data = {}
+    if (this.form2Data.value.password){
+      data = {
+        username: this.form2Data.value.username.replace(' ','').trim(),
+        // PIN_code: this.form2Data.value.pin,
+        shift_key: this.form2Data.value.shift_key,
+        agency_id: this.slctAgncy,
+        community_id:this.currentUser?.id,
+        password:this.form2Data.value.password
+      }
+    }else{
+      data = {
+        shift_key: this.form2Data.value.shift_key,
+        community_id:this.currentUser?.id,
+      }
     }
     this.dataService.verifyUser(data).subscribe((res: any) => {
 
@@ -313,7 +420,7 @@ resetTimeout() {
         this.tost.errorToastr('You Have No Shift')
       }
      
-      } else if(res.msg == 'Wrong credentials'){
+      } else if(res.msg == "Wrong Credentials"){
         this.tost.errorToastr(res.msg)
       }else if(res.msg == 'No User Shifts found'){
         this.tost.errorToastr(res.msg)
@@ -355,8 +462,8 @@ resetTimeout() {
         // clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         // clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         // clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         phone_num : this.form2Data.value.phone_no,
         is_for: 'agency',
@@ -371,7 +478,7 @@ resetTimeout() {
     } else {
       let data = {
         clockIn_delay: this.agreeData1 ? this.agreeData1 : this.rows1?.clockIn_delay,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_for: 'agency',
         is_agree : false
@@ -394,7 +501,7 @@ resetTimeout() {
       this.disAgree()
       let data = {
         clockIn_responsibilities: this.agreeData2 ? this.agreeData2 : this.rows1?.clockIn_responsibilities,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         phone_num : this.form2Data.value.phone_no,
         is_for: 'agency',
@@ -416,8 +523,8 @@ resetTimeout() {
         // clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         // clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         // clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_for: 'agency',
         is_agree : false
@@ -444,8 +551,8 @@ resetTimeout() {
         clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         // clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         // clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         phone_num : this.form2Data.value.phone_no,
         is_for: 'agency',
@@ -468,22 +575,22 @@ resetTimeout() {
         clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         // clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         // clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_for: 'agency',
         is_agree : false
       }
       this.dataService.shiftClockIn(data).subscribe((res: any) => {
         if (res) {
-          
+         
         }
       },
         (err) => {
           this.dataService.genericErrorToaster();
         })
     }
-    this.activeTab = 6;
+    this.activeTab = 8;
 
   }
 
@@ -497,8 +604,8 @@ resetTimeout() {
         // clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         // clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         phone_num : this.form2Data.value.phone_no,
         is_for: 'agency',
@@ -521,8 +628,8 @@ resetTimeout() {
         // clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         // clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_for: 'agency',
         is_agree : false
@@ -548,8 +655,8 @@ resetTimeout() {
         // clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         // clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         phone_num : this.form2Data.value.phone_no,
         is_for: 'agency',
@@ -572,8 +679,8 @@ resetTimeout() {
         // clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
         // clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
         clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-        // user_id: this.currentUser.id,
-        agency_id: this.form2Data.value.agency,
+        // user_id: this.currentUser?.id,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_for: 'agency',
         is_agree : false
@@ -597,8 +704,8 @@ resetTimeout() {
       clockIn_training: this.agreeData3 ? this.agreeData3 : this.rows1?.clockIn_training,
       clockIn_covid: this.agreeData4 ? this.agreeData4 : this.rows1?.clockIn_covid,
       clockIn_safety: this.agreeData5 ? this.agreeData5 : this.rows1?.clockIn_safety,
-      // user_id: this.currentUser.id,
-      agency_id: this.form2Data.value.agency,
+      // user_id: this.currentUser?.id,
+      agency_id: this.agencyidd,
       shift_id: this.slcSftForm.value.chooseShift,
       is_for: 'agency'
     }
@@ -613,11 +720,11 @@ resetTimeout() {
 
   }
   submit5() {
-    debugger;
+    // debugger;
     let data = {
       is_for:  "agency",
       id : this.slcSftForm.value.chooseShift,
-      agency_id:  this.form2Data.value.agency,
+      agency_id:  this.agencyidd,
       clockIn:'1'
     }
 
@@ -646,7 +753,7 @@ resetTimeout() {
         clockOut_Complete1: this.agreeData10 ? this.agreeData10 : this.clockOutPopUp?.clockOut_Completed_1,
         // clockOut_Complete2: this.agreeData11? this.agreeData11 : this.clockOutPopUp?.clockOut_Completed_2,
         // clockOut_Complete3: this.agreeData12 ? this.agreeData12 : this.clockOutPopUp?.clockOut_Completed_3,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_agree : true
       }
@@ -664,7 +771,7 @@ resetTimeout() {
         clockOut_Complete1: this.agreeData10 ? this.agreeData10 : this.clockOutPopUp?.clockOut_Completed_1,
         // clockOut_Complete2: this.agreeData11 ? this.agreeData11 : this.clockOutPopUp?.clockOut_Completed_2,
         // clockOut_Complete3: this.agreeData12 ? this.agreeData12 : this.clockOutPopUp?.clockOut_Completed_3,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_agree : false
       }
@@ -687,7 +794,7 @@ resetTimeout() {
         // clockOut_Complete1: this.agreeData10 ? this.agreeData10 : this.clockOutPopUp?.clockOut_Completed_1,
         clockOut_Complete2: this.agreeData11 ? this.agreeData11 : this.clockOutPopUp?.clockOut_Completed_2,
         // clockOut_Complete3: this.agreeData12 ? this.agreeData12 : this.clockOutPopUp?.clockOut_Completed_3,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_agree : true
       }
@@ -705,7 +812,7 @@ resetTimeout() {
         // clockOut_Complete1: this.agreeData10 ? this.agreeData10 : this.clockOutPopUp?.clockOut_Completed_1,
         clockOut_Complete2: this.agreeData11 ? this.agreeData11 : this.clockOutPopUp?.clockOut_Completed_2,
         // clockOut_Complete3: this.agreeData12 ? this.agreeData12 : this.clockOutPopUp?.clockOut_Completed_3,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_agree : false
       }
@@ -728,7 +835,7 @@ resetTimeout() {
         // clockOut_Complete1: this.agreeData10 ? this.agreeData10 : this.clockOutPopUp?.clockOut_Completed_1,
         // clockOut_Complete2: this.agreeData11 ? this.agreeData11 : this.clockOutPopUp?.clockOut_Completed_2,
         clockOut_Complete3: this.agreeData12 ? this.agreeData12 : this.clockOutPopUp?.clockOut_Completed_3,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_agree : true
       }
@@ -736,9 +843,9 @@ resetTimeout() {
         if (res) {
           
           let data = {
-            is_for: this.currentUser.user_role == '5' ? '' : "community_user",
+            // is_for: this.currentUser?.user_role == '5' ? '' : "community_user",
             shift_id: this.slcSftForm.value.chooseShift,
-            agency_id: this.form2Data.value.agency
+            agency_id: this.agencyidd
           }
       
           this.dataService.endShiftByID(data).subscribe((res: any) => {
@@ -768,7 +875,7 @@ resetTimeout() {
         // clockOut_Complete1: this.agreeData10 ? this.agreeData10 : this.clockOutPopUp?.clockOut_Completed_1,
         // clockOut_Complete2: this.agreeData11 ? this.agreeData11 : this.clockOutPopUp?.clockOut_Completed_2,
         clockOut_Complete3: this.agreeData12 ? this.agreeData12 : this.clockOutPopUp?.clockOut_Completed_3,
-        agency_id: this.form2Data.value.agency,
+        agency_id: this.agencyidd,
         shift_id: this.slcSftForm.value.chooseShift,
         is_agree : false
       }
@@ -777,9 +884,9 @@ resetTimeout() {
           
 
           let data = {
-            is_for: this.currentUser.user_role == '5' ? '' : "community_user",
+            // is_for: this.currentUser?.user_role == '5' ? '' : "community_user",
             shift_id: this.slcSftForm.value.chooseShift,
-            agency_id: this.form2Data.value.agency
+            agency_id: this.agencyidd
           }
       
           this.dataService.endShiftByID(data).subscribe((res: any) => {
@@ -881,7 +988,7 @@ resetTimeout() {
   // getUserById() {
   //   let is_for = 'user'
   //   let searchStr = ''
-  //   this.dataService.getUserById(searchStr = '',this.currentUser.id, is_for).subscribe((res: any) => {
+  //   this.dataService.getUserById(searchStr = '',this.currentUser?.id, is_for).subscribe((res: any) => {
   //     this.curntUsrvl = res.body[0].linked_with;
   //     this.curntUsrvl.forEach(element => {
   //       this.linked_with.push(element)
@@ -909,8 +1016,8 @@ resetTimeout() {
     this.slctAgncy = e.target.value
     // let data = {
     //   agncId: e.target.value,
-    //   usrId: this.currentUser.id,
-    //   is_for: this.currentUser.user_role == '5' ? 'agency' : 'community_user'
+    //   usrId: this.currentUser?.id,
+    //   is_for: this.currentUser?.user_role == '5' ? 'agency' : 'community_user'
     // }
     // this.dataService.getUserAssignedShift(data).subscribe((res: any) => {
     //   if (!res.error) {
@@ -931,6 +1038,11 @@ resetTimeout() {
         this.strtShft="";
         this.endShft='';
         this.frstFrmData1 = res.body
+        this.agencyidd =res.body[0]?.aggency_id
+        
+        if(res.body){
+          this.getDifferenceDate = this.getDifferenceDateBw(this.getDiff(res.body[0].start_time),this.getDiff(res.body[0].end_time))          
+        }
         if(this.frstFrmData1?.length > 0){
           if(this.frstFrmData1[0].clocked_in_out == 1 && this.frstFrmData1[0].status == 1){
                this.strtShft = this.frstFrmData1[0].user_start_time
@@ -955,19 +1067,9 @@ resetTimeout() {
   }
 
   getStrShftDtl() {
-    setTimeout(() => {
-      this.myItem = localStorage.getItem('Secretkey');
-      if(this.myItem == null){
-        // this.modalOpenOSE(this.keyModal, 'lg');
-        this.welcomeClockIN = false
-      }else{
-        this.welcomeClockIN = true
-      }
-      
-    }, 200);
     let data = {
       id: this.currentUser?.id,
-      // is_for: this.currentUser.user_role == '5' ? '' : 'community_user'
+      // is_for: this.currentUser?.user_role == '5' ? '' : 'community_user'
     }
     this.dataService.clockInPortal(data).subscribe((res: any) => {
       if (!res.error) {
@@ -1015,7 +1117,7 @@ resetTimeout() {
       // DOB: this.newUser.value.DOB,
       PIN_code: this.newUser.value.PIN_code,
       password: this.newUser.value.password,
-      agency_id : [this.form2Data.value.agency]
+      agency_id : [this.agencyidd]
     }
 
     this.dataService.addAgencyUser(data).subscribe((res: any) => {
@@ -1035,9 +1137,9 @@ resetTimeout() {
   completeShiftByID(){
     this.clkOut() 
     let data = {
-      is_for: this.currentUser.user_role == '5' ? '' : "community_user",
+      is_for: this.currentUser?.user_role == '5' ? '' : "community_user",
       id: this.slctSftId ? this.slctSftId  : this.form2Data.value.chooseShift,
-      agency_id: this.currentUser.user_role == '5' ? ( this.agncId || this.form2Data.value.agency) : (this.cpId || this.currentUser.id )
+      agency_id: this.currentUser?.user_role == '5' ? ( this.agncId || this.agencyidd) : (this.cpId || this.currentUser?.id )
     }
     this.dataService.completeShiftByID(data).subscribe((res: any) => {
       if (!res.error) {
@@ -1065,12 +1167,14 @@ resetTimeout() {
         localStorage.setItem('Secretkey',JSON.stringify(this.sec_key || this.locl_Sec_k))
         this.loggedUser = res.body[0];
         this._authenticationService.setLogin(res.body[0]) 
+        if (localStorage.getItem('uniqueFirst') && localStorage.getItem('Secretkey')) {
+          this.tost.errorToastr("Time Clock Refreshed");
+        } else if(localStorage.getItem('Secretkey') && !localStorage.getItem('uniqueFirst')){
+          localStorage.setItem('uniqueFirst', 'login');
+          this.tost.successToastr('Success');
+      }
         this.getStrShftDtl()
-
-          this.tost.successToastr(res.msg)
           this.welcomeClockIN = true;
-          // this.modalService.dismissAll()
-
         }else{
           this.tost.errorToastr(res.msg)
         }
@@ -1087,11 +1191,12 @@ resetTimeout() {
 
   goToHome(){
     this.form2Data.reset();
+    this.activeTab = 1;
+    this.rfsh()
     this.form2Data.get('agency').setValue('')
     this.slcSftForm.reset();
     this.slcSftForm.get('chooseShift').setValue('')
-    this.activeTab = 1;
-    this.rfsh()
+    
   }
   ngOnDestroy() {
     this.form2Data.reset();
@@ -1099,5 +1204,17 @@ resetTimeout() {
       this.slcSftForm.reset();
       this.slcSftForm.get('chooseShift').setValue('')
     clearTimeout(this.timeoutId);
+  }
+  getDiff(timestamp:any){
+    const dateObject = new Date(timestamp*1000);
+    return dateObject.toString();
+  }
+  getDifferenceDateBw(startDate:any,endDate:any){
+    var diff = new Date(endDate).getTime() - new Date(startDate).getTime();
+        var days = Math.floor(diff / (60 * 60 * 24 * 1000));
+        var hours = Math.floor(diff / (60 * 60 * 1000)) - (days * 24);
+        var minutes = Math.floor(diff / (60 * 1000)) - ((days * 24 * 60) + (hours * 60));
+        var seconds = Math.floor(diff / 1000) - ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60));
+        return days + ' ' + 'Days' + ' ' + hours + ' ' + 'Hours' + ' ' + minutes + ' ' + 'Minutes' + ' '+ seconds + ' ' +'Seconds'
   }
 }

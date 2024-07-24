@@ -22,7 +22,6 @@ const routes = [
     {
         path: '',
         component: ProfileAgencyComponent,
-        canActivate: [AuthGuard],
     },
 
 ];

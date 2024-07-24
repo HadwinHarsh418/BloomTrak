@@ -25,6 +25,8 @@ export class AdminNotificationsComponent implements OnInit {
   roleData: any=[]
   roleData1: any=[];
   roleData2: any=[];
+  allCommunity1: any;
+  community_id: any;
   constructor(
     private _authenticationService: AuthenticationService, 
     private formBuilder:FormBuilder,private location:Location,
@@ -34,16 +36,15 @@ export class AdminNotificationsComponent implements OnInit {
     this.getRole()
     this._authenticationService.currentUser.subscribe((x: any) => {
       this.currentUser = x
-      
+      this.currentUser?.user_role == 3 ? this.getCommunityByMangmentId(): this.currentUser?.user_role == 8 ? this.getManagementUserCommunities():this.getNotification()
     });
   }
 
   ngOnInit(): void {
-   this.getNotification()
   }
 
   getNotification(){
-    let data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  : this.currentUser.id }
+    let data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.currentUser?.prmsnId == '6' ? '' : [3,5].includes(this.currentUser?.user_role) ? this.community_id: this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  : this.currentUser?.id }
     this.dataService.getNotification(data).subscribe((res:any)=>{
       
       if(!res.error){
@@ -62,6 +63,53 @@ export class AdminNotificationsComponent implements OnInit {
       this.loading=  false;
       this.dataService.genericErrorToaster()
     })
+  }
+  getCommunityByMangmentId(){
+    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity1 = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      })  ;
+      this.community_id = response?.body[0]?.cp_id
+      this.getNotification();
+    }
+  })
+  }
+  getManagementUserCommunities(){
+    let data = {
+      userId : this.currentUser?.id,
+      mangId : this.currentUser?.management
+    }
+    this.dataService.getManagementUserCommunities(data).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity1 = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      });
+      if(this.currentUser?.prmsnId == '1'){
+        // this.slctCom(this.currentUser?.id)
+        this.allCommunity1 =   this.allCommunity1.filter(i=>{
+          if(this.currentUser?.id == i.id){
+            return i
+          }
+        })
+      }
+        //this.toastr.successToastr(response.msg);
+      } else if (response['error'] == true) {
+        this.tost.errorToastr(response.msg);
+      }
+    }, (err) => {
+      this.dataService.genericErrorToaster();
+
+    })
+  }
+
+  selectCommunity1(id:any){
+    this.community_id=id;
+    this.getNotification()
   }
 
   openDeleteUser(row){

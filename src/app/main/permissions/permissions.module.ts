@@ -9,6 +9,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { CoreCommonModule } from '@core/common.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 const routes = [
@@ -31,6 +32,8 @@ const routes = [
     CoreCommonModule,
     NgxDatatableModule,
     ContentHeaderModule,
+    ReactiveFormsModule,
+    FormsModule
 
   ]
 })

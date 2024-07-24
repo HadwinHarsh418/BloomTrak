@@ -107,7 +107,7 @@ export class ProfileAgencyComponent implements OnInit {
   ngOnInit(): void {
     this.getAgencyContractById()
     this.getagencyDetails();
-    if(this.currentUser.role == 'Community'){
+    if(this.currentUser?.role == 'Community'){
       // this.getBudgetById()
     }
     this.contentHeader = {
@@ -223,7 +223,7 @@ export class ProfileAgencyComponent implements OnInit {
 
     addBgt(){
       let data ={
-        community_id : this.currentUser.id,
+        community_id : this.currentUser?.id,
         agency_id : this.comunityId,
         budget : this.budgetForm.value.budget
       }
@@ -246,7 +246,7 @@ export class ProfileAgencyComponent implements OnInit {
 
     updtBgt(){
       let data ={
-        community_id : this.currentUser.id,
+        community_id : this.currentUser?.id,
         agency_id : this.comunityId,
         budget : this.budgetForm.value.budget
       }
@@ -269,7 +269,7 @@ export class ProfileAgencyComponent implements OnInit {
 
     getBudgetById(){
       let data ={
-        community_id : this.currentUser.id,
+        community_id : this.currentUser?.id,
         agency_id : this.comunityId,
       }
       this._userService.getBudgetById(data).subscribe(response => {
@@ -300,9 +300,9 @@ export class ProfileAgencyComponent implements OnInit {
       let data ={
         sms_notification : this.value == false ? '1' : '0',
         email_notification : this.allAgency [0].email_notification,
-        is_for : this.currentUser.role == 'User' ? 'user' : this.currentUser.role == 'SuperAdmin' ? 'superadmin' : 'agency',
-        agency_id :  this.currentUser.role == 'Agency' ? this.currentUser.id : this.currentUser.role == 'SuperAdmin' ? this.allAgency[0].id : '',
-        user_id :  this.currentUser.role == 'Agency' ?  '' : this.currentUser.id 
+        is_for : this.currentUser?.role == 'User' ? 'user' : this.currentUser?.role == 'SuperAdmin' ? 'superadmin' : 'agency',
+        agency_id :  this.currentUser?.role == 'Agency' ? this.currentUser?.id : this.currentUser?.role == 'SuperAdmin' ? this.allAgency[0].id : '',
+        user_id :  this.currentUser?.role == 'Agency' ?  '' : this.currentUser?.id 
       }
       this.dtSrv.notificationEnableDisable(data).subscribe((res: any) => {
       })
@@ -313,9 +313,9 @@ export class ProfileAgencyComponent implements OnInit {
       let data ={
         email_notification : this.value2 == false ? '1' : '0',
         sms_notification : this.allAgency [0].sms_notification,
-        is_for : this.currentUser.role == 'User' ? 'user' : this.currentUser.role == 'SuperAdmin' ? 'superadmin' : 'agency',
-        agency_id :  this.currentUser.role == 'Agency' ? this.currentUser.id : this.currentUser.role == 'SuperAdmin' ? this.allAgency[0].id :  '',
-        user_id :  this.currentUser.role == 'Agency' ?  '' : this.currentUser.id 
+        is_for : this.currentUser?.role == 'User' ? 'user' : this.currentUser?.role == 'SuperAdmin' ? 'superadmin' : 'agency',
+        agency_id :  this.currentUser?.role == 'Agency' ? this.currentUser?.id : this.currentUser?.role == 'SuperAdmin' ? this.allAgency[0].id :  '',
+        user_id :  this.currentUser?.role == 'Agency' ?  '' : this.currentUser?.id 
       }
       this.dtSrv.notificationEnableDisable(data).subscribe((res: any) => {
       })
@@ -344,12 +344,8 @@ export class ProfileAgencyComponent implements OnInit {
    
     getAgencyContractById(){
       this.myFileName = 'Agency-Contract-Form.pdf';
-      this.dtSrv.getAgencyContractById(this.comunityId).subscribe((response: any) => {
-      this.rows = response.body.sort(function(a, b){
-        if(a.contract_start_date.toUpperCase() < b.contract_start_date.toUpperCase()) { return -1; }
-        if(a.contract_start_date.toUpperCase() > b.contract_start_date.toUpperCase()) { return 1; }
-        return 0;
-    });
+      this.dtSrv.getAgencyContractById(this.comunityId, this.currentUser?.user_role == 1 ? this.currentUser?.id : this.currentUser?.user_role == 4 ? this.currentUser?.com_id : '').subscribe((response: any) => {
+      this.rows = response.body.sort((a, b) => new Date(b.contract_start_date).getTime() - new Date(a.contract_start_date).getTime());
       this.fileUrl=response.body[0].contract;
 
 
@@ -372,16 +368,20 @@ uploadNow() {
   let formdata2 = new FormData();
   formdata2.append('docFile',this.fileToUpload)
   formdata2.append('agency_id',this.comunityId)
-  formdata2.append('community_id',this.currentUser.id)
+  formdata2.append('community_id',this.currentUser?.id)
   formdata2.append('contract_start_date',this.contractform.value.contract_start_date)
   formdata2.append('contract_end_date',this.contractform.value.contract_end_date)
-
-
+  if (this.contractform.value.contract_start_date >=this.contractform.value.contract_end_date) {
+   
+    this.toastr.errorToastr('End Date must be after Start Date ')
+    return
+  }else{
   this.dtSrv.uploadAgencyContract(formdata2).subscribe(
     (res:any) => {
       if (!res.error) {
         this.toastr.successToastr("Contract Upload Successful")
         this.contractform.reset();
+        this.getAgencyContractById()
         // this.getLedger()
       } else {
         this.toastr.errorToastr(res.msg)
@@ -389,9 +389,22 @@ uploadNow() {
   }, (error:any) => {
     this.dtSrv.genericErrorToaster()
   }
-  )}
+  )}}
 get contractform_Control() {
   return this.contractform.controls
 }
+delete(id){
+  let data ={
+    id: id,
+  }
+  this.dtSrv.deleteAgencyContract(data).subscribe((res:any)=>{
+    if(!res.error){
+      this.toastr.successToastr(res.msg)
+      this.getAgencyContractById()
+    }else{
+      this.toastr.errorToastr(res.msg)
+    }
+  })
 
+}
 }

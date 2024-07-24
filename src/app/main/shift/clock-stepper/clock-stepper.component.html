@@ -87,9 +87,10 @@
                         </div>
                         <div class="col-lg-7">
                             <div class="common-form-left form-group">
-                                <input type="text"
+                                <input type="text" 
+                                [disabled]="isUsernameDisabled()"
                                     [class.is-invalid]="fc2['username'].dirty && fc2['username'].invalid"
-                                    formControlName="username" class="form-control form-control-user" id="username">
+                                    formControlName="username" class="form-control form-control-user" id="username12">
                                     <div *ngIf="fc2['username'].dirty && fc2['username'].invalid" class="invalid-feedback">
                                         <div *ngIf="fc2['username'].hasError('required')">This field is required
                                         </div>
@@ -107,8 +108,9 @@
                         <div class="col-lg-7">
                             <div class="common-form-left form-group">
                                 <input type="password"
+                                [disabled]="isUsernameDisabled()"
                                     [class.is-invalid]="fc2['password'].dirty && fc2['password'].invalid"
-                                    formControlName="password" class="form-control form-control-user" id="password">
+                                    formControlName="password" class="form-control form-control-user" id="password12">
                                     <div *ngIf="fc2['password'].dirty && fc2['password'].invalid" class="invalid-feedback">
                                         <div *ngIf="fc2['password'].hasError('required')">This field is required
                                         </div>
@@ -135,6 +137,30 @@
                             </div>
                         </div>
                     </div> -->
+                     <h3 class="tt" >-------------OR-------------</h3>
+
+
+                    <div class="row">
+                        <div class="col-lg-5">
+                            <div class="common-form-left">
+                                <label class="form-label" for="login-email">Enter Your Shift PIN: </label>
+
+                            </div>
+                        </div>
+                        <div class="col-lg-7">
+                            <div class="common-form-left form-group">
+                                <input type="text"
+                                 [disabled]="isShiftKeyDisabled()"
+                                    [class.is-invalid]="fc2['shift_key'].dirty && fc2['shift_key'].invalid" (keyup)="shiftkey($event.target.value)"
+                                    formControlName="shift_key" class="form-control form-control-user" id="shift_key">
+                                    <div *ngIf="fc2['shift_key'].dirty && fc2['shift_key'].invalid" class="invalid-feedback">
+                                        <div *ngIf="fc2['shift_key'].hasError('required')">This field is required
+                                        </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div> 
+
 
                     <div class="row mb-2">
                         <b>
@@ -184,9 +210,9 @@
                                     [class.is-invalid]="fc['phone'].dirty && fc['phone'].invalid"
                                     formControlName="phone" class="form-control form-control-user" id="phone">
                                 <div *ngIf="fc['phone'].dirty && fc['phone'].invalid" class="invalid-feedback">
-                                    <div *ngIf="fc['phone'].hasError('required')">This field required
+                                    <div *ngIf="fc['phone'].hasError('required')">This field is Required
                                     </div>
-                                    <div *ngIf="fc['phone'].hasError('pattern')">This field required
+                                    <div *ngIf="fc['phone'].hasError('pattern')">This field is Required
                                     </div>
                                 </div>
                             </div>
@@ -206,7 +232,7 @@
                                     [ngClass]="{ 'is-invalid': fc['pin'].dirty && fc['pin'].invalid }" placeholder=""
                                     aria-describedby="login-email">
                                 <div *ngIf="fc['pin'].dirty && fc['pin'].invalid" class="invalid-feedback">
-                                    <div *ngIf="fc['pin'].hasError('required')">This field required
+                                    <div *ngIf="fc['pin'].hasError('required')">This field is Required
                                     </div>
                                 </div>
                             </div>
@@ -224,7 +250,7 @@
                                 <input type="date" formControlName="dob" class="form-control" max="{{todaysDate}}"
                                     [ngClass]="{ 'is-invalid': fc['dob'].dirty && fc['dob'].invalid }" tabindex="1">
                                 <div *ngIf="fc['dob'].dirty && fc['dob'].invalid" class="invalid-feedback">
-                                    <div *ngIf="fc['dob'].hasError('required')">This field required</div>
+                                    <div *ngIf="fc['dob'].hasError('required')">This field is Required</div>
                                 </div>
                             </div>
                         </div>
@@ -273,10 +299,13 @@
 
             <div *ngIf="activeTab == 3">
                 <form class="auth-login-form mt-2" (ngSubmit)="submit(1)">
-                    <p>
-                        I understand and agree that 30 minutes will be deducted from my time for any shift that
-                        is 6 hours or longer unless the Agency Variance Form is filled out in full and signed by
+                    <!-- <p>
+                        I understand and agree that {{frstFrmData1[0]?.adj_break_time ? frstFrmData1[0]?.adj_break_time : frstFrmData1[0]?.break_time}} minutes will be deducted from my time for any shift that
+                        is {{getDifferenceDate}} longer unless the Agency Variance Form is filled out in full and signed by
                         the appropriate community personnel. I understand and agree that it is my responsibility to take this break and that nearly no exceptions shall be made.
+                    </p> -->
+                    <p>
+                        I understand and agree that a break will be automatically deducted from my time for any shift that is over the Community’s designated shift length for automatic break deductions unless bloomtrak’s Agency Variance Form is filled out and signed by the appropriate community personnel. I understand and agree that it is my responsibility to take this break and that no exceptions shall be made without a completed form being uploaded.
                     </p>
                     <div class="d-flex justify-content-between">
                         <div>
@@ -553,11 +582,11 @@ completed.
     </div>
     <div class="modal-footer">
         <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
-            style="margin-top: 10px!important;" (click)="closeDismiss(modal)" rippleEffect>
+            style="margin-top: 10px!important;" (click)="goback(modal)" rippleEffect>
             <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span>Yes, I Do not Agree
         </button>
         <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
-            style="margin-top: 10px!important;" (click)="goback(modal)" rippleEffect>
+            style="margin-top: 10px!important;" (click)="closeDismiss(modal)" rippleEffect>
             <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Cancel
         </button>
     </div>
@@ -662,7 +691,7 @@ completed.
                             <div class="invalid-feedback"
                                 *ngIf="controls['first_name'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -687,7 +716,7 @@ completed.
                             <div class="invalid-feedback"
                                 *ngIf="controls['last_name'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -708,7 +737,7 @@ completed.
                         <span *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
                             <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                             <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('pattern')"
                                 class="text text-danger">
@@ -738,7 +767,7 @@ completed.
                                     <span *ngIf="controls['email'].dirty && controls['email'].invalid">
                                         <div class="invalid-feedback" *ngIf="controls['email'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         <div class="invalid-feedback" *ngIf="controls['email'].hasError('email')"
                                             class="text text-danger">
@@ -766,7 +795,7 @@ completed.
                                     <span *ngIf="controls['DOB'].dirty && controls['DOB'].invalid">
                                         <div class="invalid-feedback" *ngIf="controls['DOB'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
 
                                     </span>
@@ -797,7 +826,7 @@ completed.
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['management_co_user'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                 </span>
                                             </div>
@@ -855,7 +884,7 @@ completed.
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['community_id'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                 </span>
                                             </div>
@@ -909,7 +938,7 @@ completed.
                                         <div class="invalid-feedback"
                                             *ngIf="controls['hourly_rate'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -932,7 +961,7 @@ completed.
                                         <div class="invalid-feedback"
                                             *ngIf="controls['PIN_code'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -955,14 +984,12 @@ completed.
                                         <div class="invalid-feedback"
                                             *ngIf="controls['password'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         <div class="invalid-feedback"
                                             *ngIf="controls['password'].hasError('pattern')"
                                             class="text text-danger">
-                                            A minimum 8 characters password contains a combination of
-                                            uppercase and lowercase letter and special character are
-                                            required.
+                                            Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                         </div>
                                     </span>
                                 </div>
@@ -986,7 +1013,7 @@ completed.
                                         <div class="invalid-feedback"
                                             *ngIf="controls['cnfrmpassword'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         
                                         <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>
@@ -1022,7 +1049,7 @@ completed.
                                         <div class="invalid-feedback"
                                             *ngIf="controls['community_id'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -1049,7 +1076,7 @@ completed.
                                         <div class="invalid-feedback"
                                             *ngIf="controls['agency_id'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>

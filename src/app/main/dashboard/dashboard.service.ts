@@ -10,7 +10,9 @@ export class DashboardService {
   // Public
   public apiData: any;
   public onApiDataChanged: BehaviorSubject<any>;
+  private saveSubject = new BehaviorSubject<boolean>(false);
 
+  
   /**
    * Constructor
    *
@@ -19,7 +21,7 @@ export class DashboardService {
   constructor(private _httpClient: HttpClient) {
     // Set the defaults
     this.onApiDataChanged = new BehaviorSubject({});
-  }
+     }
 
   /**
    * Resolver
@@ -49,12 +51,21 @@ export class DashboardService {
     });
   }
 
-  getDashboardData(user_role,id): Observable<any>{
-    let dshbrdApi = user_role == '1' ? 'CMdashboard' : user_role == '3' ? 'MGdashboardStatus' : 'AGdashboardStatus'
+  getSaveSubject() {
+    return this.saveSubject.asObservable();
+  }
+
+  setSaveSubject(value: boolean) {
+    this.saveSubject.next(value);
+  }
+
+ 
+  getDashboardData(user_role,id,forCp?): Observable<any>{
+    let dshbrdApi = user_role == '1' ? 'CMdashboard' : user_role == '3' || user_role == 8 ? 'MGdashboardStatus' : 'AGdashboardStatus'
    if(user_role == '5'){
-    return this._httpClient.get(`${environment.baseApiUrl}USRdashboardShift?id=${id}`,);
-   } else if(user_role == '4'){
-    return this._httpClient.get(`${environment.baseApiUrl}UsrCMdashboardShift/${id}`,);
+    return this._httpClient.get(`${environment.baseApiUrl}USRdashboardShift?id=${id}&for_as=${forCp ?? ''}`,);
+  //  }else if(user_role == '4'){
+  //   return this._httpClient.get(`${environment.baseApiUrl}UsrCMdashboardShift/${id}`,);
    }else if(user_role == '6'){
     return this._httpClient.get(`${environment.baseApiUrl}dashboard`,);
    }
@@ -70,7 +81,7 @@ export class DashboardService {
   }
 
   getPermissionByAdminRole(): Observable<any>{
-    if(sessionStorage.getItem('Token'))
+    if(localStorage.getItem('Bloom-admin-auth-token'))
     return this._httpClient.get(`${environment.baseApiUrl}getPermissionByAdminRole`);
   }
 

@@ -207,12 +207,14 @@
                                     aria-hidden="true"></span>
                                     I Agree
                             </button>
+
                             <!-- <button type="button" class="btn btn-primary btn-block " [disabled]="btnShow" (click)="activeTab = 7">
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
                                     I Agree
                             </button> -->
-                        </div>
+
+                    </div> 
                         <div>
                             <button type="button" class="btn btn-primary btn-block " (click)="tab6Submit(0)">
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
@@ -238,12 +240,16 @@
                                     aria-hidden="true"></span>
                                     I Agree
                             </button>
+
+
                             <!-- <button type="button" class="btn btn-primary btn-block " [disabled]="btnShow" (click)="activeTab = 8">
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
                                     aria-hidden="true"></span>
                                     I Agree
                             </button> -->
-                        </div>
+
+
+                         </div>
                         <div>
                             <button type="button" class="btn btn-primary btn-block " (click)="tab7Submit(0)">
                                 <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
@@ -504,7 +510,7 @@
                             <div class="invalid-feedback"
                                 *ngIf="controls['first_name'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -529,7 +535,7 @@
                             <div class="invalid-feedback"
                                 *ngIf="controls['last_name'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                         </span>
                     </div>
@@ -550,7 +556,7 @@
                         <span *ngIf="controls['phone_number'].dirty && controls['phone_number'].invalid">
                             <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('required')"
                                 class="text text-danger">
-                                This field required
+                                This field is Required
                             </div>
                             <div class="invalid-feedback" *ngIf="controls['phone_number'].hasError('pattern')"
                                 class="text text-danger">
@@ -580,7 +586,7 @@
                                     <span *ngIf="controls['email'].dirty && controls['email'].invalid">
                                         <div class="invalid-feedback" *ngIf="controls['email'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         <div class="invalid-feedback" *ngIf="controls['email'].hasError('email')"
                                             class="text text-danger">
@@ -607,7 +613,7 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['PIN_code'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                     </span>
                                 </div>
@@ -630,14 +636,12 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['password'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         <div class="invalid-feedback"
                                             *ngIf="controls['password'].hasError('pattern')"
                                             class="text text-danger">
-                                            A minimum 8 characters password contains a combination of
-                                            uppercase and lowercase letter and special character are
-                                            required.
+                                            Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                         </div>
                                     </span>
                                 </div>
@@ -661,7 +665,7 @@
                                         <div class="invalid-feedback"
                                             *ngIf="controls['cnfrmpassword'].hasError('required')"
                                             class="text text-danger">
-                                            This field required
+                                            This field is Required
                                         </div>
                                         
                                         <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>

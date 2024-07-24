@@ -19,6 +19,7 @@ export class EditAgencyholidayComponent implements OnInit {
   btnShow: boolean =false;
   rows: any;
   holiId: any;
+  comdata:any;
   currentUser: any;
   searchStr: string;
   public page = new Page();
@@ -99,6 +100,7 @@ export class EditAgencyholidayComponent implements OnInit {
       
     });
     this.getAgencyListing()
+    this.getcommunityForAgencyRates()
   }
 
   ngOnInit(): void {
@@ -115,22 +117,34 @@ export class EditAgencyholidayComponent implements OnInit {
           },
           {
             name: 'Agency Holiday',
-            isLink: false,
-            link: '/agency'
+            isLink: true,
+            link: '/agency-holiday'
           }
         ]
       }
     };
 
     this.formData = this.fb.group({
+      community_id: ['',[Validators.required]],
        holi_strDate : [null ,[Validators.required]],
       holi_strTime : [null ,[Validators.required]],
       holi_endDate : [null ,[Validators.required]],
       holi_endTime : [null ,[Validators.required]],
-      description : ['' ],
+      description : [null,[Validators.required]],
       agency_id : ['' ,[Validators.required]],
       holiday_name : ['' ,[Validators.required]]
-    })
+    }
+    )
+    if(this.currentUser?.role != 'Admin')
+    {
+     this.formData.controls['community_id'].clearValidators();
+     this.formData.updateValueAndValidity();
+    }
+    if(this.currentUser?.role == 'Admin')
+    {
+     this.formData.controls['community_id'].setValidators(Validators.required);
+     this.formData.updateValueAndValidity();
+    }
     
   }
 
@@ -147,7 +161,7 @@ export class EditAgencyholidayComponent implements OnInit {
     this.dtsrv.getHolidayByID(id).subscribe((res:any)=>{
       this.rows = res.body[0];
       this.holiId = res.body[0].id
-      this.patchVal()
+      this.selectCommunity('',res.body[0].community_id)
     },err=>{
       this.toaster.errorToastr('Something went wrong please try again leter')
     })
@@ -166,6 +180,7 @@ export class EditAgencyholidayComponent implements OnInit {
       date: this.rows.date,
       description: this.rows.description,
       agency_id: this.rows.agency_id,
+      community_id:this.rows.community_id,
       holiday_name: this.rows.holiday_name,
       holi_strDate: this.dt_tm1[0],
       holi_strTime: this.dt_tm1[1],
@@ -189,25 +204,43 @@ export class EditAgencyholidayComponent implements OnInit {
       agency_id: this.formData.value.agency_id,
       holiday_name: this.formData.value.holiday_name,
       id: this.holiId,
-      community_id : this.currentUser.id
+      community_id : this.formData.value.community
       
     }
     this.btnShow = true;
-    this.dtsrv.editHolidayByID(body).subscribe((res: any) => {
-      if (!res.error) {
-        this.toaster.successToastr(res.msg)
-        this.btnShow = false;
-        this.loct.back()
-      } else {
-        this.btnShow = false;
-        this.toaster.errorToastr(res.msg)
-      }
-    },
-      (err) => {
-        this.btnShow = false;
-        this.dtsrv.genericErrorToaster()
-      })
+    if(this.formData.value.holi_strDate + ' ' + this.formData.value.holi_strTime >= this.formData.value.holi_endDate + ' ' + this.formData.value.holi_endTime){
+      this.toaster.errorToastr("Holiday End Time must be after Holiday Start Time")
+      this.btnShow = false;
+    }else{
+      this.dtsrv.editHolidayByID(body).subscribe((res: any) => {
+        if (!res.error) {
+          this.toaster.successToastr(res.msg)
+          this.btnShow = false;
+          this.loct.back()
+        } else {
+          this.btnShow = false;
+          this.toaster.errorToastr(res.msg)
+        }
+      },
+        (err) => {
+          this.btnShow = false;
+          this.dtsrv.genericErrorToaster()
+        })
+    }
 
+
+  }
+
+  selectCommunity(event:any,id?:any){
+    if(this.currentUser?.user_role != 1)
+    this.dtsrv.getAgenciesNewByID(id ?? event?.target?.value).subscribe((response: any) => { 
+      this.agencyListingData = response.body;
+      this.patchVal()
+
+    })
+    else{
+      this.patchVal()
+    }
   }
 
   cnvrtnewDt(date_tm) {
@@ -215,11 +248,30 @@ export class EditAgencyholidayComponent implements OnInit {
   }
 
   getAgencyListing(){
-    let community_id = this.currentUser.id
+    let community_id = this.currentUser?.id
     let is_for = 'community'
     let typeDrop = true
     this.dtsrv.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe((res:any)=>{
       this.agencyListingData = res.body
     })
   }
+  getcommunityForAgencyRates() {
+    if(this.currentUser?.user_role == 6)
+    this.dtsrv.getAllCgetcommunityForAgencyRatesom().subscribe((response: any) => { 
+          this.comdata = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        })
+        else{
+          this.dtsrv.getMNMGcommunity(this.currentUser?.user_role == 8 ? this.currentUser?.com_id : this.currentUser?.id).subscribe((response: any) => {
+              this.comdata = response.body.sort(function(a, b){
+                if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+                if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+                return 0;
+            })  ;
+  }    
+
+      )}}
 }

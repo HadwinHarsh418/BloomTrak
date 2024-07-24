@@ -32,6 +32,8 @@ export class User {
   stepper?: number;
   access_to?:string;
   community?:any;
+  management?:any;
+  agency_shift_request_status?:any
 }
 
 

@@ -25,7 +25,6 @@ const routes = [
     {
         path: '',
         component: ContractProfileComponent,
-        canActivate: [AuthGuard],
     },
 
 ];

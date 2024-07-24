@@ -1,17 +1,22 @@
-<div class="col-lg-12">
-    <div class="card card-statistics">
-        <div class="card-header">
-            <h4 class="card-title text-center">Welcome to bloomtrak</h4>
-            <h6 class="card-title text-danger" *ngIf="showPermisionError?.length  == 0">You Have No Permisions Please Contact To Your Admin</h6>
-
+<i class="fa fa-spinner fa-spin loader" *ngIf="loadingSite"></i>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title text-center">Welcome to bloomtrak</h4>
+                <h6 class="card-title text-danger" *ngIf="showPermisionError?.length  == 0">You Have No Permisions Please Contact To Your Admin</h6>
+    
+            </div>
         </div>
+    
     </div>
-
 </div>
-<div class="row match-height" *ngIf="shftTrk&&showPermisionError?.length">
+<!-- {{shftTrk && showPermisionError && !loadingSite}}
+{{dashusers | json}} -->
+<div class="row match-height" *ngIf="(currentUser?.access_to == 'both' && this.currentUser?.user_role != 4) || (currentUser?.access_to == 'shift_trak' && this.currentUser?.user_role != 4)">
     <!-- Medal Card -->
     <ng-container *ngFor="let dashuser of dashusers">
-        <div class="col-xl-4 col-md-6 col-12" *ngIf="dashuser.roles.includes(currentUser.role)">
+        <div class="col-xl-4 col-md-6 col-12" *ngIf="dashuser.roles.includes(currentUser.role) && vwPrms == '1' ">
             <div class="card card-congratulation-medal">
                 <div class="card-body">
                     <!-- <h5>Welcome 🎉 {{ dashuser?.username }}!</h5> -->
@@ -44,7 +49,7 @@
 </div> -->
     <!--/ Medal Card -->
     <!-- Statistics Card -->
-    <div class="col-xl-8 col-md-6 col-12">
+    <div class="col-xl-8 col-md-6 col-12" *ngIf="showPermisionError?.length  != 0 || currentUser.user_role == 3 || currentUser.user_role == 8">
         <div class="card card-statistics">
             <div class="card-header">
                 <h4 class="card-title">shiftrak Statistics</h4>
@@ -56,7 +61,7 @@
                 <div class="row d-flex " *ngIf="currentUser.role != 'User'">
                     <ng-container *ngFor="let dispStat of stats">
 
-                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="dispStat.roles.includes(currentUser.role)">
+                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0 media-employees" *ngIf="dispStat.roles.includes(currentUser.role)">
                             <div class="media">
                                 <div class="avatar {{dispStat.iconColor}} mr-2">
                                     <div class="avatar-content">
@@ -72,19 +77,24 @@
 
                     </ng-container>
 
-                    <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0">
+                    <i class="fa fa-spinner fa-spin todar" *ngIf="loadingSite1"></i>
+
+                    <div class="card" *ngIf="!loadingSite1">
+                    <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8">
                         <div class="media">
-                            <div class="avatar bg-light-info mr-2">
+                            <div class="avatar bg-light-primary mr-2">
                                 <div class="avatar-content">
-                                    <i class="fa fa-building-o  avatar-icon"></i>
+                                    <i class="fa fa-suitcase  avatar-icon"></i>
                                 </div>
                             </div>
                             <div class="media-body my-auto">
-                                <h4 class="font-weight-bolder mb-0">{{ data?.total_vehicle || 0 }}</h4>
-                                <p class="card-text font-small-3 mb-0">Agencies</p>
+                                <h4 class="font-weight-bolder mb-0">{{this.totalshift}}</h4>
+                                <p class="card-text font-small-3 mb-0">Community Shifts</p>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
+                </div>
+
                     <!-- <div class="col-sm-6 col-xl-3 mb-2 mb-sm-0">
                         <div class="media">
                             <div class="avatar bg-light-danger mr-2">
@@ -172,7 +182,7 @@
                     <li ngbNavItem>
                         <a ngbNavLink>Reservations</a>
                         <ng-template ngbNavContent>
-                            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="todayBooking"
+                            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="todayBooking"
                                 [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" rowHeight="auto">
                                 <ngx-datatable-column [name]="'Departure Time'" prop="start_period">
                                     <ng-template let-row="row" ngx-datatable-cell-template>
@@ -197,7 +207,7 @@
                     <li ngbNavItem>
                         <a ngbNavLink>Departures</a>
                         <ng-template ngbNavContent>
-                            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="todays_Departure"
+                            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="todays_Departure"
                                 [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
                                 [limit]="10">
                                 <ngx-datatable-column [name]="'Departure Time'" prop="end_period">
@@ -224,7 +234,7 @@
                     <li ngbNavItem>
                         <a ngbNavLink>Returning</a>
                         <ng-template ngbNavContent>
-                            <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="todays_Returning"
+                            <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="todays_Returning"
                                 [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
                                 [limit]="10">
                                 <ngx-datatable-column [name]="'Arrival Time'" prop="end_period">
@@ -288,36 +298,104 @@
         </div>
     </div> -->
 </div>
-<div class="row match-height" *ngIf="spndTrk && currentUser.prmsnId != '2'&&showPermisionError?.length">
+<div class="row match-height" *ngIf="(this.currentUser?.user_role == 4)">
+    <ng-container *ngFor="let dashuser of dashusers" >
+        <div class="col-xl-4 col-md-6 col-12" *ngIf="dashuser.roles.includes(currentUser.role) && vwPrms == '1' ">
+            <div class="card card-congratulation-medal">
+                <div class="card-body">
+                    <!-- <h5>Welcome 🎉 {{ dashuser?.username }}!</h5> -->
+                    <!-- <p class="card-text font-small-3">to bloomtrak</p> -->
+                    <h3 class="mb-75 mt-2 pt-50">
+                        <a href="javascript:void(0);">Total {{dashuser?.name}} {{totalshift || 0}}</a>
+                    </h3>
+                    <button type="button" class="btn btn-primary" routerLink="{{rLink}}">
+                        <i class="fa fa-eye"></i>
+                        {{viewStat}}
+                    </button>
+                    <!-- <img src="assets/images/illustration/badge.svg" class="congratulation-medal" alt="Medal Pic" /> -->
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <div class="col-xl-8 col-md-6 col-12" *ngIf="showPermisionError?.length  != 0">
+        <div class="card card-statistics">
+            <div class="card-header">
+                <h4 class="card-title">shiftrak Statistics</h4>
+            </div>
+            <div class="card-body statistics-body">
+                <div class="row d-flex " *ngIf="currentUser.role != 'User'">
+                    <ng-container *ngFor="let dispStat of stats">
 
-    <div class="col-4">
+                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="dispStat.roles.includes(currentUser.role)">
+                            <div class="media">
+                                <div class="avatar {{dispStat.iconColor}} mr-2">
+                                    <div class="avatar-content">
+                                        <i class="{{dispStat.icon}} avatar-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="media-body my-auto">
+                                    <h4 class="font-weight-bolder mb-0">{{ totalshift || 0 }}</h4>
+                                    <p class="card-text font-small-3 mb-0">{{dispStat.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </div>
+
+                <div class="row d-flex justify-content-between" *ngIf="currentUser.role == 'User'">
+                    <ng-container *ngFor="let dispStat of stats">
+
+                        <div class="col-sm-6 col-xl-3 mb-2 mb-xl-0" *ngIf="dispStat.roles.includes(currentUser.role)">
+                            <div class="media">
+                                <div class="avatar {{dispStat.iconColor}} mr-2">
+                                    <div class="avatar-content">
+                                        <i class="{{dispStat.icon}} avatar-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="media-body my-auto">
+                                    <h4 class="font-weight-bolder mb-0">{{ dispStat.stat || 0 }}</h4>
+                                    <p class="card-text font-small-3 mb-0">{{dispStat.name}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+
+<div class="row match-height" *ngIf="spndTrk && (currentUser.prmsnId != '2'&&showPermisionError?.length&&!loadingSite) || (currentUser.user_role == 3 || currentUser.user_role == 8 && !loadingSite)">
+
+    <div class="col-lg-4">
         <div class="card card-statistics">
             <div class="card-header">
                 <h4 class="card-title">Last Entry Summary</h4>
             </div>
 
 
-            <div class="row mx-1" *ngIf="['6','3','8'].includes(currentUser.prmsnId)">
-                <div class="col-lg-4">
+            <div class="row name" *ngIf="['6','3','8'].includes(currentUser.prmsnId) || this.currentUser?.user_role == 8">
+                <div class="col-lg-12">
                     <div class="common-form-left">
                         <label for="inputPassword6" class="col-form-label">Communities :
                         </label>
                     </div>
                 </div>
-                <div class="col-lg-8">
+                <div class="col-lg-12">
                     <div class="common-form-left form-group">
                         <select class="form-control" (change)="chngCom($event.target.value)"
-                            *ngIf="currentUser.user_role !='3'  && this.currentUser.user_role !='8'">
-                            <!-- <option value="undefined" selected="selected" disabled>---Select Community---</option> -->
-                            <!-- <option value="" >All Communities</option> -->
+                            *ngIf="currentUser.user_role !=3  && currentUser.user_role !=8"
+                              [disabled]="comdisable">
                             <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}
                             </option>
                         </select>
                         <select class="form-control"
-                            *ngIf="currentUser.user_role=='3'  || this.currentUser.user_role=='8'"
-                            (change)="chngCom($event.target.value)">
-                            <!-- <option value="undefined" selected="selected" disabled>---Select Community---</option> -->
-                            <!-- <option value="" >All Community</option> -->
+                            *ngIf="currentUser.user_role== 3  || currentUser.user_role==8"
+                            (change)="chngCom($event.target.value)"
+                            [disabled]="comdisable">
                             <option value="{{item.cp_id || item.community_id}}" *ngFor="let item of allCommunity">
                                 {{item.community_name}}</option>
                         </select>
@@ -326,14 +404,14 @@
             </div>
 
 
-            <div class="row mx-1">
-                <div class="col-lg-5">
+            <div class="row name">
+                <div class="col-lg-12">
                     <div class="common-form-left">
                         <label for="inputPassword6" class="col-form-label">Select Time Period :
                         </label>
                     </div>
                 </div>
-                <div class="col-lg-7">
+                <div class="col-lg-12">
                     <div class="common-form-left form-group">
                         <select name="overtime" class="form-control" (change)="chngDay($event.target.value)">
                             <!-- <option value="undefined" selected="selected" disabled>---Allow Overtime---</option> -->
@@ -370,7 +448,7 @@
         </div>
     </div>
 
-    <div class="col-8">
+    <div class="col-lg-8">
         <div class="card card-statistics">
             <div class="card-header">
                 <h4 class="card-title">spendtrak Statistics : Monthly Expense</h4>
@@ -423,11 +501,11 @@
 </div>
 
 <!----------------------------Monthly Chart Card----------------------------->
-<div class="row match-height" *ngIf="currentUser.prmsnId != '2' && spndTrk &&showPermisionError?.length">
+<div class="row match-height" *ngIf="(currentUser.prmsnId != '2' && spndTrk &&showPermisionError?.length&&!loadingSite) || (currentUser.user_role == 3 || this.currentUser?.user_role == 8 || this.currentUser?.user_role == 6) && !loadingSite" >
     <div class="col-md-12 mb-2">
         <div class="row">
             <div class="col-md-6">
-                <p class="head">Month to Date - Spend to Budget</p>
+                <h5 class="head">Month to Date - Spend to Budget</h5>
             </div>
             <!-- <div class="col-md-6">
                 <select  class="form-control" [(ngModel)]="com_name" *ngIf="['6'].includes(currentUser.prmsnId)" (change)="comNames()">
@@ -436,92 +514,92 @@
                     <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
                 </select>
 
-                <select  class="form-control" [(ngModel)]="com_name" *ngIf="currentUser.user_role=='3'  || this.currentUser.user_role=='8'" (change)="mgnComNames(com_name)">
+                <select  class="form-control" [(ngModel)]="com_name" *ngIf="currentUser.user_role=='3'  || this.currentUser?.user_role=='8'" (change)="mgnComNames(com_name)">
                     <option value="{{item.cp_id || item.community_id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
                 </select>
             </div> -->
         </div>
     </div>
     <ng-container>
-        <div class="col-xl-2 col-md-2 col-2">
-            <div style="border-bottom: 1px solid #000;">
-                <p class="label-opt"><b>Key</b></p>
-            </div>
-            <div class="row my-1">
-                <div
-                    style="border-radius: 5px !important;border-color: #e70909;background-color:#e70909;padding: 12px;">
+            <div class="col-xl-3 col-md-3">
+                <div style="border-bottom: 1px solid #000;">
+                    <p class="label-opt"><b>Key</b></p>
                 </div>
-                <div class="mx-1">
-                    <span class="label-opt">Over Budget</span>
-                </div>
-            </div>
-            <div class="row my-1">
-                <div
-                    style="border-radius: 5px !important;border-color: #ede50e;background-color:#ede50e;padding: 12px;">
-                </div>
-                <div class="mx-1">
-                    <span class="label-opt">Approaching Budget</span>
-                </div>
-            </div>
-            <div class="row my-1">
-                <div
-                    style="border-radius: 5px !important;border-color: #14802e;background-color:#14802e;padding: 12px;">
-                </div>
-                <div class="mx-1">
-                    <span class="label-opt">Under Budget</span>
-                </div>
-            </div>
-            <!-- <div class="d-block">
-                <div style="border-bottom: 1px solid #000;margin-bottom: 5px !important;">
-                    <p class="label-opt"><b>Months</b></p>
-                </div>
-                <form [formGroup]="form" novalidate>
-                    <div *ngFor="let data of Data; let i=index" class="d-flex opt">
-                        <div>
-                            <input type="checkbox" [value]="data.value" (change)="onCheckboxChange($event)" />
-                        </div>
-                        <div class="mx-2">
-                            <label>
-                                <span class="label-opt">{{data.name}}</span>
-                            </label>
-                        </div>
-                        
-                      </div>
-                </form>
-            </div> -->
-        </div>
-        <div class="col-xl-10 col-md-10 col-10">
-            <div class="card card-congratulation-medal">
-                <div class="card-body">
-                    <!----------------Month/Year Buttons---------------->
-                    <!-- <ng-container>
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="form-group text-right">
-                                <button class="btn btn-primary" (click)="monthSpDownDashboard()" [disabled]="loading">
-                                    Month <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                                </button>
-                            </div>
-                            <div class="form-group text-right mx-1" (click)="yearSpDownDashboard()">
-                                <button class="btn btn-primary" [disabled]="loadingYear">
-                                    Year <span *ngIf="loadingYear" class="spinner-border spinner-border-sm mr-1"></span>
-                                </button>
-                            </div>
-                        </div>
+                <div class="row my-1 cus-0">
+                    <div
+                        style="border-radius: 5px !important;border-color: #e70909;background-color:#e70909;padding: 12px;">
                     </div>
-                </ng-container> -->
-                    <!-- Apexchart component-->
-                    <div id="monthlyChartoptions">
-                        <apx-chart #monthlyChartRef [series]="monthlyChartoptions.series"
-                            [chart]="monthlyChartoptions.chart" [stroke]="monthlyChartoptions.stroke"
-                            [fill]="monthlyChartoptions.fill" [plotOptions]="monthlyChartoptions.plotOptions"
-                            [tooltip]="monthlyChartoptions.tooltip" [colors]="monthlyChartoptions.colors"
-                            [xaxis]="monthlyChartoptions.xaxis" [yaxis]="monthlyChartoptions.yaxis"
-                            [dataLabels]="monthlyChartoptions.dataLabels"></apx-chart>
+                    <div class="mx-1">
+                        <span class="label-opt">Over Budget</span>
                     </div>
                 </div>
+                <div class="row my-1 cus-0">
+                    <div
+                        style="border-radius: 5px !important;border-color: #ede50e;background-color:#ede50e;padding: 12px;">
+                    </div>
+                    <div class="mx-1">
+                        <span class="label-opt">Approaching Budget</span>
+                    </div>
+                </div>
+                <div class="row my-1 cus-0">
+                    <div
+                        style="border-radius: 5px !important;border-color: #14802e;background-color:#14802e;padding: 12px;">
+                    </div>
+                    <div class="mx-1">
+                        <span class="label-opt">Under Budget</span>
+                    </div>
+                </div>
+                <!-- <div class="d-block">
+                    <div style="border-bottom: 1px solid #000;margin-bottom: 5px !important;">
+                        <p class="label-opt"><b>Months</b></p>
+                    </div>
+                    <form [formGroup]="form" novalidate>
+                        <div *ngFor="let data of Data; let i=index" class="d-flex opt">
+                            <div>
+                                <input type="checkbox" [value]="data.value" (change)="onCheckboxChange($event)" />
+                            </div>
+                            <div class="mx-2">
+                                <label>
+                                    <span class="label-opt">{{data.name}}</span>
+                                </label>
+                            </div>
+                            
+                          </div>
+                    </form>
+                </div> -->
             </div>
-        </div>
+            <div class="col-xl-9 col-md-9">
+                <div class="card card-congratulation-medal">
+                    <div class="card-body">
+                        <!----------------Month/Year Buttons---------------->
+                        <!-- <ng-container>
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="form-group text-right">
+                                    <button class="btn btn-primary" (click)="monthSpDownDashboard()" [disabled]="loading">
+                                        Month <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                    </button>
+                                </div>
+                                <div class="form-group text-right mx-1" (click)="yearSpDownDashboard()">
+                                    <button class="btn btn-primary" [disabled]="loadingYear">
+                                        Year <span *ngIf="loadingYear" class="spinner-border spinner-border-sm mr-1"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container> -->
+                        <!-- Apexchart component-->
+                        <div id="monthlyChartoptions">
+                            <apx-chart #monthlyChartRef [series]="monthlyChartoptions.series"
+                                [chart]="monthlyChartoptions.chart" [stroke]="monthlyChartoptions.stroke"
+                                [fill]="monthlyChartoptions.fill" [plotOptions]="monthlyChartoptions.plotOptions"
+                                [tooltip]="monthlyChartoptions.tooltip" [colors]="monthlyChartoptions.colors"
+                                [xaxis]="monthlyChartoptions.xaxis" [yaxis]="monthlyChartoptions.yaxis"
+                                [dataLabels]="monthlyChartoptions.dataLabels"></apx-chart>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         <!-- <div class="col-xl-3 col-md-3 col-3">
         <div style="border-bottom: 1px solid #000;">
@@ -552,14 +630,16 @@
 <!---------------------------/Monthly Chart Card----------------------------->
 
 <!----------------------------Yearly Chart Card----------------------------->
-<div class="row match-height" *ngIf="currentUser.prmsnId != '2' && spndTrk &&showPermisionError?.length">
+<div class="row match-height" *ngIf="(currentUser.prmsnId != '2' && spndTrk &&showPermisionError?.length&&!loadingSite) || (currentUser.user_role == 3 || this.currentUser.user_role == 8) && !loadingSite" >
     <div class="col-md-12">
         <div class="row">
-            <p class="head">Year to Date - Spend to Budget</p>
+           <div class="col-lg-12">
+             <h5 class="head">Year to Date - Spend to Budget</h5>
+           </div>
         </div>
     </div>
     <ng-container>
-        <div class="col-xl-2 col-md-2 col-2">
+        <div class="col-xl-3 col-md-3">
             <div class="d-block">
                 <div style="border-bottom: 1px solid #000;margin-bottom: 5px !important;">
                     <p class="label-opt"><b>Months</b></p>
@@ -577,7 +657,7 @@
                 <!-- </form> -->
             </div>
         </div>
-        <div class="col-xl-10 col-md-10 col-10">
+        <div class="col-xl-9 col-md-9">
             <div class="card card-congratulation-medal">
                 <div class="card-body">
                     <!----------------Month/Year Buttons---------------->

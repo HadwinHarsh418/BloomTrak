@@ -16,18 +16,28 @@
                 <div class="form-group row">
                     
                     <div class="col-lg-12">
-                    <input type="password" formControlName="password" class="input-f" 
+                    <input [type]="passwordTextType ? 'text' : 'password'" formControlName="password" class="input-f" 
                         [ngClass]="{ 'is-invalid': controls['password'].dirty && controls['password'].invalid }"
                         placeholder="Password" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
                         maxlength="50">
+                        <div class="input-group-append">
+                          <span class="input-group-text cursor-pointer eyeBtn"
+                            ><i
+                              class="feather font-small-4"
+                              [ngClass]="{
+                                'icon-eye-off': passwordTextType,
+                                'icon-eye': !passwordTextType
+                              }"
+                              (click)="togglePasswordTextType()"
+                            ></i
+                          ></span>
+                        </div>
                     <div *ngIf="controls['password'].dirty && controls['password'].invalid" class="invalid-feedback">
-                        <div *ngIf="controls['password'].hasError('required')">This field required</div>
+                        <div *ngIf="controls['password'].hasError('required')">This field is Required</div>
                     </div>
                     <div class="invalid-feedback" *ngIf="controls['password'].hasError('pattern')"
                         class="text text-danger">
-                        A minimum 8 characters password contains a combination of
-                        uppercase and lowercase letter and special character are
-                        required.
+                        Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                     </div>
                     </div>
                 </div>
@@ -36,16 +46,28 @@
                    
                     <div class="col-lg-12">
                         <div class="common-form-left form-group">
-                            <input type="password" placeholder="Confirm Password"
+                            <input  [type]="passwordTextType2 ? 'text' : 'password'" placeholder="Confirm Password"
                                 [class.is-invalid]="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid"
                                 formControlName="cnfrmpassword" class="input-f" 
                                 id="cnfrmpassword">
+                                <div class="input-group-append">
+                                  <span class="input-group-text cursor-pointer eyeBtn"
+                                    ><i
+                                      class="feather font-small-4"
+                                      [ngClass]="{
+                                        'icon-eye-off': passwordTextType2,
+                                        'icon-eye': !passwordTextType2
+                                      }"
+                                      (click)="togglePasswordTextType2()"
+                                    ></i
+                                  ></span>
+                                </div>
                             <span
                                 *ngIf="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid">
                                 <div class="invalid-feedback"
                                     *ngIf="controls['cnfrmpassword'].hasError('required')"
                                     class="text text-danger">
-                                    This field required
+                                    This field is Required
                                 </div>
                                 
                                 <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>
@@ -97,7 +119,7 @@
         <div class="col-lg-12">
           <div class="footer-content">
             <ul>
-              <li><p>@ bloomtrak™ DEV 2023 </p></li>
+              <li><p>@ bloomtrak™ DEV 2024 </p></li>
               <li><a href="https://bloomtrak.com/privacy-policy/" target="_blank">Terms of Use </a></li>
               <li><a href="https://bloomtrak.com/privacy-policy/" target="_blank">Privacy Policy</a></li>
             </ul>

@@ -10,6 +10,8 @@ import { ToastrManager } from 'ng6-toastr-notifications';
 import { SettingsService } from '../settings.service';
 import StatesJson from 'assets/states.json';
 import { ConfirmedValidator } from 'app/auth/helpers/mustMacth';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { DashboardService } from 'app/main/dashboard/dashboard.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -19,6 +21,7 @@ import { ConfirmedValidator } from 'app/auth/helpers/mustMacth';
 export class UserProfileComponent implements OnInit {
   States:any = StatesJson;
   formData!: FormGroup;
+  formData1!: FormGroup;
   addCommunityFormData!: FormGroup;
   userFormData!: FormGroup;
   communityFormData!: FormGroup;
@@ -37,42 +40,42 @@ export class UserProfileComponent implements OnInit {
   shortBreak:{hour_label: any,value:any,editing:boolean}[]= [
     {
         "hour_label":"Less then Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"2 Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"3 Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"4 Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"5 Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"6 Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"7 Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     },
     {
         "hour_label":"8 or more Hour",
-        "value":"0",
+        "value":"00",
         "editing": false,
     }
 ]
@@ -82,6 +85,8 @@ export class UserProfileComponent implements OnInit {
   @ViewChild('verificationModal') verificationModal : ElementRef<any>;
   @ViewChild('addCom') addCom : ElementRef<any>;
   @ViewChild('addSrtNmCom') addSrtNmCom : ElementRef<any>;
+  @ViewChild('facinal') facinal: ElementRef<any>;
+  @ViewChild('copyButton') copyButton!: ElementRef;
   userDetails: any;
   state: any =[]
   chngPass!: FormGroup;
@@ -97,6 +102,7 @@ export class UserProfileComponent implements OnInit {
     { hour: '12' },
     { hour: '24' },
   ]
+  count2 : any = ['00', '05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60']
 
   automatic_clockoutArr: any = [
     { hour: '01' },
@@ -118,6 +124,13 @@ export class UserProfileComponent implements OnInit {
   addSrtNmFormData: FormGroup;
   usrExst: boolean;
   CurrentUserRole: Object;
+  isGaleAgency: any;
+  resonIsNull: boolean;
+  facinalty_id: any;
+  fac_id: any;
+  type: any;
+  facilityId: any;
+  public copySuccessMessage: string = '';
 
 
 
@@ -136,7 +149,8 @@ export class UserProfileComponent implements OnInit {
     private fb: FormBuilder,
     private settingService: SettingsService,
     private dataService: DataService,
-    private userService: UserService
+    private userService: UserService,
+    private dashboardservice :DashboardService
     ) {
       this.auth.currentUser.subscribe((x: any) => {
         this.currentUser = x
@@ -146,6 +160,7 @@ export class UserProfileComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getRole()
+    this.getFacilityID()
     this.state = this.States;
     this.getUserRoles()
     setTimeout(() => {
@@ -175,6 +190,7 @@ export class UserProfileComponent implements OnInit {
         agency_website: ['', [Validators.required,Validators.pattern(Patterns.website)]],
         state: ['',[ Validators.required]],
         show_shift_user: ['',[ Validators.required]],
+        show_request : ['',[ Validators.required]],
         address1: ['', [Validators.required]],
         address2: [''],
         city: ['',[ Validators.required]],
@@ -189,7 +205,7 @@ export class UserProfileComponent implements OnInit {
     this.addCommunityFormData = this.fb.group({
       value: ['', [Validators.required]],
       symbol: ['', [Validators.required]],
-      break: ['', [Validators.required]],
+      // break: ['', [Validators.required]],
       // setting_name: ['', [Validators.required]],
     })
 
@@ -212,10 +228,15 @@ export class UserProfileComponent implements OnInit {
       // PIN_code: ['', Validators.required],
     })
 
+    this.formData1 = this.fb.group({
+      shift_assigned_to : ['',Validators.required]
+    })
+
     this.communityFormData = this.fb.group({
       community_name: ['', Validators.required],
       community_address1: ['', [Validators.required]],
       cancellation_period: ['',Validators.required],
+      typ_shift_length : ['',Validators.required],
       automatic_clockout: ['', [Validators.required]],
       community_email: ['', [Validators.required]],
       state: ['', [Validators.required]],
@@ -271,6 +292,9 @@ export class UserProfileComponent implements OnInit {
 
   get controls() {
     return this.formData.controls;
+  }
+  get employee() {
+    return this.formData1.controls;
   }
   get fp() {
     return this.forgotPassword.controls;
@@ -331,7 +355,7 @@ export class UserProfileComponent implements OnInit {
       return
     }
     let body = {
-      id: this.currentUser.id,
+      id: this.currentUser?.id,
       password: this.chngPass.value.old_Pass,
       newPassword: this.chngPass.value.new_Pass,
       confPassword: this.chngPass.value.confim_Pass,
@@ -352,6 +376,30 @@ export class UserProfileComponent implements OnInit {
   
       })
   }
+  submitted1(){
+    for (let item of Object.keys(this.employee)) {
+      this.employee[item].markAsDirty()
+    }
+    if(this.formData1.invalid){
+      return
+    }
+    let body = {
+      assign_to : this.formData1.value.shift_assigned_to,
+      id : this.currentUser.user_role == 4 ? this.currentUser.com_id : this.currentUser.id
+    }
+    this.dataService.shiftAssignTo(body).subscribe((res: any) => {
+      if (!res.error) {
+        this.toastr.successToastr(res.msg);
+        // this.dashboardservice.setSaveSubject(true);
+      } else {
+        this.toastr.errorToastr(res.msg);
+      }
+    },
+      (err) => {
+        this.dataService.genericErrorToaster();
+      })
+    
+  }
 
 submitted(){
   for (let item of Object.keys(this.controls)) {
@@ -367,6 +415,7 @@ submitted(){
     agency_website: this.formData.value.agency_website,
     state: this.formData.value.state,
     show_shift_user:this.formData.value.show_shift_user,
+    show_request:this.formData.value.show_request,
     address1: this.formData.value.address1,
     address2: this.formData.value.address2,
     city: this.formData.value.city,
@@ -397,6 +446,10 @@ submitted(){
 
 
 userSubmitted(){
+  if(this.dateErrorFxn()){
+    this.toastr.errorToastr('Please select valid date!')
+    return;
+  }
   for (let item of Object.keys(this.uc)) {
     this.uc[item].markAsDirty()
   }
@@ -416,12 +469,14 @@ userSubmitted(){
  
   this.btnShow = true;
   let is_for = 'agency'
-  this.dataService.editUser(body,is_for,this.currentUser.role).subscribe((res: any) => {
+  this.dataService.editUser(body,is_for,this.currentUser?.role).subscribe((res: any) => {
     if (!res.error) {
       this.toastr.successToastr(res.msg);
+      this.getRole()
       body = null
     } else {
       this.toastr.errorToastr(res.msg);
+      this.getRole()
     }
     this.btnShow = false;
   },
@@ -430,6 +485,12 @@ userSubmitted(){
       this.dataService.genericErrorToaster();
 
     })
+}
+
+dateErrorFxn(){
+  let date = new Date();
+  let inputDate = new Date(this.formData.value.DOB)
+  return date < inputDate ? true : false;
 }
 
 communitySubmitted(){
@@ -447,6 +508,7 @@ communitySubmitted(){
     automatic_clockout: this.communityFormData.value.automatic_clockout,
     state: this.communityFormData.value.state,
     community_email: this.communityFormData.value.community_email,
+    typ_shift_length : this.communityFormData.value.typ_shift_length,
     cancellation_period: this.communityFormData.value.cancellation_period,
     city: this.communityFormData.value.city,
     community_phone_no: this.communityFormData.value.community_phone_no.replace(/\D/g, ''),
@@ -481,7 +543,7 @@ editManagementSubmit(){
   }
   let body1={
     mg_name: this.editManagement.value.mg_name,
-    username: this.editManagement.value.username,
+    username: this.editManagement.value.username.replace(' ','').trim(),
     mg_title: this.editManagement.value.mg_title,
     short_name: this.curntUsrvl[0]?.sort_name,
     contact_person_name: this.editManagement.value.contact_person_name,
@@ -533,15 +595,39 @@ upadtePassword(){
 
     })}
 }
+copyText() {
+  const text = this.currentUser.id;
+
+  // Create a temporary textarea element
+  const tempTextArea = document.createElement('textarea');
+  tempTextArea.value = text;
+  tempTextArea.style.position = 'fixed';  // Ensure it's not visible
+  document.body.appendChild(tempTextArea);
+  tempTextArea.focus();
+  tempTextArea.select();
+
+  // Execute copy command
+  try {
+    document.execCommand('copy');
+    this.toastr.successToastr('Text copied to clipboard');
+    this.copySuccessMessage = 'Copied: ' + text;
+  } catch (err) {
+    console.error('Unable to copy text to clipboard', err);
+    this.copySuccessMessage = 'Failed to copy. Please copy manually.';
+  } finally {
+    document.body.removeChild(tempTextArea);  // Clean up
+  }
+}
+
 
 sendNosbmt(){
   for (let item of Object.keys(this.sn)) {
     this.sn[item].markAsDirty()
   }
   let data ={
-    number : this.currentUser.role == 'User' ? this.curntUsrvl[0].phone_number : this.currentUser.role == 'Community' ?  this.curntUsrvl[0].community_phone_no : this.currentUser.role == 'Admin' ? this.userDetails.mg_phone :  this.curntUsrvl[0].agency_phone ,
+    number : this.currentUser?.role == 'User' ? this.curntUsrvl[0].phone_number : this.currentUser?.role == 'Community' ?  this.curntUsrvl[0].community_phone_no : this.currentUser?.role == 'Admin' ? this.userDetails.mg_phone :  this.curntUsrvl[0].agency_phone ,
     id : this.userId,
-    is_for :  this.currentUser.role == 'User' ? 'user' : this.currentUser.role == 'Community' ? 'community'  : this.currentUser.role == 'Admin' ? 'management' : 'agency'
+    is_for :  this.currentUser?.role == 'User' ? 'user' : this.currentUser?.role == 'Community' ? 'community'  : this.currentUser?.role == 'Admin' ? 'management' : 'agency'
   }
   this.dataService.sms(data).subscribe((res: any) => {
     if (!res.error) {
@@ -573,7 +659,7 @@ closeVerificationModal(){
   this.modalService.dismissAll()
 }
 otpSubmit(){
-  this.dataService.verifyOtp({...this.otp.value,...{id:this.userId},...{is_for : this.currentUser.role == 'User' ? 'user' : this.currentUser.role == 'Community' ? 'community' : this.currentUser.role == 'Admin' ? 'management' : 'agency'}}).subscribe((res: any) => {
+  this.dataService.verifyOtp({...this.otp.value,...{id:this.userId},...{is_for : this.currentUser?.role == 'User' ? 'user' : this.currentUser?.role == 'Community' ? 'community' : this.currentUser?.role == 'Admin' ? 'management' : 'agency'}}).subscribe((res: any) => {
     if (!res.error) {
       this.toastr.successToastr(res.msg);
       this.modalService.dismissAll()
@@ -596,7 +682,7 @@ generate_id(){
     return;
   }
   this.btnShow = true;
-  this.dataService.generateSecret_Id(this.currentUser.id).subscribe((res: any) => {
+  this.dataService.generateSecret_Id(this.currentUser?.id).subscribe((res: any) => {
     if (!res.error) {
       this.secret_key = res.body[0].secretKey;
       localStorage.setItem('Secretkey',JSON.stringify(this.secret_key))
@@ -618,12 +704,13 @@ forNoti() {
   let data ={
     sms_notification : this.value == false ? '1' : '0',
     email_notification : this.curntUsrvl[0].email_notification,
-    is_for : this.roleData1.includes(this.currentUser.prmsnId) ? 'user' : 'agency',
-    agency_id :  this.currentUser.role == 'Agency' ? this.currentUser.id : '',
-    user_id :  this.roleData1.includes(this.currentUser.prmsnId) ? this.currentUser.id : ''
+    is_for : this.roleData1.includes(this.currentUser?.prmsnId) ? 'user' : 'agency',
+    agency_id :  this.currentUser?.role == 'Agency' ? this.currentUser?.id : '',
+    user_id :  this.roleData1.includes(this.currentUser?.prmsnId) ? this.currentUser?.id : ''
   }
   this.dataService.notificationEnableDisable(data).subscribe((res: any) => {
   })
+  this.getRole()
 }
 
 forEml() {
@@ -631,16 +718,17 @@ forEml() {
   let data ={
     email_notification : this.value2 == false ? '1' : '0',
     sms_notification : this.curntUsrvl[0].sms_notification,
-    is_for : this.roleData1.includes(this.currentUser.prmsnId) ? 'user' : 'agency',
-    agency_id :  this.currentUser.role == 'Agency' ? this.currentUser.id : '',
-    user_id : this.roleData1.includes(this.currentUser.prmsnId) ? this.currentUser.id : ''
+    is_for : this.roleData1.includes(this.currentUser?.prmsnId) ? 'user' : 'agency',
+    agency_id :  this.currentUser?.role == 'Agency' ? this.currentUser?.id : '',
+    user_id : this.roleData1.includes(this.currentUser?.prmsnId) ? this.currentUser?.id : ''
   }
   this.dataService.notificationEnableDisable(data).subscribe((res: any) => {
   })
+  this.getRole()
 }
 
 getRole(){
-  this.dataService.getAllRole( ).subscribe((res:any)=>{
+  this.dataService.getAllRole().subscribe((res:any)=>{
     if(!res.err){
       //  res.body.filter(i=>{ this.roleData.push(i.id)})
        res.body.filter(i=>{ this.roleData.push(i.id.toString())})
@@ -656,9 +744,10 @@ getRole(){
         }
        })
 
-       if(['2'].includes(this.currentUser.prmsnId)){
-        this.dataService.getAgenciesByID(this.currentUser.id).subscribe((res: any) => {
+       if(['2'].includes(this.currentUser?.prmsnId)){
+        this.dataService.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
               this.curntUsrvl = res.body
+              this.type = res.body[0]
               this.formData.patchValue({
                 agency_name: this.curntUsrvl[0]?.agency_name,
                 agency_phone: this.curntUsrvl[0]?.agency_phone,
@@ -666,6 +755,7 @@ getRole(){
                 agency_website: this.curntUsrvl[0]?.agency_website,
                 state: this.curntUsrvl[0]?.state,
                 show_shift_user: this.curntUsrvl[0]?.show_shift_user,
+                show_request: this.curntUsrvl[0]?.shift_request_permission,
                 address1: this.curntUsrvl[0]?.address1,
                 address2: this.curntUsrvl[0]?.address2,
                 city: this.curntUsrvl[0]?.city,
@@ -679,14 +769,16 @@ getRole(){
               this.value = this.curntUsrvl[0]?.sms_notification == 0 ? false : true
               this.value2 = this.curntUsrvl[0]?.email_notification == 0 ? false : true
       })
-    } else if(this.currentUser.role == 'Community' && !this.roleData2.includes(this.currentUser.prmsnId)){
-      this.dataService.getcommunityById(this.currentUser.id).subscribe((res: any) => {
+    } else if(this.currentUser?.role == 'Community' && !this.roleData2.includes(this.currentUser?.prmsnId)){
+      this.dataService.getcommunityById(this.currentUser?.id).subscribe((res: any) => {
         this.curntUsrvl = res.body
+        this.isGaleAgency = res.body[0].gale_flag
               this.secret_key = this.curntUsrvl[0]?.secret_key
               this.communityFormData.patchValue({
                 community_name: this.curntUsrvl[0]?.community_name,
                 community_username: this.curntUsrvl[0]?.username,
                 community_address1: this.curntUsrvl[0]?.community_address1,
+                typ_shift_length : this.curntUsrvl[0]?.typ_shift_length,
                 cancellation_period: this.curntUsrvl[0]?.cancellation_period,
                 community_email: this.curntUsrvl[0]?.community_email,
                 state: this.curntUsrvl[0]?.state,
@@ -700,12 +792,13 @@ getRole(){
                 primary_contact_phone: this.curntUsrvl[0]?.primary_contact_phone,
                 primary_contact_email: this.curntUsrvl[0]?.primary_contact_email
               });
+              this.ptchVal()
               setTimeout(() => {
                 this.communityFormData.get('community_phone_no').setValue(this.communityFormData.value.community_phone_no)
               }, 100)
       })
-    } else if(this.currentUser.role == 'Admin'){
-      this.userService.getManagementById(this.currentUser.id).subscribe((res: any) => {
+    } else if(this.currentUser?.role == 'Admin'){
+      this.userService.getManagementById(this.currentUser?.id).subscribe((res: any) => {
               this.curntUsrvl = res.body
               this.curntUsrvl.map(i=>{
                 if(i.short_name){
@@ -729,10 +822,10 @@ getRole(){
               }, 100)
       })
        }
-       else if(this.currentUser.role == 'User' || this.roleData2.includes(this.currentUser.prmsnId) ){
+       else if(this.currentUser?.role == 'User' || this.roleData2.includes(this.currentUser?.prmsnId) ){
         let is_for = 'user'
         let searchStr = ''
-        this.dataService.getUserById(searchStr = '',this.currentUser.id,is_for).subscribe((res: any) => {
+        this.dataService.getUserById(searchStr = '',this.currentUser?.id,is_for).subscribe((res: any) => {
           this.curntUsrvl = res.body
           this.userFormData.patchValue({
             DOB: this.curntUsrvl[0].DOB,
@@ -758,6 +851,75 @@ getRole(){
 
 }
 
+keyupper(facinalty_id: number) {
+  if (!facinalty_id) {
+      this.resonIsNull = true;
+  } else {
+      this.resonIsNull = false;
+  }
+}
+
+closeded(modal: NgbModalRef) {
+  this.facinalty_id = ''
+  this.resonIsNull = false;
+  modal.dismiss();
+}
+
+facinaltyId(item) {
+  this.modalOpenOSE(this.facinal);
+  if(this.fac_id){
+    this.patchFacilityId()
+  }
+}
+
+updateGaleFacilityId(modal){
+  if(!this.facinalty_id){
+    this.resonIsNull = true
+  }else{
+  let body ={
+    community_id : this.currentUser.id,
+    agency_id : 'fa127792-310a-4c68-8a89-f21c49642539',
+    gale_partnerFacilityId : this.facinalty_id
+  }
+  this.dataService.updateGaleFacilityId(body).subscribe(res=>
+    {
+      if (!res.error) {
+        this.toastr.successToastr(res.msg);
+        modal.dismiss();
+        this.getFacilityID()
+        this.facinalty_id = ''
+      }
+      else{
+        this.toastr.errorToastr(res.msg)
+        modal.dismiss();
+        this.facinalty_id = ''
+      }
+    }
+  )
+}}
+
+patchFacilityId() {
+  this.facinalty_id = this.fac_id.gale_partnerFacilityId;
+}
+
+getFacilityID()
+{
+  let data = {
+    community_id : this.currentUser.id,
+    agency_id : 'fa127792-310a-4c68-8a89-f21c49642539'
+  }
+  this.dataService.getFacilityID(data).subscribe(response => {
+    if (!response.error) {
+      if (response.body) {
+        this.fac_id = response.body[0]
+       this.facilityId = this.fac_id.gale_partnerFacilityId
+      }
+    }
+  });
+}
+
+
+
 addComSubmitted(){
   for (let item of Object.keys(this.adComSet)) {
     this.adComSet[item].markAsDirty()
@@ -774,7 +936,7 @@ addComSubmitted(){
       symbol: this.addCommunityFormData.value.symbol,
       value:this.addCommunityFormData.value.value,
     },
-    break_time:this.addCommunityFormData.value.break
+    // break_time:this.addCommunityFormData.value.break
     }
     this.dataService.editCommunitySetting(data).subscribe((res: any) => {
       if (!res.error) {
@@ -794,13 +956,13 @@ addComSubmitted(){
   }
   else{
     let data ={
-      community_id : this.currentUser.id ,
+      community_id : this.currentUser?.id ,
     // setting_name : this.addCommunityFormData.value.setting_name,
       variance_val  : {
         symbol: this.addCommunityFormData.value.symbol,
         value:this.addCommunityFormData.value.value,
       },
-      break_time:this.addCommunityFormData.value.break
+      // break_time:this.addCommunityFormData.value.break
     }
     this.dataService.addCommunitySetting(data).subscribe((res: any) => {
       if (!res.error) {
@@ -820,9 +982,15 @@ addComSubmitted(){
   }
 }
 
+ptchVal(){
+  this.formData1.patchValue({
+    shift_assigned_to: JSON.stringify(this.curntUsrvl[0]?.shift_assigned_to),
+  })
+}
+
 getCommunitySetting(){
  
-  this.dataService.getCommunitySetting(this.currentUser.id).subscribe((res: any) => {
+  this.dataService.getCommunitySetting(this.currentUser?.id).subscribe((res: any) => {
     if (!res.error) {
           this.rows =  res.body
           this.rows.map(i=> {i.variance_val2 = JSON.parse(i.variance_val); return i});     
@@ -840,12 +1008,12 @@ getCommunitySetting(){
 
 getCommunityBreakSetting(){
  
-  this.dataService.getCommunityBreakSetting(this.currentUser.id).subscribe((res: any) => {
+  this.dataService.getCommunityBreakSetting(this.currentUser?.id).subscribe((res: any) => {
     if (!res.error) {
-      let d= JSON.parse(res.body[0].variance_val)
+      if(res?.body[0]?.variance_val){
+      let d= JSON.parse(res?.body[0]?.variance_val)
           this.shortBreak =JSON.parse(d).map(i=>{i.editing=false; return i;});
-          console.log(this.shortBreak,'ewwghjrwerjwvmewmvwgjc');
-          
+      }
     }
   },
     (err) => {
@@ -901,7 +1069,7 @@ edtComSet(row){
   this.addCommunityFormData.patchValue({
     value: row.variance_val2.value,
     symbol: row.variance_val2.symbol,
-    break: row.variance_val2.break_time,
+    // break: row.variance_val2.break_time,
     // setting_name:row.setting_name,
   })
   this.opnModl(row)
@@ -919,7 +1087,7 @@ addSrtNmComSubmitted(){
   }
   let data ={
     sort_name:this.addSrtNmFormData.value.SrtNm,
-    id : this.currentUser.id
+    id : this.currentUser?.id
   }
   this.dataService.updateCommunityShortname(data).subscribe((res: any) => {
     if (!res.error) {
@@ -962,12 +1130,11 @@ shortNm(val){
 }
 editRowBreak(index: number) {
   this.shortBreak[index].editing = true;
-  console.log("Edit row:", index);
 }
 save(){
   let d = JSON.stringify(this.shortBreak.map(i=>{i.editing=false; return i;}))
   let data = {
-    community_id:this.currentUser.id,
+    community_id:this.currentUser?.id,
     variance_val:d,
   }
   this.dataService.communitySetting(data).subscribe(res=>{

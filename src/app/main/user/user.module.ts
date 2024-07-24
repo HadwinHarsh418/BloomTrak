@@ -16,28 +16,30 @@ import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { AddUserComponent } from './add-user/add-user.component';
 import { EditUserComponent } from './edit-user/edit-user.component';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
-import { PercentageDirectiveDirective } from 'app/auth/helpers/percentage-directive.directive';
+import { CustomDirectives } from 'app/auth/helpers/percentage-directive.directive';
+import { EmployeeListComponent } from 'app/employee-list/employee-list.component';
 
 const routes = [
   {
     path: '',
     component: UserComponent,
-    canActivate: [AuthGuard],
   },{
     path: 'add-user',
     component: AddUserComponent,
-    canActivate: [AuthGuard],
   },{
     path: 'edit-user',
     component: EditUserComponent,
+    canActivate: [AuthGuard],
+  },{
+    path: 'employee-list',
+    component: EmployeeListComponent,
     canActivate: [AuthGuard],
   },
 ];
 
 @NgModule({
     
-    declarations: [UserComponent, AddUserComponent, EditUserComponent,
-      PercentageDirectiveDirective],
+    declarations: [UserComponent, AddUserComponent, EditUserComponent,EmployeeListComponent],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -52,6 +54,7 @@ const routes = [
     NgxDatatableModule,
     ContentHeaderModule,
     NgMultiSelectDropDownModule.forRoot(),
+    CustomDirectives
   ] 
  
 })

@@ -15,7 +15,7 @@
             </div>
         </div>
        </div> 
-       
+       <div class="overflow" style="overflow: auto;">
         <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
             [count]="" [offset]="" [limit]="10" >
@@ -23,6 +23,12 @@
             <ngx-datatable-column name="Name" prop="name" [width]="100" >
                 <ng-template let-name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Role For" prop="is_for" [width]="100"  *ngIf="currentUser.user_role == 6">
+                <ng-template let-is_for="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ is_for == '1' ? 'Community' : is_for == '0' ? 'Agency' : '---'}}
                 </ng-template>
             </ngx-datatable-column>
 
@@ -52,7 +58,7 @@
                                 <!-- <a ngbDropdownItem class="d-flex align-items-center" (click)="dltRoleFctn(row)">
                                     <i class="fa fa-trash mr-50"></i> Delete
                                 </a> -->
-                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-role',row.id,row.name,row.trak_type]"  *ngIf="currentUser.prmsnId == '6'">
+                                <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-role',row.id,row.name,row.trak_type,row.is_for]"  *ngIf="currentUser.prmsnId == '6'">
                                     <i class="fa fa-edit mr-50"></i> Edit Role
                                 </a>
                             </div>
@@ -61,3 +67,4 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
+    </div>

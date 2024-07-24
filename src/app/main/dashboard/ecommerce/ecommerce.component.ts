@@ -12,7 +12,8 @@ import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@ang
 import { debounceTime } from 'rxjs/internal/operators';
 import { Subject } from 'rxjs';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
-import { log } from 'console';
+import { PushNotificationService } from 'app/auth/service/notification.service';
+import { environment } from 'environments/environment';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class EcommerceComponent implements OnInit {
 
   // Public
   public data: any = { total_users: 0, total_drivers: 0, total_coupons: 0 };
-  public currentUser: User;
+  public currentUser: any;
   public isAdmin: boolean;
   public isClient: boolean;
   public loadingStats: boolean;
@@ -46,6 +47,9 @@ export class EcommerceComponent implements OnInit {
 
   rLink: any;
   viewStat: any;
+  loadingSite:boolean=true;
+  loadingSite1:boolean=false;
+
 
     // Private
     private $primary = '#14802e';
@@ -58,10 +62,10 @@ export class EcommerceComponent implements OnInit {
 
   dashusers = [
     {
-      id: 0, username: '', total_username: 0, name: 'Communities', roles: [Role.SuperAdmin ,Role.Admin]
+      id: 0, username: '', total_username: 0, name: 'Communities', roles: [Role.SuperAdmin ,Role.Admin,Role.ManagementUser]
     },
     {
-      id: 1, username: '', total_username: 0, name: 'Shifts', roles: [Role.Community]
+      id: 1, username: '', total_username: 0, name: 'Shifts', roles: [Role.Community,Role.communityUser]
     },
     {
       id: 2, username: '', total_username: 0, name: 'Shifts', roles: [Role.Agency]
@@ -132,6 +136,7 @@ export class EcommerceComponent implements OnInit {
   loading: boolean;
   mthNam: any[]=[];
   loadingYear: boolean = false;
+  comdisable: boolean = false;
   form: FormGroup;
   checkedIDs: any[];
   selectedValue: any[];
@@ -155,6 +160,13 @@ export class EcommerceComponent implements OnInit {
   showPermisionError: any[];
   showAddedOther: any[]=[];
   sectDepr: any[]=[];
+  showshift: any;
+  showDesh: any;
+  totalshift: any;
+  avvshift: any;
+  monthDataName1: any[];
+  lastTrue: number;
+  yearischecked: boolean;
 
   constructor(
     private _authenticationService: AuthenticationService,
@@ -166,12 +178,29 @@ export class EcommerceComponent implements OnInit {
     private authService: AuthenticationService,
     private fb:FormBuilder,
     private _coreMenuService: CoreMenuService,
+    private notificationService: PushNotificationService,
+
 
   ) {
+    sessionStorage.clear()
     this._authenticationService.currentUser.subscribe((x: any) => {
-      // console.log(x)
-      this.currentUser = x
+      this.currentUser = x;
+      if(x && !x.hasOwnProperty('access_to')){
+        this.datasrv.getCMAccessToByDate(this.authService.currentUserValue.com_id ? this.authService.currentUserValue.com_id : this.authService.currentUserValue.id).subscribe((res:any) => {
+          if(!res.err){
+            this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.getDashboardData() : ''
+            if(x?.access_to != res.body?.access_to){
+              this.accTo = res.body
+              this.loadingSite = false
+              let o = JSON.parse(JSON.stringify(this.authService.currentUserValue));
+              Object.assign(o, { access_to: res.body?.access_to})
+              this.authService.updateTokenValue(o);
+            }
+          }
+        })
+      }
     })
+    this.getRole()
     let currMnt = new Date().getMonth()+1;
     this.monthDataName.forEach(item => {
       if(item.id <= currMnt) {
@@ -181,36 +210,25 @@ export class EcommerceComponent implements OnInit {
     });
     this.isAdmin = this._authenticationService.isAdmin;
     this.isClient = !this._authenticationService.isAdmin;
-    if(this.currentUser){
-      this.getRole()
-      this.datasrv.getCMAccessToByDate(this.authService.currentUserValue.com_id ? this.authService.currentUserValue.com_id : this.authService.currentUserValue.id).subscribe((res:any) => {
-        if(!res.err){
-          this.accTo = res.body
-          let o = JSON.parse(JSON.stringify(this.authService.currentUserValue));
-          Object.assign(o, { access_to: res.body?.access_to})
-          this.authService.updateTokenValue(o);
-        }
-      })
-    }
+    
     this.form = this.fb.group({
       checkedValue: this.fb.array([])
     });
     this.debounceApi.pipe(
       debounceTime(1000)
     ).subscribe(data => {
-      this.yearSpDownDashboard()
+      // this.yearSpDownDashboard()
     });
   }
  
 
   ngOnInit(): void {
-    this.getRonMonths();
+    this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 || this.currentUser?.user_role == 6 ? '' : this.getRonMonths()
     this._authenticationService.currentUser.subscribe((x: any) => {
-      // console.log(x)
       this.currentUser = x
       this.stats = [
         {
-          id: 0, name: 'Communities', stat: 0, icon: 'fa fa-users', iconColor: 'bg-light-primary', roles: [Role.SuperAdmin,Role.Admin]
+          id: 0, name: 'Communities', stat: 0, icon: 'fa fa-users', iconColor: 'bg-light-primary', roles: [Role.SuperAdmin,Role.Admin,Role.ManagementUser]
         },
         {
           id: 1, name: 'Agencies', stat: 0, icon: 'fa fa-building-o', iconColor: 'bg-light-info', roles: [Role.SuperAdmin]
@@ -218,11 +236,8 @@ export class EcommerceComponent implements OnInit {
         {
           id: 2, name: 'Employees', stat: 0, icon: 'fa fa-user', iconColor: 'bg-light-danger', roles: [Role.SuperAdmin]
         },
-    
-       
-    
         {
-          id: 3, name: 'Shifts', stat: 0, icon: 'fa fa-suitcase', iconColor: 'bg-light-primary', roles: [Role.Community,Role.Admin]
+          id: 3, name: 'Shifts', stat: 0, icon: 'fa fa-suitcase', iconColor: 'bg-light-primary', roles: [Role.Community,Role.Admin,Role.communityUser,Role.ManagementUser]
         },
         {
           id: 4, name: 'Agencies', stat: 0, icon: 'fa fa-building-o', iconColor: 'bg-light-info', roles: [Role.Community]
@@ -254,10 +269,10 @@ export class EcommerceComponent implements OnInit {
           id:9, name: 'Agency Personnel', stat:0, icon: 'fa fa-user', iconColor:'bg-light-primary', roles: [  ]
         },
         {
-          id:10, name: 'Available Shifts', stat:0, icon: 'fa fa-user', iconColor:'bg-light-primary', roles: [ Role.Agency ]
+          id:10, name: 'Available Shifts', stat:0, icon: 'fa fa-user', iconColor:'bg-light-primary', roles: [ Role.Agency,Role.User ]
         },
         {
-          id:11, name: 'My Shifts', stat:0, icon: 'fa fa-user', iconColor:'bg-light-primary', roles: [ Role.Agency ]
+          id:11, name: 'My Shifts', stat:0, icon: 'fa fa-user', iconColor:'bg-light-primary', roles: [ Role.Agency,Role.User]
         },
         {
           id:12, name: 'Agency Personnel', stat:0, icon: 'fa fa-user', iconColor:'bg-light-primary', roles: [ Role.Agency ]
@@ -271,17 +286,17 @@ export class EcommerceComponent implements OnInit {
     
       ]
 
-      if (this.currentUser && this.currentUser.user_role == '1') {
+      if (this.currentUser && this.currentUser?.user_role == '1') {
         this.viewStat = 'View Shifts' //  community
         this.rLink = '/shift'
-      } else if (this.currentUser && this.currentUser.user_role == '6') {
+      } else if (this.currentUser && this.currentUser?.user_role == '6') {
         this.viewStat = 'View Communities' // admin
         this.rLink = '/community'
-      } else if (this.currentUser && this.currentUser.user_role == '2') {
+      } else if (this.currentUser && this.currentUser?.user_role == '2') {
         this.viewStat = 'View Shifts' // agency
         this.rLink = '/shift'
       } 
-      else if (this.currentUser && this.currentUser.user_role == '3') {
+      else if (this.currentUser && (this.currentUser?.user_role == '3' || this.currentUser?.user_role == 8)) {
         this.viewStat = 'View Communities' // agency
         this.rLink = '/community'
       } else {
@@ -290,60 +305,14 @@ export class EcommerceComponent implements OnInit {
       }
     }
     );
-    this._dashboardService.getDashboardData(this.currentUser.user_role,this.currentUser.id).subscribe(response => {
-      if (!response.error) {
-        let data = response;
-        if (this.currentUser && this.currentUser.user_role == '6') {
-          this.stats[0].stat = data.body[0]?.community_portal; //admin
-          this.stats[1].stat = data.body[0]?.agencies; //admin
-          this.stats[2].stat = data.body[0]?.employees; //admin
-          this.dashusers[0].total_username = data.body[0]?.community_portal; //admin
-        }
-        else if (this.currentUser && this.currentUser.user_role == '1') {
-          this.stats[3].stat = data.body.SHIFT; //community
-          this.stats[4].stat = data.body.Agencies; //community
-          this.stats[5].stat = data.body.Employees; //community
-          // this.stats[6].stat = data.body[0].Contracts; //community
-          this.dashusers[1].total_username = data.body.SHIFT; //community
-        }
-        else if (this.currentUser && this.currentUser.user_role == '2') {
-          // this.stats[7].stat = data.body[0].Contracts; //agency
-          this.stats[12].stat = data?.body?.Employees; //User
-          this.stats[6].stat = data?.body?.shiftAndAvilable; //agency
-          this.stats[10].stat = data?.body?.avilableShift; //agency
-          this.stats[11].stat = data?.body?.myShift; //agency
-          this.dashusers[2].total_username = data?.body?.shiftAndAvilable; //Agency        
-
-        }else if (this.currentUser && this.currentUser.user_role == '3') {
-          // this.stats[7].stat = data.body[0].Contracts; //agency
-          this.stats[0].stat = data.body[0].community_portal; //User
-          this.stats[3].stat = data.body[0].shift; //agency
-          this.dashusers[0].total_username = data.body[0].community_portal; //Agency        
-
-        }
-        else if (this.currentUser && this.currentUser.user_role == '4') {
-          this.stats[7].stat = data.body[0].userCMShift; //User
-          this.dashusers[3].total_username = data.body[0].userCMShift; //Users
-        }
-        else if (this.currentUser && this.currentUser.user_role == '5') {
-          this.stats[7].stat = data.body[0].userAgShift; //User
-          this.dashusers[3].total_username = data.body[0].userAgShift; //Users
-        }
+    
 
 
-        this.data = data.body[0];
-      }
-      this.loadingStats = false;
-    }, error => {
-      this.loadingStats = false;
-    });
-
-
-    // this._authenticationService.login(this.currentUser.value)
-    this.onCheckboxChange('january',true, 0)
+    // this._authenticationService.login(this.currentUser?.value)
+    this.onCheckboxChange('january',true, 0,1)
     this.createChart()
 
-    if(['6'].includes(this.currentUser.prmsnId) || this.currentUser.user_role=='3'  || this.currentUser.user_role=='8'){
+    if(['6'].includes(this.currentUser?.prmsnId) || this.currentUser?.user_role==3  || this.currentUser?.user_role==8){
       this.getCommunityId()
     }
 
@@ -351,10 +320,83 @@ export class EcommerceComponent implements OnInit {
      this.getCurrMenu()
    }, 2000);
   }
+  goToPwa(){
+    this.notificationService.showNotification('Test Notification', 'This is a test notification.');
+  }
+
+  getDashboardData(forcp?){
+    this._dashboardService.getDashboardData(this.currentUser?.user_role,this.currentUser?.id,forcp).subscribe(response => {
+      if (!response.error) {
+        this.loadingSite = false;
+        
+        let data = response;
+        if (this.currentUser && this.currentUser?.user_role == '6') {
+          this.stats[0].stat = data.body[0]?.community_portal; //admin
+          this.stats[1].stat = data.body[0]?.agencies; //admin
+          this.stats[2].stat = data.body[0]?.employees; //admin
+          this.stats[8].stat = data.body[0]?.shift; //admin
+          // this.dashusers[0]?.total_username = data.body[0]?.community_portal; //admin
+        }
+        else if (this.currentUser && this.currentUser?.user_role == '1') {
+          this.stats[3].stat = data.body.SHIFT; //community
+          this.stats[4].stat = data.body.Agencies; //community
+          this.stats[5].stat = data.body.Employees; //community
+          // this.stats[6].stat = data.body[0]?.Contracts; //community
+          this.dashusers[1].total_username = data.body.SHIFT; //community
+        }
+        else if (this.currentUser && this.currentUser?.user_role == '2') {
+          // this.stats[7].stat = data.body[0]?.Contracts; //agency
+          this.stats[12].stat = data?.body?.Employees; //User
+          this.stats[6].stat = data?.body?.shiftAndAvilable; //agency
+          this.stats[10].stat = data?.body?.avilableShift; //agency
+          this.stats[11].stat = data?.body?.myShift; //agency
+          this.dashusers[2].total_username = data?.body?.shiftAndAvilable; //Agency        
+
+        }else if (this.currentUser && this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8) {
+          // this.stats[7].stat = data.body[0]?.Contracts; //agency
+          this.stats[0].stat = data.body[0]?.community_portal; //User
+          this.stats[3].stat = data.body[0]?.shift; //agency
+          this.dashusers[0].total_username = data.body[0]?.community_portal; //Agency        
+
+        }
+        // else if (this.currentUser && this.currentUser?.user_role == '4') {
+        //   this.stats[3].stat = data.body[0]?.userCMShift; //agency
+        //   // this.stats[11].stat = data.body[0]?.userCMShift; //User
+        //   this.dashusers[1].total_username = data.body[0]?.userCMShift; 
+        // }
+        else if (this.currentUser && this.currentUser?.user_role == 5) {
+          if(this.showDesh == 0){
+            var namesToRemove = ["Available Shifts", "My Shifts"];
+            this.stats = this.stats.filter(function(item) {
+                  return namesToRemove.indexOf(item.name) === -1;
+              });
+              this.stats[7].stat = data.body.totalShift; //User
+              this.dashusers[3].total_username = data.body.totalShift;
+            // this.stats[7].stat = data.body[0]?.userAgShift; //User
+          // this.dashusers[3].total_username = data.body[0]?.userAgShift;
+          }else{
+            this.stats[7].stat = data.body.shiftAndAvilable; //User
+            this.dashusers[3].total_username = data.body.shiftAndAvilable; //Users
+            this.stats[10].stat = data.body.avilableShift; //Users
+            this.stats[11].stat = data.body.myShift; //Users
+          }
+        }        
+        if(data?.body)
+        this.data = data?.body[0];
+      }
+      this.loadingStats = false;
+      this.loadingSite = false;
+
+    }, error => {
+      this.loadingStats = false;
+        this.loadingSite = false;
+
+    });
+  }
 
 
   getSpndOnInIt(){
-    this.datasrv.getSpendDownOthersTable(this.currentUser.id,this.sectDepr,this.currentUser.com_id ?? this.currentUser.id).subscribe((res:any)=>{
+    this.datasrv.getSpendDownOthersTable(this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.com_name : this.currentUser?.id,this.sectDepr,this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.com_name : this.currentUser?.com_id ?? this.currentUser?.id).subscribe((res:any)=>{
       if(!res.error){
         this.showAddedOther = res.body?.added_by_others
       }
@@ -396,7 +438,7 @@ export class EcommerceComponent implements OnInit {
   //     res => {
   //       if(!res.error) {
   //         let data = this._encryptionService.getDecode(res);
-  //         this.memoText = data.body[0].memo_text;
+  //         this.memoText = data.body[0]?.memo_text;
   //       } else {
 
   //         this._toastr.errorToastr(res.msg);
@@ -695,10 +737,10 @@ export class EcommerceComponent implements OnInit {
       let events = JSON.parse(JSON.stringify(this.calendarOptions.events))
       let dtFound = events.filter(ev => ev.start == arg.dateStr && ev.title == this.calLabels[2]);
       this.selectedResDate = arg.dateStr
-      if (dtFound.length && dtFound[0].title == this.calLabels[2]) {
+      if (dtFound.length && dtFound[0]?.title == this.calLabels[2]) {
         this.unReserveDt = true;
         this.modalOpenOSE(this.reserveDateModal, 'sm');
-      } else if (dtFound.length && this.calLabels.includes(dtFound[0].title)) {
+      } else if (dtFound.length && this.calLabels.includes(dtFound[0]?.title)) {
         //do nothing
         return;
       } else {
@@ -763,7 +805,22 @@ export class EcommerceComponent implements OnInit {
   }
 
   getRonMonths(){
-    this._dashboardService.getRonMonths(this.authService.currentUserValue.com_id ? this.authService.currentUserValue.com_id : this.authService.currentUserValue.id).subscribe(
+    // this.monthDataName=[]
+    this.monthDataName1=[
+      { id:1, name: 'January', value: 'january',isChecked:true,isDisable:true},
+      { id:2, name: 'February', value: 'february',isChecked:false,isDisable:false},
+      { id:3, name: 'March', value: 'march' ,isChecked:false,isDisable:true},
+      { id:4, name: 'April', value: 'april' ,isChecked:false,isDisable:true},
+      { id:5, name: 'May', value: 'may',isChecked:false ,isDisable:true},
+      { id:6, name: 'June', value: 'june' ,isChecked:false,isDisable:true},
+      { id:7, name: 'July', value: 'july',isChecked:false ,isDisable:true},
+      { id:8, name: 'August', value: 'august',isChecked:false ,isDisable:true},
+      { id:9, name: 'September', value: 'september' ,isChecked:false,isDisable:true},
+      { id:10, name: 'October', value: 'october' ,isChecked:false,isDisable:true},
+      { id:11, name: 'November', value: 'november' ,isChecked:false,isDisable:true},
+      { id:12, name: 'December', value: 'december',isChecked:false ,isDisable:true}
+    ];
+    this._dashboardService.getRonMonths(this.currentUser?.user_role == 8 || this.currentUser?.user_role == 6 ? this.com_name : this.authService.currentUserValue.com_id ? this.authService.currentUserValue.com_id : this.currentUser?.user_role == 3 ? this.com_name : this.authService.currentUserValue.id).subscribe(
       res =>{
         for (const key of Object.keys(res.body)) {
           const monthName = this.getMonthName(key);
@@ -797,7 +854,7 @@ export class EcommerceComponent implements OnInit {
 
 
   getCommunityId() {
-    if(['6'].includes(this.currentUser.prmsnId) ){
+    if(['6'].includes(this.currentUser?.prmsnId) ){
     this.datasrv.getCommunityId().subscribe((response: any) => {
       if (response['error'] == false) {
         this.allCommunity = response.body.sort(function(a, b){
@@ -807,6 +864,8 @@ export class EcommerceComponent implements OnInit {
       })  ;
       this.comId =  this.allCommunity[0]?.id
       this.getLastEntrySummery()
+      this.monthSpDownDashboard()
+      this.yearSpDownDashboard()
         //this.toastr.successToastr(response.msg);
       } else if (response['error'] == true) {
         this._toastr.errorToastr(response.msg);
@@ -816,15 +875,24 @@ export class EcommerceComponent implements OnInit {
 
     })
   }else{
-    if(this.currentUser.id && this.currentUser.com_id){
+    if(this.currentUser?.id && this.currentUser?.com_id){
       let data = {
-        userId : this.currentUser.id,
-        mangId : this.currentUser.com_id
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
       }
       this.datasrv.getManagementUserCommunities(data).subscribe((res: any) => {
         if (!res.error) {
+          let d = res?.body[0]?.user_added_communities.concat(res?.body[1].userAvailableCommunities);
           // this.mangComs = res.body[1].userAvailableCommunities
-          this.allCommunity = res.body[0].user_added_communities.sort(function(a, b){
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
             if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
             if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
             return 0;
@@ -832,6 +900,9 @@ export class EcommerceComponent implements OnInit {
         this.com_name =  this.allCommunity[0]?.community_id
         this.comId =  this.allCommunity[0]?.community_id
         this.getLastEntrySummery()
+      this.getRonMonths()
+      this.shiftapi() 
+
         } else {
           this._toastr.errorToastr(res.msg);
         }
@@ -841,7 +912,7 @@ export class EcommerceComponent implements OnInit {
         })
     }
     else{
-      this.datasrv.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
+      this.datasrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
         if (response['error'] == false) {
           this.allCommunity = response.body.sort(function(a, b){
             if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
@@ -850,7 +921,11 @@ export class EcommerceComponent implements OnInit {
         })  ;
         this.com_name =  this.allCommunity[0]?.cp_id
         this.comId =  this.allCommunity[0]?.cp_id
+      this.getDepartment(this.comId)
       this.getLastEntrySummery()
+      this.getRonMonths()
+      this.shiftapi()
+      this.getSpndOnInIt()
           //this.toastr.successToastr(response.msg);
         } else if (response['error'] == true) {
           this._toastr.errorToastr(response.msg);
@@ -864,19 +939,21 @@ export class EcommerceComponent implements OnInit {
   }
 
   comNames(){
-    if(['6'].includes(this.currentUser.prmsnId)){
+    if(['6'].includes(this.currentUser?.prmsnId)||this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8){
         this.getDepartment(this.com_name)
-    }else{
+    }
+    else{
       this.getRole()
     }
-    this.monthSpDownDashboard()
-    this.yearSpDownDashboard()
+    // this.monthSpDownDashboard()
+    // this.yearSpDownDashboard()
   }
 
   mgnComNames(com_name){
-    console.log(com_name);
-    this.monthSpDownDashboard()
-    this.yearSpDownDashboard()
+    // this.monthSpDownDashboard()
+    // this.yearSpDownDashboard()
+    this.getRonMonths()
+    this.getSpndOnInIt()
   }
 
   getDepartment(e){
@@ -884,7 +961,9 @@ export class EcommerceComponent implements OnInit {
     let isfor =  6
     let for_other = null
     this.datasrv.getDepartmentListing(e,isfor,for_other).subscribe((res:any)=>{
+      if(res?.body)
       res.body.filter(i=>{this.dprtmnt2.push(i.name)})
+      this.mgnComNames(e)
     },err=>{
       this._toastr.errorToastr('Something went wrong please try again leter')
     })
@@ -892,30 +971,44 @@ export class EcommerceComponent implements OnInit {
 
   monthSpDownDashboard(){
     this.loading = true;
+    this.comdisable = true;
     this.cat1 = []
     this.percent1 = []
     this.data3= []
     this.expence = []
     this.colors1 = []
-      let id = this.currentUser.prmsnId == '1' ? this.currentUser.id : this.currentUser.user_role == '3' || this.currentUser.user_role == '6'  || this.currentUser.user_role=='8' ? this.com_name : this.currentUser.com_id || '' ;
+      let id = this.currentUser?.prmsnId == '1' ? this.currentUser?.id : this.currentUser?.user_role == '3' || this.currentUser?.user_role=='8' ? this.com_name : this.currentUser?.user_role == 6 ? this.comId : this.currentUser?.com_id || '' ;
     this._dashboardService.monthSpDownDashboard(id).subscribe((res:any) =>{
       if(!res.error){
         this.loading = false;
-        this.allResData = res?.body?.sort(function(a, b){
+        this.comdisable = false;
+        this.yearSpDownDashboard()
+        let newUniqueArr=[];
+        let arr1=[];
+        res.body.forEach(i=>{
+          if(!arr1.includes(i.department)){
+            arr1.push(i.department)
+            newUniqueArr.push(i)
+          }
+        })
+        this.allResData=[]
+        res?.body ?this.allResData = newUniqueArr?.sort(function(a, b){
           if(a.department.toUpperCase() < b.department.toUpperCase()) { return -1; }
           if(a.department.toUpperCase() > b.department.toUpperCase()) { return 1; }
           return 0;
-      })  ;;
-         if(this.roleData2.includes(this.currentUser.prmsnId)){
-          this.allResData.forEach((i)=>{
+      }) : ''  ;
+         if(this.roleData2.includes(this.currentUser?.prmsnId)){
+          if(this.allResData?.length)
+            this.allResData.forEach((i)=>{
             if(this.dprtmnt2.includes( i.department)){
               this.cat1.push(JSON.parse(JSON.stringify(i.department)))
               this.percent1.push(parseInt(i.percentage))
               this.data3.push(i.budget)
               this.expence.push(i.expense)
             }
-           })
+            })
          }else{
+          if(this.allResData?.length)
           this.allResData.forEach(i=>{
             if(this.dprtmnt2.includes( i.department)){
             this.cat1.push(JSON.parse(JSON.stringify(i.department)))
@@ -932,11 +1025,13 @@ export class EcommerceComponent implements OnInit {
            })
          }
         //  array1.filter(item => array2.includes(item))
+        if(this.allResData?.length){
          this.allResData = this.allResData.filter((i,ind)=>{
          if( this.cat1.includes(i.department)) {
           return i
          }
         })
+        this.colors1=[]
          this.percent1.forEach(i=>{
           if(i >= 90 && i<= 100){
             this.colors1.push('#ede50e');
@@ -948,10 +1043,18 @@ export class EcommerceComponent implements OnInit {
             this.colors1.push('#e70909');
            }
          })
+        }
       }
+      let arr=[];
+      this.cat=[]
+      this.cat.map(i=>{
+        if(!arr.includes(i.id)){
+          arr.push(i.id)
+          return i;
+        }
+       })
       this.monthlyChartoptions.colors = this.colors1
       this.createChart()
-      // console.log('chart data',this.cat1,this.data3,this.percent1,'expence',this.expence)
 
     }, error => {
       this.loading = false;
@@ -959,16 +1062,18 @@ export class EcommerceComponent implements OnInit {
   }
 
   
-  onCheckboxChange(data: string, isChecked: boolean, index:number) {
+  onCheckboxChange(data: string, isChecked: boolean, index:number,call?:any) {
+    
+
     setTimeout(() => {
-      let lastTrue = 0;
+      this.lastTrue = 0;
       this.selectedValue=[];
       this.monthDataName.forEach( (item, i) => {
         if(i > 0) {
           if(!item.isChecked  && this.monthDataName[i -1].isChecked) {
-            lastTrue = (i > 0) ? i -1 : 0;
+            this.lastTrue = (i > 0) ? i -1 : 0;
           } else if(item.isChecked && i == 11) {
-            lastTrue = 11;
+            this.lastTrue = 11;
           }
         }
         if(item.isChecked) {
@@ -976,34 +1081,53 @@ export class EcommerceComponent implements OnInit {
         }
         item.isDisable = true;
       });
-      if(lastTrue < 11) {
-        this.monthDataName[lastTrue+1].isDisable = false;
+      if(this.lastTrue < 11) {
+        this.monthDataName[this.lastTrue+1].isDisable = false;
       }
-      this.monthDataName[lastTrue].isDisable = false;
-      this.debounceApi.next();
+      this.monthDataName[this.lastTrue].isDisable = false;
+      // this.debounceApi.next();
+      if(call != 1){
+        if(this.yearischecked == false)
+        this.yearSpDownDashboard()
+        }
     }, 100);
+
 
   }
 
   yearSpDownDashboard(){
     this.loadingYear = true;
+    this.yearischecked = true
+    // this.monthDataName[this.lastTrue+1].isDisable = true;
+    this.comdisable = true;
     this.cat = []
     this.data2= []
     this.colors = []
     this.percent = []
     this.expence1 = []
     let d = this.selectedValue
-    let id = this.currentUser.prmsnId == '1' ? this.currentUser.id : this.currentUser.user_role == '3' || this.currentUser.user_role == '6'  || this.currentUser.user_role=='8' ? this.com_name : this.currentUser.com_id || '' ;
+    let id = this.currentUser?.prmsnId == '1' ? this.currentUser?.id : this.currentUser?.user_role == '3' || this.currentUser?.user_role=='8' ? this.com_name : this.currentUser?.user_role == 6 ? this.comId : this.currentUser?.com_id || '' ;
     this._dashboardService.yearSpDownDashboard(id,d).subscribe((res:any) =>{
       if(!res.error){
         this.loadingYear = false;
-        this.allResData2 = res?.body?.sort(function(a, b){
+        // this.monthDataName[this.lastTrue+1].isDisable = false;
+        let newUniqueArr=[];
+        let arr1=[];
+        if(res?.body)
+        res.body.forEach(i=>{
+          if(!arr1.includes(i.department)){
+            arr1.push(i.department)
+            newUniqueArr.push(i)
+          }
+        })
+        this.allResData2 = []
+        this.allResData2 = newUniqueArr?.sort(function(a, b){
           if(a.department.toUpperCase() < b.department.toUpperCase()) { return -1; }
           if(a.department.toUpperCase() > b.department.toUpperCase()) { return 1; }
           return 0;
       })  ;;
-
-        if(this.roleData2.includes(this.currentUser.prmsnId)){
+          this.cat= []
+        if(this.roleData2.includes(this.currentUser?.prmsnId)){
           this.allResData2.forEach((i)=>{
             if(this.dprtmnt2.includes( i.department)){
               this.cat.push(JSON.parse(JSON.stringify(i.department)))
@@ -1028,14 +1152,18 @@ export class EcommerceComponent implements OnInit {
             }
            })
          }
-
+         let arr=[]
          this.cat.map(i=>{
           if(i == null){
            return i.push('Activities')
           }
-          // console.log(i);
+          if(!arr.includes(i.id)){
+            arr.push(i.id)
+            return i;
+          }
           
-         })
+         }) 
+         this.colors =[]
          this.percent.forEach(i=>{
           if(i >= 90 && i<= 100){
             this.colors.push('#ede50e');
@@ -1048,22 +1176,25 @@ export class EcommerceComponent implements OnInit {
            }
          })
 
-        //  console.log('clr',this.colors);
-         
-      }
-      this.gainedChartoptions.colors = this.colors
-      this.createChart()
-      // console.log('chart data',this.cat,this.data2)
-
-    }, error => {
-      this.loadingYear = false;
-    })
+        
+        }
+        this.comdisable = false;
+        this.yearischecked = false
+        this.gainedChartoptions.colors = this.colors
+        this.createChart()
+        
+      }, error => {
+        this.loadingYear = false;
+        this.yearischecked = false
+        this.comdisable = false;
+      })
+      this.loadingSite=false;
+      
   }
 
   getRole(){
-    this.datasrv.getAllRole( ).subscribe((res:any)=>{
-      if(!res.err){
-        // console.log("Roles------",res.body);
+    this.datasrv.getAllRole().subscribe((res:any)=>{
+      if(!res.err){ 
          res.body.filter(i=>{ this.roleData.push(i.id.toString())
           this.roleData.map(i=>{
             if(i != 1 && i != 2 && i != 3  && i != 4 && i != 5 && i!= 6 ){
@@ -1073,12 +1204,10 @@ export class EcommerceComponent implements OnInit {
               this.roleData2.push(i)
             }
            })
-        })
-        setTimeout(() => {
-          this.getPermissionByAdminRole()
-        }, 1000);
-
-      }
+          
+        })    
+        this.getPermissionByAdminRole() 
+        }
 
     },err=>{
       this.datasrv.genericErrorToaster()
@@ -1089,8 +1218,20 @@ export class EcommerceComponent implements OnInit {
     this._dashboardService.getPermissionByAdminRole().subscribe(
       res => {
         if (!res.error) {
-          this.showPermisionError = res.body
+          this.showPermisionError = res.body;
+          if(res?.body)
           res.body.filter(i=>{
+            if(i.permission_name == 'Shifts'){
+              this.showDesh = i.apply_permission
+              this.addPrms = i.add_permission
+              if(i.apply_permission == '1' && this.currentUser?.user_role == 5){
+                this.getDashboardData('true')
+              }else{
+                this.getDashboardData()
+              }
+              this.currentUser?.user_role == 4 ? this.shiftapi() : ''
+            }
+              
             if(i.permission_name == 'Department' && i.trak_type =='0'){
               this.dprtmnt=JSON.parse(i.row_data);
               this.dprtmnt.map(i=>{
@@ -1103,6 +1244,11 @@ export class EcommerceComponent implements OnInit {
                 return 0;
             });
            }
+           
+            if(i.permission_name == 'Shifts'){
+             this.vwPrms  = i.view_permission
+             this.addPrms = i.add_permission
+          }
           })
           this.dprtmnt.filter(i=>{this.dprtmnt2.push(i.name)})
            this.monthSpDownDashboard()
@@ -1121,13 +1267,19 @@ export class EcommerceComponent implements OnInit {
 
   chngCom(comId){
     this.comId  = comId
-    this.com_name  = comId
-    this.getLastEntrySummery()
-    if(this.currentUser.prmsnId == '6'){
+    this.com_name  = comId    
+    if(this.currentUser?.prmsnId == '6'){
+      this.monthSpDownDashboard()
+      // this.yearSpDownDashboard()
       this.comNames()
+      this.getLastEntrySummery()
     }
-    if(this.currentUser.user_role == '3' || this.currentUser.user_role == '8'){
-      this.mgnComNames(comId)
+    if(this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8){
+      this.getDepartment(this.comId)
+      this.getLastEntrySummery()
+      this.monthSpDownDashboard()
+    // this.yearSpDownDashboard()
+    this.shiftapi()
     }
   }
 
@@ -1137,11 +1289,15 @@ export class EcommerceComponent implements OnInit {
   }
 
   getLastEntrySummery(){
-    let isfor = this.currentUser.prmsnId == '6' ? '' : '6';
-    let id = this.currentUser.prmsnId == '1' ? this.currentUser.id : this.currentUser.user_role == '3' || this.currentUser.user_role == '6'  || this.currentUser.user_role=='8' ? this.comId : this.currentUser.com_id || '' ;
+    let isfor = this.currentUser?.prmsnId == '6' ? '' : '6';
+    let id = this.currentUser?.prmsnId == '1' ? this.currentUser?.id : this.currentUser?.user_role == '3' || this.currentUser?.user_role == '6'  || this.currentUser?.user_role=='8' ? this.comId : this.currentUser?.com_id || '' ;
     this.datasrv.getLastEntrySummery(id,isfor,this.slcDay || '3').subscribe((res:any)=>{
-    this.lastEntry =   res.body
-    if(this.roleData1.includes(this.currentUser.prmsnId)){
+    this.lastEntry =   res.body.sort(function(a, b){
+      if(a.department.toUpperCase() < b.department.toUpperCase()) { return -1; }
+      if(a.department.toUpperCase() > b.department.toUpperCase()) { return 1; }
+      return 0;
+     });
+    if(this.roleData1.includes(this.currentUser?.prmsnId)){
       this.lastEntry =  this.lastEntry.filter(i=>{
         if(this.dprtmnt2.includes(i.department)){
           return i
@@ -1151,5 +1307,42 @@ export class EcommerceComponent implements OnInit {
     },err=>{
       this._toastr.errorToastr('Something went wrong please try again leter')
     })
+  }
+
+  shiftapi(){
+    let body = {
+      searchStr: '',
+      page: this.page.pageNumber,
+      shiftType: '5',
+      currentUser: this.addPrms == '1' && this.currentUser?.user_role == 4 ? this.currentUser?.com_id : (this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3) ? this.com_name : this.currentUser?.id,
+      limit: '10',
+      start_time:  null,
+      end_time:  null,
+      sort: { prop: 'start_time', dir: 'desc' }
+    }
+    let body1 = {
+      searchStr: '',
+      tpUsr: null,
+      cpType:  null,
+      currentUser: this.currentUser?.id,
+      id:  undefined,
+      for_cp1: true,
+      start_time:  null,
+      end_time: null,
+      sort: { prop: 'start_time', dir: 'desc' }
+    }
+    this.loadingSite1 = true
+    if((this.currentUser?.user_role == 4 && this.addPrms == '1') || this.currentUser?.user_role == 8 || this.currentUser?.user_role == 3){
+    this.datasrv.getNewCommunityShifts(body).subscribe((res:any) =>{
+      this.totalshift = res.pagination.totalElements; 
+      this.loadingSite1 = false;
+    }
+    )}
+    else{
+    this.datasrv.getNewCommunityShiftByID(body1).subscribe((res:any) =>{
+      this.totalshift = (res.body.availableShifts?.length + res.body.userShifts?.length)
+    }
+    )
+  }
   }
 }

@@ -28,6 +28,8 @@ export class AddBudgetComponent implements OnInit {
   getCurrentYear: number;
   listOfYears: number[];
   rows: any =[]
+  allCommunity1: any[];
+  allCommunity: any;
   
   constructor(private _authenticationService: AuthenticationService, private formBuilder:FormBuilder,private location:Location,
     private budgetService:BudgetServiceService,private toaster:ToastrManager, private _router:Router, private activatedRoute:ActivatedRoute,
@@ -40,8 +42,8 @@ export class AddBudgetComponent implements OnInit {
         }
       })
       this._authenticationService.currentUser.subscribe((x: any) => {
-      this.currentUser = x
-      
+      this.currentUser = x;
+     this.currentUser?.user_role == 3 ? this.getCommunityByMangmentId() : this.currentUser?.user_role == 6 ? this.getCommunityId() : ''
     }); }
 
   ngOnInit(): void {
@@ -53,6 +55,7 @@ export class AddBudgetComponent implements OnInit {
       // shift_length: ['', Validators.required],
       // avg_rate: ['', Validators.required],
       spend: ['', Validators.required],
+      community_id: ['',this.currentUser?.user_role == 3 || this.currentUser?.user_role == 6 ? Validators.required:''],
       // agency_Id: ['', Validators.required],
       // agency_rate: ['', Validators.required],
       // ar_Feb: ['', Validators.required],
@@ -72,10 +75,34 @@ export class AddBudgetComponent implements OnInit {
       this.formPatch()
     }
 
-     this.getCurrentYear = new Date().getFullYear(); // current year
-    this.listOfYears = Array.from({length: 51}, (_, i) => this.getCurrentYear + i);
-
+     this.getCurrentYear = new Date().getFullYear() -2; // current year
+    this.listOfYears = Array.from({length: 3}, (_, i) => this.getCurrentYear + i);
+    
   }
+
+
+  getCommunityByMangmentId(){
+    this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      })  ;
+    }
+  })
+  }
+
+  getCommunityId() {
+    this.dataSrv.getCommunityId().subscribe((response: any) => { 
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        })
+}
+
   formPatch(){
     this.budgetService.getBudgetById(this.RouteIdData.id).subscribe((res:any)=>{
       this.formBudgetData.patchValue({
@@ -83,6 +110,7 @@ export class AddBudgetComponent implements OnInit {
       agency_shift: res.body[0].agency_shift ,
       year: res.body[0].year ,
       spend: res.body[0].spend ,
+      community_id:res.body[0]?.community_id
       })
     })
   }
@@ -136,13 +164,13 @@ export class AddBudgetComponent implements OnInit {
     }
 
     let data ={
-      // agency_id:this.currentUser.id,
+      // agency_id:this.currentUser?.id,
       months:this.formBudgetData.value.months,
       year:this.formBudgetData.value.year,
       agency_shift:this.formBudgetData.value.agency_shift,
       spend:this.formBudgetData.value.spend,
       id: this.RouteIdData?.id,
-      community_id : this.currentUser.id
+      community_id : this.formBudgetData.value.community_id ? this.formBudgetData.value.community_id: this.currentUser?.id
     }
     this.loading = true;
     if(this.RouteIdData.id){
@@ -182,7 +210,7 @@ export class AddBudgetComponent implements OnInit {
   }
 
   getAgncy(){
-    let community_id = this.currentUser.id
+    let community_id = this.currentUser?.id
     let is_for = 'community'
     let typeDrop = true
     this.dataSrv.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe(response => {
@@ -200,7 +228,7 @@ export class AddBudgetComponent implements OnInit {
 
   
   getBudget(){
-    this.budgetService.getBudget(this.currentUser.id).subscribe((res:any)=>{
+    this.budgetService.getBudget(this.currentUser?.id).subscribe((res:any)=>{
     if(!res.err){
       this.rows = res.body;
     }else{

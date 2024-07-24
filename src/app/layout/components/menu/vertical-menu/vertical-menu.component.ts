@@ -170,8 +170,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
   /**
    * Toggle sidebar collapsed status
    */
-  toggleSidebarCollapsible(): void {
-    // Get the current menu state
+  toggleSidebarCollapsible(d?:any): void {
     this._coreConfigService
       .getConfig()
       .pipe(takeUntil(this._unsubscribeAll))

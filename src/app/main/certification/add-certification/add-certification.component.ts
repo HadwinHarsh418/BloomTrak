@@ -39,17 +39,17 @@ export class AddCertificationComponent implements OnInit {
 
   ngOnInit(): void {
     this.getHeaders()
-    this.getCommunityId()
+    this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.getMngComunity() : this.getCommunityId()
     this.formDepartmentData = this.formBuilder.group({
       department_name: ['', Validators.required],
       community_name: ['', Validators.required],
     })
-    if(this.currentUser.role == 'Community')
+    if(this.currentUser?.role == 'Community' || this.currentUser?.user_role == 4)
     {
      this.formDepartmentData.controls['community_name'].clearValidators();
      this.formDepartmentData.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'SuperAdmin')
+    if(this.currentUser?.role == 'SuperAdmin' || this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8)
     {
      this.formDepartmentData.controls['community_name'].setValidators(Validators.required);
      this.formDepartmentData.updateValueAndValidity();
@@ -58,12 +58,12 @@ export class AddCertificationComponent implements OnInit {
     if(this.RouteIdData){
       this.formPatch()
     }
-    if(this.currentUser.role == 'Community')
+    if(this.currentUser?.role == 'Community'|| this.currentUser?.user_role == 4 )
     {
      this.formDepartmentData.controls['community_name'].clearValidators();
      this.formDepartmentData.updateValueAndValidity();
     }
-    if(this.currentUser.role == 'SuperAdmin')
+    if(this.currentUser?.role == 'SuperAdmin' || this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8)
     {
      this.formDepartmentData.controls['community_name'].setValidators(Validators.required);
      this.formDepartmentData.updateValueAndValidity();
@@ -112,7 +112,7 @@ export class AddCertificationComponent implements OnInit {
     }
     let data ={
       "name":this.formDepartmentData.value.department_name,
-     "community_id" : this.currentUser.role=='SuperAdmin' ? this.formDepartmentData.value.community_name : this.currentUser.id,
+     "community_id" : (this.currentUser?.role=='SuperAdmin' || this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8) ? this.formDepartmentData.value.community_name : this.currentUser?.user_role == 4 ? this.currentUser?.com_id : this.currentUser?.id,
       "id":this.RouteIdData.id ?this.RouteIdData.id : ''
     }
     this.loading=  true;
@@ -151,15 +151,56 @@ export class AddCertificationComponent implements OnInit {
   goBack(){
     this.location.back()
   }
+
   getCommunityId() {
-    this.dataService.getCommunityId().subscribe((response: any) => {
+    if(this.currentUser?.user_role==6)
+    this.dataService.getCommunityId().subscribe((response: any) => { 
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        })
+ }
+ getMngComunity(){
+  if(this.currentUser?.id && this.currentUser?.com_id){
+    let data = {
+      userId : this.currentUser?.id,
+      mangId : this.currentUser?.com_id
+    }
+    this.dataService.getManagementUserCommunities(data).subscribe((res: any) => {
+      if (!res.error) {
+        let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+        // this.mangComs = res.body[1].userAvailableCommunities
+        let e=[]
+        let c =[]
+        d.forEach(element => {
+          if(!e.includes(element.community_id)){
+            e.push(element.community_id)
+            c.push(element)
+          }
+        });
+        this.allCommunity = c.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      })  ;
+      } else {
+        this.toaster.errorToastr(res.msg);
+      }
+    },
+      (err) => {
+        this.dataService.genericErrorToaster();
+      })
+  }
+  else{
+    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
       if (response['error'] == false) {
         this.allCommunity = response.body.sort(function(a, b){
           if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
           if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
           return 0;
-      });
-        //this.toastr.successToastr(response.msg);
+      })  ;
       } else if (response['error'] == true) {
         this.toaster.errorToastr(response.msg);
       }
@@ -168,4 +209,23 @@ export class AddCertificationComponent implements OnInit {
 
     })
   }
+}
+
+  // getCommunityId() {
+  //   this.dataService.getCommunityId().subscribe((response: any) => {
+  //     if (response['error'] == false) {
+  //       this.allCommunity = response.body.sort(function(a, b){
+  //         if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+  //         if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+  //         return 0;
+  //     });
+  //       //this.toastr.successToastr(response.msg);
+  //     } else if (response['error'] == true) {
+  //       this.toaster.errorToastr(response.msg);
+  //     }
+  //   }, (err) => {
+  //     this.dataService.genericErrorToaster();
+
+  //   })
+  // }
 }

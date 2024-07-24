@@ -98,7 +98,7 @@
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['agency_phone'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['agency_phone'].hasError('pattern')"
@@ -126,7 +126,7 @@
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['agency_email'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['agency_email'].hasError('email')"
@@ -151,7 +151,7 @@
                                                 <span *ngIf="controls['DOB'].dirty && controls['DOB'].invalid">
                                                     <div class="invalid-feedback" *ngIf="controls['DOB'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
         
                                                 </span>
@@ -209,7 +209,7 @@
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['community_id'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                 </span>
                                             </div>
@@ -233,14 +233,12 @@
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['password'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                     <div class="invalid-feedback"
                                                         *ngIf="controls['password'].hasError('pattern')"
                                                         class="text text-danger">
-                                                        A minimum 8 characters password contains a combination of
-                                                        uppercase and lowercase letter and special character are
-                                                        required.
+                                                        Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                                     </div>
                                                 </span>
                                             </div>
@@ -264,7 +262,7 @@
                             maxlength="50" />
                         <div *ngIf="controls['community_name'].dirty && controls['community_name'].invalid"
                             class="invalid-feedback">
-                            <div *ngIf="controls['community_name'].hasError('required')">This field required</div>
+                            <div *ngIf="controls['community_name'].hasError('required')">This field is Required</div>
                         </div>
                     </div>
 
@@ -276,7 +274,7 @@
                             maxlength="50"></textarea>
                         <div *ngIf="controls['community_address1'].dirty && controls['community_address1'].invalid"
                             class="invalid-feedback">
-                            <div *ngIf="controls['community_address1'].hasError('required')">This field required</div>
+                            <div *ngIf="controls['community_address1'].hasError('required')">This field is Required</div>
                         </div>
                     </div>
 
@@ -288,7 +286,7 @@
                         <div *ngIf="controls['community_phone_no'].dirty && controls['community_phone_no'].invalid"
                             class="invalid-feedback">
                             <div *ngIf="controls['community_phone_no'].hasError('pattern')">Please enter valid phone number </div>
-                            <div *ngIf="controls['community_phone_no'].hasError('required')">This field required</div>
+                            <div *ngIf="controls['community_phone_no'].hasError('required')">This field is Required</div>
                         </div>                    
                     </div>
 
@@ -300,13 +298,11 @@
                             maxlength="50">
                         <div *ngIf="controls['password'].dirty && controls['password'].invalid"
                             class="invalid-feedback">
-                            <div *ngIf="controls['password'].hasError('required')">This field required</div>
+                            <div *ngIf="controls['password'].hasError('required')">This field is Required</div>
                         </div>
                         <div class="invalid-feedback" *ngIf="controls['password'].hasError('pattern')"
                         class="text text-danger">
-                        A minimum 8 characters password contains a combination of
-                        uppercase and lowercase letter and special character are
-                        required.
+                       Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                     </div>
                     </div>
                     <!-- <div class="form-group captcha">

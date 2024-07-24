@@ -73,6 +73,10 @@ export class AddagencyHolidayComponent implements OnInit {
     { value: { hour: 23, minute: 30 }, label: '23:30' },
     { value: { hour: 24, minute: 0 }, label: '24:00' },
   ]
+  comdata: any;
+  agcydata: any;
+  comid: any;
+  tomorrow: any;
 
 
   constructor(
@@ -88,9 +92,11 @@ export class AddagencyHolidayComponent implements OnInit {
     });
     // this.getAgencyListing()
     this.getAgencyId()
+    this.getcommunityForAgencyRates()
    }
 
   ngOnInit(): void {
+    this.getAgncyDtail()
     this.contentHeader = {
       headerTitle: 'Add Holiday ',
       actionButton: false,
@@ -104,8 +110,8 @@ export class AddagencyHolidayComponent implements OnInit {
           },
           {
             name: 'Agency Holiday',
-            isLink: false,
-            link: '/agency'
+            isLink: true,
+            link: '/agency-holiday'
           }
         ]
       }
@@ -114,15 +120,32 @@ export class AddagencyHolidayComponent implements OnInit {
     this.formData = this.fb.group({
       description : ['' ,],
       agency_id : ['' ,[Validators.required]],
+      community : ['',[Validators.required]],
       holiday_name : ['' ,[Validators.required]],
       holi_strDate : [null ,[Validators.required]],
       holi_strTime : [null ,[Validators.required]],
       holi_endDate : [null ,[Validators.required]],
       holi_endTime : [null ,[Validators.required]],
-    })
-
+    }
+    )
+    if(this.currentUser?.role != 'Admin'&& this.currentUser?.user_role != 8)
+    {
+     this.formData.controls['community'].clearValidators();
+     this.formData.updateValueAndValidity();
+    }
+    if(this.currentUser?.role == 'Admin'&& this.currentUser?.user_role != 8)
+    {
+     this.formData.controls['community'].setValidators(Validators.required);
+     this.formData.updateValueAndValidity();
+    }
+  
     let today = new Date();
-    this.todaysDate = this.getDate(today)
+    this.todaysDate = this.getDate(today);
+    console.log(this.todaysDate);
+    
+
+    this.tomorrow = this.addDaysToDate(today, 1);
+    console.log(this.tomorrow);
   }
 
   get isHolidayEndDisabled() {
@@ -137,7 +160,19 @@ export class AddagencyHolidayComponent implements OnInit {
     this.loct.back()
   }
 
+ dateErrorFxn() {
+    let date = new Date();
+    let yesterday = new Date();
+    yesterday.setDate(date.getDate() - 1);
+    let inputDate = new Date(this.formData.value.holi_strDate)
+    return yesterday > inputDate;
+}
+
   submitted(){
+    if(this.dateErrorFxn()){
+      this.tost.errorToastr('Please select valid date!')
+      return;
+    }
     for (let item of Object.keys(this.controls)) {
       this.controls[item].markAsDirty()
     }
@@ -149,10 +184,15 @@ export class AddagencyHolidayComponent implements OnInit {
       description: this.formData.value.description,
       holiday_name: this.formData.value.holiday_name,
       agency_id: this.formData.value.agency_id,
-      community_id : this.currentUser.id,
+      community_id: this.currentUser?.user_role == 6 || this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.formData.value.community : this.currentUser?.id,
       start_date:  this.cnvrtnewDt(this.formData.value.holi_strDate + ' ' + this.formData.value.holi_strTime),
       end_date :  this.cnvrtnewDt(this.formData.value.holi_endDate + ' ' + this.formData.value.holi_endTime),
     }
+    if(this.formData.value.holi_strDate + ' ' + this.formData.value.holi_strTime >= this.formData.value.holi_endDate + ' ' + this.formData.value.holi_endTime){
+      this.tost.errorToastr("Holiday End Time must be after Holiday Start Time")
+      this.btnShow = false;
+    }
+    else{    
     this.btnShow = true;
     this.dataService.addHoliday(body).subscribe((res: any) => {
       if (!res.error) {
@@ -169,28 +209,86 @@ export class AddagencyHolidayComponent implements OnInit {
         this.dataService.genericErrorToaster()
       })
   }
+}
+
+  selectCommunity(id:any){
+    this.comid =id
+    console.log('tttttttttttttttttt',id);
+    this.dataService.getAgenciesNewByID(id).subscribe((response: any) => { 
+      this.agencyListingData = response.body
+    })
+  }
+
+  getcommunityForAgencyRates() {
+    if(this.currentUser?.user_role==6)
+    this.dataService.getAllCgetcommunityForAgencyRatesom().subscribe((response: any) => { 
+          this.comdata = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        })
+        else{
+          this.dataService.getMNMGcommunity(this.currentUser?.user_role == 8 ? this.currentUser?.com_id : this.currentUser?.id).subscribe((response: any) => {
+              this.comdata = response.body.sort(function(a, b){
+                if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+                if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+                return 0;
+            })  ;
+  }    
+
+      )}}
+
 
   cnvrtnewDt(date_tm) {
     return new Date(date_tm)
   }
 
-  getDate(today) {
-    // let todayDate: any = new Date();
-    let toDate: any = today.getDate();
-    if (toDate < 10) {
-      toDate = '0' + toDate
-    }
-    let month = today.getMonth() + 1;
-    if (month < 10) {
-      month = '0' + month;
-    }
-    let year = today.getFullYear();
-    this.minDate = year + '-' + month + '-' + toDate
-    return this.minDate
+  // getDate(today) {
+  //   // let todayDate: any = new Date();
+  //   let toDate: any = today.getDate();
+  //   if (toDate < 10) {
+  //     toDate = '0' + toDate
+  //   }
+  //   let month = today.getMonth() + 1;
+  //   if (month < 10) {
+  //     month = '0' + month;
+  //   }
+  //   let year = today.getFullYear();
+  //   this.minDate = year + '-' + month + '-' + toDate
+  //   return this.minDate
+  // }
+
+
+addDaysToDate(today, daysToAdd) {
+  let newDate = new Date(today);
+  newDate.setDate(newDate.getDate() + daysToAdd);
+  return newDate.toISOString().slice(0, 10);
+}
+
+getDate(today) {
+  return today.toISOString().slice(0, 10);
+}
+
+// Example usage:
+
+
+  getAgncyDtail() {
+    this.dataService.getAgenciesByID(this.currentUser?.id).subscribe((res: any) => {
+      if (!res.error) {
+        this.agcydata = res.body[0]
+  
+      }
+      else {
+        this.tost.errorToastr(res.msg)
+      }
+    }, (err) => {
+      this.dataService.genericErrorToaster()
+    })
   }
 
   // getAgencyListing(){
-  //   let community_id = this.currentUser.id
+  //   let community_id = this.currentUser?.id
   //   let is_for = 'community'
   //   let typeDrop = true
   //   this.dataService.getAgency(this.searchStr= '', this.page.pageNumber, this.page.size, community_id,is_for,typeDrop).subscribe((res:any)=>{
@@ -198,9 +296,23 @@ export class AddagencyHolidayComponent implements OnInit {
   //   })
   // }
 
+  // getAgencyId() {
+  //   this.dataService.getAgencyId().subscribe((response: any) => {
+  //     if (response['error'] == false) {
+  //       this.agencyListingData = response.body;
+  //       //this.toastr.successToastr(response.msg);
+  //     } else if (response['error'] == true) {
+  //       this.tost.errorToastr(response.msg);
+  //     }
+  //   })
+  // }
+
   getAgencyId() {
-    this.dataService.getAgencyId().subscribe((response: any) => {
-      if (response['error'] == false) {
+    let typeDrop = false
+    let community_id = this.currentUser?.role == 'Community' ? this.currentUser?.id : this.currentUser?.role == 'Admin' ? this.currentUser?.id : null;
+    let is_for= this.currentUser?.role == 'Community' ? 'community' : this.currentUser?.role == 'Admin' ? 'management' :'superadmin';
+    this.dataService.getAgency(this.searchStr, this.page.pageNumber, 10, community_id,is_for,typeDrop).subscribe((response: any) => {
+      if (response['error'] == false && this.currentUser?.user_role != 6) {
         this.agencyListingData = response.body;
         //this.toastr.successToastr(response.msg);
       } else if (response['error'] == true) {

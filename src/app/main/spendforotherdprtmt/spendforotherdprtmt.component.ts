@@ -44,6 +44,8 @@ export class SpendforotherdprtmtComponent implements OnInit {
   sectDepr: any=[];
   no: any;
   apprvBtnHide: boolean;
+  community_id: any;
+  currenttab: string;
   constructor(
     private dataSrv : DataService,
     private toaster : ToastrManager,
@@ -55,21 +57,22 @@ export class SpendforotherdprtmtComponent implements OnInit {
       this.currentUser = x
     })
     this.getRole()
-   }
-
-   ngOnInit(): void {
-    this.getCurrentYear = new Date().getFullYear(); // current year
+    this.getSpnDwn(1)
+  }
+  
+  ngOnInit(): void {
+    this.getCurrentYear = new Date().getFullYear()+1; // current year
     this.listOfYears = Array.from({length: 3}, (_, i) => this.getCurrentYear - i);
     // this.getSpendDownList(this.data);
     this.getCommunityId()
-    // if(['1'].includes(this.currentUser.prmsnId)){
-    //   this.getDepartment( this.currentUser.id);
-    // }
-    // else if(this.roleData1.includes(this.currentUser.prmsnId)){
-    // }
-    setTimeout(() => {
-      this.getSpndOnInIt()
-    }, 1500);
+    // if(['1'].includes(this.currentUser?.prmsnId)){
+      //   this.getDepartment( this.currentUser?.id);
+      // }
+      // else if(this.roleData1.includes(this.currentUser?.prmsnId)){
+        // }
+        // setTimeout(() => {
+          // this.getSpndOnInIt()
+          // }, 1500);
     // this.getPrmsnData();
     // this.getUserDtl()
   }
@@ -108,7 +111,7 @@ export class SpendforotherdprtmtComponent implements OnInit {
   uploadNow() {
     let formdata = new FormData();
     formdata.append('report',this.fileToUpload)
-    formdata.append('entered_by',this.currentUser.id)
+    formdata.append('entered_by',this.currentUser?.id)
 
     this.dataSrv.importSpendDownTable(formdata).subscribe(
       (res:any) => {
@@ -125,7 +128,7 @@ export class SpendforotherdprtmtComponent implements OnInit {
   }
 
   getCommunityId() {
-    if(this.currentUser.user_role != 3 && this.currentUser.user_role != 8){
+    if(this.currentUser?.user_role != 3 && this.currentUser?.user_role != 8){
       this.dataSrv.getCommunityId().subscribe((response: any) => {
         if (response['error'] == false) {
           this.allCommunity = response.body.sort(function(a, b){
@@ -133,15 +136,15 @@ export class SpendforotherdprtmtComponent implements OnInit {
             if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
             return 0;
         })  ;
-        if(!['2','3','4','5','6'].includes(this.currentUser.prmsnId)){
-          this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser.com_id){ return i}})
+        if(!['2','3','4','5','6'].includes(this.currentUser?.prmsnId)){
+          this.allCommunity= this.allCommunity.filter(i=> {if(i.id == this.currentUser?.com_id){ return i}})
         }
         this.frsCom = this.allCommunity[0]?.id
-        if(this.currentUser.prmsnId ==6){
+        if(this.currentUser?.prmsnId ==6){
           this.getDepartment(this.frsCom)
           }
-          if(this.currentUser.prmsnId ==1){
-            this.getDepartment(this.currentUser.id)
+          if(this.currentUser?.prmsnId ==1){
+            this.getDepartment(this.currentUser?.id)
             }
           //this.toastr.successToastr(response.msg);
         } else if (response['error'] == true) {
@@ -151,59 +154,78 @@ export class SpendforotherdprtmtComponent implements OnInit {
         this.dataSrv.genericErrorToaster();
   
       })
+    }  
+    else{
+      this.getMngComunity()
+    }
+  }
+
+
+  getMngComunity(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.com_id
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          let d = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let e=[]
+          let c =[]
+          d.forEach(element => {
+            if(!e.includes(element.community_id)){
+              e.push(element.community_id)
+              c.push(element)
+            }
+          });
+          this.allCommunity = c.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = d.community_id
+        // this.getSpndOnInIt()
+        this.getSpnDwn(0)
+      } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
     }
     else{
-
-        if(this.currentUser.id && this.currentUser.com_id){
-          let data = {
-            userId : this.currentUser.id,
-            mangId : this.currentUser.com_id
-          }
-          this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
-            if (!res.error) {
-              // this.mangComs = res.body[1].userAvailableCommunities
-              this.allCommunity = res.body[0].user_added_communities.sort(function(a, b){
-                if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
-                if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
-                return 0;
-            })  ;
-            this.frsCom =  this.allCommunity[0]?.community_id
-            this.getDepartment(this.frsCom)
-            } else {
-              this.toaster.errorToastr(res.msg);
-            }
-          },
-            (err) => {
-              this.dataSrv.genericErrorToaster();
-            })
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = response?.body[0]?.cp_id
+        // this.getSpndOnInIt()
+        this.getSpnDwn(0)
+      } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
         }
-        else{
-          this.dataSrv.getMNMGcommunity(this.currentUser.id).subscribe((response: any) => {
-            if (response['error'] == false) {
-              this.allCommunity = response.body.sort(function(a, b){
-                if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
-                if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
-                return 0;
-            })  ;
-            this.frsCom =  this.allCommunity[0]?.cp_id
-            this.getDepartment(this.frsCom)
-              //this.toastr.successToastr(response.msg);
-            } else if (response['error'] == true) {
-              this.toaster.errorToastr(response.msg);
-            }
-          }, (err) => {
-            this.dataSrv.genericErrorToaster();
-      
-          })
-        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
     }
-   
+  }
+
+
+  selectCommunity(id:any){
+    this.community_id = id;
+    this.currenttab == 'other' ? this.getSpnDwn(2) : this.getSpnDwn(1)
   }
 
 //   getUserDtl(){
 //     let is_for = 'user'
 //     let searchStr = ''
-//     this.dataSrv.getUserById(searchStr = '',this.currentUser.id,is_for).subscribe(response => {
+//     this.dataSrv.getUserById(searchStr = '',this.currentUser?.id,is_for).subscribe(response => {
 //       if (!response.error) {
 //           this.userName = response.body[0]
 //       } else {
@@ -235,7 +257,7 @@ export class SpendforotherdprtmtComponent implements OnInit {
   slct(e){
     this.slcDp = ''
     this.slcm = e.target.value
-    // if(this.currentUser.user_role == 3){
+    // if(this.currentUser?.user_role == 3){
     //   this.getPrmsnData()
     // }
     // else{
@@ -258,19 +280,19 @@ export class SpendforotherdprtmtComponent implements OnInit {
     this.slcMn = val
   }
 
-  getSpndOnInIt(){
-    this.dataSrv.getSpendDownOthersTable(this.currentUser.id,this.sectDepr,this.currentUser.com_id ?? this.currentUser.id).subscribe((res:any)=>{
-      if(!res.error){
-        this.rows = res.body.added_by_others
-        this.apprvBtnHide = true
-      }
-      else{
-        this.toaster.errorToastr('Something went wrong please try again later')
-      }
-    },err=>{
-        this.dataSrv.genericErrorToaster()
-    })
-  }
+  // getSpndOnInIt(){
+  //   this.dataSrv.getSpendDownOthersTable(this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.community_id : this.currentUser?.id,this.sectDepr,this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.community_id : this.currentUser?.com_id ?? this.currentUser?.id).subscribe((res:any)=>{
+  //     if(!res.error){
+  //       this.rows = res.body.added_by_others
+  //       this.apprvBtnHide = true
+  //     }
+  //     else{
+  //       this.toaster.errorToastr('Something went wrong please try again later')
+  //     }
+  //   },err=>{
+  //       this.dataSrv.genericErrorToaster()
+  //   })
+  // }
 
   getPrmsnData(){
     let post=[];
@@ -280,7 +302,7 @@ export class SpendforotherdprtmtComponent implements OnInit {
           res.body.map(i=>{
             //comunity
             if(this.roleData.includes(i.role_id)){
-              if(this.roleData2.includes(this.currentUser.prmsnId )){
+              if(this.roleData2.includes(this.currentUser?.prmsnId )){
               if(i.permission_name == 'Department'){
                 if(i.trak_type == '0'){
                   this.dprtmnt=JSON.parse(i.row_data);
@@ -317,13 +339,15 @@ export class SpendforotherdprtmtComponent implements OnInit {
   
   getSpnDwn(no){
     this.no = no
-    this.dataSrv.getSpendDownOthersTable(this.currentUser.id,this.sectDepr,this.currentUser.com_id ?? this.currentUser.id).subscribe((res:any)=>{
+    this.dataSrv.getSpendDownOthersTable(this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.community_id : this.currentUser?.id,this.sectDepr,this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.community_id : this.currentUser?.com_id ?? this.currentUser?.id).subscribe((res:any)=>{
       if(!res.error){
         if(this.no == 1){
+          this.currenttab = 'me'
           this.apprvBtnHide = false
           this.rows = res.body.added
         }
         else{
+          this.currenttab = 'other'
           this.apprvBtnHide = true
           this.rows = res.body.added_by_others
         }

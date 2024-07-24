@@ -77,7 +77,7 @@ export class SetupComponent implements OnInit {
     // this.currentUser = this.auth.currentUserValue;
     // this.auth.currentUser.subscribe(res => {
     //   this.currentUser = res;
-    //   this.activeTab = this.currentUser.stepper || 1;
+    //   this.activeTab = this.currentUser?.stepper || 1;
     // })
 
     this._unsubscribeAll = new Subject()
@@ -106,7 +106,7 @@ export class SetupComponent implements OnInit {
     //   this.coreConfig = config;
     // });
 
-    // this.activeTab = this.currentUser.stepper || 1;
+    // this.activeTab = this.currentUser?.stepper || 1;
 
     // this.Primary = this.fb.group({
     //   primary_contact_name: ['', Validators.required],
@@ -294,7 +294,7 @@ export class SetupComponent implements OnInit {
   }
 
   getCommunityById() {
-    let id = this.currentUser.id
+    let id = this.currentUser?.id
     this.api.getcommunityById(id).subscribe((res: any) => {
       this.getDetail = res.body
       if (!res.error && this.getDetail?.length ) {

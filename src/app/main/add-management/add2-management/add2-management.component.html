@@ -23,7 +23,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mt-3">
+                                    <div class="mt-3000">
                                         <form class="auth-login-form mt-2" [formGroup]="formData" (ngSubmit)="submitted()">
                                             <div class="form-group row">
                                                 <div class="col-md-4">
@@ -36,7 +36,7 @@
                                                 <span *ngIf="controls['mg_name'].dirty && controls['mg_name'].invalid">
                                                     <div class="invalid-feedback" *ngIf="controls['mg_name'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                 </span>
                                                 </div>
@@ -47,13 +47,13 @@
                                                 <label class="form-label" for="login-email">Username <span class="text-danger">*</span></label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                <input type="text" formControlName="username" class="form-control"
+                                                <input type="text" noLeadingSpace formControlName="username" class="form-control"
                                                     [ngClass]="{ 'is-invalid': controls['username'].dirty && controls['username'].invalid }"
                                                     placeholder=""  autofocus="" tabindex="1" maxlength="50" />
                                                 <span *ngIf="controls['username'].dirty && controls['username'].invalid">
                                                     <div class="invalid-feedback" *ngIf="controls['username'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                 </span>
                                                 </div>
@@ -77,7 +77,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="controls['sort_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                         <span
@@ -106,7 +106,7 @@
                                                             [ngClass]="{ 'is-invalid': controls['mg_phone'].dirty && controls['mg_phone'].invalid }"
                                                             placeholder="" aria-describedby="mg_phone" autofocus="" tabindex="1">
                                                         <div *ngIf="controls['mg_phone'].dirty && controls['mg_phone'].invalid" class="invalid-feedback">
-                                                            <div *ngIf="controls['mg_phone'].hasError('required')">This field required</div>
+                                                            <div *ngIf="controls['mg_phone'].hasError('required')">This field is Required</div>
                                                             <div *ngIf="controls['mg_phone'].hasError('pattern')">Please enter a phone number </div>
                                                         </div>
                                                         </div>
@@ -122,7 +122,7 @@
                                                 <span *ngIf="controls['mg_email'].dirty && controls['mg_email'].invalid">
                                                     <!-- <div class="invalid-feedback" *ngIf="controls['mg_email'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div> -->
                                                     <div class="invalid-feedback" *ngIf="controls['mg_email'].hasError('email')"
                                                         class="text text-danger">
@@ -142,7 +142,7 @@
                                                     placeholder="Address 1" aria-describedby="mg_address1" autofocus="" tabindex="1" maxlength="50">
                                                     <div *ngIf="controls['mg_address1'].dirty && controls['mg_address1'].invalid"
                                                     class="invalid-feedback">
-                                                    <div *ngIf="controls['mg_address1'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['mg_address1'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -151,7 +151,7 @@
                                                     placeholder="Address 2" aria-describedby="mg_address2" autofocus="" tabindex="1" maxlength="50">
                                                     <!-- <div *ngIf="controls['mg_address2'].dirty && controls['mg_address2'].invalid"
                                                     class="invalid-feedback">
-                                                    <div *ngIf="controls['mg_address2'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['mg_address2'].hasError('required')">This field is Required</div>
                                                 </div> -->
                                                 </div>
                                             </div>
@@ -165,7 +165,7 @@
                                                     [ngClass]="{ 'is-invalid': controls['city'].dirty && controls['city'].invalid }"
                                                     placeholder="city" aria-describedby="city" autofocus="" tabindex="1" maxlength="50">
                                                 <div *ngIf="controls['city'].dirty && controls['city'].invalid" class="invalid-feedback">
-                                                    <div *ngIf="controls['city'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['city'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 </div>
                                             </div>
@@ -182,7 +182,7 @@
                                                 <span *ngIf="controls['state'].dirty && controls['state'].invalid">
                                                     <div class="invalid-feedback" *ngIf="controls['state'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                 </span>
                                                 </div>
@@ -197,7 +197,7 @@
                                                     [ngClass]="{ 'is-invalid': controls['zipcode'].dirty && controls['zipcode'].invalid }"
                                                     placeholder="Zipcode" aria-describedby="zipcode" autofocus="" tabindex="1" maxlength="5">
                                                 <div *ngIf="controls['zipcode'].dirty && controls['zipcode'].invalid" class="invalid-feedback">
-                                                    <div *ngIf="controls['zipcode'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['zipcode'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 </div>
                                             </div>
@@ -211,7 +211,7 @@
                                                     [ngClass]="{ 'is-invalid': controls['website'].dirty && controls['website'].invalid }"
                                                     placeholder="website" >
                                                 <div *ngIf="controls['website'].dirty && controls['website'].invalid" class="invalid-feedback">
-                                                    <div *ngIf="controls['website'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['website'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 <!-- <div class="invalid-feedback"
                                                                             *ngIf="controls['website'].hasError('maxlength')"
@@ -233,7 +233,7 @@
                                                     maxlength="50">
                                                 <div *ngIf="controls['contact_person_firstname'].dirty && controls['contact_person_firstname'].invalid"
                                                     class="invalid-feedback">
-                                                    <div *ngIf="controls['contact_person_firstname'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['contact_person_firstname'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 </div>
                                             </div>
@@ -250,7 +250,7 @@
                                                     maxlength="50">
                                                 <div *ngIf="controls['contact_person_lastname'].dirty && controls['contact_person_lastname'].invalid"
                                                     class="invalid-feedback">
-                                                    <div *ngIf="controls['contact_person_lastname'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['contact_person_lastname'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 </div>
                                             </div>
@@ -267,7 +267,7 @@
                                                     maxlength="50">
                                                 <div *ngIf="controls['contact_person_title'].dirty && controls['contact_person_title'].invalid"
                                                     class="invalid-feedback">
-                                                    <div *ngIf="controls['contact_person_title'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['contact_person_title'].hasError('required')">This field is Required</div>
                                                 </div>
                                                 </div>
                                             </div>
@@ -295,7 +295,7 @@
                                                                 [preValue]="formData.value.contact_person" maxlength="14">
                                                             <div *ngIf="controls['contact_person'].dirty && controls['contact_person'].invalid"
                                                                 class="invalid-feedback">
-                                                            <div *ngIf="controls['contact_person'].hasError('required')">This field required</div>
+                                                            <div *ngIf="controls['contact_person'].hasError('required')">This field is Required</div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -313,7 +313,7 @@
                                                 <span *ngIf="controls['contact_email'].dirty && controls['contact_email'].invalid">
                                                     <div class="invalid-feedback" *ngIf="controls['contact_email'].hasError('required')"
                                                         class="text text-danger">
-                                                        This field required
+                                                        This field is Required
                                                     </div>
                                                     <div class="invalid-feedback" *ngIf="controls['contact_email'].hasError('email')"
                                                         class="text text-danger">
@@ -328,18 +328,28 @@
                                                 <label class="form-label" for="login-email">Password</label>
                                                 </div>
                                                 <div class="col-md-8">
-                                                <input type="password" formControlName="password" class="form-control"
+                                                <input [type]="passwordTextType2 ? 'text' : 'password'" formControlName="password" class="form-control"
                                                     [ngClass]="{ 'is-invalid': controls['password'].dirty && controls['password'].invalid }"
                                                     placeholder="" aria-describedby="login-email" autofocus="" tabindex="1" inputDirective
                                                     maxlength="50">
                                                 <!-- <div *ngIf="controls['password'].dirty && controls['password'].invalid" class="invalid-feedback">
-                                                    <div *ngIf="controls['password'].hasError('required')">This field required</div>
+                                                    <div *ngIf="controls['password'].hasError('required')">This field is Required</div>
                                                 </div> -->
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text cursor-pointer eyeBtn"
+                                                      ><i
+                                                        class="feather font-small-4"
+                                                        [ngClass]="{
+                                                          'icon-eye': passwordTextType2,
+                                                          'icon-eye-off': !passwordTextType2
+                                                        }"
+                                                        (click)="passwordTextType2=!passwordTextType2"
+                                                      ></i
+                                                    ></span>
+                                                  </div>
                                                 <div class="invalid-feedback" *ngIf="controls['password'].hasError('pattern')"
                                                     class="text text-danger">
-                                                    A minimum 8 characters password contains a combination of
-                                                    uppercase and lowercase letter and special character are
-                                                    required.
+                                                    Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                                 </div>
                                                 </div>
                                             </div>
@@ -352,16 +362,28 @@
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="common-form-left form-group">
-                                                        <input type="password"
+                                                        <input [type]="passwordTextType1 ? 'text' : 'password'"
                                                             [class.is-invalid]="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid"
                                                             formControlName="cnfrmpassword" class="form-control form-control-user"
                                                             id="cnfrmpassword">
+                                                            <div class="input-group-append">
+                                                                <span class="input-group-text cursor-pointer eyeBtn"
+                                                                  ><i
+                                                                    class="feather font-small-4"
+                                                                    [ngClass]="{
+                                                                      'icon-eye': passwordTextType1,
+                                                                      'icon-eye-off': !passwordTextType1
+                                                                    }"
+                                                                    (click)="passwordTextType1=!passwordTextType1"
+                                                                  ></i
+                                                                ></span>
+                                                              </div>
                                                         <span
                                                             *ngIf="controls['cnfrmpassword'].dirty && controls['cnfrmpassword'].invalid">
                                                             <!-- <div class="invalid-feedback"
                                                                 *ngIf="controls['cnfrmpassword'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div> -->
                                                             
                                                             <div *ngIf="controls.cnfrmpassword.errors.confirmedValidator" style="color: #ea5455; font-size: 1rem;">Password and Confirm Password must be match.</div>

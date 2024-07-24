@@ -1,12 +1,11 @@
 <div class="card">
     <div class="card-header d-flex flex-column align-items-start pb-0">
-        <h2 class="font-weight-bolder mt-1"
-            [innerHTML]="currentUser.role == 'Agency' ? 'Agency Personnel List' : 'User List'"> </h2>
+        <p class="font-weight-bolder ml-1" >{{ workingUserHide == false ? 'Users' : 'Deleted Users' }}</p>
     </div>
     <div class="card-body mt-1">
         <div class="row">
-            <div class="col-md-6 col-12">
-                <div class="d-flex ">
+            <div class=" col-lg-6">
+                <div class="d-flex custom-button ">
 
                     <button type="button" class="btn-sm btn-info" *ngIf="addPrms ==1|| currentUser.prmsnId== '6' || currentUser.prmsnId == '1' || currentUser.user_role == 3 ||currentUser.prmsnId == '2'"
                         [routerLink]="['/user/add-user']" >
@@ -15,12 +14,20 @@
 
                     <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
                         <i class="fa fa-file "></i>   Import File
-                        <input #fileInput type="file"  (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                        <input #fileInput type="file"  (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" accept=".csv, .xls" />
                       </button>
+
+                      <button type="button" [class.activeTab]="currenttab == 'community'"  (click)="this.setPage({ offset: 0 })"
+                      class="btn-sm btn-info ml-1" >
+                      <i class="fa fa-user"></i> Users
+                  </button>
+                  <button type="button"   [class.activeTab]="currenttab == 'block'" class=" btn-info  btn-sm ml-1" (click)="getDeletedUser()">
+                      <i class="fa fa-lock"></i> Deleted Users
+                  </button>
 
                 </div>
             </div>
-            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+            <div class="col-lg-6 d-flex justify-content-md-end">
                 <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
                     <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
                         <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
@@ -30,34 +37,35 @@
             </div>
         </div>
 <!-- For SuperAdmin -->
+<div class="overflow" style="overflow: auto;">
         <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
         [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" (page)="setPage($event)"
-        [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size"  *ngIf="currentUser.role == 'SuperAdmin' ">
-        <ngx-datatable-column name="Lastname" prop="last_name" [width]="100">
-            <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
-                {{ last_name }}
-            </ng-template>
-        </ngx-datatable-column>
-
+        [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size"  *ngIf="currentUser.role == 'SuperAdmin' && !workingUserHide ">
         <ngx-datatable-column name="Firstname" prop="first_name" [width]="100">
             <ng-template let-first_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{ first_name }}
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Phone No." prop="phone_number" [width]="80">
+        <ngx-datatable-column name="Lastname" prop="last_name" [width]="120">
+            <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ last_name }}
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Phone No." prop="phone_number" [width]="120">
             <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{phone_number | numberFormat }}
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="email" prop="email" [width]="100">
+        <ngx-datatable-column name="email" prop="email" [width]="200">
             <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{ email }}
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="80">
+        <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="120">
             <ng-template let-DOB="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{  DOB | date:'MM-dd-yyyy' || '---'}}
             </ng-template>
@@ -65,29 +73,29 @@
 
         <ngx-datatable-column
             *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role != 'Admin'"
-            name="Community" prop="community_id" [width]="100">
+            name="Community" prop="community_id" [width]="120">
             <ng-template let-community_id="value" let-expanded="expanded" ngx-datatable-cell-template>
                 <span *ngFor="let com of community_id; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
                 <span *ngIf="!community_id || !community_id?.length">---</span>
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column *ngIf="currentUser.role == 'Admin' && currentUser.role == 'Community' && currentUser.role == 'Agency'" name="Community" prop="community" [width]="100">
+        <ngx-datatable-column *ngIf="currentUser.role == 'Admin' && currentUser.role == 'Community' && currentUser.role == 'Agency'" name="Community" prop="community" [width]="120">
             <ng-template let-community="value" let-expanded="expanded" ngx-datatable-cell-template>
                 <span *ngFor="let com of community; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
                 <span *ngIf="!community || !community.length">---</span>
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Agency" prop="agency_id" [width]="100"
-            *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role !='Admin'">
+        <ngx-datatable-column name="Agency" prop="agency_id" [width]="120"
+            *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.user_role != 6">
             <ng-template let-agency_id="value" let-expanded="expanded" ngx-datatable-cell-template>
                 <span *ngFor="let com of agency_id; let l = last">{{com.agency_name}}{{l ? '' : ','}} </span>
                 <span *ngIf="!agency_id || !agency_id.length">---</span>
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80">
+        <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="120">
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                 <div class="d-flex align-items-center">
                     <div ngbDropdown container="body">
@@ -103,11 +111,11 @@
                             <a [routerLink]="['/user/edit-user',row]" ngbDropdownItem class="d-flex align-items-center">
                                 <i class="fa fa-edit mr-50"></i> Edit
                             </a>
-                            <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' ">
-                                <i class="fa fa-trash mr-50"></i> Archive
+                            <a (click)="permanentdelete(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' ">
+                                <i class="fa fa-trash mr-50"></i> Terminate
                             </a>
                             <a (click)="terminateUsr(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.role == 'Community' || currentUser.role == 'Agency' ">
-                                <i class="fa fa-trash mr-50"></i> Terminate
+                                <i class="fa fa-trash mr-50"></i> Archive
                             </a>
                             
                         </div>
@@ -116,36 +124,37 @@
             </ng-template>
         </ngx-datatable-column>
     </ngx-datatable>
+</div>
 <!-- End For SuperAdmin -->
-
+<div class="overflow" style="overflow: auto;">
         <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10"  *ngIf="currentUser.role != 'Admin' && currentUser.role != 'SuperAdmin'  ">
-            <ngx-datatable-column name="Lastname" prop="last_name" [width]="100">
-                <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ last_name }}
-                </ng-template>
-            </ngx-datatable-column>
-
+            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10"  *ngIf="currentUser.role != 'Admin' && currentUser.role != 'SuperAdmin' && !workingUserHide  ">
             <ngx-datatable-column name="Firstname" prop="first_name" [width]="100">
                 <ng-template let-first_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ first_name }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Phone No." prop="phone_number" [width]="80">
+            <ngx-datatable-column name="Lastname" prop="last_name" [width]="120">
+                <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ last_name }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column name="Phone No." prop="phone_number" [width]="120">
                 <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{phone_number | numberFormat }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="email" prop="email" [width]="100">
+            <ngx-datatable-column name="email" prop="email" [width]="200">
                 <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{ email }}
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="80">
+            <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="120">
                 <ng-template let-DOB="value" let-expanded="expanded" ngx-datatable-cell-template>
                     {{  DOB | date:'MM-dd-yyyy' || '---'}}
                 </ng-template>
@@ -153,21 +162,21 @@
 
             <ngx-datatable-column
                 *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role != 'Admin' && currentUser.role != 'Community User'"
-                name="Community" prop="community_id" [width]="100">
+                name="Community" prop="community_id" [width]="120">
                 <ng-template let-community_id="value" let-expanded="expanded" ngx-datatable-cell-template>
                     <span *ngFor="let com of community_id; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
                     <span *ngIf="!community_id || !community_id?.length">---</span>
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column *ngIf="currentUser.role == 'Admin' && currentUser.role == 'Community' && currentUser.role == 'Agency' && currentUser.role == 'Community user'" name="Community" prop="community" [width]="100">
+            <ngx-datatable-column *ngIf="currentUser.role == 'Admin' && currentUser.role == 'Community' && currentUser.role == 'Agency' && currentUser.role == 'Community user'" name="Community" prop="community" [width]="120">
                 <ng-template let-community="value" let-expanded="expanded" ngx-datatable-cell-template>
                     <span *ngFor="let com of community; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
                     <span *ngIf="!community || !community.length">---</span>
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Agency" prop="agency_id" [width]="100"
+            <ngx-datatable-column name="Agency" prop="agency_id" [width]="120"
                 *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role !='Admin' &&currentUser.role != 'Community User'">
                 <ng-template let-agency_id="value" let-expanded="expanded" ngx-datatable-cell-template>
                     <span *ngFor="let com of agency_id; let l = last">{{com.agency_name}}{{l ? '' : ','}} </span>
@@ -175,7 +184,7 @@
                 </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80">
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="120">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                     <div class="d-flex align-items-center">
                         <div ngbDropdown container="body">
@@ -191,11 +200,11 @@
                                 <a [routerLink]="['/user/edit-user',row]" ngbDropdownItem class="d-flex align-items-center" *ngIf="edtPrms == 1|| currentUser.prmsnId== '6' || currentUser.prmsnId == '1'|| currentUser.prmsnId == '2'">
                                     <i class="fa fa-edit mr-50"></i> Edit
                                 </a>
-                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms == 1 || currentUser.prmsnId== '6'|| currentUser.prmsnId == '1'|| currentUser.prmsnId == '2' ">
-                                    <i class="fa fa-trash mr-50"></i> Archive
-                                </a>
-                                <a (click)="terminateUsr(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms == 1 || currentUser.prmsnId== '6' || currentUser.prmsnId == '1'|| currentUser.prmsnId == '2'">
+                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms == 1|| currentUser.user_role == '6'|| currentUser.prmsnId == '2'|| currentUser.user_role == '1'  ">
                                     <i class="fa fa-trash mr-50"></i> Terminate
+                                </a>
+                                <a (click)="permanentdelete(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms == 1|| currentUser.user_role == '6'|| currentUser.prmsnId == '2'|| currentUser.user_role == '1' ">
+                                    <i class="fa fa-trash mr-50"></i> Archive
                                 </a>
                                 <a ngbDropdownItem class="d-flex align-items-center" *ngIf="vwPrms==0 && edtPrms==0 && dltPrms==0">
                                     <i class="fa fa-exclamation-circle mr-50" aria-hidden="true"></i> You don't have any permissions
@@ -207,35 +216,36 @@
                 </ng-template>
             </ngx-datatable-column>
         </ngx-datatable>
-
-        <ngx-datatable *ngIf="currentUser.role == 'Admin' " #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows1" [columnMode]="'force'"
+    </div>
+    <div class="overflow" style="overflow: auto;">
+        <ngx-datatable *ngIf="currentUser.role == 'Admin' && !workingUserHide " #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
         [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
         [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" (page)="setPage($event)">
-        <ngx-datatable-column name="Lastname" prop="last_name" [width]="100" >
-            <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
-                {{ last_name }}
-            </ng-template>
-        </ngx-datatable-column>
-
-        <ngx-datatable-column name="Firstname" prop="first_name" [width]="100">
+        <ngx-datatable-column name="Firstname" prop="first_name" [width]="120">
             <ng-template let-first_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{ first_name }}
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Phone No." prop="phone_number" [width]="80">
+        <ngx-datatable-column name="Lastname" prop="last_name" [width]="120" >
+            <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ last_name }}
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="Phone No." prop="phone_number" [width]="120">
             <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{phone_number | numberFormat }}
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="email" prop="email" [width]="100">
+        <ngx-datatable-column name="email" prop="email" [width]="200">
             <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{ email }}
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="80">
+        <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="120">
             <ng-template let-DOB="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{  DOB | date:'MM-dd-yyyy' || '---'}}
             </ng-template>
@@ -243,21 +253,21 @@
 
         <ngx-datatable-column
             *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role != 'Admin'"
-            name="Community" prop="community_id" [width]="100">
+            name="Community" prop="community_id" [width]="120">
             <ng-template let-community_id="value" let-expanded="expanded" ngx-datatable-cell-template>
                 <span *ngFor="let com of community_id; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
                 <span *ngIf="!community_id || !community_id?.length">---</span>
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column *ngIf="currentUser.role == 'Admin'" name="Community" prop="community" [width]="100">
+        <ngx-datatable-column *ngIf="currentUser.role == 'Admin'" name="Community" prop="community" [width]="120">
             <ng-template let-community="value" let-expanded="expanded" ngx-datatable-cell-template>
                 <span *ngFor="let com of community; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
                 <span *ngIf="!community || !community.length">---</span>
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Agency" prop="agency_id" [width]="100"
+        <ngx-datatable-column name="Agency" prop="agency_id" [width]="120"
             *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role !='Admin'">
             <ng-template let-agency_id="value" let-expanded="expanded" ngx-datatable-cell-template>
                 <span *ngFor="let com of agency_id; let l = last">{{com.agency_name}}{{l ? '' : ','}} </span>
@@ -265,7 +275,7 @@
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80" >
+        <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="120" >
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                 <div class="d-flex align-items-center">
                     <div ngbDropdown container="body">
@@ -282,7 +292,7 @@
                                 <i class="fa fa-edit mr-50"></i> Edit
                             </a>
                             <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms == 1 || currentUser.user_role == 3">
-                                <i class="fa fa-trash mr-50"></i> Archive
+                                <i class="fa fa-trash mr-50"></i> Terminate
                             </a>
                           
                         </div>
@@ -291,11 +301,126 @@
             </ng-template>
         </ngx-datatable-column>
     </ngx-datatable>
+</div>
+<div class="ovr-flow" style="overflow: auto;">
+    <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows2" [columnMode]="'force'"
+        [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
+        [count]="page.totalElements" [offset]="page.pageNumber" [limit]="10" *ngIf="workingUserHide">
+
+            <ngx-datatable-column name="Lastname" prop="last_name" [width]="100">
+                <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ last_name }}
+                </ng-template>
+            </ngx-datatable-column>
+    
+            <ngx-datatable-column name="Firstname" prop="first_name" [width]="100">
+                <ng-template let-first_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ first_name }}
+                </ng-template>
+            </ngx-datatable-column>
+    
+            <ngx-datatable-column name="Phone No." prop="phone_number" [width]="80">
+                <ng-template let-phone_number="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{phone_number | numberFormat }}
+                </ng-template>
+            </ngx-datatable-column>
+    
+            <ngx-datatable-column name="email" prop="email" [width]="100">
+                <ng-template let-email="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    {{ email ? email : '---' }}
+                </ng-template>
+            </ngx-datatable-column>
+
+            <ngx-datatable-column *ngIf="currentUser.role == 'Admin' && currentUser.role == 'Community' && currentUser.role == 'Agency'" name="Community" prop="community" [width]="100">
+                <ng-template let-community="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    <span *ngFor="let com of community; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
+                    <span *ngIf="!community || !community.length">---</span>
+                </ng-template>
+            </ngx-datatable-column>
+    
+            <ngx-datatable-column name="Agency" prop="agency_id" [width]="100"
+                *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role !='Admin'">
+                <ng-template let-agency_id="value" let-expanded="expanded" ngx-datatable-cell-template>
+                    <span *ngFor="let com of agency_id; let l = last">{{com.agency_name}}{{l ? '' : ','}} </span>
+                    <span *ngIf="!agency_id || !agency_id.length">---</span>
+                </ng-template>
+            </ngx-datatable-column>
+    
+         
+            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <div class="d-flex align-items-center">
+                        <div ngbDropdown container="body">
+                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                            </a>
+                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                                <!-- <a [routerLink]="['/userProfile', row.id,0]" ngbDropdownItem
+                                    class="d-flex align-items-center">
+                                    <i class="fa fa-eye mr-50"></i> View
+                                </a> -->
+                                <a (click)="reinstatefn(row)" ngbDropdownItem class="d-flex align-items-center">
+                                    <i class="fa fa-edit mr-50"></i> Reinstate 
+                                </a>  
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+        </div>
     </div>
 </div>
 
 <!-- DeleteModal -->
 <ng-template #deleteUser let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1"
+            [innerHTML]="currentUser.role == 'Agency' ? 'Terminate Agency Personnel ? ' : 'Terminate User '"></h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5
+            [innerHTML]="currentUser.role == 'Agency' ? 'Are you sure you want to Terminate this Agency Personnel? This action will temporarily delete the user, and you can reinstate the user later if needed.' : 'Are you sure you want to Terminate this User? This action will temporarily delete the user, and you can reinstate the user later if needed.'">
+        </h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="deletesUser(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Terminate
+        </button>
+    </div>
+</ng-template>
+<!-- / Modal -->
+
+<ng-template #reinstate let-modal>
+    <div class="modal-header bg-danger">
+        <h4 class="modal-title text-white" id="myModalLabel1"
+            [innerHTML]="currentUser.role == 'Agency' ? 'Reinstate Agency Personnel ? ' : 'Reinstate User '"></h4>
+        <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <h5
+            [innerHTML]="currentUser.role == 'Agency' ? 'Are you sure you want to Reinstate this Agency Personnel ? ' : 'Are you sure you want to Reinstate this User ?'">
+        </h5>
+    </div>
+    <div class="modal-footer">
+        <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
+            style="margin-top: 10px!important;" (click)="reinstateUser(modal)" rippleEffect>
+            <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Reinstate
+        </button>
+    </div>
+</ng-template>
+  
+
+<!-- permanently -->
+
+<ng-template #permanentdeleteUser let-modal>
     <div class="modal-header bg-danger">
         <h4 class="modal-title text-white" id="myModalLabel1"
             [innerHTML]="currentUser.role == 'Agency' ? 'Archive Agency Personnel ? ' : 'Archive User '"></h4>
@@ -305,16 +430,14 @@
     </div>
     <div class="modal-body" tabindex="0" ngbAutofocus>
         <h5
-            [innerHTML]="currentUser.role == 'Agency' ? 'Are you sure you want to Archive this Agency Personnel ? ' : 'Are you sure you want to Archive this User ?'">
+            [innerHTML]="currentUser.role == 'Agency' ? 'Are you sure you want to Archive this Agency Personnel permanently  ? ' : 'Are you sure you want to Archive this User permanently ?'">
         </h5>
     </div>
     <div class="modal-footer">
         <button type="button" [disabled]="btnShow" class="btn btn-danger d-flex float-right"
-            style="margin-top: 10px!important;" (click)="deletesUser(modal)" rippleEffect>
+            style="margin-top: 10px!important;" (click)="terminateUsr(modal)" rippleEffect>
             <span *ngIf="btnShow" class="spinner-border spinner-border-sm mr-1"></span> Archive
         </button>
     </div>
 </ng-template>
-<!-- / Modal -->
-
 

@@ -123,7 +123,7 @@ export class ContractComponent implements OnInit {
       limitNum: this.page.size,
     };
     this.loadingList = true;
-    // let community_id = (this.currentUser.role == Role.Community) ? this.currentUser.id : null;
+    // let community_id = (this.currentUser?.role == Role.Community) ? this.currentUser?.id : null;
     this.searchSub = this.dataService.getContract(this.searchStr, this.page.pageNumber, this.page.size).subscribe(
       res => {
         if (!res.error) {
@@ -150,7 +150,7 @@ export class ContractComponent implements OnInit {
 
   deletesUser(modal) {
     if (this.currentUser) {
-      let data = { id: this.currentUser.id };
+      let data = { id: this.currentUser?.id };
       let enc = this.encryptionService.encode(JSON.stringify(data));
       this.deletingUser = true;
       this.dataService.deleteActivity(data).subscribe(res => {

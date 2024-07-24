@@ -25,7 +25,7 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="mt-1">
+                                    <div class="new-300">
                                         <form class="user" [formGroup]="editFormData" (ngSubmit)="editSubmitted()">
                                             <div class="row">
                                                 <div class="col-lg-4">
@@ -48,7 +48,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="ec['first_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -75,7 +75,7 @@
                                                             <div class="invalid-feedback"
                                                                 *ngIf="ec['last_name'].hasError('required')"
                                                                 class="text text-danger">
-                                                                This field required
+                                                                This field is Required
                                                             </div>
                                                         </span>
                                                     </div>
@@ -131,7 +131,7 @@
                                                         <div class="invalid-feedback"
                                                             *ngIf="ec['username'].hasError('required')"
                                                             class="text text-danger">
-                                                            This field required
+                                                            This field is Required
                                                         </div>
                                                     </span>
                                                 </div>
@@ -160,7 +160,7 @@
                                                 </div>
                                                 <div class="col-lg-8">
                                                     <div class="row">
-                                                        <div class="col-2 test_data">
+                                                        <div class="col-4 test_data">
                                                             <div ngbDropdown class="d-inline-block">
                                                                 <button type="button" class="btn btn-outline-primary"
                                                                     id="dropdownBasic1"
@@ -178,7 +178,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-10">
+                                                        <div class="col-8">
                                                             <div class="common-form-left form-group">
                                                                 <input type="text" phoneMask style="height:45px ;"
                                                                     [preValue]="editFormData.value.phone_number"
@@ -192,7 +192,7 @@
                                                                     <div class="invalid-feedback"
                                                                         *ngIf="ec['phone_number'].hasError('required')"
                                                                         class="text text-danger">
-                                                                        This field required
+                                                                        This field is Required
                                                                     </div>
                                                                     <div class="invalid-feedback"
                                                                         *ngIf="ec['phone_number'].hasError('pattern')"
@@ -230,7 +230,7 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="ec['email'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="ec['email'].hasError('email')"
@@ -262,7 +262,7 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="ec['DOB'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
 
                                                                     </span>
@@ -326,7 +326,7 @@
                                                                                     <div class="invalid-feedback"
                                                                                         *ngIf="ec['management_co_user'].hasError('required')"
                                                                                         class="text text-danger">
-                                                                                        This field required
+                                                                                        This field is Required
                                                                                     </div>
                                                                                 </span>
                                                                             </div>
@@ -422,7 +422,7 @@
                                                                         <div class="invalid-feedback"
                                                                             *ngIf="ec['hourly_rate'].hasError('required')"
                                                                             class="text text-danger">
-                                                                            This field required
+                                                                            This field is Required
                                                                         </div>
                                                                     </span>
                                                                 </div>
@@ -488,12 +488,12 @@
                                                                                 <div class="invalid-feedback"
                                                                                     *ngIf="fp['password'].hasError('required')"
                                                                                     class="text text-danger">
-                                                                                    This field required
+                                                                                    This field is Required
                                                                                 </div>
                                                                                 <div class="invalid-feedback"
                                                                                     *ngIf="fp['password'].hasError('pattern')"
                                                                                     class="text text-danger">
-                                                                                    please enter valid password
+                                                                                    Old Password not match
                                                                                 </div>
                                                                             </span>
                                                                             </div>
@@ -526,7 +526,7 @@
                                                                                         <div class="invalid-feedback"
                                                                                             *ngIf="fp['password'].hasError('required')"
                                                                                             class="text text-danger">
-                                                                                            This field required
+                                                                                            This field is Required
                                                                                         </div>
                                                                                     </span>
                                                                                 </div>
@@ -572,12 +572,12 @@
                                                                                 <div class="invalid-feedback"
                                                                                     *ngIf="fp['newPassword'].hasError('required')"
                                                                                     class="text text-danger">
-                                                                                    This field required
+                                                                                    This field is Required
                                                                                 </div>
                                                                                 <div class="invalid-feedback"
                                                                                     *ngIf="fp['newPassword'].hasError('pattern')"
                                                                                     class="text text-danger">
-                                                                                    please enter valid password
+                                                                                    Password must be at least 8 characters and contain a combination of uppercase and lowercase letters and at least one special character or number.
                                                                                 </div>
                                                                             </span>
                                                                             </div>
@@ -623,13 +623,12 @@
                                                                                 <div class="invalid-feedback"
                                                                                     *ngIf="fp['confPassword'].hasError('required')"
                                                                                     class="text text-danger">
-                                                                                    This field required
+                                                                                    This field is Required
                                                                                 </div>
                                                                                 <div class="invalid-feedback"
                                                                                     *ngIf="fp['confPassword'].hasError('pattern')"
                                                                                     class="text text-danger">
-                                                                                    please enter valid password
-                                                                                </div>
+                                                                                    Password and Confirm Password must be match.                                                                                </div>
                                                                             </span>
                                                                             </div>
                                                                             </div>
@@ -660,7 +659,7 @@
                                                                                         <div class="invalid-feedback"
                                                                                             *ngIf="fp['confPassword'].hasError('required')"
                                                                                             class="text text-danger">
-                                                                                            This field required
+                                                                                            This field is Required
                                                                                         </div>
 
                                                                                     </span>

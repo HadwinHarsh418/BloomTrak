@@ -18,6 +18,10 @@ export class ComunityBudgetComponent implements OnInit {
   edtPrms: any;
   vwPrms: any;
   roleData: any=[];
+  allAgency: any[];
+  selectAgency: any;
+  allCommunity: any;
+  selectCommunity: any;
 
   constructor(private _authenticationService:AuthenticationService,
     private toaster:ToastrManager, private budgetService:BudgetServiceService,
@@ -27,13 +31,26 @@ export class ComunityBudgetComponent implements OnInit {
    this._authenticationService.currentUser.subscribe((x: any) => {
      this.currentUser = x
    });
-   console.log(this.currentUser,'wjwhgw');
+   this.getAllAgency()
    
    this.getRole()
+   this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8 ? this.getMngComunity() : ''
    this.getBudget()
   }
 
   ngOnInit(): void {
+  }
+
+  getAllAgency(){
+    this.dataService.getAgencyForManagement().subscribe(res=>{
+      this.allAgency = res.body;
+      this.selectAgency=res.body[0]?.id;
+      this.getBudget()
+    })
+  }
+  chngCom(comId){
+    this.selectCommunity = comId;
+    this.getBudget()
   }
 
   getPrmsnData(){
@@ -58,11 +75,22 @@ export class ComunityBudgetComponent implements OnInit {
     }
     )
   }
-
-  getBudget(){
-    this.budgetService.getBudget(this.currentUser.id).subscribe((res:any)=>{
+  getMngComunity(){
+    this.dataService.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+      if (response['error'] == false) {
+        this.allCommunity = response.body.sort(function(a, b){
+          if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+          if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+          return 0;
+      });
+      this.selectCommunity = response.body[0].cp_id;
+      this.getBudget(this.selectCommunity)
+    }})
+  }
+  getBudget(id?){
+    this.budgetService.getBudget(this.currentUser?.user_role == 3 ? this.selectCommunity : id??this.currentUser?.id).subscribe((res:any)=>{
     if(!res.err){
-      this.rows = res.body.map(i=>{
+      this.rows = res?.body.map(i=>{
         i.months = i.months == 'January' ? '01' : i.months == 'February' ? '02' : i.months == 'March' ? '03' :
         i.months == 'April' ? '04' : i.months == 'May' ? '05': i.months == 'June' ? '06':
         i.months == 'July' ? '07': i.months == 'August' ? '08': i.months == 'September' ? '09':
@@ -101,7 +129,7 @@ export class ComunityBudgetComponent implements OnInit {
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
         // console.log("Roles------",res.body);
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})

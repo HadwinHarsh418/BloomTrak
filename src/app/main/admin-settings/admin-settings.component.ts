@@ -103,7 +103,8 @@ export class AdminSettingsComponent implements OnInit {
         if (!res.error) {
           res.body.map(i=>{
             //comunity
-            if(this.roleData.includes(i.role_id)){
+            // if(this.roleData.includes(i.role_id))
+              // {
               // if(i.permission_name == 'Department'){
               //     this.dprtmnt=JSON.parse(i.row_data);
               //     this.frstDp = this.dprtmnt[0]?.name
@@ -115,7 +116,7 @@ export class AdminSettingsComponent implements OnInit {
                 this.vwPrms  = i.view_permission
                 this.assPrms  = i.assignResidentCount_permission
              }
-            }
+            // }
           })
         } 
     }, (error:any) => {

@@ -1,306 +1,330 @@
 <div class="card">
-    <div class="card-header d-flex flex-column align-items-start pb-0">
-       <p class="font-weight-bolder ml-1" >Vendor Contract List</p>
-    </div>
-    <div class="card-body mt-1">
-    <div class="row mb-1">
-       <div class="col-md-6 col-12">
-          <div class="d-flex">
-             <button type="button" class="btn-sm btn-info"   *ngIf="addPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'"
-                [routerLink]="['add-vendorContracts']" >  <i class="fa fa-plus mr-50"></i>Add Vendor Contract
-             </button> 
-             <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" >
-             <i class="fa fa-file "></i>   Import File
-             <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
-             </button>
-             <button type="button" class="btn-sm btn-info ml-1" *ngIf="['1','6','16'].includes(currentUser.prmsnId)" (click)="openMdl()">  <i class="fa fa-trash mr-50"></i>Delete Import
-             </button> 
-          </div>
-       </div>
-
-       <div class="col-md-6 col-12 d-flex justify-content-md-end">
-         <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
-             <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
-                 <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
-                     [(ngModel)]="searchStr" />
-             </label>
+   <div class="card-header d-flex flex-column align-items-start pb-0">
+      <p class="font-weight-bolder ml-1">Vendor Contract List</p>
+   </div>
+   <div class="card-body ">
+      <div class="row mb-1">
+         <div class=" col-lg-6">
+            <div class="d-flex custom-button">
+               <button type="button" class="btn-sm btn-info"
+                  *ngIf="addPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1' || currentUser.user_role == 3"
+                  [routerLink]="['add-vendorContracts']"> <i class="fa fa-plus mr-50"></i>Add Vendor Contract
+               </button>
+               <button type="button" (click)="fileInput.click()" class="btn-sm btn-info ml-1"
+                  *ngIf="['1','6','3','16'].includes(currentUser.prmsnId)">
+                  <i class="fa fa-file "></i> Import File
+                  <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)"
+                     style="display:none;" accept=".csv, .xls" />
+               </button>
+               <button type="button" class="btn-sm btn-info ml-1"
+                  *ngIf="['1','6','3','16'].includes(currentUser.prmsnId)" (click)="openMdl()"> <i
+                     class="fa fa-trash mr-50"></i>Delete Import
+               </button>
+            </div>
          </div>
-     </div>
-    </div>
-    <div class="ovrFlwCon">
-    <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-    [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" (page)="setPage($event)"
-    [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" [scrollbarH]="true"
-    >
-    <ngx-datatable-column name="Community" prop="community_name" [width]="150" >
-       <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ community_name || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Vendor" prop="vendor" [width]="150" >
-       <ng-template let-vendor="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ vendor || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Description" prop="description" [width]="150" >
-       <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ description || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="department" prop="department" [width]="150" >
-      <ng-template let-department="value" let-expanded="expanded" ngx-datatable-cell-template>
-         {{ department || '---'}}
-      </ng-template>
-   </ngx-datatable-column>
-    <ngx-datatable-column name="GL Account" prop="gl_account" [width]="150" >
-       <ng-template let-gl_account="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ gl_account || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Contract Amount" prop="contract_amount" [width]="150" >
-       <ng-template let-contract_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
-         {{'$ '}}{{ contract_amount | number : '1.2-2'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Periods " prop="periods" [width]="150" >
-       <ng-template let-periods="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ periods || '0'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Monthly Amount" prop="monthly_amount" [width]="150" >
-       <ng-template let-monthly_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
-         {{'$ '}}{{ monthly_amount | number : '1.2-2'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Type" prop="type" [width]="150" >
-       <ng-template let-type="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ type || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Payment Type" prop="pmt_type" [width]="150" >
-       <ng-template let-pmt_type="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ pmt_type || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Start date" prop="start_date" [width]="150" >
-       <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ start_date |  date:'MM-dd-yyyy'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="End date" prop="end_date" [width]="150" >
-       <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ end_date |  date:'MM-dd-yyyy'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Cancellation Notice date" prop="cencellation_date" [width]="150" >
-       <ng-template let-cencellation_date="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ cencellation_date |  date:'MM-dd-yyyy'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Renewal date" prop="renewal_date" [width]="150" >
-       <ng-template let-renewal_date="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ renewal_date|  date:'MM-dd-yyyy'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Est. Renewal Amount" prop="renewal_amount" [width]="150" >
-       <ng-template let-renewal_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
-         {{'$ '}} {{ renewal_amount | number : '1.2-2'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Contract required" prop="contract_required" [width]="150" >
-       <ng-template let-contract_required="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ contract_required == '1' ? 'N' : 'Y' || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Contract File" prop="contract_uploaded" [width]="150" >
-       <ng-template let-contract_uploaded="value" let-row="row" let-value="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ contract_uploaded || '---' }}
-          <a target="_blank" href="{{row.contract_file ? row.contract_file : 'javascript:void(0)'}}"><span *ngIf="row.contract_uploaded == 'Y'" class="badge badge-warning">File</span></a>
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Entered date" prop="entered_date" [width]="150" >
-       <ng-template let-entered_date="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ entered_date |  date:'MM-dd-yyyy'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Entered By" prop="entered1" [width]="150" >
-       <ng-template let-entered1="value" let-expanded="expanded" ngx-datatable-cell-template>
-          {{ entered1 || '---'}}
-       </ng-template>
-    </ngx-datatable-column>
-    <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="150">
-       <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-          <div class="d-flex align-items-center">
-             <div ngbDropdown container="body">
-                <a ngbDropdownToggle  class="hide-arrow" id="dropdownBrowserState"
-                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
-                </a>
-                <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                   <a ngbDropdownItem class="d-flex align-items-center" [routerLink]="['edit-vendorContracts',row.id]"  *ngIf="edtPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'">
-                   <i class="fa fa-edit mr-50"></i> Edit 
-                   </a>
-                   <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)"  *ngIf="dltPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'">
-                   <i class="fa fa-trash mr-50"></i> Delete 
-                   </a>
-                   <a ngbDropdownItem class="d-flex align-items-center" (click)="openAddNew(row.id)"  *ngIf="dltPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'">
-                   <i class="fa fa-file mr-50"></i> Upload file 
-                   </a>
-                   <a ngbDropdownItem class="d-flex align-items-center"  *ngIf="dltPrms ==0 && edtPrms == 0">
-                     <i class="fa fa-trash mr-50"></i>  You have no Permissions for any actions. 
-                 </a>
-                </div>
-             </div>
-          </div>
-       </ng-template>
-    </ngx-datatable-column>
-    </ngx-datatable>
+         <div class="col-lg-3">
+            <div class="col-lg-094"
+               *ngIf="currentUser.role == 'Agency' || currentUser.user_role == 5 || currentUser.user_role == 3 || currentUser.user_role == 8">
+               <select id="inputState" class="form-control" (change)="selectCommunity1($event.target.value)"
+                  [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                  <option value="undefined" selected="selected" disabled>---Select Community---</option>
+                  <option value="{{item.cp_id || item.id || item.community_id}}" *ngFor="let item of allCommunity1">
+                     {{item.community_name}}</option>
+               </select>
+            </div>
+         </div>
+         <div class="col-lg-3">
+            <div class="ccol">
+               <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
+                  <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                     [(ngModel)]="searchStr" />
+               </label>
+            </div>
+         </div>
+      </div>
+   </div>
+   </div>
+
+
+   <!-- <div class="col-md-6 col-12 d-flex justify-content-md-end"> -->
+   <!-- </div> -->
+   <div class="ovrFlwCon">
+      <ngx-datatable #tablesss class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+         [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true" (page)="setPage($event)"
+         [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" [scrollbarH]="true">
+         <ngx-datatable-column name="Community" prop="community_name" [width]="150">
+            <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ community_name || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Vendor" prop="vendor" [width]="150">
+            <ng-template let-vendor="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ vendor || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Description" prop="description" [width]="150">
+            <ng-template let-description="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ description || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="department" prop="department" [width]="150">
+            <ng-template let-department="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ department || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="GL Account" prop="gl_account" [width]="150">
+            <ng-template let-gl_account="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ gl_account || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Contract Amount" prop="contract_amount" [width]="150">
+            <ng-template let-contract_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{'$ '}}{{ contract_amount | number : '1.2-2'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Periods " prop="periods" [width]="150">
+            <ng-template let-periods="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ periods || '0'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Monthly Amount" prop="monthly_amount" [width]="150">
+            <ng-template let-monthly_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{'$ '}}{{ monthly_amount | number : '1.2-2'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Type" prop="type" [width]="150">
+            <ng-template let-type="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ type || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Payment Type" prop="pmt_type" [width]="150">
+            <ng-template let-pmt_type="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ pmt_type || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Start date" prop="start_date" [width]="150">
+            <ng-template let-start_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ start_date | date:'MM-dd-yyyy'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="End date" prop="end_date" [width]="150">
+            <ng-template let-end_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ end_date | date:'MM-dd-yyyy'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Cancellation Notice date" prop="cencellation_date" [width]="150">
+            <ng-template let-cencellation_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ cencellation_date | date:'MM-dd-yyyy'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Renewal date" prop="renewal_date" [width]="150">
+            <ng-template let-renewal_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ renewal_date| date:'MM-dd-yyyy'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Est. Renewal Amount" prop="renewal_amount" [width]="150">
+            <ng-template let-renewal_amount="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{'$ '}} {{ renewal_amount | number : '1.2-2'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Contract required" prop="contract_required" [width]="150">
+            <ng-template let-contract_required="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ contract_required == '1' ? 'N' : 'Y' || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Contract File" prop="contract_uploaded" [width]="150">
+            <ng-template let-contract_uploaded="value" let-row="row" let-value="value" let-expanded="expanded"
+               ngx-datatable-cell-template>
+               {{ contract_uploaded || '---' }}
+               <a target="_blank" href="{{row.contract_file ? row.contract_file : 'javascript:void(0)'}}"><span
+                     *ngIf="row.contract_uploaded == 'Y'" class="badge badge-warning">File</span></a>
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Entered date" prop="entered_date" [width]="150">
+            <ng-template let-entered_date="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ entered_date | date:'MM-dd-yyyy'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Entered By" prop="entered1" [width]="150">
+            <ng-template let-entered1="value" let-expanded="expanded" ngx-datatable-cell-template>
+               {{ entered1 || '---'}}
+            </ng-template>
+         </ngx-datatable-column>
+         <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="150">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+               <div class="d-flex align-items-center">
+                  <div ngbDropdown container="body">
+                     <a ngbDropdownToggle class="hide-arrow" id="dropdownBrowserState" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                     </a>
+                     <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                        <a ngbDropdownItem class="d-flex align-items-center"
+                           [routerLink]="['edit-vendorContracts',row.id]"
+                           *ngIf="edtPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                           <i class="fa fa-edit mr-50"></i> Edit
+                        </a>
+                        <a ngbDropdownItem class="d-flex align-items-center" (click)="delete(row.id)"
+                           *ngIf="dltPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                           <i class="fa fa-trash mr-50"></i> Delete
+                        </a>
+                        <a ngbDropdownItem class="d-flex align-items-center" (click)="openAddNew(row.id)"
+                           *ngIf="dltPrms ==1|| currentUser.user_role == '6' || currentUser.prmsnId == '1'">
+                           <i class="fa fa-file mr-50"></i> Upload file
+                        </a>
+                        <a ngbDropdownItem class="d-flex align-items-center" *ngIf="dltPrms ==0 && edtPrms == 0">
+                           <i class="fa fa-trash mr-50"></i> You have no Permissions for any actions.
+                        </a>
+                     </div>
+                  </div>
+               </div>
+            </ng-template>
+         </ngx-datatable-column>
+      </ngx-datatable>
    </div>
 
 
    <!-- Addnew List -->
-<ng-template #Addnew let-modal>
-   <div class="modal-header bg-danger">
-      <h4 class="modal-title text-white" id="myModalLabel1">Upload Vendor</h4>
-      <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
-         <span aria-hidden="true">&times;</span>
-      </button>
-   </div>
-   <div class="modal-body" tabindex="0" ngbAutofocus>
-      <form class="user" (ngSubmit)="uploadNow1(modal)">
-         <div class="row">
-            <div class="col-lg-12">
-               <div class="common-form-field">
-                  <div class="row">
-                     <div class="col-lg-12">
-                        <div class="welcome-logo">
-                           <img src="assets/images/log.png" alt="">
+   <ng-template #Addnew let-modal>
+      <div class="modal-header bg-danger">
+         <h4 class="modal-title text-white" id="myModalLabel1">Upload Vendor</h4>
+         <button type="button" [disabled]="deletingUser" class="close" (click)="closeded(modal)" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+         </button>
+      </div>
+      <div class="modal-body" tabindex="0" ngbAutofocus>
+         <form class="user" (ngSubmit)="uploadNow1(modal)">
+            <div class="row">
+               <div class="col-lg-12">
+                  <div class="common-form-field">
+                     <div class="row">
+                        <div class="col-lg-12">
+                           <div class="welcome-logo">
+                              <img src="assets/images/log.png" alt="">
+                           </div>
                         </div>
                      </div>
-                  </div>
 
-                  <div class="row">
-                     <div class="col-lg-4">
-                        <div class="common-form-left">
-                           <label for="inputPassword6" class="col-form-label">Upload File <span
-                                 class="text-danger">*</span></label>
+                     <div class="row">
+                        <div class="col-lg-4">
+                           <div class="common-form-left">
+                              <label for="inputPassword6" class="col-form-label">Upload File <span
+                                    class="text-danger">*</span></label>
+                           </div>
                         </div>
-                     </div>
-                     <div class="col-lg-8">
-                        <button type="button" (click)="fileInput1.click()"  class="btn-sm btn-info ml-1" >
-                           <i class="fa fa-file "></i>   Import File
-                           <input #fileInput1 type="file" (click)="fileInput1.value = null" (change)="onFileInput1(fileInput1.files)" style="display:none;" />
+                        <div class="col-lg-8">
+                           <button type="button" (click)="fileInput1.click()" class="btn-sm btn-info ml-1">
+                              <i class="fa fa-file "></i> Import File
+                              <input #fileInput1 type="file" (click)="fileInput1.value = null"
+                                 (change)="onFileInput1(fileInput1.files)" style="display:none;" />
                            </button>
+                        </div>
                      </div>
+
+
+
+                     <button type="submit" class="btn btn-primary">
+                        Upload
+                        <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm"
+                           role="status" aria-hidden="true"></span>
+                     </button>
+                     <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
+                        Cancel
+                     </button>
                   </div>
-
-
-
-                  <button type="submit" class="btn btn-primary">
-                     Upload
-                     <span *ngIf="btnShow" [disabled]="btnShow" class="spinner-border spinner-border-sm" role="status"
-                        aria-hidden="true"></span>
-                  </button>
-                  <button type="button" (click)="closeded(modal)" class="btn btn-primary ml-1" [disabled]="btnShow">
-                     Cancel
-                  </button>
                </div>
             </div>
-         </div>
-      </form>
-   </div>
-</ng-template>
-<!-- / Addnew List -->
+         </form>
+      </div>
+   </ng-template>
+   <!-- / Addnew List -->
 
-  <!-- OtpModal -->
-  <ng-template #dltImprt let-modal>
-   <div class="modal-header bg-danger">
-     <h4 class="modal-title text-white" id="modal-basic-title">Delete Import </h4>
-     <button type="button" class="close" aria-label="Close" (click)="closeded(modal)">&times;</button>
- </div>
- <div class="modal-body" tabindex="0" ngbAutofocus>
-   <form class="user" [formGroup]="dltForm" (ngSubmit)="dltFormSub(modal)">
+   <!-- OtpModal -->
+   <ng-template #dltImprt let-modal>
+      <div class="modal-header bg-danger">
+         <h4 class="modal-title text-white" id="modal-basic-title">Delete Import </h4>
+         <button type="button" class="close" aria-label="Close" (click)="closeded(modal)">&times;</button>
+      </div>
+      <div class="modal-body" tabindex="0" ngbAutofocus>
+         <form class="user" [formGroup]="dltForm" (ngSubmit)="dltFormSub(modal)">
 
-       <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">Select Community <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-               <select  class="form-control" formControlName="community_name">
-                   <option value="" selected="selected" disabled>---Select Community---</option>
-                   <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
-               </select>
-                 <span *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="FormData_Control['community_name'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-        </div>
+            <div class="row">
+               <div class="col-lg-4">
+                  <div class="common-form-left">
+                     <label for="inputPassword6" class="col-form-label">Select Community <span
+                           class="text-danger">*</span>
+                     </label>
+                  </div>
+               </div>
+               <div class="col-lg-8">
+                  <div class="common-form-left form-group">
+                     <select class="form-control" formControlName="community_name">
+                        <option value="" selected="selected" disabled>---Select Community---</option>
+                        <option value="{{item.id}}" *ngFor="let item of allCommunity">{{item.community_name}}</option>
+                     </select>
+                     <span
+                        *ngIf="FormData_Control['community_name'].dirty && FormData_Control['community_name'].invalid">
+                        <div class="invalid-feedback" *ngIf="FormData_Control['community_name'].hasError('required')"
+                           class="text text-danger">
+                           This field is Required
+                        </div>
+                     </span>
+                  </div>
+               </div>
+            </div>
 
-       <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">Start Date <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-                 <input type="date"
-                    [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
-                    formControlName="start_date" class="form-control form-control-user"
-                    id="start_date" class="form-control"
-                    placeholder="Start Date" aria-describedby="passwordHelpInline">
-                 <span *ngIf="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="FormData_Control['start_date'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-        </div>
+            <div class="row">
+               <div class="col-lg-4">
+                  <div class="common-form-left">
+                     <label for="inputPassword6" class="col-form-label">Start Date <span class="text-danger">*</span>
+                     </label>
+                  </div>
+               </div>
+               <div class="col-lg-8">
+                  <div class="common-form-left form-group">
+                     <input type="date"
+                        [class.is-invalid]="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid"
+                        formControlName="start_date" class="form-control form-control-user" id="start_date"
+                        class="form-control" placeholder="Start Date" aria-describedby="passwordHelpInline">
+                     <span *ngIf="FormData_Control['start_date'].dirty && FormData_Control['start_date'].invalid">
+                        <div class="invalid-feedback" *ngIf="FormData_Control['start_date'].hasError('required')"
+                           class="text text-danger">
+                           This field is Required
+                        </div>
+                     </span>
+                  </div>
+               </div>
+            </div>
 
-        <div class="row">
-           <div class="col-lg-4">
-              <div class="common-form-left">
-                 <label for="inputPassword6" class="col-form-label">End Date <span class="text-danger">*</span>
-                 </label>
-              </div>
-           </div>
-           <div class="col-lg-8">
-              <div class="common-form-left form-group">
-                 <input type="date"
-                    [class.is-invalid]="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid"
-                    formControlName="end_date" class="form-control form-control-user"
-                    id="end_date" class="form-control"
-                    placeholder="Start Date" aria-describedby="passwordHelpInline">
-                 <span *ngIf="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid">
-                    <div class="invalid-feedback"
-                       *ngIf="FormData_Control['end_date'].hasError('required')"
-                       class="text text-danger">
-                       This field required
-                    </div>
-                 </span>
-              </div>
-           </div>
-           <button type="submit" class="btn btn-primary ml-1" [disabled]="btnShow">
-               <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
-                   aria-hidden="true"></span>
+            <div class="row">
+               <div class="col-lg-4">
+                  <div class="common-form-left">
+                     <label for="inputPassword6" class="col-form-label">End Date <span class="text-danger">*</span>
+                     </label>
+                  </div>
+               </div>
+               <div class="col-lg-8">
+                  <div class="common-form-left form-group">
+                     <input type="date"
+                        [class.is-invalid]="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid"
+                        formControlName="end_date" class="form-control form-control-user" id="end_date"
+                        class="form-control" placeholder="Start Date" aria-describedby="passwordHelpInline">
+                     <span *ngIf="FormData_Control['end_date'].dirty && FormData_Control['end_date'].invalid">
+                        <div class="invalid-feedback" *ngIf="FormData_Control['end_date'].hasError('required')"
+                           class="text text-danger">
+                           This field is Required
+                        </div>
+                     </span>
+                  </div>
+               </div>
+               <button type="submit" class="btn btn-primary ml-1" [disabled]="btnShow">
+                  <span *ngIf="btnShow" class="spinner-border spinner-border-sm" role="status"
+                     aria-hidden="true"></span>
                   Delete
-           </button>
-        </div>
-   </form>
- </div>
- 
- </ng-template>
- <!-- / Modal -->
+               </button>
+            </div>
+         </form>
+      </div>
+
+   </ng-template>
+   <!-- / Modal -->

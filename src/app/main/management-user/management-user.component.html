@@ -29,10 +29,10 @@
                 </div>
             </div> -->
         </div>
-
-        <ngx-datatable *ngIf="currentUser.role == 'Admin' " #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows1" [columnMode]="'force'"
+<div class="overflow" style="overflow: auto;">
+        <ngx-datatable *ngIf="currentUser.role == 'Admin'|| currentUser.role == 'SuperAdmin' " #tablesss class="bootstrap core-bootstrap" [rows]="rows1" [columnMode]="'force'"
         [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="false"
-        [count]="" [offset]="" [limit]="10" >
+        [count]="" [offset]="" [limit]="10" [scrollbarH]="true" [virtualization]="false">
         <ngx-datatable-column name="Lastname" prop="last_name" [width]="100" >
             <ng-template let-last_name="value" let-expanded="expanded" ngx-datatable-cell-template>
                 {{ last_name }}
@@ -56,6 +56,11 @@
                 {{ email }}
             </ng-template>
         </ngx-datatable-column>
+        <ngx-datatable-column name="Management Name" *ngIf="currentUser.user_role==6" prop="management_name" [width]="100">
+            <ng-template let-management_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ management_name ? management_name: '--' }}
+            </ng-template>
+        </ngx-datatable-column>
 
         <ngx-datatable-column *ngIf="currentUser.role != 'SuperAdmin'" name="DOB" prop="DOB" [width]="80">
             <ng-template let-DOB="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -63,7 +68,7 @@
             </ng-template>
         </ngx-datatable-column>
 
-        <ngx-datatable-column
+        <!-- <ngx-datatable-column
             *ngIf="currentUser.role != 'Community' && currentUser.role != 'Agency' && currentUser.role != 'Admin'"
             name="Community" prop="community_id" [width]="100">
             <ng-template let-community_id="value" let-expanded="expanded" ngx-datatable-cell-template>
@@ -85,7 +90,7 @@
                 <span *ngFor="let com of agency_id; let l = last">{{com.agency_name}}{{l ? '' : ','}} </span>
                 <span *ngIf="!agency_id || !agency_id.length">---</span>
             </ng-template>
-        </ngx-datatable-column>
+        </ngx-datatable-column> -->
 
         <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="80" >
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
@@ -113,6 +118,7 @@
             </ng-template>
         </ngx-datatable-column>
     </ngx-datatable>
+</div>
     </div>
 </div>
 

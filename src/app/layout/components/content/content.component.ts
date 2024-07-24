@@ -20,7 +20,7 @@ export class ContentComponent {
     this.unsubscribeAllModals.push(
       this._authenticationService.currentUser.subscribe(x => {
         (this.currentUser = x);
-        if (x) { this.user_id = this.currentUser._id }
+        if (x) { this.user_id = this.currentUser?._id }
       })
     );
   }
@@ -32,6 +32,6 @@ export class ContentComponent {
    */
   ngOnInit(): void {
     this.currentUser = this._authenticationService.currentUserValue;
-    this.user_id = this.currentUser ? this.currentUser._id  :  '';
+    this.user_id = this.currentUser ? this.currentUser?._id  :  '';
   }
 }

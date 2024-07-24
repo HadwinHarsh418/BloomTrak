@@ -86,8 +86,8 @@ export class EditDepartmentComponent implements OnInit {
     }
     let data = {
       name : this.formDepartmentData.value.department_name,
-      community_id :this.currentUser.id,
-      role_id : this.currentUser.prmsnId,
+      community_id : this.currentUser?.user_role == 4 ? this.currentUser?.com_id  : this.currentUser?.user_role == 3 || this.currentUser?.user_role == 8|| this.currentUser?.user_role == 6 ? this.data.id : this.currentUser?.id,
+      role_id : this.currentUser?.prmsnId,
       id:this.data.d
     }
 

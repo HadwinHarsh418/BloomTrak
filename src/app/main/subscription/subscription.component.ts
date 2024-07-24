@@ -14,6 +14,7 @@ import { fromEvent } from 'rxjs';
   styleUrls: ['./subscription.component.scss']
 })
 export class SubscriptionComponent implements OnInit {
+  @ViewChild('deleteSubscription') deleteSubscription: ElementRef<any>;
   currentUser: any;
   public page = new Page();
   public rows = [];
@@ -28,6 +29,7 @@ export class SubscriptionComponent implements OnInit {
   vwPrms: any;
   assPrms: any;
   userName: any;
+  id: { id: any; };
 
   constructor(
     private _authenticationService: AuthenticationService,
@@ -60,12 +62,34 @@ getCmAcess(){
   })
 }
 
-  delete(row){
-    
-    this.dataService.deleteCMAccess({id :row.id}).subscribe((res:any)=>{
+modalOpenOSE(modalOSE, size = 'md') {
+  this.modalService.open(modalOSE,
+    {
+      backdrop: false,
+      size: size,
+      centered: true,
+    }
+  );
+}
+
+openDeleteShift(row: any,) {
+  this.id = row.id 
+  this.modalOpenOSE(this.deleteSubscription, 'lg');
+}
+
+closeded(modal: NgbModalRef) {
+  modal.dismiss();
+}
+
+  delete(modal: NgbModalRef){
+    let body= {
+      id:this.id
+    }
+    this.dataService.deleteCMAccess(body).subscribe((res:any)=>{
       if(!res.err){
         this.toastr.successToastr(res.msg)
-        this.ngOnInit()
+        this.getCmAcess()
+        this.closeded(modal)
       }else{
       this.toastr.errorToastr('Something went wrong please try again leter')
       }
@@ -132,7 +156,7 @@ getCmAcess(){
   }
 
   getRole(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
       
          res.body.filter(i=>{ this.roleData.push(i.id.toString())})

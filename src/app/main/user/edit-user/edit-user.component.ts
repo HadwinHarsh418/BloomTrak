@@ -88,6 +88,7 @@ export class EditUserComponent implements OnInit {
   cfpasswordTextType: boolean;
   comRoles: any;
   admRoles: any;
+  public passwordTextType2: boolean;
   slctSrtNm: any;
 
   constructor(
@@ -116,7 +117,9 @@ export class EditUserComponent implements OnInit {
     )
 
     this._authenticationService.currentUser.subscribe((x: any) => {
-      this.currentUser = x
+      this.currentUser = x;
+      this.currentUser?.user_role == 5  ? this.currentUser.role = 'Agency' : ''
+      this.currentUser?.user_role == 5  ? this.currentUser.role = 'Agency' : ''
       this.crrntUsrId.push(this.currentUser?.role == 'Admin' ?  x?._id : x?.id)
     });
   }
@@ -144,37 +147,37 @@ export class EditUserComponent implements OnInit {
       // isAdmin: ['',Validators.required],
     })
 
-    // if(this.currentUser.role == 'Agency')
+    // if(this.currentUser?.role == 'Agency')
     // {
     //  this.editFormData.controls['DOB'].clearValidators();
     //  this.editFormData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role != 'Agency')
+    // if(this.currentUser?.role != 'Agency')
     // {
     //  this.editFormData.controls['DOB'].setValidators(Validators.required);
     //  this.editFormData.updateValueAndValidity();
     // }
 
     this.forgotPassword = this.fb.group({
-      password: ['', Validators.required],
-      confPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required]],
+      password: ['',Validators.compose([Validators.required, Validators.pattern(Patterns.password)])],
+      confPassword: ['',Validators.compose([Validators.required, Validators.pattern(Patterns.password)])],
+      newPassword: ['',Validators.compose([Validators.required, Validators.pattern(Patterns.password)])],
       id: this.prmsUsrId.id
     })
 
-    // if(this.currentUser.role == 'Agency')
+    // if(this.currentUser?.role == 'Agency')
     // {
     //  this.editFormData.controls['DOB'].clearValidators();
     //  this.editFormData.updateValueAndValidity();
     // }
-    // if(this.currentUser.role != 'Agency')
+    // if(this.currentUser?.role != 'Agency')
     // {
     //  this.editFormData.controls['DOB'].setValidators(Validators.required);
     //  this.editFormData.updateValueAndValidity();
     // }
 
     this.contentHeader = {
-      headerTitle: this.currentUser.role == 'Agency' ? 'Edit Agency Personnel' : 'Edit User',
+      headerTitle: this.currentUser?.role == 'Agency' ? 'Edit Agency Personnel' : 'Edit User',
       actionButton: false,
       breadcrumb: {
         type: '',
@@ -185,13 +188,17 @@ export class EditUserComponent implements OnInit {
             link: '/'
           },
           {
-            name: this.currentUser.role == 'Agency' ? 'Agency Personnel' : 'User',
+            name: this.currentUser?.role == 'Agency' ? 'Agency Personnel' :this.currentUser?.user_role == 6   ?  '':'User',
             isLink: true,
-            link: '/user'
+            link: this.currentUser?.user_role == 5 ? '/agency-personnel' :this.currentUser?.user_role == 2 ?'/agency-personnel':this.currentUser?.user_role == 6 ?'': '/user'
           }
         ]
       }
     };
+  }
+
+  togglePasswordTextType2() {
+    this.passwordTextType2 = !this.passwordTextType2;
   }
 
   uncheckDropdown4() {
@@ -243,14 +250,22 @@ export class EditUserComponent implements OnInit {
     let year = todayDate.getFullYear();
     this.minDate = year + '-' + month + '-' + toDate
   }
-
+  dateErrorFxn(){
+    let date = new Date();
+    let inputDate = new Date(this.editFormData?.value?.DOB)
+    return date < inputDate ? true : false;
+}
 
   editSubmitted() {
+    if(this.dateErrorFxn()){
+      this.tost.errorToastr('Please select valid date!')
+      return;
+    }
     for (let item of Object.keys(this.ec)) {
       this.ec[item].markAsDirty()
     }
-      if(this.currentUser.role == 'SuperAdmin' || this.currentUser.role == 'Community' ||
-      this.currentUser.role == 'Agency' || this.currentUser.role == 'Community User'
+      if(this.currentUser?.role == 'SuperAdmin' || this.currentUser?.role == 'Community' ||
+      this.currentUser?.role == 'Agency' || this.currentUser?.role == 'Community User'
       ){
         if (!this.editFormData.value.phone_number ||
           !this.editFormData.value.email ||
@@ -268,7 +283,7 @@ export class EditUserComponent implements OnInit {
       }
   
 
-    if (this.currentUser.role == "SuperAdmin" || this.currentUser.role == "Admin") {
+    if (this.currentUser?.role == "SuperAdmin" || this.currentUser?.role == "Admin") {
       if (this.editFormData.value?.community_id?.length) {
         this.editFormData.value.community_id.forEach(element => {
           this.submitId.push(element.id)
@@ -285,7 +300,7 @@ export class EditUserComponent implements OnInit {
           first_name: this.editFormData.value.first_name,
           last_name: this.editFormData.value.last_name,
           DOB: this.editFormData.value.DOB,
-          // username: this.slctSrtNm +'-'+ this.editFormData.value.username,
+          // username: this.slctSrtNm +'-'+ this.editFormData.value.username.replace(' ','').trim(),
           // hourly_rate : parseFloat( this.formData?.value?.hourly_rate),
           // PIN_code: this.editFormData.value.PIN_code,
           management_Co: this.editFormData.value.management_Co ,
@@ -305,14 +320,14 @@ export class EditUserComponent implements OnInit {
           PIN_code: this.editFormData.value.PIN_code,
           management_Co: this.editFormData.value.management_Co ,
           management_co_user:  this.editFormData.value.management_co_user ,
-          // username: this.slctSrtNm +'-'+ this.editFormData.value.username,
+          // username: this.slctSrtNm +'-'+ this.editFormData.value.username.replace(' ','').trim(),
           agency_id: this.submitId2,
         // isAdmin: this.editFormData.value.isAdmin ,
 
         }
       }
 
-    } else if (this.currentUser.role == 'Agency') {
+    } else if (this.currentUser?.role == 'Agency') {
       this.data4 = {
         phone_number: this.editFormData.value.phone_number?.replace(/\D/g, ''),
         email: this.editFormData.value.email,
@@ -321,18 +336,18 @@ export class EditUserComponent implements OnInit {
         DOB: this.editFormData.value.DOB,
         PIN_code: this.editFormData.value.PIN_code,
         management_Co: this.editFormData.value.management_Co ,
-        // username: this.slctSrtNm +'-'+ this.editFormData.value.username,
+        // username: this.slctSrtNm +'-'+ this.editFormData.value.username.replace(' ','').trim(),
         management_co_user:  this.editFormData.value.management_co_user ,
         id: this.userEdit
       }
-    } else if (this.currentUser.role == 'Community' || this.currentUser.role =='Community User') {
+    } else if (this.currentUser?.role == 'Community' || this.currentUser?.role =='Community User') {
       this.data6 = {
         phone_number: this.editFormData.value.phone_number?.replace(/\D/g, ''),
         email: this.editFormData.value.email,
         first_name: this.editFormData.value.first_name,
         last_name: this.editFormData.value.last_name,
         DOB: this.editFormData.value.DOB,
-        // username: this.slctSrtNm +'-'+ this.editFormData.value.username,
+        // username: this.slctSrtNm +'-'+ this.editFormData.value.username.replace(' ','').trim(),
         // hourly_rate : parseFloat( this.editFormData?.value?.hourly_rate),
         PIN_code: this.editFormData.value.PIN_code,
         management_Co: this.editFormData.value.management_Co ,
@@ -343,13 +358,19 @@ export class EditUserComponent implements OnInit {
       }
     }
     this.btnShow = true;
-    let is_for = this.currentUser.role == 'Agency' ? 'agency' : this.currentUser.role == 'Community' || this.currentUser.role == 'Community User' ? 'agency' : 'superAdmin'
-    this.dataService.editUser(this.currentUser.role == 'SuperAdmin' || this.currentUser.role == 'Admin' ? { ...this.editFormData.value.community_id?.length ? this.data2 : this.data3, ...{ id: this.userEdit } } : this.currentUser.role == 'Community' || this.currentUser.role == 'Community User' ? this.data6 : this.data4, is_for,this.currentUser.role).subscribe((res: any) => {
+    let is_for = this.currentUser?.role == 'Agency' ? 'agency' : this.currentUser?.role == 'Community' || this.currentUser?.role == 'Community User' ? 'agency' : 'superAdmin'
+    this.dataService.editUser(this.currentUser?.role == 'SuperAdmin' || this.currentUser?.role == 'Admin' ? { ...this.editFormData.value.community_id?.length ? this.data2 : this.data3, ...{ id: this.userEdit } } : this.currentUser?.role == 'Community' || this.currentUser?.role == 'Community User' ? this.data6 : this.data4, is_for,this.currentUser?.role).subscribe((res: any) => {
       if (!res.error) {
         // this.currenUserId = ''
-        this.tost.successToastr(res.msg)
+        // this.tost.successToastr(res.msg)
         setTimeout(() => {
-          this.upadtePassword()
+          if(!this.forgotPassword.value.password.length){
+             this.tost.successToastr(res.msg)
+             this.loctn.back()
+          }else{
+            this.upadtePassword()
+          }
+          
         }, 200);
         this.btnShow = false;
       } else {
@@ -381,9 +402,13 @@ export class EditUserComponent implements OnInit {
         this.loctn.back()
 
       }
+      else{
+        this.tost.errorToastr(response.msg)
+        return
+      }
     }
     );
-    this.loctn.back()
+    // this.loctn.back()
     
   }
 
@@ -493,7 +518,7 @@ export class EditUserComponent implements OnInit {
         });
       }
       for(let i = 0; i < res.body[0].linked_with.length; i++){
-        if(this.currentUser.role == 'SuperAdmin'){
+        if(this.currentUser?.role == 'SuperAdmin'){
           let allAssigned = [];
           this.currenUserId.forEach(rate => {allAssigned.push(rate.community_name)});
           this.cmntArr = this.allCommunity.filter(item => allAssigned.includes(item.community_name));
@@ -536,7 +561,7 @@ export class EditUserComponent implements OnInit {
   }
 
   getRoles(){
-    this.dataService.getAllRole( ).subscribe((res:any)=>{
+    this.dataService.getAllRole().subscribe((res:any)=>{
       if(!res.err){
         this.admRoles = res.body.sort(function(a, b){
           if(a.name.toUpperCase() < b.name.toUpperCase()) { return -1; }
@@ -562,6 +587,9 @@ this.allCommunity.filter(i=>{
     }
   })
     
+}
+ngOnDestroy(): void{
+  this.currentUser?.user_role == 5  ? this.currentUser.role = 'User' : ''
 }
 
 }

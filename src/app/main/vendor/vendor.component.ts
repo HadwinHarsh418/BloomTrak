@@ -20,6 +20,8 @@ export class VendorComponent implements OnInit {
   currentUser: any;
   roleData1: any=[];
   roleData2: any=[];
+  community_id:any;
+  allCommunity1:any;
 
   constructor(
     private _authenticationService : AuthenticationService,
@@ -30,13 +32,14 @@ export class VendorComponent implements OnInit {
       this.currentUser = x
     })
     this.getRole()
+    this.getCommunityByMangmentId();
    }
 
   ngOnInit(): void {
   }
 
   getVendor(){
-    let data = {usrRole : this.currentUser.prmsnId == '6' ? '6' : '', comId : this.currentUser.prmsnId == '6' ? '' : this.roleData2.includes(this.currentUser.prmsnId) ? this.currentUser.com_id  : this.currentUser.id }
+    let data = {usrRole : this.currentUser?.prmsnId == '6' ? '6' : '', comId : this.community_id ? this.community_id :this.currentUser?.prmsnId == '6' ? '' :this.currentUser?.user_role == 3 ? this.community_id: this.roleData2.includes(this.currentUser?.prmsnId) ? this.currentUser?.com_id  : this.currentUser?.id }
     this.dataSrv.getVendor(data).subscribe((res:any)=>{
       if(!res.err){
         this.rows = res.body.sort(function(a, b){
@@ -117,6 +120,64 @@ export class VendorComponent implements OnInit {
     },err=>{
       this.dataSrv.genericErrorToaster()
     })
+  }
+  selectCommunity1(id:any){
+    this.community_id=id;
+    this.getVendor();
+  }
+
+
+  getCommunityByMangmentId(){
+    if(this.currentUser?.id && this.currentUser?.com_id){
+      let data = {
+        userId : this.currentUser?.id,
+        mangId : this.currentUser?.management
+      }
+      this.dataSrv.getManagementUserCommunities(data).subscribe((res: any) => {
+        if (!res.error) {
+          // this.mangComs = res.body[1].userAvailableCommunities
+          let d:any[] = res?.body[0].user_added_communities.concat(res?.body[1].userAvailableCommunities);
+          const uniqueArray = d.filter((obj, index, self) =>
+                index === self.findIndex((t) => (
+                    t.community_id === obj.community_id &&
+                    t.community_name === obj.community_name &&
+                    t.community_short_name === obj.community_short_name
+                ))
+            );
+          this.allCommunity1 = uniqueArray.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = this.allCommunity1[0].community_id
+        this.getVendor();
+        } else {
+          this.toaster.errorToastr(res.msg);
+        }
+      },
+        (err) => {
+          this.dataSrv.genericErrorToaster();
+        })
+    }
+    else{
+      this.dataSrv.getMNMGcommunity(this.currentUser?.id).subscribe((response: any) => {
+        if (response['error'] == false) {
+          this.allCommunity1 = response.body.sort(function(a, b){
+            if(a.community_name.toUpperCase() < b.community_name.toUpperCase()) { return -1; }
+            if(a.community_name.toUpperCase() > b.community_name.toUpperCase()) { return 1; }
+            return 0;
+        })  ;
+        this.community_id = response.body[0]?.cp_id
+        this.getVendor();
+          //this.toastr.successToastr(response.msg);
+        } else if (response['error'] == true) {
+          this.toaster.errorToastr(response.msg);
+        }
+      }, (err) => {
+        this.dataSrv.genericErrorToaster();
+  
+      })
+    }
   }
 
 }

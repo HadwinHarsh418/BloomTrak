@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthGuard } from 'app/auth/helpers';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgImageFullscreenViewModule } from 'ng-image-fullscreen-view';
@@ -16,17 +15,14 @@ const routes = [
   {
     path: '',
     component:VendorComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'add-Vendor',
     component: AddVendorComponent,
-    canActivate: [AuthGuard],
   },
   {
     path: 'edit-Vendor/:id',
     component: AddVendorComponent,
-    canActivate: [AuthGuard],
   },
 ];
 

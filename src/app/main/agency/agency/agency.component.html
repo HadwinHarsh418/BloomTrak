@@ -2,107 +2,138 @@
     <div class="card-header d-flex flex-column align-items-start pb-0">
         <h2 class="font-weight-bolder mt-1">Agency List </h2>
     </div>
-    <div class="card-body mt-1">
+    <div class="card-body mt-1 pad-0-cus">
         <div class="row">
             <div class="col-md-6 col-12"  >
-                <div class="d-flex ">
+                <div class="d-flex custom-button">
 
-                        <button type="button" class="btn-sm btn-info" *ngIf="addPrms == 1 && currentUser.role == 'SuperAdmin' || currentUser.role == 'Admin'|| currentUser.user_role == '6'" [routerLink]="['/agency/add-agency']"  >
+                        <button type="button" class="btn-sm btn-info" *ngIf="addPrms == 1 && currentUser.role == 'SuperAdmin' || currentUser.role == 'Admin'|| currentUser.user_role == '6' || currentUser.user_role == 8" [routerLink]="['/agency/add-agency']"  >
                             <i class="fa fa-plus "></i> Add Agency
                         </button>
 
                         <button type="button" (click)="fileInput.click()"  class="btn-sm btn-info ml-1" *ngIf="['6','16'].includes(currentUser.prmsnId)" >
                             <i class="fa fa-file "></i>   Import File
-                            <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;" />
+                            <input #fileInput type="file" (click)="fileInput.value = null" (change)="onFileInput(fileInput.files)" style="display:none;"accept=".csv, .xls"  />
                           </button>
+
+                         
+                </div>
+                <div class="col-6-op" *ngIf="currentUser.user_role == 8">
+                    <select id="inputState" class="form-control" (change)="selectCommunity($event.target.value)" [(ngModel)]="community_id" [disabled]="runPrms == 0">
+                      <option value="undefined" selected="selected" disabled>--Select Community--</option>
+                      <option value="{{item.community_id}}" *ngFor="let item of allCommunity">
+                        {{item.community_name}}</option>
+                    </select>
                 </div>
             </div>
-            <div class="col-md-6 col-12 d-flex justify-content-md-end">
-                <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+            <div class="col-md-6 col-12 d-flex justify-content-md-end agency-list">
+                <div class="d-flex align-items-center justify-content-end pb-1 pl-1 pl-md-0 pb-md-0">
                     <label class="d-flex align-items-center"> {{ 'DEPOSIT.depoSearch' | translate}}
-                        <input #searchStrInput type="text" placeholder="Search" class="form-control ml-25"
+                        <input #searchStrInput type="text" placeholder="Search" class="form-control ml-50"
                             [(ngModel)]="searchStr" />
                     </label>
                 </div>
             </div>
         </div>
        
-        <ngx-datatable #tablesss class="bootstrap core-bootstrap sz-1000" [rows]="rows" [columnMode]="'force'"
-            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
-            [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)">
+       <div class="ovr-flow" style="overflow: auto;">
+        <ngx-datatable class="bootstrap core-bootstrap" [rows]="rows" [columnMode]="'force'"
+        [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [externalPaging]="true"
+      [scrollbarH]="true" [virtualization]="false"
+      [count]="page.totalElements" [offset]="page.pageNumber" [limit]="page.size" (page)="setPage($event)" >
 
-            <ngx-datatable-column name="Name" prop="agency_name" [width]="100">
-                <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ agency_name }}
-                </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column name="Email" prop="agency_email" [width]="100">
-                <ng-template let-agency_email="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ agency_email }}
-                </ng-template>
-            </ngx-datatable-column>
-            <ngx-datatable-column name="Phone No." prop="agency_phone" [width]="80">
-                <ng-template let-agency_phone="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ agency_phone |numberFormat}}
-                </ng-template>
-            </ngx-datatable-column>
-            
-            <ngx-datatable-column name="Website" prop="agency_website" [width]="100">
-                <ng-template let-agency_website="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ agency_website }}
-                </ng-template>
-            </ngx-datatable-column>
+        <ngx-datatable-column name="Name" prop="agency_name" [width]="100">
+            <ng-template let-agency_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ agency_name }}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Email" prop="agency_email" [width]="100">
+            <ng-template let-agency_email="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ agency_email }}
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Phone No." prop="agency_phone" [width]="80">
+            <ng-template let-agency_phone="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ agency_phone |numberFormat}}
+            </ng-template>
+        </ngx-datatable-column>
+        
+        <ngx-datatable-column name="Website" prop="agency_website" [width]="100">
+            <ng-template let-agency_website="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ agency_website }}
+            </ng-template>
+        </ngx-datatable-column>
 
-            <ngx-datatable-column name="Status" prop="approval" [width]="50">
-                <ng-template let-approval="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ approval }}
-                </ng-template>
-            </ngx-datatable-column>
+        <ngx-datatable-column name="Status" prop="approval" [width]="100">
+            <ng-template let-approval="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ approval }}
+            </ng-template>
+        </ngx-datatable-column>
 
-            <ngx-datatable-column name="username" prop="username" [width]="100">
-                <ng-template let-username="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    {{ username }}  
-                </ng-template>
-            </ngx-datatable-column>
+        <ngx-datatable-column name="Agency Type" prop="agency_type" [width]="50">
+            <ng-template let-agency_type="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ agency_type == '1' ? 'Agency - Rate Plus Fee' : 'Agency - Contract Rates' }}
+            </ng-template>
+        </ngx-datatable-column>
 
-            <ngx-datatable-column *ngIf="currentUser.user_role != '1'" name="community name" prop="communities" [width]="100">
-                <ng-template let-communities="value" let-expanded="expanded" ngx-datatable-cell-template>
-                    <span *ngFor="let com of communities; let l = last">{{com.community_name}}{{l ? '' : ','}} </span>
-                </ng-template>
-            </ngx-datatable-column>
-            
-            <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50">
-                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    <div class="d-flex align-items-center">
-                        <div ngbDropdown container="body">
-                            <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+        <ngx-datatable-column name="username" prop="username" [width]="100">
+            <ng-template let-username="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ username }}  
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="community name" prop="community_name" [width]="100" *ngIf="currentUser.user_role == '3'">
+            <ng-template let-community_name="value" let-expanded="expanded" ngx-datatable-cell-template>
+                {{ community_name }}  
+            </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column *ngIf="currentUser.user_role != '1' && currentUser.user_role != 3" name="community name" prop="communities" [width]="100">
+            <ng-template let-communities="value" let-expanded="expanded" ngx-datatable-cell-template>
+                <div class="flex">
+                    <span *ngFor="let com of communities; let l = last; let i=index;"> {{ i < 3 ? com.community_name : ''}}{{i < 3 ? l ? '' : ',' : ''}}</span>
+                    <span *ngIf="communities.length > 3">....</span>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+        
+        <ngx-datatable-column name="Actions" sortable="false" prop="id" [width]="50">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <div class="d-flex align-items-center">
+                    <div ngbDropdown container="body">
+                        <a ngbDropdownToggle href="javascript:void(0);" class="hide-arrow" id="dropdownBrowserState"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i data-feather="more-vertical" class="text-primary cursor-pointer mr-50"></i>
+                        </a>
+                        <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
+                            <a [routerLink]="['/agencyProfile', row.id]" ngbDropdownItem
+                                class="d-flex align-items-center" *ngIf="vwPrms ==1 || currentUser.user_role == '1'|| currentUser.prmsnId == '2' || currentUser.user_role == 3 || currentUser.user_role == 6">
+                                <i class="fa fa-eye mr-50"></i> View
                             </a>
-                            <div ngbDropdownMenu class="dropdown-menu-right" aria-labelledby="dropdownBrowserState">
-                                <a [routerLink]="['/agencyProfile', row.id]" ngbDropdownItem
-                                    class="d-flex align-items-center" *ngIf="vwPrms ==1 || currentUser.user_role == '1'|| currentUser.prmsnId == '2' || currentUser.user_role == 6">
-                                    <i class="fa fa-eye mr-50"></i> View
-                                </a>
-                                <a [routerLink]="['/agency/edit-agency', row]" ngbDropdownItem *ngIf="edtPrms ==1 || currentUser.user_role == '6' || currentUser.user_role != '1'|| currentUser.prmsnId == '2'"
-                                    class="d-flex align-items-center">
-                                    <i class="fa fa-edit mr-50"></i> Edit
-                                </a>
-                                <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.user_role ==6 || currentUser.user_role == '1'|| currentUser.prmsnId == '2'">
-                                    <i class="fa fa-ban mr-50"></i> Reject
-                                </a>
-                                <!-- <a (click)="giveApproval(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="row.approvedHide && currentUser.user_role ==6 || currentUser.prmsnId == '1' || currentUser.prmsnId == '2' ">
-                                    <i class="fa fa-check mr-50"></i> Approve
-                                </a> -->
-                                <a  ngbDropdownItem class="d-flex align-items-center" *ngIf="showMenuIcon">
-                                     You have no Permissions for any actions.
-                                </a>
-                            </div>
+                            <a [routerLink]="['/agency/edit-agency', row]" ngbDropdownItem *ngIf="edtPrms ==1 || currentUser.user_role == '6' || currentUser.user_role != '1'|| currentUser.prmsnId == '2'"
+                                class="d-flex align-items-center">
+                                <i class="fa fa-edit mr-50"></i> Edit
+                            </a>
+                            <!-- <a (click)="facinaltyId(row)" ngbDropdownItem *ngIf="row.id == 'fa127792-310a-4c68-8a89-f21c49642539'"
+                            class="d-flex align-items-center">
+                            <i class="fa fa-edit mr-50"></i> Update Facility ID
+                        </a> -->
+                            <a (click)="openDeleteUser(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="currentUser.user_role ==6 || currentUser.user_role == '1'|| currentUser.prmsnId == '2'">
+                                <i class="fa fa-ban mr-50"></i> Reject
+                            </a>
+                            <!-- <a (click)="giveApproval(row)" ngbDropdownItem class="d-flex align-items-center" *ngIf="row.approvedHide && currentUser.user_role ==6 || currentUser.prmsnId == '1' || currentUser.prmsnId == '2' ">
+                                <i class="fa fa-check mr-50"></i> Approve
+                            </a> -->
+                            <a  ngbDropdownItem class="d-flex align-items-center" *ngIf="showMenuIcon">
+                                 You have no Permissions for any actions.
+                            </a>
                         </div>
                     </div>
-                </ng-template>
-            </ngx-datatable-column>
-        </ngx-datatable>
+                </div>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+       </div>
     </div>
 </div>
 
@@ -126,6 +157,9 @@
     </div>
 </ng-template>
 <!-- / Modal -->
+
+
+
 
 
 
